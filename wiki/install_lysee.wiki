@@ -1,19 +1,19 @@
-Follow me, let's install linux into your computer and run it.
+Follow me, let's install LYSEE into your computer and run it.
 
-*windows*
+*LINUX*
+
+    # Download LYSEE source to your computer.
+    # Unizp it.
+    # Copy libc package of Free Pascal to your home place.
+    # Change to folder _LYSEE_SOURCE/lysee_.
+    # Compile with: make.
+    # Install with: sudo make install.
+    # Lysee was installed to _/usr/local/lib/lysee_.
+    # Soft link _/usr/bin/lysee_ will be created and pointer to _/usr/local/lib/lysee/lysee_.
+    # Type "lysee" and return will start lysee.
+
+*WINDOWS*
 
     # Download the lasted Win32 installer to your computer.
     # Run the installer.
-    # Click menu "Start->Programs->Lysee 0.1.9->Lysee Interpreter" to start Lysee. 
-
-*Linux*
-
-    # Download source code to your computer.
-    # Unizp it.
-    # Copy libc package of Free Pascal to your home place.
-    # Change current position to _LYSEE_FOLDER/lysee_.
-    # Compile lysee with: make.
-    # Install lysee with: sudo make install.
-    # Lysee will be installed to _/usr/local/lib/lysee_.
-    # Soft link _/usr/bin/lysee_ will be created.
-    # Type "lysee" and return will start lysee.  
+    # Follow Start->Programs->Lysee 0.1.9->Lysee Interpreter to start Lysee. 
