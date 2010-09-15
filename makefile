@@ -2,7 +2,6 @@ LYSEE_HOME    = /usr/local/lib/lysee
 LYSEE_CONFILE = $(LYSEE_HOME)/lysee.config
 LYSEE_MODULES = $(LYSEE_HOME)/modules
 LYSEE_DEMOS   = $(LYSEE_HOME)/demos
-LYSEE_MANUAL  = $(LYSEE_HOME)/manual
 LYSEE_SYNE    = /usr/lib/lazarus/0.9.28.2
 
 OPTS = -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewnh -Fu.
@@ -68,7 +67,6 @@ install:
 
 	mkdir -p $(LYSEE_MODULES)
 	mkdir -p $(LYSEE_DEMOS)
-	mkdir -p $(LYSEE_MANUAL)
 	cp -f LICENSE $(LYSEE_HOME)
 	cp -f LICENSE.txt $(LYSEE_HOME)
 	cp -f lysee $(LYSEE_HOME)
@@ -77,7 +75,6 @@ install:
 	cp -f modules/*.so $(LYSEE_MODULES)
 	cp -f modules/*.ls $(LYSEE_MODULES)
 	cp -f -r demos/* $(LYSEE_DEMOS)
-	cp -f -r ../homepage/sc/manual/* $(LYSEE_MANUAL)
 	ln -s -f ${LYSEE_HOME}/lysee /usr/bin/lysee
 	ln -s -f ${LYSEE_HOME}/lysee_pad /usr/bin/lysee_pad
 
