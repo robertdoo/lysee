@@ -1,0 +1,27 @@
+1 VERSIONINFO
+FILEVERSION 0,2,1,398
+PRODUCTVERSION 1,1,1,307
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "Comments", "\000"
+   VALUE "CompanyName", "\000"
+   VALUE "FileDescription", "lysee PAD (FPC)\000"
+   VALUE "FileVersion", "0.2.1.398\000"
+   VALUE "InternalName", "\000"
+   VALUE "LegalCopyright", "Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>\000"
+   VALUE "LegalTrademarks", "\000"
+   VALUE "OriginalFilename", "\000"
+   VALUE "ProductName", "\000"
+   VALUE "ProductVersion", "1.1.1.307\000"
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x0409, 0x04E4
+ }
+}
+
+MAINICON ICON "lysee_pad_fpc.ico"
