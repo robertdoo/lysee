@@ -78,6 +78,17 @@ type
     dlgFind: TFindDialog;
     ImageList: TImageList;
     MainMenu: TMainMenu;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    pmiReplace: TMenuItem;
+    pmiFind: TMenuItem;
+    pmiSelectAll: TMenuItem;
+    pmiPaste: TMenuItem;
+    pmiCopyHTML: TMenuItem;
+    pmiCopy: TMenuItem;
+    pmiCut: TMenuItem;
+    pmiRedo: TMenuItem;
+    pmiUndo: TMenuItem;
     miFileUTF8ToAnsi: TMenuItem;
     miFileAnsiToUTF8: TMenuItem;
     miFileConvert: TMenuItem;
@@ -107,6 +118,7 @@ type
     miHelp: TMenuItem;
     dlgSave: TSaveDialog;
     dlgReplace: TReplaceDialog;
+    popEdit: TPopupMenu;
     StatusBar: TStatusBar;
     smLysee: TSynMemo;
     expHTML: TSynExporterHTML;

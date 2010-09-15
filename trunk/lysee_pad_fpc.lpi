@@ -10,14 +10,14 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="1"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="398"/>
+      <CurrentBuildNr Value="400"/>
       <ProjectVersion Value="1.1.1.307"/>
       <FileDescription Value="lysee PAD (FPC)"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
@@ -58,28 +58,28 @@
         <ComponentName Value="LspadForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="lse_pad_fpc"/>
-        <CursorPos X="43" Y="610"/>
+        <CursorPos X="43" Y="622"/>
         <TopLine Value="594"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="47"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\..\..\Develop\lazarus\components\synedit\synedit.pp"/>
+        <Filename Value="..\..\Develop\lazarus\components\synedit\synedit.pp"/>
         <UnitName Value="SynEdit"/>
         <CursorPos X="29" Y="838"/>
         <TopLine Value="824"/>
         <UsageCount Value="11"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\..\..\Develop\lazarus\components\synedit\synmemo.pas"/>
+        <Filename Value="..\..\Develop\lazarus\components\synedit\synmemo.pas"/>
         <UnitName Value="SynMemo"/>
         <CursorPos X="3" Y="69"/>
         <TopLine Value="159"/>
         <UsageCount Value="9"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\..\..\Develop\lazarus\components\synedit\synhighlighterjava.pas"/>
+        <Filename Value="..\..\Develop\lazarus\components\synedit\synhighlighterjava.pas"/>
         <UnitName Value="SynHighlighterJava"/>
         <CursorPos X="1" Y="1321"/>
         <TopLine Value="1314"/>
@@ -93,14 +93,14 @@
         <UsageCount Value="38"/>
       </Unit5>
       <Unit6>
-        <Filename Value="..\..\..\Develop\lazarus\components\synedit\syneditstrconst.pp"/>
+        <Filename Value="..\..\Develop\lazarus\components\synedit\syneditstrconst.pp"/>
         <UnitName Value="SynEditStrConst"/>
         <CursorPos X="1" Y="144"/>
         <TopLine Value="144"/>
         <UsageCount Value="9"/>
       </Unit6>
       <Unit7>
-        <Filename Value="..\..\..\Develop\lazarus\components\synedit\synedithighlighter.pp"/>
+        <Filename Value="..\..\Develop\lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
         <CursorPos X="1" Y="402"/>
         <TopLine Value="389"/>
@@ -114,7 +114,7 @@
         <UsageCount Value="10"/>
       </Unit8>
       <Unit9>
-        <Filename Value="..\..\..\Develop\lazarus\fpc\2.2.2\source\rtl\objpas\classes\classesh.inc"/>
+        <Filename Value="..\..\Develop\lazarus\fpc\2.2.2\source\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="3" Y="120"/>
         <TopLine Value="107"/>
         <UsageCount Value="9"/>
@@ -125,59 +125,57 @@
         <UnitName Value="lseu"/>
         <CursorPos X="14" Y="64"/>
         <TopLine Value="61"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="46"/>
-        <Loaded Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="..\..\..\Develop\lazarus\lcl\forms.pp"/>
+        <Filename Value="..\..\Develop\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
         <CursorPos X="3" Y="1349"/>
         <TopLine Value="1336"/>
         <UsageCount Value="11"/>
       </Unit11>
       <Unit12>
-        <Filename Value="..\..\..\Develop\lazarus\lcl\include\application.inc"/>
+        <Filename Value="..\..\Develop\lazarus\lcl\include\application.inc"/>
         <CursorPos X="25" Y="184"/>
         <TopLine Value="178"/>
         <UsageCount Value="11"/>
       </Unit12>
       <Unit13>
-        <Filename Value="..\..\..\Develop\lazarus\lcl\dialogs.pp"/>
+        <Filename Value="..\..\Develop\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <CursorPos X="43" Y="351"/>
         <TopLine Value="337"/>
         <UsageCount Value="12"/>
       </Unit13>
       <Unit14>
-        <Filename Value="..\..\..\Develop\lazarus\lcl\include\messagedialogs.inc"/>
+        <Filename Value="..\..\Develop\lazarus\lcl\include\messagedialogs.inc"/>
         <CursorPos X="6" Y="162"/>
         <TopLine Value="151"/>
         <UsageCount Value="10"/>
       </Unit14>
       <Unit15>
-        <Filename Value="..\..\..\Develop\lazarus\lcl\dbgrids.pas"/>
+        <Filename Value="..\..\Develop\lazarus\lcl\dbgrids.pas"/>
         <UnitName Value="DBGrids"/>
         <CursorPos X="19" Y="1829"/>
         <TopLine Value="1815"/>
         <UsageCount Value="10"/>
       </Unit15>
       <Unit16>
-        <Filename Value="..\..\..\Develop\lazarus\lcl\controls.pp"/>
+        <Filename Value="..\..\Develop\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <CursorPos X="3" Y="55"/>
         <TopLine Value="44"/>
         <UsageCount Value="10"/>
       </Unit16>
       <Unit17>
-        <Filename Value="..\..\..\Develop\lazarus\fpc\2.2.2\source\packages\fcl-process\src\process.pp"/>
+        <Filename Value="..\..\Develop\lazarus\fpc\2.2.2\source\packages\fcl-process\src\process.pp"/>
         <UnitName Value="process"/>
         <CursorPos X="31" Y="85"/>
         <TopLine Value="112"/>
         <UsageCount Value="10"/>
       </Unit17>
       <Unit18>
-        <Filename Value="..\..\..\Develop\lazarus\components\synedit\synedittypes.pp"/>
+        <Filename Value="..\..\Develop\lazarus\components\synedit\synedittypes.pp"/>
         <UnitName Value="SynEditTypes"/>
         <CursorPos X="20" Y="73"/>
         <TopLine Value="53"/>
@@ -191,127 +189,125 @@
         <UnitName Value="lse_about_fpc"/>
         <CursorPos X="74" Y="98"/>
         <TopLine Value="81"/>
-        <EditorIndex Value="1"/>
         <UsageCount Value="39"/>
-        <Loaded Value="True"/>
       </Unit19>
       <Unit20>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\dialogs.pp"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <CursorPos X="15" Y="481"/>
         <TopLine Value="467"/>
         <UsageCount Value="12"/>
       </Unit20>
       <Unit21>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\forms.pp"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
         <CursorPos X="28" Y="431"/>
         <TopLine Value="425"/>
         <UsageCount Value="10"/>
       </Unit21>
       <Unit22>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\customform.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\customform.inc"/>
         <CursorPos X="11" Y="229"/>
         <TopLine Value="223"/>
         <UsageCount Value="10"/>
       </Unit22>
       <Unit23>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\lcltype.pp"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\lcltype.pp"/>
         <UnitName Value="LCLType"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="2853"/>
         <UsageCount Value="10"/>
       </Unit23>
       <Unit24>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\graphics.pp"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <CursorPos X="15" Y="687"/>
         <TopLine Value="690"/>
         <UsageCount Value="10"/>
       </Unit24>
       <Unit25>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\icon.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\icon.inc"/>
         <CursorPos X="17" Y="325"/>
         <TopLine Value="308"/>
         <UsageCount Value="10"/>
       </Unit25>
       <Unit26>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\rasterimage.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\rasterimage.inc"/>
         <CursorPos X="16" Y="391"/>
         <TopLine Value="383"/>
         <UsageCount Value="10"/>
       </Unit26>
       <Unit27>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\graphic.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\graphic.inc"/>
         <CursorPos X="3" Y="66"/>
         <TopLine Value="64"/>
         <UsageCount Value="10"/>
       </Unit27>
       <Unit28>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\controls.pp"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <CursorPos X="3" Y="55"/>
         <TopLine Value="43"/>
         <UsageCount Value="11"/>
       </Unit28>
       <Unit29>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\control.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\control.inc"/>
         <CursorPos X="3" Y="247"/>
         <TopLine Value="242"/>
         <UsageCount Value="10"/>
       </Unit29>
       <Unit30>
-        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\win\wininc\ascdef.inc"/>
+        <Filename Value="..\..\Developments\lazarus\fpc\2.2.2\source\rtl\win\wininc\ascdef.inc"/>
         <CursorPos X="17" Y="259"/>
         <TopLine Value="247"/>
         <UsageCount Value="10"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\lclintf.pas"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\lclintf.pas"/>
         <UnitName Value="LCLIntf"/>
         <CursorPos X="38" Y="45"/>
         <TopLine Value="24"/>
         <UsageCount Value="10"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\lclintfh.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\lclintfh.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="107"/>
         <UsageCount Value="10"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\lclintf.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\lclintf.inc"/>
         <CursorPos X="18" Y="39"/>
         <TopLine Value="36"/>
         <UsageCount Value="10"/>
       </Unit33>
       <Unit34>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\interfacebase.pp"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\interfacebase.pp"/>
         <UnitName Value="InterfaceBase"/>
         <CursorPos X="15" Y="115"/>
         <TopLine Value="67"/>
         <UsageCount Value="10"/>
       </Unit34>
       <Unit35>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\interfacebase.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\interfacebase.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="41"/>
         <UsageCount Value="10"/>
       </Unit35>
       <Unit36>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\intfbasewinapi.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\intfbasewinapi.inc"/>
         <CursorPos X="3" Y="52"/>
         <TopLine Value="46"/>
         <UsageCount Value="10"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\intfbaselcl.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\intfbaselcl.inc"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="19"/>
         <UsageCount Value="10"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\..\..\Developments\lazarus\lcl\include\winapih.inc"/>
+        <Filename Value="..\..\Developments\lazarus\lcl\include\winapih.inc"/>
         <CursorPos X="10" Y="42"/>
         <TopLine Value="30"/>
         <UsageCount Value="10"/>
@@ -340,7 +336,7 @@
         <UsageCount Value="28"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\..\..\Developments\lazarus\components\synedit\synedithighlighter.pp"/>
+        <Filename Value="..\..\Developments\lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
         <CursorPos X="25" Y="265"/>
         <TopLine Value="253"/>
@@ -357,80 +353,80 @@
         <UsageCount Value="25"/>
       </Unit43>
       <Unit44>
-        <Filename Value="..\..\..\usr\share\fpcsrc\2.4.0\rtl\objpas\sysutils\filutilh.inc"/>
+        <Filename Value="..\..\usr\share\fpcsrc\2.4.0\rtl\objpas\sysutils\filutilh.inc"/>
         <CursorPos X="10" Y="86"/>
         <TopLine Value="75"/>
         <UsageCount Value="10"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\..\..\usr\share\fpcsrc\2.4.0\rtl\unix\sysutils.pp"/>
+        <Filename Value="..\..\usr\share\fpcsrc\2.4.0\rtl\unix\sysutils.pp"/>
         <UnitName Value="sysutils"/>
         <CursorPos X="3" Y="537"/>
         <TopLine Value="534"/>
         <UsageCount Value="10"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\..\..\Developments\lazarus\components\synedit\syneditexport.pas"/>
+        <Filename Value="..\..\Developments\lazarus\components\synedit\syneditexport.pas"/>
         <UnitName Value="SynEditExport"/>
         <CursorPos X="15" Y="202"/>
         <TopLine Value="188"/>
         <UsageCount Value="11"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\..\..\Developments\lazarus\components\synedit\synexporthtml.pas"/>
+        <Filename Value="..\..\Developments\lazarus\components\synedit\synexporthtml.pas"/>
         <UnitName Value="SynExportHTML"/>
         <CursorPos X="44" Y="64"/>
         <TopLine Value="64"/>
         <UsageCount Value="11"/>
       </Unit47>
       <Unit48>
-        <Filename Value="..\..\..\Developments\lazarus\components\synedit\synedit.pp"/>
+        <Filename Value="..\..\Developments\lazarus\components\synedit\synedit.pp"/>
         <UnitName Value="SynEdit"/>
         <CursorPos X="51" Y="982"/>
         <TopLine Value="958"/>
         <UsageCount Value="11"/>
       </Unit48>
       <Unit49>
-        <Filename Value="..\..\..\Developments\lazarus\components\synedit\syneditpointclasses.pas"/>
+        <Filename Value="..\..\Developments\lazarus\components\synedit\syneditpointclasses.pas"/>
         <UnitName Value="SynEditPointClasses"/>
         <CursorPos X="20" Y="76"/>
         <TopLine Value="70"/>
         <UsageCount Value="11"/>
       </Unit49>
       <Unit50>
-        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\classesh.inc"/>
+        <Filename Value="..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\classesh.inc"/>
         <CursorPos X="15" Y="561"/>
         <TopLine Value="549"/>
         <UsageCount Value="10"/>
       </Unit50>
       <Unit51>
-        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\stringl.inc"/>
+        <Filename Value="..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\stringl.inc"/>
         <CursorPos X="3" Y="752"/>
         <TopLine Value="748"/>
         <UsageCount Value="10"/>
       </Unit51>
       <Unit52>
-        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\sysutils\filutilh.inc"/>
+        <Filename Value="..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\sysutils\filutilh.inc"/>
         <CursorPos X="10" Y="84"/>
         <TopLine Value="72"/>
         <UsageCount Value="10"/>
       </Unit52>
       <Unit53>
-        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\win\sysutils.pp"/>
+        <Filename Value="..\..\Developments\lazarus\fpc\2.2.4\source\rtl\win\sysutils.pp"/>
         <UnitName Value="sysutils"/>
         <CursorPos X="3" Y="350"/>
         <TopLine Value="346"/>
         <UsageCount Value="10"/>
       </Unit53>
       <Unit54>
-        <Filename Value="..\..\..\usr\share\fpcsrc\2.4.0\packages\fcl-process\src\process.pp"/>
+        <Filename Value="..\..\usr\share\fpcsrc\2.4.0\packages\fcl-process\src\process.pp"/>
         <UnitName Value="process"/>
         <CursorPos X="3" Y="25"/>
         <TopLine Value="22"/>
         <UsageCount Value="10"/>
       </Unit54>
     </Units>
-    <JumpHistory Count="20" HistoryIndex="19">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="lse_pad_fpc.pas"/>
         <Caret Line="313" Column="1" TopLine="301"/>
@@ -504,13 +500,53 @@
         <Caret Line="607" Column="14" TopLine="594"/>
       </Position18>
       <Position19>
-        <Filename Value="lse_about_fpc.pas"/>
-        <Caret Line="3" Column="54" TopLine="1"/>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="610" Column="43" TopLine="594"/>
       </Position19>
       <Position20>
-        <Filename Value="lseu.pas"/>
-        <Caret Line="38" Column="32" TopLine="28"/>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="611" Column="43" TopLine="594"/>
       </Position20>
+      <Position21>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="612" Column="43" TopLine="594"/>
+      </Position21>
+      <Position22>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="613" Column="43" TopLine="594"/>
+      </Position22>
+      <Position23>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="614" Column="43" TopLine="594"/>
+      </Position23>
+      <Position24>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="615" Column="43" TopLine="594"/>
+      </Position24>
+      <Position25>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="616" Column="43" TopLine="594"/>
+      </Position25>
+      <Position26>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="617" Column="43" TopLine="594"/>
+      </Position26>
+      <Position27>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="618" Column="43" TopLine="594"/>
+      </Position27>
+      <Position28>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="619" Column="43" TopLine="594"/>
+      </Position28>
+      <Position29>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="620" Column="43" TopLine="594"/>
+      </Position29>
+      <Position30>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="621" Column="43" TopLine="594"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
