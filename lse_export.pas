@@ -2,7 +2,7 @@
 {        UNIT: lse_export                                                      }
 { DESCRIPTION: binary interface between lseu and lse_kernel                    }
 {     CREATED: 2004/04/12                                                      }
-{    MODIFIED: 2010/09/07                                                      }
+{    MODIFIED: 2010/09/15                                                      }
 {==============================================================================}
 { Copyright (c) 2004-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -89,8 +89,10 @@ procedure qe_end_cgi(const Engine: pointer);cdecl;
 function qe_module_setup(const Name: pchar; const initrec: PLseModuleRec): pointer;cdecl;
 function qe_find_class(const Name: pchar): PLseClassRec;cdecl;
 function qe_param_engine(const Param: PLseParam): pointer;cdecl;
-function qe_param_format(const Param: pointer; const Fmt: pchar): PLseString;cdecl;
-procedure qe_param_error(const Param: pointer; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
+function qe_param_format(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
+procedure qe_param_error(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
+function qe_push(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
+function qe_goon(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
 procedure qe_value_set_object(const Data, obj, obj_class: pointer);cdecl;
 procedure qe_value_set_stream(const Data: pointer; Value: PLseStream);cdecl;
 function qe_dbv_provide(const Vendor: pchar): PLseDB;cdecl;
@@ -173,6 +175,8 @@ var
     cik_get_engine      : {$IFDEF FPC}@{$ENDIF}qe_param_engine;
     cik_format          : {$IFDEF FPC}@{$ENDIF}qe_param_format;
     cik_set_error       : {$IFDEF FPC}@{$ENDIF}qe_param_error;
+    cik_push            : {$IFDEF FPC}@{$ENDIF}qe_push;
+    cik_goon            : {$IFDEF FPC}@{$ENDIF}qe_goon;
     cik_set_object      : {$IFDEF FPC}@{$ENDIF}qe_value_set_object;
     cik_set_stream      : {$IFDEF FPC}@{$ENDIF}qe_value_set_stream;
     { database }
@@ -649,12 +653,12 @@ begin
   end;
 end;
 
-function qe_param_format(const Param: pointer; const Fmt: pchar): PLseString;cdecl;
+function qe_param_format(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
 begin
   try
     InitLyseeKernel;
     if Param <> nil then
-      Result := lse_strec_alloc(__AsRunner(PLseParam(Param)).FormatFor(Fmt, nil)) else
+      Result := lse_strec_alloc(__AsRunner(Param).FormatFor(Fmt, nil)) else
       Result := nil;
   except
     Result := nil;
@@ -682,13 +686,42 @@ begin
   end;
 end;
 
-procedure qe_param_error(const Param: pointer; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
+procedure qe_param_error(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
 begin
   try
     InitLyseeKernel;
     __SetError(PLseParam(Param), ID, Errno, Msg);
   except
     __log('qe_param_error()', lse_exception_str);
+  end;
+end;
+
+function qe_push(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
+var
+  rnnr: KLiRunner;
+begin
+  try
+    InitLyseeKernel;
+    rnnr := __AsRunner(Param);
+    Result := rnnr.Stack.Count;
+    rnnr.Stack.Push(Value);
+  except
+    __log('qe_push()', lse_exception_str);
+    Result := -1;
+  end;
+end;
+
+function qe_goon(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
+var
+  rnnr: KLiRunner;
+begin
+  try
+    InitLyseeKernel;
+    rnnr := __AsRunner(Param);
+    Result := Ord(rnnr.Goon(KLiFunc(Func), Params, ResValue));
+  except
+    __log('qe_goon()', lse_exception_str);
+    Result := 0;
   end;
 end;
 
