@@ -1,12 +1,12 @@
 object LspadForm: TLspadForm
-  Left = 66
-  Height = 492
-  Top = 66
-  Width = 760
+  Left = 210
+  Height = 608
+  Top = 188
+  Width = 1072
   ActiveControl = smLysee
   Caption = 'Lysee PAD'
-  ClientHeight = 465
-  ClientWidth = 760
+  ClientHeight = 589
+  ClientWidth = 1072
   Menu = MainMenu
   OnActivate = FormActivate
   OnClose = FormClose
@@ -16,9 +16,9 @@ object LspadForm: TLspadForm
   LCLVersion = '0.9.28.2'
   object StatusBar: TStatusBar
     Left = 0
-    Height = 21
-    Top = 444
-    Width = 760
+    Height = 20
+    Top = 569
+    Width = 1072
     Panels = <    
       item
         Width = 100
@@ -34,9 +34,9 @@ object LspadForm: TLspadForm
   object smLysee: TSynMemo
     Cursor = crIBeam
     Left = 0
-    Height = 444
+    Height = 569
     Top = 0
-    Width = 760
+    Width = 1072
     Align = alClient
     Font.CharSet = ANSI_CHARSET
     Font.Color = clBlack
@@ -46,9 +46,9 @@ object LspadForm: TLspadForm
     Font.Quality = fqDraft
     ParentColor = False
     ParentFont = False
+    PopupMenu = popEdit
     TabOrder = 1
     BookMarkOptions.Xoffset = 15
-    BookMarkOptions.OnChange = nil
     Gutter.Color = 15000804
     Gutter.LeftOffset = 2
     Gutter.Visible = False
@@ -1843,5 +1843,52 @@ object LspadForm: TLspadForm
     UseBackground = False
     left = 392
     top = 48
+  end
+  object popEdit: TPopupMenu
+    Images = ImageList
+    left = 390
+    top = 182
+    object pmiUndo: TMenuItem
+      Action = acEditUndo
+      OnClick = acEditUndoExecute
+    end
+    object pmiRedo: TMenuItem
+      Action = acEditRedo
+      OnClick = acEditRedoExecute
+    end
+    object MenuItem1: TMenuItem
+      Caption = '-'
+    end
+    object pmiCut: TMenuItem
+      Action = acEditCut
+      OnClick = acEditCutExecute
+    end
+    object pmiCopy: TMenuItem
+      Action = acEditCopy
+      OnClick = acEditCopyExecute
+    end
+    object pmiCopyHTML: TMenuItem
+      Action = acEditCopyHTML
+      OnClick = acEditCopyHTMLExecute
+    end
+    object pmiPaste: TMenuItem
+      Action = acEditPaste
+      OnClick = acEditPasteExecute
+    end
+    object pmiSelectAll: TMenuItem
+      Action = acEditSelectAll
+      OnClick = acEditSelectAllExecute
+    end
+    object MenuItem2: TMenuItem
+      Caption = '-'
+    end
+    object pmiFind: TMenuItem
+      Action = acEditFind
+      OnClick = acEditFindExecute
+    end
+    object pmiReplace: TMenuItem
+      Action = acEditReplace
+      OnClick = acEditReplaceExecute
+    end
   end
 end
