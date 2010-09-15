@@ -2,7 +2,7 @@
 {        UNIT: lseu                                                            }
 { DESCRIPTION: lysee script engine unit                                        }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/09/12                                                      }
+{    MODIFIED: 2010/09/15                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -649,8 +649,10 @@ type
     cik_find_class: function(const Name: pchar): PLseClassRec;cdecl;
     { parametre }
     cik_get_engine: function(const Param: PLseParam): pointer;cdecl;
-    cik_format: function(const Param: pointer; const Fmt: pchar): PLseString;cdecl;
-    cik_set_error: procedure(const Param: pointer; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
+    cik_format: function(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
+    cik_set_error: procedure(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
+    cik_push: function(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
+    cik_goon: function(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
     { set value }
     cik_set_object: procedure(const Data, obj, obj_class: pointer);cdecl;
     cik_set_stream: procedure(const Data: pointer; Value: PLseStream);cdecl;

@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/09/14                                                      }
+{    MODIFIED: 2010/09/15                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
