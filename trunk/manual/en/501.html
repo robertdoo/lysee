@@ -267,8 +267,8 @@
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
-<td bgcolor="#FFC6C6">&nbsp;&nbsp;each:void |any, proc:function|</td>
-<td bgcolor="#FFC6C6">execute each: {|item,...| ... }</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;each:void |any:vargen, proc:function|</td>
+<td bgcolor="#FFC6C6">process each item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
@@ -307,11 +307,6 @@
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
-<td bgcolor="#FFC6C6">&nbsp;&nbsp;executable:bool |any|</td>
-<td bgcolor="#FFC6C6">test if something is executable</td>
-</tr>
-<tr class="black">
-<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
 <td bgcolor="#FFC6C6">&nbsp;&nbsp;exit:void |status:int|</td>
 <td bgcolor="#FFC6C6">exit with status code</td>
 </tr>
@@ -322,8 +317,8 @@
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
-<td bgcolor="#FFC6C6">&nbsp;&nbsp;filter:varlist |any, proc:function|</td>
-<td bgcolor="#FFC6C6">execute filter: {|item| ... }</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;filter:varlist |any:vargen, proc:function|</td>
+<td bgcolor="#FFC6C6">filter item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
@@ -442,8 +437,8 @@
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
-<td bgcolor="#FFC6C6">&nbsp;&nbsp;map:varlist |any, proc:function|</td>
-<td bgcolor="#FFC6C6">execute map: {|item,...| ... }</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;map:varlist |any:vargen, proc:function|</td>
+<td bgcolor="#FFC6C6">map each item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
@@ -527,8 +522,8 @@
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
-<td bgcolor="#FFC6C6">&nbsp;&nbsp;reduce |any, initValue, proc:function|</td>
-<td bgcolor="#FFC6C6">execute reduce: {|result,item,...| ... }</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;reduce |any:vargen, initValue, proc:function|</td>
+<td bgcolor="#FFC6C6">reduce each item: |result, item| ... end</td>
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
@@ -582,8 +577,8 @@
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
-<td bgcolor="#FFC6C6">&nbsp;&nbsp;sum |any, proc:function, initValue|</td>
-<td bgcolor="#FFC6C6">sum all</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;sum |any:vargen, proc:function, initValue|</td>
+<td bgcolor="#FFC6C6">sum all: |result, item| ... end</td>
 </tr>
 <tr class="black">
 <td align="center" bgcolor="#FFFFFF" nowrap>function</td>
@@ -1872,8 +1867,8 @@
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
-<td bgcolor="#C6C6FF">&nbsp;&nbsp;each:void |any, proc:function|</td>
-<td bgcolor="#C6C6FF">execute each: {|item,...| ... }</td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;each:void |any:vargen, proc:function|</td>
+<td bgcolor="#C6C6FF">process each item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -1912,11 +1907,6 @@
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
-<td bgcolor="#C6C6FF">&nbsp;&nbsp;executable:bool |any|</td>
-<td bgcolor="#C6C6FF">test if something is executable</td>
-</tr>
-<tr class="black">
-<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
 <td bgcolor="#C6C6FF">&nbsp;&nbsp;exit:void |status:int|</td>
 <td bgcolor="#C6C6FF">exit with status code</td>
 </tr>
@@ -1927,8 +1917,8 @@
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
-<td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:varlist |any, proc:function|</td>
-<td bgcolor="#C6C6FF">execute filter: {|item| ... }</td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:varlist |any:vargen, proc:function|</td>
+<td bgcolor="#C6C6FF">filter item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -2047,8 +2037,8 @@
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
-<td bgcolor="#C6C6FF">&nbsp;&nbsp;map:varlist |any, proc:function|</td>
-<td bgcolor="#C6C6FF">execute map: {|item,...| ... }</td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;map:varlist |any:vargen, proc:function|</td>
+<td bgcolor="#C6C6FF">map each item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -2132,8 +2122,8 @@
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
-<td bgcolor="#C6C6FF">&nbsp;&nbsp;reduce |any, initValue, proc:function|</td>
-<td bgcolor="#C6C6FF">execute reduce: {|result,item,...| ... }</td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reduce |any:vargen, initValue, proc:function|</td>
+<td bgcolor="#C6C6FF">reduce each item: |result, item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -2187,8 +2177,8 @@
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
-<td bgcolor="#C6C6FF">&nbsp;&nbsp;sum |any, proc:function, initValue|</td>
-<td bgcolor="#C6C6FF">sum all</td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;sum |any:vargen, proc:function, initValue|</td>
+<td bgcolor="#C6C6FF">sum all: |result, item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -2413,12 +2403,12 @@
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
 <td bgcolor="#C6C6FF">&nbsp;&nbsp;each:void |proc:function|</td>
-<td bgcolor="#C6C6FF">execute each: {|item,...| ... }</td>
+<td bgcolor="#C6C6FF">process each item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
 <td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:varlist |proc:function|</td>
-<td bgcolor="#C6C6FF">execute filter: {|item| ... }</td>
+<td bgcolor="#C6C6FF">filter item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -2428,7 +2418,7 @@
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
 <td bgcolor="#C6C6FF">&nbsp;&nbsp;map:varlist |proc:function|</td>
-<td bgcolor="#C6C6FF">execute map: {|item,...| ... }</td>
+<td bgcolor="#C6C6FF">map each item: |item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -2438,7 +2428,7 @@
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
 <td bgcolor="#C6C6FF">&nbsp;&nbsp;reduce |initValue, proc:function|</td>
-<td bgcolor="#C6C6FF">execute reduce: {|initValue,item,...| ... }</td>
+<td bgcolor="#C6C6FF">reduce each item: |result, item| ... end</td>
 </tr>
 <tr class="black">
 <td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
@@ -3022,7 +3012,7 @@
 </tr>
 <tr>
 <td colspan=3 bgcolor="#000000" class="white" align="right">
-TOTAL: 2 modules | 155 functions | 18 classes | 424 methods
+TOTAL: 2 modules | 154 functions | 18 classes | 423 methods
 </td>
 </tr>
 <!--END API LIST-->

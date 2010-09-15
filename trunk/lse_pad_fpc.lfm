@@ -1,12 +1,12 @@
 object LspadForm: TLspadForm
-  Left = 210
-  Height = 608
-  Top = 188
-  Width = 1072
+  Left = 110
+  Height = 492
+  Top = 110
+  Width = 760
   ActiveControl = smLysee
   Caption = 'Lysee PAD'
-  ClientHeight = 589
-  ClientWidth = 1072
+  ClientHeight = 473
+  ClientWidth = 760
   Menu = MainMenu
   OnActivate = FormActivate
   OnClose = FormClose
@@ -17,8 +17,8 @@ object LspadForm: TLspadForm
   object StatusBar: TStatusBar
     Left = 0
     Height = 20
-    Top = 569
-    Width = 1072
+    Top = 453
+    Width = 760
     Panels = <    
       item
         Width = 100
@@ -34,9 +34,9 @@ object LspadForm: TLspadForm
   object smLysee: TSynMemo
     Cursor = crIBeam
     Left = 0
-    Height = 569
+    Height = 453
     Top = 0
-    Width = 1072
+    Width = 760
     Align = alClient
     Font.CharSet = ANSI_CHARSET
     Font.Color = clBlack
@@ -49,6 +49,7 @@ object LspadForm: TLspadForm
     PopupMenu = popEdit
     TabOrder = 1
     BookMarkOptions.Xoffset = 15
+    BookMarkOptions.OnChange = nil
     Gutter.Color = 15000804
     Gutter.LeftOffset = 2
     Gutter.Visible = False
@@ -1168,7 +1169,7 @@ object LspadForm: TLspadForm
   object dlgSave: TSaveDialog
     Title = 'Save File'
     DefaultExt = '.ls'
-    Filter = 'Lysee Script File (*.ls)|*.ls|Lysee Script Page (*.lsp)|*.lsp'
+    Filter = 'Lysee Script File (*.ls)|*.ls|Lysee Script Page (*.lsp)|*.lsp|HTML Files (*.htm, *.html)|*.htm; *.html'
     left = 146
     top = 48
   end
@@ -1846,8 +1847,8 @@ object LspadForm: TLspadForm
   end
   object popEdit: TPopupMenu
     Images = ImageList
-    left = 390
-    top = 182
+    left = 392
+    top = 136
     object pmiUndo: TMenuItem
       Action = acEditUndo
       OnClick = acEditUndoExecute

@@ -10,14 +10,14 @@
       <MainUnit Value="0"/>
       <TargetFileExt Value=".exe"/>
       <Icon Value="0"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="1"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="400"/>
+      <CurrentBuildNr Value="404"/>
       <ProjectVersion Value="1.1.1.307"/>
       <FileDescription Value="lysee PAD (FPC)"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
@@ -59,7 +59,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="lse_pad_fpc"/>
         <CursorPos X="43" Y="622"/>
-        <TopLine Value="594"/>
+        <TopLine Value="598"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="47"/>
         <Loaded Value="True"/>
@@ -350,7 +350,9 @@
         <UnitName Value="lse_pad_open_fpc"/>
         <CursorPos X="79" Y="3"/>
         <TopLine Value="1"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="25"/>
+        <Loaded Value="True"/>
       </Unit43>
       <Unit44>
         <Filename Value="..\..\usr\share\fpcsrc\2.4.0\rtl\objpas\sysutils\filutilh.inc"/>
