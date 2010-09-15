@@ -59,7 +59,7 @@ object OpenForm: TOpenForm
   object dlgOpen: TOpenDialog
     Title = 'Open File'
     DefaultExt = '.ls'
-    Filter = 'Lysee Script File (*.ls)|*.ls|Lysee Script Page (*.lsp)|*.lsp'
+    Filter = 'Lysee Script File (*.ls)|*.ls|Lysee Script Page (*.lsp)|*.lsp|HTML Files (*.htm, *.html)|*.htm; *.html'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
     left = 112
     top = 72
