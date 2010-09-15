@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="7"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=""/>
+      <Title Value="lysee_ib"/>
+      <ActiveEditorIndexAtStart Value="1"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
+      <CurrentMajorRevNr Value="2"/>
+      <CurrentBuildNr Value="372"/>
+      <ProjectVersion Value="1.1.1.306"/>
+      <FileDescription Value="interbase database vendor"/>
+      <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <Units Count="7">
+      <Unit0>
+        <Filename Value="lysee_ib.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_ib"/>
+        <CursorPos X="80" Y="2"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="lysee_ib_funcs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_ib_funcs"/>
+        <CursorPos X="1" Y="42"/>
+        <TopLine Value="25"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\lseu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lseu"/>
+        <CursorPos X="26" Y="9"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="4"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\lse_dbu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_dbu"/>
+        <CursorPos X="9" Y="53"/>
+        <TopLine Value="26"/>
+        <UsageCount Value="20"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="body.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\fpc\dbv\head.inc"/>
+        <CursorPos X="1" Y="13"/>
+        <TopLine Value="6"/>
+        <UsageCount Value="10"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="head.inc"/>
+        <CursorPos X="1" Y="42"/>
+        <TopLine Value="25"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit6>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="230" Column="19" TopLine="198"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="84" Column="28" TopLine="64"/>
+      </Position2>
+      <Position3>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="9" Column="17" TopLine="1"/>
+      </Position3>
+      <Position4>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="20" Column="15" TopLine="3"/>
+      </Position4>
+      <Position5>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="9" Column="40" TopLine="3"/>
+      </Position5>
+      <Position6>
+        <Filename Value="body.inc"/>
+        <Caret Line="91" Column="22" TopLine="77"/>
+      </Position6>
+      <Position7>
+        <Filename Value="body.inc"/>
+        <Caret Line="462" Column="39" TopLine="450"/>
+      </Position7>
+      <Position8>
+        <Filename Value="body.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position8>
+      <Position9>
+        <Filename Value="body.inc"/>
+        <Caret Line="49" Column="1" TopLine="27"/>
+      </Position9>
+      <Position10>
+        <Filename Value="body.inc"/>
+        <Caret Line="629" Column="41" TopLine="617"/>
+      </Position10>
+      <Position11>
+        <Filename Value="body.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position11>
+      <Position12>
+        <Filename Value="body.inc"/>
+        <Caret Line="54" Column="16" TopLine="42"/>
+      </Position12>
+      <Position13>
+        <Filename Value="body.inc"/>
+        <Caret Line="373" Column="1" TopLine="353"/>
+      </Position13>
+      <Position14>
+        <Filename Value="body.inc"/>
+        <Caret Line="664" Column="23" TopLine="652"/>
+      </Position14>
+      <Position15>
+        <Filename Value="body.inc"/>
+        <Caret Line="659" Column="23" TopLine="652"/>
+      </Position15>
+      <Position16>
+        <Filename Value="body.inc"/>
+        <Caret Line="664" Column="23" TopLine="652"/>
+      </Position16>
+      <Position17>
+        <Filename Value="head.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position17>
+      <Position18>
+        <Filename Value="lysee_ib_funcs.pas"/>
+        <Caret Line="46" Column="50" TopLine="34"/>
+      </Position18>
+      <Position19>
+        <Filename Value="lysee_ib_funcs.pas"/>
+        <Caret Line="44" Column="41" TopLine="23"/>
+      </Position19>
+      <Position20>
+        <Filename Value="lysee_ib_funcs.pas"/>
+        <Caret Line="42" Column="1" TopLine="25"/>
+      </Position20>
+      <Position21>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="13" Column="17" TopLine="1"/>
+      </Position21>
+      <Position22>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="42" Column="1" TopLine="18"/>
+      </Position22>
+      <Position23>
+        <Filename Value="body.inc"/>
+        <Caret Line="664" Column="14" TopLine="652"/>
+      </Position23>
+      <Position24>
+        <Filename Value="body.inc"/>
+        <Caret Line="13" Column="1" TopLine="13"/>
+      </Position24>
+      <Position25>
+        <Filename Value="head.inc"/>
+        <Caret Line="27" Column="42" TopLine="6"/>
+      </Position25>
+      <Position26>
+        <Filename Value="head.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position26>
+      <Position27>
+        <Filename Value="head.inc"/>
+        <Caret Line="43" Column="1" TopLine="22"/>
+      </Position27>
+      <Position28>
+        <Filename Value="body.inc"/>
+        <Caret Line="730" Column="5" TopLine="706"/>
+      </Position28>
+      <Position29>
+        <Filename Value="body.inc"/>
+        <Caret Line="42" Column="1" TopLine="19"/>
+      </Position29>
+      <Position30>
+        <Filename Value="body.inc"/>
+        <Caret Line="63" Column="1" TopLine="61"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <Parsing>
+      <SyntaxOptions>
+        <CStyleOperator Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <Optimizations>
+        <VariablesInRegisters Value="True"/>
+        <OptimizationLevel Value="2"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
+    <Other>
+      <WriteFPCLogo Value="False"/>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

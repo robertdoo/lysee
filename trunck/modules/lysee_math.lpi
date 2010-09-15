@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="7"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=".exe"/>
+      <Icon Value="0"/>
+      <UseXPManifest Value="True"/>
+      <ActiveEditorIndexAtStart Value="0"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
+      <CurrentMajorRevNr Value="2"/>
+      <CurrentBuildNr Value="395"/>
+      <ProjectVersion Value="0.1.8.391"/>
+      <FileDescription Value="mathmetics module for lysee"/>
+      <LegalCopyright Value="Copyright (C) 2003-2010 Li Yun Jie"/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="lysee_math.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_math"/>
+        <CursorPos X="69" Y="10"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\lseu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lseu"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="20"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_math_funcs"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="20"/>
+      </Unit2>
+    </Units>
+    <JumpHistory Count="3" HistoryIndex="2">
+      <Position1>
+        <Filename Value="lysee_math.lpr"/>
+        <Caret Line="28" Column="18" TopLine="4"/>
+      </Position1>
+      <Position2>
+        <Filename Value="lysee_math.lpr"/>
+        <Caret Line="17" Column="59" TopLine="3"/>
+      </Position2>
+      <Position3>
+        <Filename Value="lysee_math.lpr"/>
+        <Caret Line="24" Column="34" TopLine="6"/>
+      </Position3>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)\"/>
+      <OtherUnitFiles Value="D:\budi\lysee\lysee\"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

@@ -1,0 +1,67 @@
+object OpenForm: TOpenForm
+  Left = 331
+  Height = 149
+  Top = 223
+  Width = 432
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Open File'
+  ClientHeight = 149
+  ClientWidth = 432
+  Position = poMainFormCenter
+  LCLVersion = '0.9.28.2'
+  object edtFile: TLabeledEdit
+    Left = 16
+    Height = 20
+    Top = 40
+    Width = 400
+    EditLabel.AnchorSideLeft.Control = edtFile
+    EditLabel.AnchorSideBottom.Control = edtFile
+    EditLabel.Left = 16
+    EditLabel.Height = 13
+    EditLabel.Top = 24
+    EditLabel.Width = 133
+    EditLabel.Caption = '&Please Enter File Name'
+    EditLabel.ParentColor = False
+    TabOrder = 0
+    OnChange = edtFileChange
+  end
+  object btnOK: TButton
+    Left = 168
+    Height = 25
+    Top = 72
+    Width = 75
+    Caption = '&OK'
+    Default = True
+    Enabled = False
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object btnCancel: TButton
+    Left = 340
+    Height = 25
+    Top = 72
+    Width = 75
+    Cancel = True
+    Caption = '&Cancel'
+    ModalResult = 2
+    TabOrder = 3
+  end
+  object btnOpen: TButton
+    Left = 254
+    Height = 25
+    Top = 72
+    Width = 75
+    Caption = '&Browse'
+    OnClick = btnOpenClick
+    TabOrder = 2
+  end
+  object dlgOpen: TOpenDialog
+    Title = 'Open File'
+    DefaultExt = '.ls'
+    Filter = 'Lysee Script File (*.ls)|*.ls|Lysee Script Page (*.lsp)|*.lsp'
+    Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
+    left = 112
+    top = 72
+  end
+end

@@ -1,0 +1,425 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="7"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=""/>
+      <ActiveEditorIndexAtStart Value="0"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
+      <CurrentMajorRevNr Value="2"/>
+      <CurrentBuildNr Value="393"/>
+      <ProjectVersion Value="1.1.1.306"/>
+      <FileDescription Value="Lysee Script Kernel (FPC)"/>
+      <LegalCopyright Value="Copyright (C) 2003-2010 Li Yun Jie"/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <Units Count="44">
+      <Unit0>
+        <Filename Value="lysee_kernel.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_kernel"/>
+        <CursorPos X="14" Y="56"/>
+        <TopLine Value="37"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="84"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="spawn.pas"/>
+        <UnitName Value="spawn"/>
+        <CursorPos X="10" Y="1022"/>
+        <TopLine Value="1022"/>
+        <UsageCount Value="17"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="lse_api.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_api"/>
+        <CursorPos X="42" Y="49"/>
+        <TopLine Value="40"/>
+        <UsageCount Value="84"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="lse_console.pas"/>
+        <UnitName Value="lse_console"/>
+        <CursorPos X="24" Y="2157"/>
+        <TopLine Value="2139"/>
+        <UsageCount Value="11"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="lse_dbu.pas"/>
+        <UnitName Value="lse_dbu"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="7"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="lse_export.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_export"/>
+        <CursorPos X="3" Y="664"/>
+        <TopLine Value="662"/>
+        <UsageCount Value="84"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="lse_funcs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_funcs"/>
+        <CursorPos X="30" Y="5"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="84"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="lse_kernel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_kernel"/>
+        <CursorPos X="1" Y="4373"/>
+        <TopLine Value="4370"/>
+        <UsageCount Value="84"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="lse_regexpr.pas"/>
+        <UnitName Value="lse_regexpr"/>
+        <CursorPos X="46" Y="79"/>
+        <TopLine Value="64"/>
+        <UsageCount Value="24"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="lse_symbol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_symbol"/>
+        <CursorPos X="33" Y="1385"/>
+        <TopLine Value="1373"/>
+        <UsageCount Value="84"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="lseu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lseu"/>
+        <CursorPos X="1" Y="35"/>
+        <TopLine Value="15"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="84"/>
+        <Bookmarks Count="2">
+          <Item0 X="1" Y="385" ID="0"/>
+          <Item1 X="1" Y="731" ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="fpc\dbv\odbc.pp"/>
+        <UnitName Value="odbc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="17"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="fpc\dbv\body.inc"/>
+        <CursorPos X="23" Y="652"/>
+        <TopLine Value="617"/>
+        <UsageCount Value="7"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.0\source\rtl\win32\classes.pp"/>
+        <UnitName Value="Classes"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="7"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.0\source\rtl\objpas\classes\classesh.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="9"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.0\source\packages\base\regexpr\regexpr.pp"/>
+        <UnitName Value="regexpr"/>
+        <CursorPos X="6" Y="5"/>
+        <TopLine Value="397"/>
+        <UsageCount Value="11"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="lse_spawn.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_spawn"/>
+        <CursorPos X="30" Y="5"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="70"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\..\..\Tools\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\filutilh.inc"/>
+        <CursorPos X="35" Y="70"/>
+        <TopLine Value="66"/>
+        <UsageCount Value="8"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\..\..\Tools\lazarus\fpc\2.2.2\source\rtl\objpas\dateutils.pp"/>
+        <UnitName Value="dateutils"/>
+        <CursorPos X="10" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="8"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\..\..\Tools\lazarus\fpc\2.2.2\source\rtl\objpas\dateutil.inc"/>
+        <CursorPos X="20" Y="2054"/>
+        <TopLine Value="2031"/>
+        <UsageCount Value="8"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="..\..\..\Tools\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\datih.inc"/>
+        <CursorPos X="20" Y="132"/>
+        <TopLine Value="120"/>
+        <UsageCount Value="8"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\filutilh.inc"/>
+        <CursorPos X="10" Y="84"/>
+        <TopLine Value="72"/>
+        <UsageCount Value="8"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\win\sysutils.pp"/>
+        <UnitName Value="sysutils"/>
+        <CursorPos X="3" Y="799"/>
+        <TopLine Value="794"/>
+        <UsageCount Value="10"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\win\wininc\ascdef.inc"/>
+        <CursorPos X="1" Y="75"/>
+        <TopLine Value="64"/>
+        <UsageCount Value="9"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\objpas.pp"/>
+        <UnitName Value="objpas"/>
+        <CursorPos X="8" Y="28"/>
+        <TopLine Value="16"/>
+        <UsageCount Value="8"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\..\..\Develop\lazarus\fpc\2.2.2\source\rtl\win\sysutils.pp"/>
+        <UnitName Value="sysutils"/>
+        <CursorPos X="23" Y="559"/>
+        <TopLine Value="546"/>
+        <UsageCount Value="9"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\..\..\Develop\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\diskh.inc"/>
+        <CursorPos X="10" Y="18"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="9"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\finah.inc"/>
+        <CursorPos X="10" Y="32"/>
+        <TopLine Value="18"/>
+        <UsageCount Value="10"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\fina.inc"/>
+        <CursorPos X="3" Y="175"/>
+        <TopLine Value="158"/>
+        <UsageCount Value="10"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\win32\system.pp"/>
+        <UnitName Value="System"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\inc\fexpand.inc"/>
+        <CursorPos X="10" Y="371"/>
+        <TopLine Value="347"/>
+        <UsageCount Value="10"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\osutilsh.inc"/>
+        <CursorPos X="10" Y="23"/>
+        <TopLine Value="11"/>
+        <UsageCount Value="10"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\syspchh.inc"/>
+        <CursorPos X="10" Y="26"/>
+        <TopLine Value="14"/>
+        <UsageCount Value="10"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\sysutils\syspch.inc"/>
+        <CursorPos X="3" Y="44"/>
+        <TopLine Value="42"/>
+        <UsageCount Value="10"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\inc\systemh.inc"/>
+        <CursorPos X="11" Y="590"/>
+        <TopLine Value="578"/>
+        <UsageCount Value="9"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="lse_cgi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_cgi"/>
+        <CursorPos X="23" Y="1895"/>
+        <TopLine Value="1883"/>
+        <UsageCount Value="29"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\classes\classesh.inc"/>
+        <CursorPos X="15" Y="722"/>
+        <TopLine Value="711"/>
+        <UsageCount Value="10"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\classes\streams.inc"/>
+        <CursorPos X="8" Y="129"/>
+        <TopLine Value="126"/>
+        <UsageCount Value="10"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.2\source\rtl\objpas\rtlconst.inc"/>
+        <CursorPos X="3" Y="237"/>
+        <TopLine Value="225"/>
+        <UsageCount Value="10"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="..\..\..\Tools\lazarus\fpc\2.2.2\source\packages\fcl-web\src\cgiapp.pp"/>
+        <UnitName Value="cgiapp"/>
+        <CursorPos X="1" Y="56"/>
+        <TopLine Value="35"/>
+        <UsageCount Value="10"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="lse_syncobj.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_syncobj"/>
+        <CursorPos X="46" Y="3"/>
+        <TopLine Value="2"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="..\..\..\usr\share\fpcsrc\2.2.2\rtl\objpas\rtlconsts.pp"/>
+        <UnitName Value="RtlConsts"/>
+        <CursorPos X="10" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="..\..\..\usr\share\fpcsrc\2.2.2\rtl\objpas\rtlconst.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="74"/>
+        <UsageCount Value="10"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="lse_patten.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_patten"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit43>
+    </Units>
+    <JumpHistory Count="8" HistoryIndex="7">
+      <Position1>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="117" Column="12" TopLine="103"/>
+      </Position1>
+      <Position2>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="564" Column="49" TopLine="549"/>
+      </Position2>
+      <Position3>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="334" Column="29" TopLine="314"/>
+      </Position3>
+      <Position4>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="46" Column="27" TopLine="43"/>
+      </Position4>
+      <Position5>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="51" Column="3" TopLine="32"/>
+      </Position5>
+      <Position6>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="73" Column="32" TopLine="60"/>
+      </Position6>
+      <Position7>
+        <Filename Value="lysee_kernel.lpr"/>
+        <Caret Line="9" Column="1" TopLine="1"/>
+      </Position7>
+      <Position8>
+        <Filename Value="lysee_kernel.lpr"/>
+        <Caret Line="42" Column="1" TopLine="18"/>
+      </Position8>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <OtherUnitFiles Value="packages\libc\"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <CStyleOperator Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <Optimizations>
+        <VariablesInRegisters Value="True"/>
+        <OptimizationLevel Value="2"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+    </Linking>
+    <Other>
+      <WriteFPCLogo Value="False"/>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
