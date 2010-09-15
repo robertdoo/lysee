@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.8.语句</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>8.语句</strong><br>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="definition" id="definition"></a><strong>8.1 什么是语句</strong><br> 
+      <br> 
+ 语句是标识符的集合，由关键字、常量、变量和表达式构成，是函数体的主要构成元素。Lysee 语句通常以分号“;”作为结束标志，单独的分号被看作一个空语句，空语句不做任何事情。</td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="simple" id="simple"></a><strong>8.2. 简单语句</strong><br>
+      <br>
+简单语句包括赋值语句、表达式语句和打印语句。<br>
+<br>
+8.2.1. 赋值语句就是为变量和属性赋值的语句：<br>
+
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;hs&nbsp;=&nbsp;hashed();<br>
+
+&gt;&gt;&gt;&nbsp;hs.time&nbsp;=&nbsp;now();<br>
+
+&gt;&gt;&gt;&nbsp;=&nbsp;hs.time;<br>
+Fri,&nbsp;18&nbsp;Apr&nbsp;2008&nbsp;19:14:20&nbsp;GMT<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+<br>
+8.2.2. 在表达式后加上分号就形成表达式语句，最常见的就是函数调用：<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;(now()&nbsp;as&nbsp;string).saveToFile(R&quot;c:&#92;lysee&#92;temp&#92;now.txt&quot;);<br>
+&gt;&gt;&gt;&nbsp;=&nbsp;R&quot;c:&#92;lysee&#92;temp&#92;now.txt&quot;.fileText();<br>
+Fri,&nbsp;18&nbsp;Apr&nbsp;2008&nbsp;19:18:49&nbsp;GMT<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+<br> 
+8.2.3. 以等号开始的语句为打印语句，等号后面必须有至少一个可打印项（表达式），两个以上时必须用逗号隔开，在打印过程中逗号被转换为一个空格后输出：<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;=&nbsp;&quot;I&nbsp;like&nbsp;coding&nbsp;with&nbsp;lysee&quot;;<br>
+I&nbsp;like&nbsp;coding&nbsp;with&nbsp;lysee<br>
+&gt;&gt;&gt;&nbsp;=&nbsp;&quot;Let's&nbsp;generate&nbsp;a&nbsp;magic&nbsp;value:&quot;,&nbsp;sys::random(1000);<br>
+Let's&nbsp;generate&nbsp;a&nbsp;magic&nbsp;value:&nbsp;983<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="if" id="if"></a><strong>8.3. if 语句</strong><br>
+      <br>
+      语法： <strong>if</strong> condition <strong>then</strong><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>elseif</strong> condition <strong>then</strong> <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>else</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&gt;&gt;&gt;&nbsp;if&nbsp;not&nbsp;v then &nbsp;=&nbsp;&quot;v=0&quot;;<br>
+&nbsp;&nbsp;&gt;&nbsp;elseif&nbsp;v&nbsp;&lt;=&nbsp;5 then &nbsp;=&nbsp;&quot;v&nbsp;&lt;=&nbsp;5&quot;;<br>
+&nbsp;&nbsp;&gt;&nbsp;else&nbsp;=&nbsp;&quot;v&nbsp;&gt;&nbsp;5&quot; end;<br>
+v&nbsp;&lt;=&nbsp;5<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="while" id="while"></a><strong>8.4. while <strong>循环</strong>语句</strong><br>
+      <br>
+      语法： <strong>while</strong> condition <strong>do</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&gt;&gt;&gt;&nbsp;while&nbsp;v&nbsp;!=&nbsp;5 do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;=&nbsp;v,&nbsp;eol;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&nbsp;&nbsp;&gt;&nbsp;end;<br>
+4<br>
+
+7<br>
+9<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="do_while" id="do_while"></a><strong>8.5. repeat until <strong>循环</strong>语句</strong><br>
+      <br>
+      语法： <strong>repeat</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>until</strong> condition;<br><br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;repeat<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;=&nbsp;v,&nbsp;eol;<br>
+&nbsp;&nbsp;&gt;&nbsp;until v&nbsp;==&nbsp;5;<br>
+3<br>
+1<br>
+9<br>
+6<br>
+4<br>
+0<br>
+8<br>
+5<br>
+
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>
+      <br>      
+      <strong>repeat until</strong> 循环中的代码至少执行一次。</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="for" id="for"></a><strong>8.6. for 循环语句</strong><br>
+      <br>
+      语法： <strong>for</strong> varb [<strong>in</strong> vargen [<strong>if</strong> condition]] <strong>do</strong> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong>;<br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt; for line in __envs__ if line like &quot;^H&quot; do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = line.name, eol;<br>
+&nbsp;&nbsp;&gt; end;<br>
+HOMEDRIVE<br>
+HOMEPATH<br>&gt;&gt;&gt;</td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="switch" id="switch"></a><strong>8.7. switch 分支语句</strong><br>
+      <br>
+      语法： <strong>switch</strong> expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>case</strong> expr1<strong>:</strong>&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ......<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>case</strong> exprN<strong>:</strong>&nbsp;[Statements]<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>else</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;switch sys::random(5)<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case<span class="lsp_code">&nbsp;</span>&nbsp;0:&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case&nbsp;&nbsp;1:&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case&nbsp;&nbsp;2:&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case&nbsp;&nbsp;3:&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;else&nbsp;&nbsp;&nbsp; &nbsp;=&nbsp;4;<br>
+&nbsp;&nbsp;&gt;&nbsp;end;<br>
+3<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>
+      <br>
+      与其它语言不同，Lysee 中的 <strong>switch</strong> 语句被处理为特殊的 <strong>if</strong> 语句，所以不使用 <strong>break</strong> 关键字进行中断。</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="try_catch" id="try_catch"></a><strong>8.8. try 异常处理</strong><br>
+      <br>
+      语法： <strong>try</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>except</strong> | <strong>finally</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+      <br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt; try<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = &quot;aa.txt&quot;.fileText();<br>
+&nbsp;&nbsp;&gt; except<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = __error__.text;<br>
+&nbsp;&nbsp;&gt; end;<br>
+[stringError]: (module=main row=2 col=14 errno=1250) fileText() - Cannot open fi<br>
+le &quot;aa.txt&quot;. 系统找不到指定的文件。<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>
+      <br>
+    异常发生后自动存储在类型为 error 的 <strong>__error__</strong> 对象中。</td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/03</td> 
+  </tr> 
+</table> 
+</body>
+</html>

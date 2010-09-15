@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Statements</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="307.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="309.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>3.8 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html">Language Reference</a> - <strong>Statements</strong><br>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="definition" id="definition"></a><strong><strong>3.</strong>8.1 Whate is statement?</strong><br> 
+      <br> 
+ Statement is the smallest standalone element of lysee script. Lysee program is formed by a sequence of one or more statements. Usually, Lysee statement ends with ';'.</td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="simple" id="simple"></a><strong><strong>3.</strong>8.2 Simple Statement </strong><br>
+      <br>
+Includes assign value statement, expression statement and print statement.<br>
+<br>
+3.8.2.1 Assign value to a variable or property:<br>
+
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;hs&nbsp;=&nbsp;hashed();<br>
+
+&gt;&gt;&gt;&nbsp;hs.time&nbsp;=&nbsp;now();<br>
+
+&gt;&gt;&gt;&nbsp;=&nbsp;hs.time;<br>
+Fri,&nbsp;18&nbsp;Apr&nbsp;2008&nbsp;19:14:20&nbsp;GMT<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+<br>
+3.8.2.2 Expression statement is a expression plus ';':<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;(now()&nbsp;as&nbsp;string).saveToFile(R&quot;c:&#92;lysee&#92;temp&#92;now.txt&quot;);<br>
+&gt;&gt;&gt;&nbsp;=&nbsp;R&quot;c:&#92;lysee&#92;temp&#92;now.txt&quot;.fileText();<br>
+Fri,&nbsp;18&nbsp;Apr&nbsp;2008&nbsp;19:18:49&nbsp;GMT<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+<br> 
+3.8.2.3 Print statement starts with '=' and  follows some values delimited by ','. ',' is deal as to ' ':<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;=&nbsp;&quot;I&nbsp;like&nbsp;coding&nbsp;with&nbsp;lysee&quot;;<br>
+I&nbsp;like&nbsp;coding&nbsp;with&nbsp;lysee<br>
+&gt;&gt;&gt;&nbsp;=&nbsp;&quot;Let's&nbsp;generate&nbsp;a&nbsp;magic&nbsp;value:&quot;,&nbsp;sys::random(1000);<br>
+Let's&nbsp;generate&nbsp;a&nbsp;magic&nbsp;value:&nbsp;983<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="if" id="if"></a><strong><strong>3.</strong>8.3 if statements</strong><br>
+      <br>
+      Symbol: <strong>if</strong> condition <strong>then</strong><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>elseif</strong> condition <strong>then</strong> <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>else</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&gt;&gt;&gt;&nbsp;if&nbsp;not&nbsp;v then &nbsp;=&nbsp;&quot;v=0&quot;;<br>
+&nbsp;&nbsp;&gt;&nbsp;elseif&nbsp;v&nbsp;&lt;=&nbsp;5 then &nbsp;=&nbsp;&quot;v&nbsp;&lt;=&nbsp;5&quot;;<br>
+&nbsp;&nbsp;&gt;&nbsp;else&nbsp;=&nbsp;&quot;v&nbsp;&gt;&nbsp;5&quot; end;<br>
+v&nbsp;&lt;=&nbsp;5<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="while" id="while"></a><strong><strong>3.</strong>8.4 while <strong>statement</strong></strong><br>
+      <br>
+      Syntax: <strong>while</strong> condition <strong>do</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&gt;&gt;&gt;&nbsp;while&nbsp;v&nbsp;!=&nbsp;5 do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;=&nbsp;v,&nbsp;eol;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&nbsp;&nbsp;&gt;&nbsp;end;<br>
+4<br>
+
+7<br>
+9<br>
+&gt;&gt;&gt;</td>
+        </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="do_while" id="do_while"></a><strong><strong>3.</strong>8.5 repeat until</strong><br>
+      <br>
+      Syntax: <strong>repeat</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>until</strong> condition;<br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;repeat<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;v&nbsp;=&nbsp;sys::random(10);<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;=&nbsp;v,&nbsp;eol;<br>
+&nbsp;&nbsp;&gt;&nbsp;until v&nbsp;==&nbsp;5;<br>
+3<br>
+1<br>
+9<br>
+6<br>
+4<br>
+0<br>
+8<br>
+5<br>
+
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>
+      <br>      
+    Statements in <strong>repeat until</strong> executes at least one time.</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="for" id="for"></a><strong><strong>3.</strong>8.6 for statement </strong><br>
+      <br>
+      Syntax: <strong>for</strong> varb [<strong>in</strong> vargen [<strong>if</strong> condition]] <strong>do</strong> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong>;<br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt; for line in __envs__ if line like &quot;^H&quot; do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = line.name, eol;<br>
+&nbsp;&nbsp;&gt; end;<br>
+HOMEDRIVE<br>
+HOMEPATH<br>&gt;&gt;&gt;</td>
+        </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="switch" id="switch"></a><strong><strong>3.</strong>8.7 switch statement </strong><br>
+      <br>
+      Syntax: <strong>switch</strong> expression<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>case</strong> expr1<strong>:</strong>&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ......<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>case</strong> exprN<strong>:</strong>&nbsp;[Statements]<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>else</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;switch sys::random(5)<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case<span class="lsp_code">&nbsp;</span>&nbsp;0:&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case&nbsp;&nbsp;1:&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case&nbsp;&nbsp;2:&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;case&nbsp;&nbsp;3:&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;else&nbsp;&nbsp;&nbsp; &nbsp;=&nbsp;4;<br>
+&nbsp;&nbsp;&gt;&nbsp;end;<br>
+3<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>
+      <br>      
+    <strong>switch</strong> is deal as a special <strong>if</strong>, it can not be broken with keyword <strong>break</strong>.</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="try_catch" id="try_catch"></a><strong><strong>3.</strong>8.8 try statement </strong><br>
+      <br>
+      Syntax: <strong>try</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>except</strong> | <strong>finally</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+      <br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt; try<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = &quot;aa.txt&quot;.fileText();<br>
+&nbsp;&nbsp;&gt; except<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = __error__.text;<br>
+&nbsp;&nbsp;&gt; end;<br>
+[stringError]: (module=main row=2 col=14 errno=1250) fileText() - Cannot open fi<br>
+le &quot;aa.txt&quot;. file not found。<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>
+      <br>
+    Access exception information with <strong>__error__</strong>.</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="import" id="import"></a><strong><strong>3.</strong>8.9 import statement </strong><br>
+      <br>
+Load lysee module into kernel. <br>
+<br>Syntax: <strong>import</strong> module1[, module2, module_file3, module_file];<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; import www;<br>
+      &gt;&gt;&gt; = www.funcs;<br>
+      [def www::func_0001 ||,def www::wgets |URL|]<br>
+      &gt;&gt;&gt; import c:/lysee/demos/eval.ls;<br>
+      &gt;&gt;&gt; eval.main();<br>
+      Input expression to evaluate or &quot;quit&quot; to leave!<br><br>
+      lysee&gt; 5*6<br>
+      5*6 ==&gt; 30<br>
+      lysee&gt; quit<br>
+      quit ==&gt; bye-bye!<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="import" id="import"></a><strong><strong>3.</strong>8.10 include statement</strong><br>
+      <br>
+Include specified file or part of file into current script.<br>
+<br>
+Syntax: <strong>include</strong> [PART_NAME@]FILE_NAME;<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; include c:/lysee/demos/eval.ls;<br>
+Input expression to evaluate or &quot;quit&quot; to leave!<br>
+      <br>
+      lysee&gt; 35*76<br>
+      35*76 ==&gt; 2660<br>
+      lysee&gt; quit<br>
+      quit ==&gt; bye-bye!<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/30</td> 
+  </tr> 
+</table> 
+</body>
+</html>

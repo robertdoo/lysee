@@ -1,0 +1,521 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 2.安装和运行</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>2. </strong><strong>安装和运行</strong><br> </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="install"></a><strong>2.1. 安装</strong><br> 
+      <br> 
+      首先请检查并下载最新的安装程序，然后在安装前请仔细阅读安装程序附带的安装说明：<br> 
+      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDDFF">操作系统</th> 
+          <th>说明</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Windows</td> 
+          <td>运行下载的安装程序即可，默认安装在 c:\lysee 目录</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Linux/Unix</td> 
+          <td>下载源代码，解下缩，在源代码目录输入命令“make;sudo make install”进行编译和安装</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="folder"></a><strong>2.2. 安装目录结构<br> 
+      <br> 
+      </strong> 
+      <table width="0%"  border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">名称</th> 
+          <th>类型</th> 
+          <th>Linux/Unix</th> 
+          <th>Windows</th> 
+          <th>说明</th> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">modules</div></td> 
+          <td><div align="center">文件夹</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>存放可装载 Lysee 模块</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">manual</div></td> 
+          <td><div align="center">文件夹</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>参考手册</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">src</div></td> 
+          <td><div align="center">文件夹</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td> lseu.pas，lysee.h，lysee.c 等接口文件</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">cgi-bin</div></td> 
+          <td><div align="center">文件夹</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>示例 Lysee Script Page (LSP) 处理页面</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">temp</div></td> 
+          <td><div align="center">文件夹</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>临时文件夹，缺省为网页上传文件的临时存放处</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">LICENSE</div></td> 
+          <td><div align="center">文件</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>许可文件</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.dll</div></td> 
+          <td><div align="center">内核</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>用 Delphi 或 Free Pascal 编译的内核</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.so</div></td> 
+          <td><div align="center">内核</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">&nbsp;</td> 
+          <td>用 Free Pascal 编译的内核</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.config</div></td> 
+          <td><div align="center">文件</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>内核配置文件</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.exe</div></td> 
+          <td><div align="center">程序</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>用 Free Pascal 或 Delphi 编译的 Lysee 解释程序</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_gcc.exe</div></td> 
+          <td><div align="center">程序</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>用 GCC 编译的 Lysee 解释程序</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_fpc.exe</div></td> 
+          <td><div align="center">程序</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>用 Free Pascal 编译的 Lysee 解释程序</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee</div></td> 
+          <td><div align="center">程序</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">&nbsp;</td> 
+          <td>用 Free Pascal 编译的 Lysee 解释程序</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_pad.exe</div></td> 
+          <td><div align="center">程序</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>Lysee 脚本文件编辑器，支持语法加亮</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_pad</div></td> 
+          <td><div align="center">程序</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">&nbsp;</td> 
+          <td>用 Free Pascal 编译的脚本编辑器，支持语法加亮</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">classes.htm</div></td> 
+          <td><div align="center">文件</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>Lysee 内建类型参考</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="config"></a><strong>2.3. 配置</strong><br> 
+      <br> 
+      安装完毕后，请将 Lysee 的安装目录添加到系统或当前用户的搜索路径中，或为其建立调用别名：<br> 
+      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">操作系统</th> 
+          <th>方法</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Windows</td> 
+          <td>打开“我的电脑/属性/高级/环境变量/系统变量”将 lysee 安装目录追加到 PATH 变量中即可</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Linux/Unix</td> 
+          <td>将命令“<span class="lsp_code">alias lysee='/usr/local/lysee/lysee'</span>”追加到 ~/.bashrc 文件中</td> 
+        </tr> 
+      </table> 
+      <br> 
+      修改“lysee.config”文件调整 Lysee 内核的配置：<br> 
+      <strong><br> 
+      </strong> 
+      <table width="0%"  border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr bgcolor="#FFFFFF"> 
+          <th>参数名称</th> 
+          <th>说明</th> 
+          <th>默认值</th> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td align="left">lse_tmpath</td> 
+          <td>指定临时文件夹和上传文件的临时存放处</td> 
+          <td>${LYSEE}/temp</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td align="left">lse_search</td> 
+          <td>指定模块搜索路径</td> 
+          <td>${LYSEE}/modules</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td align="left">lse_create_log</td> 
+          <td>是否创建并打开日志文件</td> 
+          <td>false</td> 
+        </tr> 
+      </table> 
+      <br> 
+      修改“lysee.config”文件可以使用以下预定义常量：<br> 
+      <strong><br> 
+      </strong> 
+      <table width="0%"  border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr bgcolor="#FFFFFF"> 
+          <th>常量名称</th> 
+          <th>常量说明</th> 
+          <th>常量值</th> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${confile}</div></td> 
+          <td>内核配置文件名</td> 
+          <td>“lysee.config”文件完整路径名</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${kernel}</div></td> 
+          <td>内核文件名</td> 
+          <td>内核文件完整路径名</td> 
+        </tr>
+        <tr align="left" bgcolor="#FFFFFF">
+          <td><div align="left">${kndir}</div></td>
+          <td>内核文件所在目录</td>
+          <td>内核文件所在目录完整名称</td>
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${knpath}</div></td> 
+          <td>内核文件所在文件夹</td> 
+          <td>内核文件所在目录完整路径名，含路径分隔符</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${home}</div></td> 
+          <td>当前用户根目录</td> 
+          <td>当前用户根目录完整路径名，含路径分隔符</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${program}</div></td> 
+          <td>装载 Lysee 内核运行的程序</td> 
+          <td>程序文件的完整路径名</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${tmpath}</div></td> 
+          <td>临时文件夹</td> 
+          <td>通过“lysee.config”文件设置，含路径分隔符</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${search}</div></td> 
+          <td>模块搜索路径</td> 
+          <td>通过“lysee.config”文件设置</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${keywords}</div></td> 
+          <td>关键子列表</td> 
+          <td>关键子列表</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td>${mimefile}</td> 
+          <td>MIME文件名</td> 
+          <td>安装目录下&quot;mime.config&quot;文件完整路径名</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="test"></a><strong>2.4. 测试运行</strong><br> 
+      <br> 
+      打开一个终端窗口，键入“lysee”并回车，lysee 将打印一个“&gt;&gt;&gt; ”提示符等待你输入后续命令，键入“/q”退出：<br> 
+      <br> 
+      <table  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">lysee</span><br> 
+            Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net<br> 
+            <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::<br> 
+            <br> 
+&gt;&gt;&gt; /q<br> 
+            D:\www.lysee.net&gt; </td> 
+        </tr> 
+      </table> 
+      <br> 
+      未出现以上画面说明 lysee 安装目录不在当前用户的搜索路径中，这时必须使用绝对路径名：<br> 
+      <br> 
+      <table border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">c:\lysee\lysee</span><br> 
+            Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net<br> 
+            <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::<br> 
+            <br> 
+&gt;&gt;&gt; /q<br> 
+            D:\www.lysee.net&gt; </td> 
+        </tr> 
+      </table> 
+      <br> 
+      <center> </center></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="hello" id="hello"></a><strong>2.5. Hello World</strong><br> 
+      <br> 
+      第一个程序我们从“Hello World”开始，请打开一个终端窗口启动 lysee 并按示例输入“<span class="lsp_code">= &quot;hello world&quot;;</span>”：<br> 
+      <br> 
+      <table border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">lysee</span><br> 
+            Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net<br> 
+            <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::<br> 
+            <br> 
+&gt;&gt;&gt; <span class="lsp_code">= &quot;Hello World&quot;;</span><br> 
+            Hello World <br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      第一个 Lysee 程序“Hello World”做完了，简单吗？<br> 
+      <br> 
+      <table border="0" cellspacing="0" cellpadding="0"> 
+        <tr align="left" valign="top"> 
+          <th>[说明]</th> 
+          <td>&nbsp;</td> 
+          <td>1. 符号“&gt;&gt;&gt; ”提示操作员输入的 Lysee 代码或命令。</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>2. “<span class="lsp_code">= &quot;Hello World&quot;;</span>”表示打印字符串“Hello World”，操作符“<span class="lsp_code">=</span>”用于打印跟在其后的内容。</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>3. Lysee 语句用分号进行分隔，交互模式下必须在最后一句代码后输入分号表示结束。 </td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="file" id="file"></a><strong>2.6. 执行程序文件</strong><br> 
+      <br> 
+      我们将代码“<span class="lsp_code">= &quot;hello world&quot;;</span>”存入文件“hw.ls”，并用 Lysee 直接在命令行执行此文件：<br> 
+      <br> 
+      <table border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">echo =&quot;hello world&quot;; &gt; hw.ls</span><br> 
+            D:\www.lysee.net&gt;<span class="lsp_code">lysee hw.ls</span><br> 
+            Hello World <br> 
+            D:\www.lysee.net&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      <table border="0" cellspacing="0" cellpadding="0"> 
+        <tr align="left" valign="top"> 
+          <th>[说明]</th> 
+          <td>&nbsp;</td> 
+          <td>1. echo 命令将其后的参数通过转向符“<span class="lsp_code">&gt;</span>”存入文件“hw.ls”。</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>2. Lysee 执行完文件后自动退出。</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>3. Lysee 程序文件的后缀名为“.ls”。</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>4. 应将复杂的操作保存到程序文件中以方便调试和重复使用。</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="usage" id="usage"></a><strong>2.6. 命令行参数</strong><br> 
+      <br> 
+      Lysee 的命令行参数比较丰富，通过命令行“<span class="lsp_code">lysee --help</span>”可以将它们打印出来：<br> 
+      <br> 
+      <table cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">lysee --help</span><br> 
+            Lysee&nbsp;0.1.6.387&nbsp;-&nbsp;interactive&nbsp;LYSEE&nbsp;script&nbsp;interpreter<br> 
+            <br> 
+            Usage:&nbsp;lysee&nbsp;[OPTION]...&nbsp;[FILE&nbsp;[ARGS]...]<br> 
+            <br> 
+            Option:<br>&nbsp;&nbsp;-v,&nbsp;--version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;the&nbsp;version&nbsp;of&nbsp;lysee&nbsp;and&nbsp;exit.<br>&nbsp;&nbsp;-h,&nbsp;--help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;this&nbsp;help&nbsp;and&nbsp;exit.<br> 
+&nbsp;&nbsp;-s,&nbsp;--search=PATH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;module&nbsp;search&nbsp;path.<br>&nbsp;&nbsp;-S,&nbsp;--script=SCRIPT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute&nbsp;script.<br>&nbsp;&nbsp;-w,&nbsp;--wait=SECONDS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wait&nbsp;for&nbsp;some&nbsp;seconds&nbsp;before&nbsp;going&nbsp;on.<br>&nbsp;&nbsp;-t,&nbsp;--times=COUNT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute&nbsp;specified&nbsp;times.<br> 
+&nbsp;&nbsp;-p, --pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pause after execute script file.<br>            <br> 
+            File:<br>&nbsp;&nbsp;.ls&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute&nbsp;this&nbsp;file&nbsp;directly.<br>&nbsp;&nbsp;.lsp,&nbsp;.html,&nbsp;.htm,&nbsp;.*&nbsp;&nbsp;&nbsp;execute&nbsp;as&nbsp;a&nbsp;LSP&nbsp;file&nbsp;(Lysee&nbsp;Script&nbsp;Page).<br> 
+            <br> 
+            Args:<br>&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arguments&nbsp;for&nbsp;file&nbsp;execution.<br> 
+            <br> 
+            D:\www.lysee.net&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      选项（Option）：<br>      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th colspan="2" bgcolor="#FFDFFF">选项</th> 
+          <th>附加参数</th> 
+          <th>说明</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-v</td> 
+          <td bgcolor="#FFDFFF">--version</td> 
+          <td align="center">无</td> 
+          <td>打印 Lysee 的版本信息后退出</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-h</td> 
+          <td bgcolor="#FFDFFF">--help</td> 
+          <td align="center">无</td> 
+          <td>打印帮助信息后退出</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-s</td> 
+          <td bgcolor="#FFDFFF">--search</td> 
+          <td align="center">用分号隔开的搜索路径列表</td> 
+          <td>为 Lysee 附加模块搜索路径</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-w</td> 
+          <td bgcolor="#FFDFFF">--wait</td> 
+          <td align="center">秒数</td> 
+          <td>执行前等待指定的秒数</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-t</td> 
+          <td bgcolor="#FFDFFF">--times</td> 
+          <td align="center">次数</td> 
+          <td>反复执行程序文件指定的次数</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-p</td> 
+          <td bgcolor="#FFDFFF">--pause</td> 
+          <td align="center">无</td> 
+          <td>执行完程序文件后暂停</td> 
+        </tr> 
+      </table> 
+      <br> 
+      文件（File）：<br>      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">文件后缀</th> 
+          <th>文件类型</th> 
+          <th>说明</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">.ls</td> 
+          <td align="center">Lysee 程序或模块文件</td> 
+          <td>由纯 Lysee 代码构成</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">.lsp</td> 
+          <td align="center">LSP（<span class="lsp_code">L</span>ysee <span class="lsp_code">S</span>cript <span class="lsp_code">P</span>age）文件</td> 
+          <td>嵌入 Lysee 代码的 HTML 文件，用于动态生成 web 页面</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">.htm</td> 
+          <td align="center">HTML 文件</td> 
+          <td>等同于 LSP 文件</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">.html</td> 
+          <td align="center">HTML 文件</td> 
+          <td>等同于 LSP 文件</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">*</td> 
+          <td align="center">其它后缀的文本文件</td> 
+          <td>Lysee 解释器将其认为是 LSP 文件</td> 
+        </tr> 
+      </table> 
+      <br> 
+      参数（Args）：<br> 
+      <br> 
+      Lysee 执行文件或代码（-S 选项）时，参数部分传递进内核保存在字符串列表 <strong>__args__</strong> 中，程序代码可以直接访问到。<br> 
+      <br> 
+      命令行示例： <br>      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">命令行</th> 
+          <th>说明</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">lysee backup.ls &quot;skip=.tmp,.bak,....,.dcu,.ppu&quot; </td> 
+          <td>备份 lysee 工程目录，忽略指定的文件</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">lysee -w 3600 -t 9999 spider.ls </td> 
+          <td>不间断，每1小时执行一次爬行机器人</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">lysee logout.lsp user=mack</td> 
+          <td>注销用户 mack 的登陆信息</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/28</td> 
+  </tr> 
+</table> 
+</body>
+</html>

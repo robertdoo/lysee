@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Types</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="301.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="303.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line">3.2 <a href="index.html">Lysee Manual</a> - <a href="300.html"></a><a href="300.html">Language Reference</a> - <strong>Types</strong><br> 
+      <br> 
+    Objects in lysee has its own types.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="basis" id="basis"></a><strong><strong>3.</strong>2.1 Simple Types</strong><br> 
+      <br> 
+      There are 7 buildin simple types in kernel:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Type</th> 
+          <th class="bottom_line">Description</th> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">bool</strong></td> 
+          <td align="left" class="bottom_left_line">Used as condition, value is <strong>true</strong> or<strong> false</strong></td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">char</strong></td> 
+          <td align="left" class="bottom_left_line">ANSI char</td> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">float</strong></td> 
+          <td align="left" class="bottom_left_line">64BIT double</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">int</strong></td> 
+          <td align="left" class="bottom_left_line">int64</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">money</strong></td> 
+          <td align="left" class="bottom_left_line">currency in Pascal </td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">string</strong></td> 
+          <td align="left" class="bottom_left_line">'\0' ended ANSI string</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">time</strong></td> 
+          <td align="left" class="bottom_left_line">TDateTime in Pascal</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="func" id="func"></a><strong>3.</strong><strong>2.2 Function</strong><br> 
+      <br> 
+      Includes function, method and closure:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Type</th> 
+          <th class="bottom_line">Description</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line">function</td> 
+          <td align="left" class="bottom_left_line">global function defined in module</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line">method</td> 
+          <td align="left" class="bottom_left_line">function defined in class</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line">closure</td> 
+          <td align="left" class="bottom_left_line">function that has no name</td> 
+        </tr> 
+      </table>    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="class" id="class"></a><strong><strong>3.</strong>2.3 Class </strong><br> 
+      <br> 
+    Base element of OOP.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="variant" id="variant"></a><strong>3.</strong><strong>2.4 Variant</strong><br> 
+      <br> 
+      Variant can be any data type, depends on the time you check:<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">&gt;&gt;&gt; v&nbsp;=&nbsp;&quot;string&quot;; <span class="comment">// a string</span><br> 
+&gt;&gt;&gt;&nbsp;v&nbsp;=&nbsp;18; <span class="comment">// change to integer </span><br> 
+&gt;&gt;&gt;&nbsp;v&nbsp;=&nbsp;strlist(); <span class="comment">// change to strlist</span> <br> 
+&gt;&gt;&gt;&nbsp;v.add(&quot;hello&nbsp;world&quot;); <span class="comment">// add a line to strlist</span> <br> 
+&gt;&gt;&gt;&nbsp;=&nbsp;v; <span class="comment">// print strlist content</span> <br> 
+            hello&nbsp;world<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="void" id="void"></a><strong><strong>3.</strong>2.5 void</strong><br> 
+      <br> 
+      Used to define functions that has no result. value of void is <strong>nil</strong>.<br>      
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Type</th> 
+          <th class="bottom_line">Nil Value</th> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">bool</strong></td> 
+          <td align="left" class="bottom_left_line">false</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">char</strong></td> 
+          <td align="left" class="bottom_left_line">'\0'</td> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">float</strong></td> 
+          <td align="left" class="bottom_left_line">0</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">int</strong></td> 
+          <td align="left" class="bottom_left_line">0</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">money</strong></td> 
+          <td align="left" class="bottom_left_line">0</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">string</strong></td> 
+          <td align="left" class="bottom_left_line">&quot;&quot;</td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">time</strong></td> 
+          <td align="left" class="bottom_left_line">0</td> 
+        </tr>
+      </table> 
+      <br> 
+      You can check default value of data type with nil:<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;strlist&nbsp;list;<br> 
+&gt;&gt;&gt;&nbsp;=&nbsp;&quot;list has no value&quot; if&nbsp;(list&nbsp;==&nbsp;<span class="lsp_code">nil</span>);<br> 
+            list has no value<br> 
+&gt;&gt;&gt;&nbsp;= (10&nbsp;==&nbsp;<span class="lsp_code">nil</span>) ? 10 : 0;<br> 
+            0 <br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/29</td> 
+  </tr> 
+</table> 
+</body>
+</html>

@@ -1,0 +1,3047 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 类库参考</title>
+<style type="text/css">
+<!--
+.white {
+	color: #FFFFFF;
+	font-family: "宋体";
+	font-size: 10pt;
+}
+.black {
+	color: #000000F;
+	font-family: "宋体";
+	font-size: 10pt;
+}
+-->
+</style>
+<link href="index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td>
+    <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td>
+  </tr>
+  <tr>
+    <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br>
+      Lysee 脚本引擎</td>
+  </tr>
+  <tr align="center" valign="middle">
+    <td colspan="2" class="menu10_white">Lysee 0.2.1 类库参考</td>
+  </tr>
+</table>
+<table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC">
+<tr bgcolor="#999999" class="white">
+<th>项目</th>
+<th>名称</th>
+<th>说明</th>
+</tr>
+<!--BEGIN API LIST-->
+<tr bgcolor="#FF0000" class="white">
+<td nowrap>module</td>
+<td>sys</td>
+<td>builtin sys module</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;- |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;!= |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;% |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;& |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;* |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;/ |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;^ |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__args__:strlist</td>
+<td bgcolor="#FFC6C6">get argument list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__dbvs__:strlist</td>
+<td bgcolor="#FFC6C6">database vendor list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__envs__:strlist</td>
+<td bgcolor="#FFC6C6">get environment value list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__error__:error</td>
+<td bgcolor="#FFC6C6">get current error</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__file__:string</td>
+<td bgcolor="#FFC6C6">get current file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__func__:function</td>
+<td bgcolor="#FFC6C6">get current function</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__ifile__:string</td>
+<td bgcolor="#FFC6C6">get current included file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__line__:int</td>
+<td bgcolor="#FFC6C6">get current line number</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__maxint__:int</td>
+<td bgcolor="#FFC6C6">get max integer value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__minint__:int</td>
+<td bgcolor="#FFC6C6">get min integer value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__module__:module</td>
+<td bgcolor="#FFC6C6">get current module</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__pd__:string</td>
+<td bgcolor="#FFC6C6">get system path delimiter</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__prmc__:int</td>
+<td bgcolor="#FFC6C6">get actual parametre count</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__prms__:varlist</td>
+<td bgcolor="#FFC6C6">get parametre value list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;__xcode__:int</td>
+<td bgcolor="#FFC6C6">get last shell exit code</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;| |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;+ |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;+< |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;< |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;<< |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;<= |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;== |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;=== |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;> |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;>= |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;>> |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;abs |value|</td>
+<td bgcolor="#FFC6C6">get absolute value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;and |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;apply |func:function, params:varlist|</td>
+<td bgcolor="#FFC6C6">call function with supplied parametres</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;as |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;cd:bool |newDirectory:string|</td>
+<td bgcolor="#FFC6C6">change current directory</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;cout:stream</td>
+<td bgcolor="#FFC6C6">get stdout stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;cp:bool |source:string, desti:string|</td>
+<td bgcolor="#FFC6C6">copy source file to desti file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;curry:function |func:function, paramList:varlist|</td>
+<td bgcolor="#FFC6C6">curry function with parametre list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;curryOne:function |func:function, value|</td>
+<td bgcolor="#FFC6C6">curry function with one parametre</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;decodeGMT:time |GMT:string|</td>
+<td bgcolor="#FFC6C6">decode GMT string to date</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;decodeS:string |S:string|</td>
+<td bgcolor="#FFC6C6">decode string value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;decodeUTF8:string |UTF8:string|</td>
+<td bgcolor="#FFC6C6">decode UTF8 string to ANSI format</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;dir:string ||</td>
+<td bgcolor="#FFC6C6">get current directory</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;dumpc:string |any|</td>
+<td bgcolor="#FFC6C6">dump object p-codes</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;each:void |any, proc:function|</td>
+<td bgcolor="#FFC6C6">execute each: {|item,...| ... }</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;encodeDateTime:time |year:int, month:int, day:int, hour:int, minute:int, second:int, milliSecond:int|</td>
+<td bgcolor="#FFC6C6">encode date time</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;encodeGMT:string |date:time|</td>
+<td bgcolor="#FFC6C6">encode date to GMT string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;encodeS:string |S:string, includeLocalBytes:bool|</td>
+<td bgcolor="#FFC6C6">encode string value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;encodeUTF8:string |ANSI:string|</td>
+<td bgcolor="#FFC6C6">encode ANSI string to UTF8 format</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;eol:string</td>
+<td bgcolor="#FFC6C6">get eol(line break)</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;eval |script:string, isLSP:bool|</td>
+<td bgcolor="#FFC6C6">evaluate a block of lysee script</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;excPD:string |path:string|</td>
+<td bgcolor="#FFC6C6">exclude trailing path delimiter</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;executable:bool |any|</td>
+<td bgcolor="#FFC6C6">test if something is executable</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;exit:void |status:int|</td>
+<td bgcolor="#FFC6C6">exit with status code</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;exportAPI:void |fileName:string|</td>
+<td bgcolor="#FFC6C6">export builtin APIs into HTML file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;filter:varlist |any, proc:function|</td>
+<td bgcolor="#FFC6C6">execute filter: {|item| ... }</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;find:varlist |S:string, patten:string, findAll:bool|</td>
+<td bgcolor="#FFC6C6">find patten matches</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;format:string |fmt:string, args:varlist|</td>
+<td bgcolor="#FFC6C6">format string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;gc:int ||</td>
+<td bgcolor="#FFC6C6">execute garbage collection immediately</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;genid:string ||</td>
+<td bgcolor="#FFC6C6">generate a global unique string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_cerr:stream ||</td>
+<td bgcolor="#FFC6C6">get stderr stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_cin:stream ||</td>
+<td bgcolor="#FFC6C6">get stdin stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getcs:varlist |index:int|</td>
+<td bgcolor="#FFC6C6">get call stack item</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getenv:string |name:string|</td>
+<td bgcolor="#FFC6C6">get environment value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getiv |obj, index:int|</td>
+<td bgcolor="#FFC6C6">get item value by index</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getpv |obj, name:string|</td>
+<td bgcolor="#FFC6C6">get property by name</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;gget |name:string|</td>
+<td bgcolor="#FFC6C6">get global value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;gput:void |name:string, value|</td>
+<td bgcolor="#FFC6C6">set global value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;gsub:string |S:string, patten:string, newStr:string, count:int|</td>
+<td bgcolor="#FFC6C6">replace patten with new string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;incPD:string |dir:string|</td>
+<td bgcolor="#FFC6C6">include trailing path delimiter</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;is |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;isdir:bool |directory:string|</td>
+<td bgcolor="#FFC6C6">test if directory exists</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;isfile:bool |fileName:string|</td>
+<td bgcolor="#FFC6C6">test if file exists</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;isValidDate:bool |year:int, month:int, day:int|</td>
+<td bgcolor="#FFC6C6">test if is valid date</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;leap:bool |year:int|</td>
+<td bgcolor="#FFC6C6">test if is a leap year</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;length:int |any|</td>
+<td bgcolor="#FFC6C6">get string length or item count</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;like |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;load:module |fileName:string|</td>
+<td bgcolor="#FFC6C6">load module</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;log:void |message:string|</td>
+<td bgcolor="#FFC6C6">save message to log file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;map:varlist |any, proc:function|</td>
+<td bgcolor="#FFC6C6">execute map: {|item,...| ... }</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;max |v1, v2|</td>
+<td bgcolor="#FFC6C6">get max value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;memory:stream |size:int|</td>
+<td bgcolor="#FFC6C6">create memory stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;min |v1, v2|</td>
+<td bgcolor="#FFC6C6">get min value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;mkdir:bool |dir:string|</td>
+<td bgcolor="#FFC6C6">create new directory</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;modules:varlist ||</td>
+<td bgcolor="#FFC6C6">return imported module list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;msecs:int |func:function, params:varlist|</td>
+<td bgcolor="#FFC6C6">count milliseconds used to call a function</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;mv:bool |source:string, desti:string|</td>
+<td bgcolor="#FFC6C6">rename source file to desti file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;now:time ||</td>
+<td bgcolor="#FFC6C6">get current time</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;openfs:stream |fileName:string, mode:string|</td>
+<td bgcolor="#FFC6C6">open file stream by specified mode: CRWE (default R)</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;or |V1, V2|</td>
+<td bgcolor="#FFC6C6">&nbsp;</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;parse:function |script:string, isLSP:bool|</td>
+<td bgcolor="#FFC6C6">parse and compile script</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;print:void |text:string|</td>
+<td bgcolor="#FFC6C6">print text into STDOUT</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;printf:void |fileName:string|</td>
+<td bgcolor="#FFC6C6">print file content into STDOUT</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;println:void |text:string|</td>
+<td bgcolor="#FFC6C6">print text and a line break into STDOUT</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;random:int |low:int, high:int|</td>
+<td bgcolor="#FFC6C6">generate random number</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;readln:string ||</td>
+<td bgcolor="#FFC6C6">read a line from STDIN</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;reduce |any, initValue, proc:function|</td>
+<td bgcolor="#FFC6C6">execute reduce: {|result,item,...| ... }</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;rm:bool |fileName:string|</td>
+<td bgcolor="#FFC6C6">remove specified file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;rmdir:bool |dir:string|</td>
+<td bgcolor="#FFC6C6">remove specified directory</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_cerr:void |stderr:stream|</td>
+<td bgcolor="#FFC6C6">set stderr stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_cin:void |stdin:stream|</td>
+<td bgcolor="#FFC6C6">set stdin stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_cout:void |stdout:stream|</td>
+<td bgcolor="#FFC6C6">set stdout stream</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setiv:void |obj, index:int, value|</td>
+<td bgcolor="#FFC6C6">set item value by index</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setpv:void |obj, name:string, value|</td>
+<td bgcolor="#FFC6C6">set property by name</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;shexec:bool |commandline:string, dir:string, wait:bool|</td>
+<td bgcolor="#FFC6C6">execute command line</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;sleep:void |milliSeconds:int|</td>
+<td bgcolor="#FFC6C6">sleep a number of milliseconds</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;split:strlist |S:string, patten:string|</td>
+<td bgcolor="#FFC6C6">split string to strlist</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;sum |any, proc:function, initValue|</td>
+<td bgcolor="#FFC6C6">sum all</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;system:string |commandline:string, dir:string|</td>
+<td bgcolor="#FFC6C6">execute command line and get its output</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;tempFileName:string |fileExt:string|</td>
+<td bgcolor="#FFC6C6">generate temp file name at temp path</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;throw:void |exceptionMsg:string, exceptionID:string|</td>
+<td bgcolor="#FFC6C6">throw exception</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;veryPD:string |path:string|</td>
+<td bgcolor="#FFC6C6">correct path delimiter</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;veryUD:string |RUL:string|</td>
+<td bgcolor="#FFC6C6">correct URL delimiter</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;which |name:string|</td>
+<td bgcolor="#FFC6C6">find variable, function, module or anything else by name</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;writeTo:int |stream:stream, someThing|</td>
+<td bgcolor="#FFC6C6">write something to stream</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">char</td>
+<td bgcolor="#0000FF" class="white">char</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;inMBCS:bool ||</td>
+<td bgcolor="#C6C6FF">test if it is in multibyte character sets</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;ord:int ||</td>
+<td bgcolor="#C6C6FF">get ordinal value of the character</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">database</td>
+<td bgcolor="#0000FF" class="white">database</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>constructor</div></td>
+<td bgcolor="#97FFC0">&nbsp;&nbsp;database(vendor:string)</td>
+<td bgcolor="#97FFC0">create database object</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;commit:void ||</td>
+<td bgcolor="#C6C6FF">commit transaction</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;commitAndTransact:void ||</td>
+<td bgcolor="#C6C6FF">commit retaining and start a new transaction</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;commitRetaining:void ||</td>
+<td bgcolor="#C6C6FF">commit retaining transactions</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;connecTo:void |target:string, user:string, password:string, source:string, params:string|</td>
+<td bgcolor="#C6C6FF">connect to target database: Access, Mssql, ODBC</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;database |vendor:string|</td>
+<td bgcolor="#C6C6FF">create database object</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;disconnect:void ||</td>
+<td bgcolor="#C6C6FF">close database connection</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;escape:string |stringValue:string|</td>
+<td bgcolor="#C6C6FF">escape string value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;execSQL:int |SQL:string|</td>
+<td bgcolor="#C6C6FF">execute SQL command</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_connected:bool ||</td>
+<td bgcolor="#C6C6FF">test if database connection is active</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_inTransaction:bool ||</td>
+<td bgcolor="#C6C6FF">test if is in transaction</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_procedures:strlist ||</td>
+<td bgcolor="#C6C6FF">get stored procedure name list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_tables:strlist ||</td>
+<td bgcolor="#C6C6FF">get table name list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;openSQL:dataset |SQL:string|</td>
+<td bgcolor="#C6C6FF">query dataset</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reconnect:void ||</td>
+<td bgcolor="#C6C6FF">reopen database connection</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rollback:void ||</td>
+<td bgcolor="#C6C6FF">rollback transaction</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rollbackAndTransact:void ||</td>
+<td bgcolor="#C6C6FF">rollback retaining and start a new transaction</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rollbackRetaining:void ||</td>
+<td bgcolor="#C6C6FF">rollback retaining transactions</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;transact:void ||</td>
+<td bgcolor="#C6C6FF">begin transaction</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">dataset</td>
+<td bgcolor="#0000FF" class="white">dataset</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;bool:bool |fieldNameOrIndex|</td>
+<td bgcolor="#C6C6FF">get boolean field value by name or index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;close:void ||</td>
+<td bgcolor="#C6C6FF">close current dataset</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;first:void ||</td>
+<td bgcolor="#C6C6FF">seek to first record</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;float:float |fieldNameOrIndex|</td>
+<td bgcolor="#C6C6FF">get float field value by name or index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_bof:bool ||</td>
+<td bgcolor="#C6C6FF">test if is at the head of the dataset</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_count:int ||</td>
+<td bgcolor="#C6C6FF">get record count</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_eof:bool ||</td>
+<td bgcolor="#C6C6FF">test if is at the end of the dataset</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_length:int ||</td>
+<td bgcolor="#C6C6FF">get field count</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getiv |index:int|</td>
+<td bgcolor="#C6C6FF">get field value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv |fieldName:string|</td>
+<td bgcolor="#C6C6FF">get field value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;indexOf:int |fieldName:string|</td>
+<td bgcolor="#C6C6FF">get field index by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;int:int |fieldNameOrIndex|</td>
+<td bgcolor="#C6C6FF">get integer field value by name or index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;last:void ||</td>
+<td bgcolor="#C6C6FF">seek to last record</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;money:money |fieldNameOrIndex|</td>
+<td bgcolor="#C6C6FF">get money field value by name or index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;name:string |index:int|</td>
+<td bgcolor="#C6C6FF">get field name by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;next:void ||</td>
+<td bgcolor="#C6C6FF">seek to next record</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;open:dataset |SQL:string|</td>
+<td bgcolor="#C6C6FF">close current dataset and start a new query</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;prior:void ||</td>
+<td bgcolor="#C6C6FF">seek to prior record</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;string:string |fieldNameOrIndex|</td>
+<td bgcolor="#C6C6FF">get string field value by name or index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;type:type |fieldNameOrIndex|</td>
+<td bgcolor="#C6C6FF">get field type by name or index</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">error</td>
+<td bgcolor="#0000FF" class="white">error</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_col:int ||</td>
+<td bgcolor="#C6C6FF">error column</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_errno:int ||</td>
+<td bgcolor="#C6C6FF">error code</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_message:string ||</td>
+<td bgcolor="#C6C6FF">error message</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_module:string ||</td>
+<td bgcolor="#C6C6FF">error module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_name:string ||</td>
+<td bgcolor="#C6C6FF">error name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_row:int ||</td>
+<td bgcolor="#C6C6FF">error row</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_text:string ||</td>
+<td bgcolor="#C6C6FF">error text</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">function</td>
+<td bgcolor="#0000FF" class="white">function</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_locals:varlist ||</td>
+<td bgcolor="#C6C6FF">get local varible list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_module:module ||</td>
+<td bgcolor="#C6C6FF">function module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_name:string ||</td>
+<td bgcolor="#C6C6FF">function name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_params:varlist ||</td>
+<td bgcolor="#C6C6FF">get parametre list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_parent:type ||</td>
+<td bgcolor="#C6C6FF">get parent class</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_prototype:string ||</td>
+<td bgcolor="#C6C6FF">function prototype</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_type:string ||</td>
+<td bgcolor="#C6C6FF">get function result type</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">hashed</td>
+<td bgcolor="#0000FF" class="white">hashed key-value list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>constructor</div></td>
+<td bgcolor="#97FFC0">&nbsp;&nbsp;hashed(buckets:int)</td>
+<td bgcolor="#97FFC0">create a hashed key-value list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;clear:void ||</td>
+<td bgcolor="#C6C6FF">clear list item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;curry:function |name:string, func:function|</td>
+<td bgcolor="#C6C6FF">curry self and save the result function</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;delete:void |index:int|</td>
+<td bgcolor="#C6C6FF">delete by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;exchange:void |index1:int, index2:int|</td>
+<td bgcolor="#C6C6FF">exchange two item valuea</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_keys:strlist ||</td>
+<td bgcolor="#C6C6FF">get hashed key list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_length:int ||</td>
+<td bgcolor="#C6C6FF">get item count</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_values:varlist ||</td>
+<td bgcolor="#C6C6FF">get hashed value list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getiv |index:int|</td>
+<td bgcolor="#C6C6FF">get value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv |key:string|</td>
+<td bgcolor="#C6C6FF">get value by key name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;gget |key:string|</td>
+<td bgcolor="#C6C6FF">get value by chain</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;gput:void |key:string, value|</td>
+<td bgcolor="#C6C6FF">set value by chain</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;hashed |buckets:int|</td>
+<td bgcolor="#C6C6FF">create a hashed key-value list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isset:bool |key:string|</td>
+<td bgcolor="#C6C6FF">check if the key exists</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;listKV:varlist ||</td>
+<td bgcolor="#C6C6FF">list keys and values</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;read |key:string, defaultValue|</td>
+<td bgcolor="#C6C6FF">read key value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;remove:void |key:string|</td>
+<td bgcolor="#C6C6FF">remove specifed key value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setiv:void |index:int, value|</td>
+<td bgcolor="#C6C6FF">set value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setpv:void |key:string, value|</td>
+<td bgcolor="#C6C6FF">set value by key name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;write:void |key:string, value|</td>
+<td bgcolor="#C6C6FF">set key value</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">int</td>
+<td bgcolor="#0000FF" class="white">int</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;bitlist:string |size:int|</td>
+<td bgcolor="#C6C6FF">convert to bit list string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;downto:vargen |value:int, step:int|</td>
+<td bgcolor="#C6C6FF">create a downto range</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;hex:string |size:int|</td>
+<td bgcolor="#C6C6FF">convert to hex string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;upto:vargen |value:int, step:int|</td>
+<td bgcolor="#C6C6FF">create a upto range</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">module</td>
+<td bgcolor="#0000FF" class="white">module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_classes:varlist ||</td>
+<td bgcolor="#C6C6FF">get type list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_file:string ||</td>
+<td bgcolor="#C6C6FF">module file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_funcs:varlist ||</td>
+<td bgcolor="#C6C6FF">global function list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_main:function ||</td>
+<td bgcolor="#C6C6FF">module main function</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_modules:varlist ||</td>
+<td bgcolor="#C6C6FF">imported module list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_name:string ||</td>
+<td bgcolor="#C6C6FF">module name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_version:string ||</td>
+<td bgcolor="#C6C6FF">type version</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv |name:string|</td>
+<td bgcolor="#C6C6FF">find class, function or const value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;imports:module |moduleName:string|</td>
+<td bgcolor="#C6C6FF">import module by name</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">stream</td>
+<td bgcolor="#0000FF" class="white">stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;close:void ||</td>
+<td bgcolor="#C6C6FF">close stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;flush:void ||</td>
+<td bgcolor="#C6C6FF">flush stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_eof:bool ||</td>
+<td bgcolor="#C6C6FF">test if is at end of the stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_length:int ||</td>
+<td bgcolor="#C6C6FF">get stream size</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_lines:vargen ||</td>
+<td bgcolor="#C6C6FF">wrap stram as a line generator</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_position:string ||</td>
+<td bgcolor="#C6C6FF">get current position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;read:string |count:int|</td>
+<td bgcolor="#C6C6FF">read value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;readln:string ||</td>
+<td bgcolor="#C6C6FF">read a line</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_length:void |length:int|</td>
+<td bgcolor="#C6C6FF">set stream size</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_position:void |newPosition:int|</td>
+<td bgcolor="#C6C6FF">set current position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;write:int |text:string|</td>
+<td bgcolor="#C6C6FF">write into stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;writeln:int |text:string|</td>
+<td bgcolor="#C6C6FF">write text and a line break into stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;writeTo:int |stream:stream, count:int|</td>
+<td bgcolor="#C6C6FF">write part data into another stream</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">string</td>
+<td bgcolor="#0000FF" class="white">string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;center:string |width:int, filler:char|</td>
+<td bgcolor="#C6C6FF">format to center</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;changeExt:string |newFileExt:string|</td>
+<td bgcolor="#C6C6FF">change file extension</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;compare:int |S2:string, ignoreCase:bool|</td>
+<td bgcolor="#C6C6FF">compare two string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;copy:string |index:int, count:int|</td>
+<td bgcolor="#C6C6FF">copy sub-string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;delete:string |index:int, count:int|</td>
+<td bgcolor="#C6C6FF">delete by range</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;extractName:string |separator:string|</td>
+<td bgcolor="#C6C6FF">extract name with specified separator</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;extractValue:string |separator:string|</td>
+<td bgcolor="#C6C6FF">extract value with specified separator</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;fileExt:string ||</td>
+<td bgcolor="#C6C6FF">extract file extension</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;fileName:string ||</td>
+<td bgcolor="#C6C6FF">extract file name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;filePath:string ||</td>
+<td bgcolor="#C6C6FF">extract file path</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;fileText:string ||</td>
+<td bgcolor="#C6C6FF">get file text</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;fullFileName:string ||</td>
+<td bgcolor="#C6C6FF">expand to full file name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_length:int ||</td>
+<td bgcolor="#C6C6FF">get string length</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_name:string ||</td>
+<td bgcolor="#C6C6FF">extract name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_value:string ||</td>
+<td bgcolor="#C6C6FF">extract value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getiv:char |index:int|</td>
+<td bgcolor="#C6C6FF">get char by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;hash:int ||</td>
+<td bgcolor="#C6C6FF">calculate hash value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;hexToInt:int |defaultValue:int|</td>
+<td bgcolor="#C6C6FF">convert HEX string to integer value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;html:string |translateMBC:bool|</td>
+<td bgcolor="#C6C6FF">encode to HTML code</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;insert:string |substr:string, index:int|</td>
+<td bgcolor="#C6C6FF">insert sub-string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isAlnum:bool ||</td>
+<td bgcolor="#C6C6FF">test if the string contains only alpha and digit charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isAlpha:bool ||</td>
+<td bgcolor="#C6C6FF">test if the string contains only alpha charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isCntrl:bool ||</td>
+<td bgcolor="#C6C6FF">test if the string contains only control charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isDigit:bool ||</td>
+<td bgcolor="#C6C6FF">test if the string contains only digit charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isHex:bool ||</td>
+<td bgcolor="#C6C6FF">test if the string contains only HEX charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isLower:bool ||</td>
+<td bgcolor="#C6C6FF">test if is lower case string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isSpace:bool ||</td>
+<td bgcolor="#C6C6FF">test if the string contains only space charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isUpper:bool ||</td>
+<td bgcolor="#C6C6FF">test if is upper case string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;lastPos:int |SubStr:string, IgnoreCase:bool|</td>
+<td bgcolor="#C6C6FF">get last sub-string position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;left:string |count:int|</td>
+<td bgcolor="#C6C6FF">copy left</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;lformat:string |width:int, filler:char|</td>
+<td bgcolor="#C6C6FF">format to left</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;lower:string ||</td>
+<td bgcolor="#C6C6FF">convert to lower case string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;md5sum:string |sumFile:bool|</td>
+<td bgcolor="#C6C6FF">calculate MD5 sum</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;pos:int |SubStr:string, IgnoreCase:bool|</td>
+<td bgcolor="#C6C6FF">get first sub-string position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;random:string ||</td>
+<td bgcolor="#C6C6FF">randomize string charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;replace:string |patten:string, newStr:string, ignoreCase:bool, replaceFirstOnly:bool|</td>
+<td bgcolor="#C6C6FF">replace patten to new string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reverse:string ||</td>
+<td bgcolor="#C6C6FF">reverse string charactors</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rformat:string |width:int, filler:char|</td>
+<td bgcolor="#C6C6FF">format to right</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;right:string |count:int|</td>
+<td bgcolor="#C6C6FF">copy right</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;saveToFile:void |fileName:string|</td>
+<td bgcolor="#C6C6FF">save string to file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setAt:string |index:int, value:char|</td>
+<td bgcolor="#C6C6FF">set char by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;translate:string |OrdCharList:string, newCharList:string|</td>
+<td bgcolor="#C6C6FF">translate original char to new char</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;trim:string ||</td>
+<td bgcolor="#C6C6FF">trim left and right</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;trimAll:string ||</td>
+<td bgcolor="#C6C6FF">trim all spaces</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;trimLeft:string ||</td>
+<td bgcolor="#C6C6FF">trim left</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;trimRight:string ||</td>
+<td bgcolor="#C6C6FF">trim right</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;upper:string ||</td>
+<td bgcolor="#C6C6FF">convert to upper case string</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">strlist</td>
+<td bgcolor="#0000FF" class="white">string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>constructor</div></td>
+<td bgcolor="#97FFC0">&nbsp;&nbsp;strlist(source:string)</td>
+<td bgcolor="#97FFC0">create string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;add:int |S:string, unique:bool|</td>
+<td bgcolor="#C6C6FF">add item string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;addFrom:void |strings:strlist|</td>
+<td bgcolor="#C6C6FF">add strings from</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;clear:void ||</td>
+<td bgcolor="#C6C6FF">clear string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;copy:strlist |index:int, count:int|</td>
+<td bgcolor="#C6C6FF">copy sub string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;delete:void |index:int|</td>
+<td bgcolor="#C6C6FF">delete by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;exchange:void |index1:int, index2:int|</td>
+<td bgcolor="#C6C6FF">exchange two item strings</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;fill:void |source:vargen, clearBeforeFill:bool|</td>
+<td bgcolor="#C6C6FF">add generated string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:strlist |filterFunc:function|</td>
+<td bgcolor="#C6C6FF">filter string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_caseSensitive:bool ||</td>
+<td bgcolor="#C6C6FF">is case sensitive?</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_commaText:string ||</td>
+<td bgcolor="#C6C6FF">convert to comma text</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_first:string ||</td>
+<td bgcolor="#C6C6FF">get first string item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_last:string ||</td>
+<td bgcolor="#C6C6FF">get last string item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_length:int ||</td>
+<td bgcolor="#C6C6FF">get strlist length</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_max:string ||</td>
+<td bgcolor="#C6C6FF">get max string item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_min:string ||</td>
+<td bgcolor="#C6C6FF">get min string item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_names:strlist ||</td>
+<td bgcolor="#C6C6FF">get name list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_sorted:bool ||</td>
+<td bgcolor="#C6C6FF">is sorted automatically?</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_text:string ||</td>
+<td bgcolor="#C6C6FF">convert to text</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getiv:string |index:int|</td>
+<td bgcolor="#C6C6FF">get string item by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv:string |name:string|</td>
+<td bgcolor="#C6C6FF">read value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;indexOf:int |S:string|</td>
+<td bgcolor="#C6C6FF">get item string index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;indexOfName:int |name:string|</td>
+<td bgcolor="#C6C6FF">get item name index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;insert:void |index:int, S:string|</td>
+<td bgcolor="#C6C6FF">insert item string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;loadFromFile:void |fileName:string|</td>
+<td bgcolor="#C6C6FF">load from file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;move:void |curIndex:int, newIndex:int|</td>
+<td bgcolor="#C6C6FF">move item string to another position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;pop:string ||</td>
+<td bgcolor="#C6C6FF">get and delete last string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;read:string |name:string, defaultValue:string|</td>
+<td bgcolor="#C6C6FF">read value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reverse:void ||</td>
+<td bgcolor="#C6C6FF">reverse item string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;saveToFile:void |fileName:string|</td>
+<td bgcolor="#C6C6FF">save to file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_caseSensitive:void |value:bool|</td>
+<td bgcolor="#C6C6FF">set case sensitive</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_commaText:void |newCommaText:string|</td>
+<td bgcolor="#C6C6FF">clear and set comma text</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_sorted:void |value:bool|</td>
+<td bgcolor="#C6C6FF">set sort mode</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_text:void |newText:string|</td>
+<td bgcolor="#C6C6FF">clear and reset its text</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setiv:void |index:int, value:string|</td>
+<td bgcolor="#C6C6FF">set string item by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setName:void |index:int, name:string|</td>
+<td bgcolor="#C6C6FF">set item name by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setpv:void |name:string, value:string|</td>
+<td bgcolor="#C6C6FF">write value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setValue:void |index:int, value:string|</td>
+<td bgcolor="#C6C6FF">set item value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;shift:string ||</td>
+<td bgcolor="#C6C6FF">get and delete first string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;sort:void ||</td>
+<td bgcolor="#C6C6FF">sort string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;strlist |source:string|</td>
+<td bgcolor="#C6C6FF">create string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;unique:void ||</td>
+<td bgcolor="#C6C6FF">delete multiple strings</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;write:void |name:string, value:string|</td>
+<td bgcolor="#C6C6FF">write value by name</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">sys</td>
+<td bgcolor="#0000FF" class="white">builtin sys module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;- |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;!= |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;% |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;& |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;* |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;/ |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;^ |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__args__:strlist</td>
+<td bgcolor="#C6C6FF">get argument list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__dbvs__:strlist</td>
+<td bgcolor="#C6C6FF">database vendor list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__envs__:strlist</td>
+<td bgcolor="#C6C6FF">get environment value list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__error__:error</td>
+<td bgcolor="#C6C6FF">get current error</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__file__:string</td>
+<td bgcolor="#C6C6FF">get current file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__func__:function</td>
+<td bgcolor="#C6C6FF">get current function</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__ifile__:string</td>
+<td bgcolor="#C6C6FF">get current included file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__line__:int</td>
+<td bgcolor="#C6C6FF">get current line number</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__maxint__:int</td>
+<td bgcolor="#C6C6FF">get max integer value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__minint__:int</td>
+<td bgcolor="#C6C6FF">get min integer value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__module__:module</td>
+<td bgcolor="#C6C6FF">get current module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__pd__:string</td>
+<td bgcolor="#C6C6FF">get system path delimiter</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__prmc__:int</td>
+<td bgcolor="#C6C6FF">get actual parametre count</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__prms__:varlist</td>
+<td bgcolor="#C6C6FF">get parametre value list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;__xcode__:int</td>
+<td bgcolor="#C6C6FF">get last shell exit code</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;| |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;+ |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;+< |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;< |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;<< |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;<= |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;== |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;=== |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;> |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;>= |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;>> |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;abs |value|</td>
+<td bgcolor="#C6C6FF">get absolute value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;and |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;apply |func:function, params:varlist|</td>
+<td bgcolor="#C6C6FF">call function with supplied parametres</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;as |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;cd:bool |newDirectory:string|</td>
+<td bgcolor="#C6C6FF">change current directory</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;cout:stream</td>
+<td bgcolor="#C6C6FF">get stdout stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;cp:bool |source:string, desti:string|</td>
+<td bgcolor="#C6C6FF">copy source file to desti file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;curry:function |func:function, paramList:varlist|</td>
+<td bgcolor="#C6C6FF">curry function with parametre list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;curryOne:function |func:function, value|</td>
+<td bgcolor="#C6C6FF">curry function with one parametre</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;decodeGMT:time |GMT:string|</td>
+<td bgcolor="#C6C6FF">decode GMT string to date</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;decodeS:string |S:string|</td>
+<td bgcolor="#C6C6FF">decode string value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;decodeUTF8:string |UTF8:string|</td>
+<td bgcolor="#C6C6FF">decode UTF8 string to ANSI format</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;dir:string ||</td>
+<td bgcolor="#C6C6FF">get current directory</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;dumpc:string |any|</td>
+<td bgcolor="#C6C6FF">dump object p-codes</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;each:void |any, proc:function|</td>
+<td bgcolor="#C6C6FF">execute each: {|item,...| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;encodeDateTime:time |year:int, month:int, day:int, hour:int, minute:int, second:int, milliSecond:int|</td>
+<td bgcolor="#C6C6FF">encode date time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;encodeGMT:string |date:time|</td>
+<td bgcolor="#C6C6FF">encode date to GMT string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;encodeS:string |S:string, includeLocalBytes:bool|</td>
+<td bgcolor="#C6C6FF">encode string value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;encodeUTF8:string |ANSI:string|</td>
+<td bgcolor="#C6C6FF">encode ANSI string to UTF8 format</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;eol:string</td>
+<td bgcolor="#C6C6FF">get eol(line break)</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;eval |script:string, isLSP:bool|</td>
+<td bgcolor="#C6C6FF">evaluate a block of lysee script</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;excPD:string |path:string|</td>
+<td bgcolor="#C6C6FF">exclude trailing path delimiter</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;executable:bool |any|</td>
+<td bgcolor="#C6C6FF">test if something is executable</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;exit:void |status:int|</td>
+<td bgcolor="#C6C6FF">exit with status code</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;exportAPI:void |fileName:string|</td>
+<td bgcolor="#C6C6FF">export builtin APIs into HTML file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:varlist |any, proc:function|</td>
+<td bgcolor="#C6C6FF">execute filter: {|item| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;find:varlist |S:string, patten:string, findAll:bool|</td>
+<td bgcolor="#C6C6FF">find patten matches</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;format:string |fmt:string, args:varlist|</td>
+<td bgcolor="#C6C6FF">format string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;gc:int ||</td>
+<td bgcolor="#C6C6FF">execute garbage collection immediately</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;genid:string ||</td>
+<td bgcolor="#C6C6FF">generate a global unique string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_cerr:stream ||</td>
+<td bgcolor="#C6C6FF">get stderr stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_cin:stream ||</td>
+<td bgcolor="#C6C6FF">get stdin stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getcs:varlist |index:int|</td>
+<td bgcolor="#C6C6FF">get call stack item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getenv:string |name:string|</td>
+<td bgcolor="#C6C6FF">get environment value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getiv |obj, index:int|</td>
+<td bgcolor="#C6C6FF">get item value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv |obj, name:string|</td>
+<td bgcolor="#C6C6FF">get property by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;gget |name:string|</td>
+<td bgcolor="#C6C6FF">get global value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;gput:void |name:string, value|</td>
+<td bgcolor="#C6C6FF">set global value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;gsub:string |S:string, patten:string, newStr:string, count:int|</td>
+<td bgcolor="#C6C6FF">replace patten with new string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;incPD:string |dir:string|</td>
+<td bgcolor="#C6C6FF">include trailing path delimiter</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;is |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isdir:bool |directory:string|</td>
+<td bgcolor="#C6C6FF">test if directory exists</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isfile:bool |fileName:string|</td>
+<td bgcolor="#C6C6FF">test if file exists</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isValidDate:bool |year:int, month:int, day:int|</td>
+<td bgcolor="#C6C6FF">test if is valid date</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;leap:bool |year:int|</td>
+<td bgcolor="#C6C6FF">test if is a leap year</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;length:int |any|</td>
+<td bgcolor="#C6C6FF">get string length or item count</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;like |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;load:module |fileName:string|</td>
+<td bgcolor="#C6C6FF">load module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;log:void |message:string|</td>
+<td bgcolor="#C6C6FF">save message to log file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;map:varlist |any, proc:function|</td>
+<td bgcolor="#C6C6FF">execute map: {|item,...| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;max |v1, v2|</td>
+<td bgcolor="#C6C6FF">get max value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;memory:stream |size:int|</td>
+<td bgcolor="#C6C6FF">create memory stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;min |v1, v2|</td>
+<td bgcolor="#C6C6FF">get min value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;mkdir:bool |dir:string|</td>
+<td bgcolor="#C6C6FF">create new directory</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;modules:varlist ||</td>
+<td bgcolor="#C6C6FF">return imported module list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;msecs:int |func:function, params:varlist|</td>
+<td bgcolor="#C6C6FF">count milliseconds used to call a function</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;mv:bool |source:string, desti:string|</td>
+<td bgcolor="#C6C6FF">rename source file to desti file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;now:time ||</td>
+<td bgcolor="#C6C6FF">get current time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;openfs:stream |fileName:string, mode:string|</td>
+<td bgcolor="#C6C6FF">open file stream by specified mode: CRWE (default R)</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;or |V1, V2|</td>
+<td bgcolor="#C6C6FF">&nbsp;</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;parse:function |script:string, isLSP:bool|</td>
+<td bgcolor="#C6C6FF">parse and compile script</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;print:void |text:string|</td>
+<td bgcolor="#C6C6FF">print text into STDOUT</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;printf:void |fileName:string|</td>
+<td bgcolor="#C6C6FF">print file content into STDOUT</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;println:void |text:string|</td>
+<td bgcolor="#C6C6FF">print text and a line break into STDOUT</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;random:int |low:int, high:int|</td>
+<td bgcolor="#C6C6FF">generate random number</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;readln:string ||</td>
+<td bgcolor="#C6C6FF">read a line from STDIN</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reduce |any, initValue, proc:function|</td>
+<td bgcolor="#C6C6FF">execute reduce: {|result,item,...| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rm:bool |fileName:string|</td>
+<td bgcolor="#C6C6FF">remove specified file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rmdir:bool |dir:string|</td>
+<td bgcolor="#C6C6FF">remove specified directory</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_cerr:void |stderr:stream|</td>
+<td bgcolor="#C6C6FF">set stderr stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_cin:void |stdin:stream|</td>
+<td bgcolor="#C6C6FF">set stdin stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_cout:void |stdout:stream|</td>
+<td bgcolor="#C6C6FF">set stdout stream</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setiv:void |obj, index:int, value|</td>
+<td bgcolor="#C6C6FF">set item value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setpv:void |obj, name:string, value|</td>
+<td bgcolor="#C6C6FF">set property by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;shexec:bool |commandline:string, dir:string, wait:bool|</td>
+<td bgcolor="#C6C6FF">execute command line</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;sleep:void |milliSeconds:int|</td>
+<td bgcolor="#C6C6FF">sleep a number of milliseconds</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;split:strlist |S:string, patten:string|</td>
+<td bgcolor="#C6C6FF">split string to strlist</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;sum |any, proc:function, initValue|</td>
+<td bgcolor="#C6C6FF">sum all</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;system:string |commandline:string, dir:string|</td>
+<td bgcolor="#C6C6FF">execute command line and get its output</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;tempFileName:string |fileExt:string|</td>
+<td bgcolor="#C6C6FF">generate temp file name at temp path</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;throw:void |exceptionMsg:string, exceptionID:string|</td>
+<td bgcolor="#C6C6FF">throw exception</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;veryPD:string |path:string|</td>
+<td bgcolor="#C6C6FF">correct path delimiter</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;veryUD:string |RUL:string|</td>
+<td bgcolor="#C6C6FF">correct URL delimiter</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;which |name:string|</td>
+<td bgcolor="#C6C6FF">find variable, function, module or anything else by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;writeTo:int |stream:stream, someThing|</td>
+<td bgcolor="#C6C6FF">write something to stream</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">time</td>
+<td bgcolor="#0000FF" class="white">time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;day:int ||</td>
+<td bgcolor="#C6C6FF">get day</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;dayOfYear:int ||</td>
+<td bgcolor="#C6C6FF">get day of the year</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;daysBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get days between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;format:string |fmt:string|</td>
+<td bgcolor="#C6C6FF">format date time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;hour:int ||</td>
+<td bgcolor="#C6C6FF">get hour</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;hoursBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get hours between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;incDay:time |days:int|</td>
+<td bgcolor="#C6C6FF">increase days</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;incMonth:time |months:int|</td>
+<td bgcolor="#C6C6FF">increase months</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;incYear:time |years:int|</td>
+<td bgcolor="#C6C6FF">increase years</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;millisecond:int ||</td>
+<td bgcolor="#C6C6FF">get millisecond</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;millisecondsBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get milliseconds between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;minute:int ||</td>
+<td bgcolor="#C6C6FF">get minute</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;minutesBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get minutes between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;month:int ||</td>
+<td bgcolor="#C6C6FF">get month</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;monthsBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get months between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;second:int ||</td>
+<td bgcolor="#C6C6FF">get second</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;secondsBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get seconds between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;week:int ||</td>
+<td bgcolor="#C6C6FF">get week</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;weekDay:int ||</td>
+<td bgcolor="#C6C6FF">get week day</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;weekOfMonth:int ||</td>
+<td bgcolor="#C6C6FF">get week of the month</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;weeksBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get weeks between two time</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;year:int ||</td>
+<td bgcolor="#C6C6FF">get year</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;yearsBetween:int |then:time|</td>
+<td bgcolor="#C6C6FF">get years between two time</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">type</td>
+<td bgcolor="#0000FF" class="white">type</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_addr:string ||</td>
+<td bgcolor="#C6C6FF">type address</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_builtin:bool ||</td>
+<td bgcolor="#C6C6FF">is builtin type?</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_description:string ||</td>
+<td bgcolor="#C6C6FF">type description</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_info:string ||</td>
+<td bgcolor="#C6C6FF">type information</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_isUDC:bool ||</td>
+<td bgcolor="#C6C6FF">is user defined class?</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_methods:varlist ||</td>
+<td bgcolor="#C6C6FF">get method list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_module:module ||</td>
+<td bgcolor="#C6C6FF">owner module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_name:string ||</td>
+<td bgcolor="#C6C6FF">type name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_simple:bool ||</td>
+<td bgcolor="#C6C6FF">is simple type?</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv:function |methodName:string|</td>
+<td bgcolor="#C6C6FF">get method function by name</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">vargen</td>
+<td bgcolor="#0000FF" class="white">variant generator</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>constructor</div></td>
+<td bgcolor="#97FFC0">&nbsp;&nbsp;vargen(any:variant)</td>
+<td bgcolor="#97FFC0">create variant generator</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;each:void |proc:function|</td>
+<td bgcolor="#C6C6FF">execute each: {|item,...| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:varlist |proc:function|</td>
+<td bgcolor="#C6C6FF">execute filter: {|item| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_eof:bool ||</td>
+<td bgcolor="#C6C6FF">test if finished</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;map:varlist |proc:function|</td>
+<td bgcolor="#C6C6FF">execute map: {|item,...| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;next ||</td>
+<td bgcolor="#C6C6FF">generate next value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reduce |initValue, proc:function|</td>
+<td bgcolor="#C6C6FF">execute reduce: {|initValue,item,...| ... }</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;rewind:bool ||</td>
+<td bgcolor="#C6C6FF">restart from first element</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;send:bool |varb:variable|</td>
+<td bgcolor="#C6C6FF">try sending value into a variable</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;vargen |any|</td>
+<td bgcolor="#C6C6FF">create variant generator</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">variable</td>
+<td bgcolor="#0000FF" class="white">variable</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_func:function ||</td>
+<td bgcolor="#C6C6FF">owner function</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_name:string ||</td>
+<td bgcolor="#C6C6FF">variable name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_type:type ||</td>
+<td bgcolor="#C6C6FF">variable type</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">varlist</td>
+<td bgcolor="#0000FF" class="white">variant list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>constructor</div></td>
+<td bgcolor="#97FFC0">&nbsp;&nbsp;varlist(count:int)</td>
+<td bgcolor="#97FFC0">create variant list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;add:int |value|</td>
+<td bgcolor="#C6C6FF">add variant</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;addFrom:int |variants:varlist|</td>
+<td bgcolor="#C6C6FF">add variants from</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;clear:void ||</td>
+<td bgcolor="#C6C6FF">clear variant list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;copy:varlist |index:int, count:int|</td>
+<td bgcolor="#C6C6FF">copy to another variant list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;delete:void |index:int|</td>
+<td bgcolor="#C6C6FF">delete variant by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;exchange:void |X1:int, X2:int|</td>
+<td bgcolor="#C6C6FF">exchange by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;fill:void |source:vargen, clearBeforeFill:bool|</td>
+<td bgcolor="#C6C6FF">fill generated value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;filter:varlist |filterFunc:function|</td>
+<td bgcolor="#C6C6FF">filter variant list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_first ||</td>
+<td bgcolor="#C6C6FF">get first variant item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_last ||</td>
+<td bgcolor="#C6C6FF">get last variant item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_length:int ||</td>
+<td bgcolor="#C6C6FF">get list size</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_max ||</td>
+<td bgcolor="#C6C6FF">get max variant item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_min ||</td>
+<td bgcolor="#C6C6FF">get min variant item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getiv |index:int|</td>
+<td bgcolor="#C6C6FF">get value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getName:string |index:int|</td>
+<td bgcolor="#C6C6FF">get name by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getpv |name:string|</td>
+<td bgcolor="#C6C6FF">get value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;insert:void |index:int, value|</td>
+<td bgcolor="#C6C6FF">insert variant at specified position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;isset:bool |name:string|</td>
+<td bgcolor="#C6C6FF">check if value exists</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;keys:strlist |sorted:bool|</td>
+<td bgcolor="#C6C6FF">get key name list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;left:varlist |count:int|</td>
+<td bgcolor="#C6C6FF">copy left</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;move:void |curIndex:int, newIndex:int|</td>
+<td bgcolor="#C6C6FF">move variant to new position</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;pop ||</td>
+<td bgcolor="#C6C6FF">get and delete last item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;read |name:string|</td>
+<td bgcolor="#C6C6FF">read value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;remove:bool |name:string|</td>
+<td bgcolor="#C6C6FF">remove value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;right:varlist |count:int|</td>
+<td bgcolor="#C6C6FF">copy right</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_length:void |count:int|</td>
+<td bgcolor="#C6C6FF">set list size</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setiv:void |index:int, value|</td>
+<td bgcolor="#C6C6FF">set value by index</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setpv:void |name:string, value|</td>
+<td bgcolor="#C6C6FF">set value by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;shift ||</td>
+<td bgcolor="#C6C6FF">get and delete first item</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;varlist |count:int|</td>
+<td bgcolor="#C6C6FF">create variant list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;write:void |name:string, value|</td>
+<td bgcolor="#C6C6FF">write value by name</td>
+</tr>
+<tr bgcolor="#FF0000" class="white">
+<td nowrap>module</td>
+<td>cgi</td>
+<td>builtin sys module</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;arrstr:string |str:string, count:int|</td>
+<td bgcolor="#FFC6C6">arrange string to required length</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;clearCookies:void ||</td>
+<td bgcolor="#FFC6C6">clear cookie list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;cookieExists:bool |name:string|</td>
+<td bgcolor="#FFC6C6">check if the named cookie exists</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;decode:string |request:string|</td>
+<td bgcolor="#FFC6C6">decode CGI request to original text</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;decodeHTML:string |HTML:string|</td>
+<td bgcolor="#FFC6C6">decode HTML to string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;deleteCookie:void |name:string|</td>
+<td bgcolor="#FFC6C6">remove cookie by name</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;encode:string |text:string, keepmbc:bool|</td>
+<td bgcolor="#FFC6C6">encode text to CGI request</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;encodeHTML:string |S:string|</td>
+<td bgcolor="#FFC6C6">encode string to HTML</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_contentLength:int ||</td>
+<td bgcolor="#FFC6C6">get response content Length</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_contentString:string ||</td>
+<td bgcolor="#FFC6C6">get response content</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_contentType:string ||</td>
+<td bgcolor="#FFC6C6">get response content type</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_headerString:string ||</td>
+<td bgcolor="#FFC6C6">get response header string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_statusCode:int ||</td>
+<td bgcolor="#FFC6C6">get response status code</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;get_statusReason:string ||</td>
+<td bgcolor="#FFC6C6">get response status reason phrase</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getCookie:string |name:string|</td>
+<td bgcolor="#FFC6C6">get cookie value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getCookieStr:string |name:string|</td>
+<td bgcolor="#FFC6C6">get cookie head value string</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;getHV:string |name:string|</td>
+<td bgcolor="#FFC6C6">get customed response header value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;mimeFile:string |fileName:string|</td>
+<td bgcolor="#FFC6C6">get MIME type of specified file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;mimeList:strlist</td>
+<td bgcolor="#FFC6C6">get MIME list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;noContent:void ||</td>
+<td bgcolor="#FFC6C6">set status code to 204: No Content</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;notags:string |HTML:string|</td>
+<td bgcolor="#FFC6C6">clear HTML tags</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;pack:void |immediately:bool|</td>
+<td bgcolor="#FFC6C6">pack HTML content</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;parse:strlist |queryString:string|</td>
+<td bgcolor="#FFC6C6">parse CGI request to string list</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;redirect:void |URI:string|</td>
+<td bgcolor="#FFC6C6">document moved and redirect</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;requestMode:string</td>
+<td bgcolor="#FFC6C6">request mode</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;reset:void ||</td>
+<td bgcolor="#FFC6C6">reset response</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;serveFile:string |fileName:string|</td>
+<td bgcolor="#FFC6C6">set reponse file</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_contentString:void |content:string|</td>
+<td bgcolor="#FFC6C6">set response content</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_contentType:void |contentType:string|</td>
+<td bgcolor="#FFC6C6">set response content type</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_satusCode:void |statusCode:int|</td>
+<td bgcolor="#FFC6C6">set response status code</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;set_statusReason:void |reason:string|</td>
+<td bgcolor="#FFC6C6">set response status reason phrase</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setCookie:void |name:string, value:string|</td>
+<td bgcolor="#FFC6C6">set cookie value</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setCookieDomain:void |name:string, domain:string|</td>
+<td bgcolor="#FFC6C6">set cookie domain</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setCookieExpires:void |name:string, expires:time|</td>
+<td bgcolor="#FFC6C6">set cookie expires</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setCookiePath:void |name:string, path:string|</td>
+<td bgcolor="#FFC6C6">set cookie path</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setCookieSecure:void |name:string, secure:time|</td>
+<td bgcolor="#FFC6C6">set cookie secure attribute</td>
+</tr>
+<tr class="black">
+<td align="center" bgcolor="#FFFFFF" nowrap>function</td>
+<td bgcolor="#FFC6C6">&nbsp;&nbsp;setHV:void |name:string, value:string|</td>
+<td bgcolor="#FFC6C6">set customed response header value</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>
+<td bgcolor="#0000FF" class="white">cgi</td>
+<td bgcolor="#0000FF" class="white">builtin sys module</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;arrstr:string |str:string, count:int|</td>
+<td bgcolor="#C6C6FF">arrange string to required length</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;clearCookies:void ||</td>
+<td bgcolor="#C6C6FF">clear cookie list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;cookieExists:bool |name:string|</td>
+<td bgcolor="#C6C6FF">check if the named cookie exists</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;decode:string |request:string|</td>
+<td bgcolor="#C6C6FF">decode CGI request to original text</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;decodeHTML:string |HTML:string|</td>
+<td bgcolor="#C6C6FF">decode HTML to string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;deleteCookie:void |name:string|</td>
+<td bgcolor="#C6C6FF">remove cookie by name</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;encode:string |text:string, keepmbc:bool|</td>
+<td bgcolor="#C6C6FF">encode text to CGI request</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;encodeHTML:string |S:string|</td>
+<td bgcolor="#C6C6FF">encode string to HTML</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_contentLength:int ||</td>
+<td bgcolor="#C6C6FF">get response content Length</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_contentString:string ||</td>
+<td bgcolor="#C6C6FF">get response content</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_contentType:string ||</td>
+<td bgcolor="#C6C6FF">get response content type</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_headerString:string ||</td>
+<td bgcolor="#C6C6FF">get response header string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_statusCode:int ||</td>
+<td bgcolor="#C6C6FF">get response status code</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;get_statusReason:string ||</td>
+<td bgcolor="#C6C6FF">get response status reason phrase</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getCookie:string |name:string|</td>
+<td bgcolor="#C6C6FF">get cookie value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getCookieStr:string |name:string|</td>
+<td bgcolor="#C6C6FF">get cookie head value string</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;getHV:string |name:string|</td>
+<td bgcolor="#C6C6FF">get customed response header value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;mimeFile:string |fileName:string|</td>
+<td bgcolor="#C6C6FF">get MIME type of specified file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;mimeList:strlist</td>
+<td bgcolor="#C6C6FF">get MIME list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;noContent:void ||</td>
+<td bgcolor="#C6C6FF">set status code to 204: No Content</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;notags:string |HTML:string|</td>
+<td bgcolor="#C6C6FF">clear HTML tags</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;pack:void |immediately:bool|</td>
+<td bgcolor="#C6C6FF">pack HTML content</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;parse:strlist |queryString:string|</td>
+<td bgcolor="#C6C6FF">parse CGI request to string list</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;redirect:void |URI:string|</td>
+<td bgcolor="#C6C6FF">document moved and redirect</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;requestMode:string</td>
+<td bgcolor="#C6C6FF">request mode</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;reset:void ||</td>
+<td bgcolor="#C6C6FF">reset response</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;serveFile:string |fileName:string|</td>
+<td bgcolor="#C6C6FF">set reponse file</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_contentString:void |content:string|</td>
+<td bgcolor="#C6C6FF">set response content</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_contentType:void |contentType:string|</td>
+<td bgcolor="#C6C6FF">set response content type</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_satusCode:void |statusCode:int|</td>
+<td bgcolor="#C6C6FF">set response status code</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;set_statusReason:void |reason:string|</td>
+<td bgcolor="#C6C6FF">set response status reason phrase</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setCookie:void |name:string, value:string|</td>
+<td bgcolor="#C6C6FF">set cookie value</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setCookieDomain:void |name:string, domain:string|</td>
+<td bgcolor="#C6C6FF">set cookie domain</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setCookieExpires:void |name:string, expires:time|</td>
+<td bgcolor="#C6C6FF">set cookie expires</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setCookiePath:void |name:string, path:string|</td>
+<td bgcolor="#C6C6FF">set cookie path</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setCookieSecure:void |name:string, secure:time|</td>
+<td bgcolor="#C6C6FF">set cookie secure attribute</td>
+</tr>
+<tr class="black">
+<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>
+<td bgcolor="#C6C6FF">&nbsp;&nbsp;setHV:void |name:string, value:string|</td>
+<td bgcolor="#C6C6FF">set customed response header value</td>
+</tr>
+<tr>
+<td colspan=3 bgcolor="#000000" class="white" align="right">
+TOTAL: 2 modules | 155 functions | 18 classes | 424 methods
+</td>
+</tr>
+<!--END API LIST-->
+</table>
+</body>
+</html>

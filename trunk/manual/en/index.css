@@ -1,0 +1,166 @@
+body, a, input, select, td, div, th, table { 
+	font-size:12px; 
+	font-family:"Courier New", Courier, mono;
+}
+body {
+	margin-bottom:0;
+	margin-top:0;
+	margin-left:0;
+	margin-right:0;
+	line-height: 23px;
+}
+a:link {
+	text-decoration: none;
+	color: #4055FF;
+	font-weight: normal;
+}
+a:hover {
+	text-decoration: underline;
+	font-weight: normal;
+	color: #FF0000;
+}
+a:visited {
+	text-decoration: none;
+	color: #4055FF;
+	font-weight: normal;
+}
+a:active {
+	font-weight: normal;
+	color: #FF0000;
+	text-decoration: underline;
+}
+.songti10 {
+	font-family: "ËÎÌו";
+	font-size: 10pt;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	text-decoration: none;
+}
+.courier10 {
+	font-family: "Courier New", Courier, mono;
+	font-size: 10pt;
+	text-decoration: none;
+}
+.menu10_white {
+	line-height: 20px;
+	padding: 2px;
+	border: 1px dashed #9F7B57;
+}
+.footer_line {
+	line-height: 20px;
+	padding: 2px;
+	border-top: 1px solid #9F7B57;
+	border-right: 1px none #9F7B57;
+	border-bottom: 1px none #9F7B57;
+	border-left: 1px none #9F7B57;
+}
+.gray {
+	font-size: 24pt;
+	color: #CCCCCC;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	text-decoration: none;
+}
+.title {
+	font-size: 30pt;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #FF0000;
+	font-family: Arial, Helvetica, sans-serif;
+	text-decoration: none;
+}
+.subject {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18pt;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #0066CC;
+	text-decoration: none;
+}
+.songsubject {
+	font-family: "ËÎÌו";
+	font-size: 20pt;
+	font-weight: bold;
+	color: #0066CC;
+	text-decoration: none;
+}
+.wform_item_single {
+	FONT-SIZE: small; MARGIN: auto
+}
+.wicon_panel {
+	
+}
+.wicon DD {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; TEXT-ALIGN: center
+}
+.wicon DT IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+DL.wicon {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FLOAT: left; PADDING-BOTTOM: 0px; MARGIN: 0.5em; WIDTH: 9em; PADDING-TOP: 0px; HEIGHT: 6em; TEXT-ALIGN: center
+}
+.curpos {
+	color: #FFFFFF;
+}
+.title2 {
+	font-size: 20px;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.silver {
+	color: #C0C0C0;
+}
+.green {
+	color: #A6A600;
+}
+.menu_active {
+	color: #FFFFFF;
+	background-color: #FF8040;
+	padding-right: 3px;
+	padding-left: 3px;
+	padding-top: 2px;
+}
+.lsp_code {
+	color: #FF0080;
+	font-weight: bold;
+}
+.dosprompt {
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+	line-height: 20px;
+	color: #FFFFFF;
+	background-color: #000000;
+	border-top-width: 1px;
+	border-top-style: none;
+	border-top-color: #FFF992;
+	border-right-color: #FFF992;
+	border-bottom-color: #FFF992;
+	border-left-color: #FFF992;
+	border-left-width: 1px;
+	border-left-style: dotted;
+}
+.bottom_line {
+	border-top: 1px none #9F7B57;
+	border-right: 1px none #9F7B57;
+	border-bottom: 1px solid #9F7B57;
+	border-left: 1px none #9F7B57;
+}
+.bottom_left_line {
+	border-top: 1px none #9F7B57;
+	border-right: 1px none #9F7B57;
+	border-bottom: 1px solid #9F7B57;
+	border-left: 1px dotted #CCCCCC;
+}
+.comment {
+	color: #ACAC59;
+}
+.console {
+	position: relative;
+	left: 64px;
+	top: 0px;
+	width: 600;
+}

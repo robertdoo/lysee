@@ -1,0 +1,341 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.1.简介</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>1.构成</strong><br> 
+      <br> 
+    正文将介绍 Lysee 的保留字、标识符以及数字、字符串等的表达方法。</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="symbols" id="symbols"></a><strong>2.1 有效字符</strong><br> 
+      <br> 
+      Lysee 程序代码由以下字符或字符对构成：<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">名称</th> 
+          <th class="bottom_line">范围</th> 
+          <th class="bottom_line">用途</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">letter</div></td> 
+          <td align="left" class="bottom_left_line">a..z A..Z _ </td> 
+          <td class="bottom_left_line">标识符、关键字</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">digit</div></td> 
+          <td align="left" class="bottom_left_line">0..9</td> 
+          <td class="bottom_left_line">数字、标识符</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">char</div></td> 
+          <td align="left" class="bottom_left_line">+ - * / \ = &lt; &gt; [ ] . , ( ) : ^ @ { } $ # ` </td> 
+          <td class="bottom_left_line">运算符、界符、注释等</td> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">char pair </td> 
+          <td align="left" class="bottom_left_line">// /* */ == != &gt;= &lt;= </td> 
+          <td class="bottom_left_line">运算符、注释等</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">space</td> 
+          <td align="left" class="bottom_left_line">空格、回车、换行、Tab、...</td> 
+          <td class="bottom_left_line">分隔符</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="comments" id="comments"></a><strong>2.2. 注释</strong><br> 
+      <br> 
+      Lysee 注释分行注释和块注释两种：<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">类型</th> 
+          <th class="bottom_line">开始标记</th> 
+          <th class="bottom_line">结束标记</th> 
+          <th class="bottom_line">示例</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">行注释</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">#</span></td> 
+          <td align="left" class="bottom_left_line">所在行末</td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">#</span> <span class="comment">This is a shell comment</span></td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">行注释</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">//</span></td> 
+          <td align="left" class="bottom_left_line">所在行末</td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">//</span> <span class="comment">This a normal line comment</span></td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">块注释</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">/*</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">*/</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">/*</span> <span class="comment">This is a block comment</span> <span class="lsp_code">*/</span></td> 
+        </tr> 
+      </table> 
+    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="ident" id="ident"></a><strong>2.3. 标识符</strong><br> 
+      <br> 
+      标识符用于表示 Lysee 程序中变量、常量、函数、类、模块等所有需要通过名称访问的对象。Lysee 标识符必须由英文字母、数字和下划线组成，且第一个字符必须是英文字母或下划线：<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">*</th> 
+          <th class="bottom_line">标识符</th> 
+          <th class="bottom_line">原因</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">正确</div></td> 
+          <td align="left" class="bottom_left_line">JAMES_is_007</td> 
+          <td align="left" class="bottom_left_line">&nbsp;</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">正确</div></td> 
+          <td align="left" class="bottom_left_line">_007</td> 
+          <td align="left" class="bottom_left_line">&nbsp;</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">错误</div></td> 
+          <td align="left" class="bottom_left_line">007_is_JAMES</td> 
+          <td align="left" class="bottom_left_line">第一个字符是数字<span class="lsp_code"></span></td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line">错误</td> 
+          <td align="left" class="bottom_left_line">JAMES is 007 </td> 
+          <td align="left" class="bottom_left_line">中间有空格</td> 
+        </tr> 
+      </table> 
+      <br> 
+      Lysee 标识符长度没有限制，建议尽可能简洁明了，不宜过长。<br> 
+      <br> 
+      Lysee 标识符区分大小写，abc、Abc、ABc 和 ABC 就是四个完全不同的标识符。</td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="reserved" id="reserved"></a><strong>2.4. 保留字</strong><br> 
+      <br> 
+      Lysee 保留字都是标准小写的标识符，在整个语言层面都是固定不变的，不允许被重复定义。<br> 
+      <br> 
+      <table cellpadding="0" cellspacing="0" class="console">
+        <tr>
+          <td class="dosprompt">&gt;&gt;&gt; = ${keywords};<br>
+      __clen__,and,as,bool,break,case,char,class,const,continue,def,do,else,elseif,end<br>
+        ,endinc,except,false,finally,float,for,if,import,in,include,int,is,like,main,nil<br>
+        ,not,object,or,recall,repeat,return,string,super,switch,sys,then,this,time,true,<br>
+        try,type,until,variant,void,while<br>
+        &gt;&gt;&gt;</td>
+        </tr>
+      </table>
+    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="number" id="number"></a><strong>2.5. 数字</strong><br> 
+      <br> 
+      数字分整数、浮点数、货币三种，默认为10进制数字，整数还可有16进制（<span class="lsp_code">0x</span>）、8进制（<span class="lsp_code">0o</span>）和2进制（<span class="lsp_code">0b</span>）三种不同的表达方法，浮点数可以使用科学计数法：<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">类型</th> 
+          <th class="bottom_line">10进制</th> 
+          <th class="bottom_line">16进制</th> 
+          <th class="bottom_line">8进制</th> 
+          <th class="bottom_line">2进制</th> 
+          <th class="bottom_line">科学计数法</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center"><strong>int</strong></div></td> 
+          <td align="center" class="bottom_left_line">2008</td> 
+          <td align="center" class="bottom_left_line"><span class="lsp_code">0x</span>07D8</td> 
+          <td align="center" class="bottom_left_line"><span class="lsp_code">0o</span>3730</td> 
+          <td align="center" class="bottom_left_line"><span class="lsp_code">0b</span>11111011000</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><strong>double</strong></td> 
+          <td align="center" class="bottom_left_line">2008.4</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">2.0084e3</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center"><strong>money</strong></div></td> 
+          <td align="center" class="bottom_left_line">100.0712</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+        </tr> 
+      </table> 
+      <br> 
+      布尔型（<strong>bool</strong>）属于特殊的整数类型，值只有真（1）、假（0）两个。</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="char" id="char"></a><strong>2.6. 字符和字符串</strong><br> 
+      <br> 
+      Lysee 字符为单字节的 ANSI 字符（0..255），在程序中必须包裹在配对的单引号中间，如‘a’和‘+’。<br> 
+      <br> 
+      一些无法通过键盘录入的字符可以按<span class="lsp_code">‘\xHH’</span>的格式转义表达，其中 <span class="lsp_code">HH</span> 代表字符的16进制值，比如‘4’转义后为\x34’，一些常用的字符还有其专用的转义写法：<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">字符</th> 
+          <th class="bottom_line">16进制转义</th> 
+          <th class="bottom_line">ASCII 值</th> 
+          <th class="bottom_line">说明</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">\0</div></td> 
+          <td align="center" class="bottom_left_line">\x00</td> 
+          <td align="center" class="bottom_left_line">0</td> 
+          <td align="center" class="bottom_left_line">字符串的结束标志</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\a</td> 
+          <td align="center" class="bottom_left_line">\x07</td> 
+          <td align="center" class="bottom_left_line">7</td> 
+          <td align="center" class="bottom_left_line">BELL</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\b</td> 
+          <td align="center" class="bottom_left_line">\x08</td> 
+          <td align="center" class="bottom_left_line">8</td> 
+          <td align="center" class="bottom_left_line">BACKSPACE</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\e</td> 
+          <td align="center" class="bottom_left_line">\x1B</td> 
+          <td align="center" class="bottom_left_line">27</td> 
+          <td align="center" class="bottom_left_line">ESCAPE</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\f</td> 
+          <td align="center" class="bottom_left_line">\x0C</td> 
+          <td align="center" class="bottom_left_line">12</td> 
+          <td align="center" class="bottom_left_line">FORMFEED</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\n</td> 
+          <td align="center" class="bottom_left_line">\x0A</td> 
+          <td align="center" class="bottom_left_line">10</td> 
+          <td align="center" class="bottom_left_line">NEWLINE</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\r</td> 
+          <td align="center" class="bottom_left_line">\x0D</td> 
+          <td align="center" class="bottom_left_line">13</td> 
+          <td align="center" class="bottom_left_line">CARRIGE RETURN</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\t</td> 
+          <td align="center" class="bottom_left_line">\x09</td> 
+          <td align="center" class="bottom_left_line">9</td> 
+          <td align="center" class="bottom_left_line">TAB</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\v</td> 
+          <td align="center" class="bottom_left_line">\x0B</td> 
+          <td align="center" class="bottom_left_line">11</td> 
+          <td align="center" class="bottom_left_line">VERTICAL TAB</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\\</td> 
+          <td align="center" class="bottom_left_line">\x5C</td> 
+          <td align="center" class="bottom_left_line">92</td> 
+          <td align="center" class="bottom_left_line">转义符</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\'</td> 
+          <td align="center" class="bottom_left_line">\x27</td> 
+          <td align="center" class="bottom_left_line">39</td> 
+          <td align="center" class="bottom_left_line">单引号</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\&quot;</td> 
+          <td align="center" class="bottom_left_line">\x22</td> 
+          <td align="center" class="bottom_left_line">34</td> 
+          <td align="center" class="bottom_left_line">双引号</td> 
+        </tr> 
+      </table> 
+      <br> 
+      字符串是以‘\0’结尾的字符序列，Lysee 字符串有三种表达形式且都允许跨行： <br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">形式</th> 
+          <th class="bottom_line">开始标记</th> 
+          <th class="bottom_line">结束标记</th> 
+          <th class="bottom_line">示例</th> 
+          <th class="bottom_line">转义符</th>
+          <th class="bottom_line">说明</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">1</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span>kite\'s mother is<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jessy<span class="lsp_code">&quot;</span> </td> 
+          <td class="bottom_left_line">有</td>
+          <td class="bottom_left_line">遇见字符 <span class="lsp_code">\</span> 时进行字符转义处理</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">2</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">R&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">R&quot;</span>kite's mother is <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jessy<span class="lsp_code">&quot;</span> </td> 
+          <td class="bottom_left_line">无</td>
+          <td class="bottom_left_line">字符 <span class="lsp_code">\</span> 不再是转义符</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">3</td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;&quot;</span><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;&quot;</span><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;&quot;&quot;</span>kite's mother is <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jessy<span class="lsp_code">&quot;&quot;&quot;</span></td> 
+          <td class="bottom_left_line">无</td>
+          <td class="bottom_left_line">开始和结束标记是连续的3个双引号<br> 
+            字符 <span class="lsp_code">\</span> 不再是转义符</td> 
+        </tr> 
+      </table> 
+      <br> 
+      第三种形式的字符串在找到配对的结束标记后将继续延伸截止到第一个不是双引号的字符：<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt"> &gt;&gt;&gt; = &quot;&quot;&quot;How many charactors in this string?&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;;<br> 
+            How many charactors in this string?&quot;&quot;&quot;&quot;&quot;<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table>      </td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/01</td> 
+  </tr> 
+</table> 
+</body>
+</html>

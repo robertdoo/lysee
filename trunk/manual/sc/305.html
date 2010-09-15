@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.5.函数</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>5.函数</strong><br>
+      <br>
+      Lysee 函数分常量函数（<a href="304.html#named">3.4.3节命名常量</a>）、普通函数、名称调用函数和匿名函数等多种。</td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><strong>5.1 普通函数</strong><br>
+    <br>
+    语法: <strong>def</strong> FuncName [:FuncType] <strong>|</strong>[Prm1 [:Prm1Type], ..., PrmN [:PrmNType]]<strong>|</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;Statements ] <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; def repeatStr |S, times|<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; for times do R:string += S end<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; return R;<br>
+&nbsp;&nbsp;&gt; end;<br>
+&gt;&gt;&gt; = repeatStr(&quot;Aa&quot;, 4);<br>
+  AaAaAaAa<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><strong>5.2 名称调用函数</strong><br>
+    <br>    
+    名称调用函数是无任何参数，名称后不加“( )”即可直接调用的函数，定义语法为：<br><br>
+    语法: <strong>def</strong> CallName [:FuncType]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;Statements ] <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; def BEGIN_TABLE = &quot;&lt;table&gt;&quot; end;<br>
+&gt;&gt;&gt; def END_TABLE  = &quot;&lt;/table&gt;&quot; end;<br>
+&gt;&gt;&gt; BEGIN_TABLE; END_TABLE;<br>
+&lt;table&gt;&lt;/table&gt;<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><strong>5.3 匿名函数</strong><br>
+    <br>
+    语法：<strong>|</strong>[Prm1 [:Prm1Type], ..., PrmN [:PrmNType]]<strong>|</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;Statements ] <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; = map(10, |X| return X * 2 end);<br>
+      [0,2,4,6,8,10,12,14,16,18]<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table><br><br>
+闭包是函数式编程的一种常见概念，它将一个函数的运行环境打包到另一个匿名函数中，Lysee 也支持这种概念，只是要借助 sys::curry 或 sys::curryOne 函数：
+<br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; a = 0;<br>
+      &gt;&gt;&gt; b = 1;<br>
+      &gt;&gt;&gt; f = curryOne(|E, V| E.a += V; E.b * = V end, this);<br>
+      &gt;&gt;&gt; f(10);<br>
+      &gt;&gt;&gt; =a, b;<br>
+      10 10<br>
+      &gt;&gt;&gt; f(10);<br>
+      &gt;&gt;&gt; =a, b;<br>
+      20 100<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table><br><br>
+Lysee 为此提供了一个经过简化的语法糖衣:
+<strong>|this</strong> [,Prms ...]<strong>|</strong> ... <strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; a = 0;<br>
+      &gt;&gt;&gt; b = 1;<br>
+      &gt;&gt;&gt; f = |this, V|<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; this.a += V;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; this.b *= V;<br>
+&nbsp;&nbsp;&gt; end;<br>
+&gt;&gt;&gt; f(10);<br>
+&gt;&gt;&gt; =a, b;<br>
+10 10<br>
+&gt;&gt;&gt; f(10);<br>
+&gt;&gt;&gt; =a, b;<br>
+20 100<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table><br></td>
+  </tr>
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/03</td> 
+  </tr> 
+</table> 
+</body>
+</html>

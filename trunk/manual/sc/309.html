@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.9.程序文件</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="3.html">3.语言参考</a> - <strong>10.程序文件</strong><br>
+      <br>
+      Lysee 程序由三种文件构成：<br>
+      <br>
+      <table  border="0" align="center" cellpadding="4" cellspacing="0">
+        <tr>
+          <th class="bottom_line">*</th>
+          <th class="bottom_line">说明</th>
+          <th class="bottom_line">后缀</th>
+          <th class="bottom_line">示例</th>
+        </tr>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">程序文件</td>
+          <td align="left" class="bottom_left_line">通过命令行指定执行的文件为程序文件</td>
+          <td align="left" class="bottom_left_line">.ls</td>
+          <td align="left" class="bottom_left_line">$ lysee <span class="lsp_code">backup.ls</span></td>
+        </tr>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">模块文件</td>
+          <td align="left" class="bottom_left_line">用<strong> import</strong> 装载的模块文件</td>
+          <td align="left" class="bottom_left_line">.ls,.dll,.so</td>
+          <td align="left" class="bottom_left_line">import <span class="lsp_code">curl</span>, <span class="lsp_code">mail</span>;</td>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">Inc 文件</td>
+          <td align="left" class="bottom_left_line">用<strong> include</strong> 包含的 Lysee 代码文件</td>
+          <td align="left" class="bottom_left_line">.inc 或其它 </td>
+          <td align="left" class="bottom_left_line">include &quot;<span class="lsp_code">${knpath}/cmnty/user.inc</span>&quot;;</td>
+      </table><br>
+      用 <strong>import</strong> 装载的模块文件必须存在于 ${search} 搜索路径中。<br><br>
+    用 <strong>include</strong> 包含的文件的路径名中可以使用 <span class="lsp_code">${...}</span> 标记的环境变量或配置，Lysee 会自动将其展开为对应的内容。</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="ls" id="ls"></a><strong>10.1 .ls 文件结构</strong><br> 
+      <br> 
+ .ls 文件是 Lysee 默认的程序文件和模块文件，以命名空间的形式组织 Lysee 的代码。<br>
+ <br>
+ .ls 文件按先后顺序和功能划分为3个部门：<br>
+ <br>
+ <table  border="0" align="center" cellpadding="4" cellspacing="0">
+   <tr>
+     <th class="bottom_line">*</th>
+     <th class="bottom_line">说明</th>
+     </tr>
+   <tr>
+     <td align="center" bgcolor="#FFDFFF" class="bottom_line">装载段</td>
+     <td align="left" class="bottom_left_line">用 <strong>import</strong> 装载其它模块文件</td>
+     </tr>
+   <tr>
+     <td align="center" bgcolor="#FFDFFF" class="bottom_line">代码段</td>
+     <td align="left" class="bottom_left_line">定义常量和函数</td>
+     </tr>
+   <tr>
+     <td align="center" bgcolor="#FFDFFF" class="bottom_line">启动段</td>
+     <td align="left" class="bottom_left_line">等同于 C 语言中 main 函数</td>
+     </table>
+ <br>
+    我们看一个提取新浪新闻的机器人（节略了一些内容）：<br>
+    <br>
+    <table  border="0" align="center" cellpadding="4" cellspacing="0">
+      <tr>
+        <th class="bottom_line">sina_news_robot.ls</th>
+      </tr>
+<tr>
+  <td align="left" class="bottom_left_line"><span class="comment">// 1. 转载段</span><br>
+          <strong>import</strong>&nbsp;net,&nbsp;cgi,&nbsp;config,&nbsp;spider,&nbsp;uppwr;<br>
+          <br>
+          <span class="comment">// 2. 代码段</span><br><br>
+          <strong>def</strong> get_sina_news |href|<br>
+&nbsp;&nbsp;ID&nbsp;=&nbsp;href.lower().md5sum();<br>
+&nbsp;&nbsp;<strong>return&nbsp;true if</strong>&nbsp;news_exists(ID);<br>
+
+&nbsp;&nbsp;add_news_log(ID, href);<br>
+
+&nbsp;&nbsp;text:strbuf&nbsp;=&nbsp;wgets(href);<br>
+&nbsp;&nbsp;begx&nbsp;=&nbsp;......;<br>
+
+&nbsp;&nbsp;endx&nbsp;=&nbsp;......;<br>
+&nbsp;&nbsp;title&nbsp;=&nbsp;fetch_title(text.copy(begx,&nbsp;endx&nbsp;-&nbsp;begx).trim());<br>
+&nbsp;&nbsp;<strong>return&nbsp;true if&nbsp;not</strong>&nbsp;title;<br>
+&nbsp;&nbsp;<strong>return</strong>&nbsp;news_save(title,&nbsp;href,&nbsp;text.copy(begx,&nbsp;endx&nbsp;-&nbsp;begx),&nbsp;ID);<br>
+<strong>end</strong><br>
+<br><span class="comment">// 3. 启动段</span><br>
+
+initRobot(&quot;sina.news.robot&quot;, now());<br>
+<strong>try</strong><br>
+&nbsp;&nbsp;add_log(&quot;FETCH NEWS: &quot;&nbsp;+&nbsp;&quot;http://www.sina.com.cn&quot;);<br>
+&nbsp;&nbsp;text&nbsp;=&nbsp;net::wgets(&quot;http://www.sina.com.cn&quot;);<br>
+&nbsp;&nbsp;begx&nbsp;=&nbsp;......;<br>
+&nbsp;&nbsp;endx&nbsp;=&nbsp;......;<br>
+&nbsp;&nbsp;text.delete(endx,&nbsp;length(text));<br>
+&nbsp;&nbsp;text.delete(0,&nbsp;begx);<br>
+&nbsp;&nbsp;begx&nbsp;=&nbsp;text.pos(&quot;&lt;li&gt;&quot;,&nbsp;true,&nbsp;0);<br>
+&nbsp;&nbsp;<strong>while</strong>&nbsp;begx&nbsp;&gt;=&nbsp;0 <strong>do</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;begx&nbsp;=&nbsp;text.pos(&quot;href=&#92;&quot;&quot;,&nbsp;true,&nbsp;begx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>return if</strong>&nbsp;begx&nbsp;&lt;&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;begx&nbsp;=&nbsp;begx&nbsp;+&nbsp;length(&quot;href=&#92;&quot;&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endx&nbsp;=&nbsp;text.pos(&quot;&#92;&quot;&quot;,&nbsp;true,&nbsp;begx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>return if</strong>&nbsp;endx&nbsp;&lt;&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;href&nbsp;=&nbsp;text.copy(begx,&nbsp;endx&nbsp;-&nbsp;begx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong>&nbsp;href&nbsp;and&nbsp;href.pos(&quot;/index.&quot;,&nbsp;true)&nbsp;&lt;&nbsp;0 <strong>then</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get_sina_news(href);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;begx&nbsp;=&nbsp;text.pos(&quot;&lt;li&gt;&quot;,&nbsp;true,&nbsp;endx);<br>
+&nbsp;&nbsp;<strong>end</strong><br>
+<strong>except</strong><br>
+&nbsp;&nbsp;add_err_log();<br> 
+<strong>end</strong></td>
+    </table>    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="program" id="program"></a><strong>10.2. 程序文件</strong><br>
+      <br>
+Lysee 程序文件是指通过命令行指定执行的 .ls 文件，解释器在装载程序文件后跳转到启动代码开始执行。<br>
+
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;lysee sina_news_robot.ls;<br>
+
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="module" id="module"></a><strong>10.3. 模块文件</strong><br>
+      <br>
+     模块文件简单说就是通过 <strong>import</strong> 关键字加载，为程序或其它模块提供可调用 API 的文件。Lysee 中的模块被自动装载为命名空间，装载模块的文件可以通过命名空间（模块文件名）直接访问模块中的常量、类型和函数。<br>
+<br>
+
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;import&nbsp;net;<br>
+
+&gt;&gt;&gt;&nbsp;wgetf(&quot;http://www.lysee.net&quot;,&nbsp;R&quot;c:&#92;lysee&#92;temp&#92;lysee.html&quot;);<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+<br>
+为避免不同模块间相同名称对象的冲突，可以在对象名称前加上模块名称和“::”进行直接限定：<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;import&nbsp;net, www;<br>
+&gt;&gt;&gt;&nbsp;www::wgetf(&quot;http://www.lysee.net&quot;,&nbsp;R&quot;c:&#92;lysee&#92;temp&#92;lysee.html&quot;);<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+    </td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="search" id="search"></a><strong>10.4.搜索路径</strong><br>
+      <br>
+    装载模块时 Lysee 按照搜索路径 ${search} 指定的文件夹列表顺序查找对应的模块文件。搜索路径由一系列使用分号分隔的文件夹组成，比如“${knpath}modules;d:\robot\moduels;${HOME}\moduels”，可以通过 Lysee 配置文件修改搜索路径的设置。</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="include" id="include"></a><strong>10.5. 包含文件</strong><br>
+      <br>
+      包含文件的语法格式为: <strong>include</strong>(FileName);，其中的 FileName 可以是绝对路径名也可以是相对路径名。遇到 <strong>include</strong> 指令时 Lysee 解释程序将文件内容展开后替换 <strong>include</strong> 语句并从展开部分继续编译运行。<br>
+      <br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">www.lysee.net&gt;echo&nbsp;=&quot;HELLO&nbsp;FROM&nbsp;INCLUDE&quot;&nbsp;&gt;&nbsp;hello.inc<br>
+<br> 
+www.lysee.net
+&gt;lysee<br>
+Lysee&nbsp;0.1.6.387&nbsp;-&nbsp;Copyright&nbsp;(C)&nbsp;2003-2010&nbsp;LiBUDI&nbsp;-&nbsp;www.lysee.net<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;/C=CANCEL&nbsp;/F=FILE&nbsp;/Q=QUIT&nbsp;/R=RESTART&nbsp;::<br>
+<br>
+&gt;&gt;&gt;&nbsp;include(hello.inc);<br>
+HELLO&nbsp;FROM&nbsp;INCLUDE<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table></td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/01</td> 
+  </tr> 
+</table> 
+</body>
+</html>
