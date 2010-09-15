@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.6.类</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>6.类</strong><br> 
+      <br> 
+      关键字 <strong>class</strong> 用于定义用户类型。此外，编程中会频繁用到在内核和模块中定义的类。 </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="define" id="define"></a><strong>6.1 什么是类</strong><br> 
+      <br> 
+      类是函数的集合，Lysee 类具有以下特点：<br> 
+      <ul> 
+        <li>不支持继承。</li> 
+        <li>访问对象只能通过函数调用。</li> 
+        <li>无析构函数。</li> 
+      </ul></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>6.2 定义新类</strong><br> 
+      <br> 
+      语法：<strong>class</strong> ClassName |Constructing Arguments| <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Constructing Statements] <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>def</strong> Method1 |Arguments| <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>def</strong> MethodN |Arguments| <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
+      <br> 
+      请看下面这个例子。<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" align="left" valign="top" nowrap class="dosprompt">&gt;&gt;&gt; class Person |name, job|<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;my.name = name;<br> 
+&nbsp;&nbsp;&gt;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;def showName ||<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= &quot;My name is&quot;, my.name, eol;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;end<br> 
+&nbsp;&nbsp;&gt;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;my.job = job;<br> 
+&nbsp;&nbsp;&gt;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;def showJob ||<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= &quot;My job is&quot;, my.job, eol;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;end<br> 
+&nbsp;&nbsp;&gt;&nbsp;end<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table> 
+      <br>      <br> 
+      my 是类函数（包括构造函数）的第一个参数，代表类对象本身，是 <strong>this</strong> （函数运行时环境）的子集。 </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="method" id="method"></a><strong>6.3. 创建对象</strong><br> 
+      <br> 
+      调用类即可创建对象，Lysee 解释器将查找并调用类的构造函数，如类无构造函数则返回一个空对象（缺省值）。<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; p.showName();<br>
+My name is Mike<br>
+&gt;&gt;&gt; p.showJob();<br>
+My job is Engineer<br>
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="method" id="method"></a><strong>6.4. 方法</strong><br> 
+      <br> 
+      方法是指在类中定义的函数，用类创建对象后，读取或修改对象的状态只能通过方法。<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; a = [1, 2, 3];<br> 
+&gt;&gt;&gt; a.add(&quot;hello world&quot;);<br> 
+&gt;&gt;&gt; = a;<br> 
+&gt;&gt;&gt; [1,2,3,hello world]<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="property" id="property"></a><strong>6.5. 属性</strong><br> 
+      <br> 
+      属性用于表达对象的运行时状态，在 Lysee 中属性被归结为简单的类成员函数调用，分以下两种：<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">属性类型</th> 
+          <th class="bottom_line">说明</th> 
+          <th class="bottom_line">类成员函数格式</th> 
+        </tr> 
+        <tr> 
+          <td align="left" class="bottom_left_line">只读属性</td> 
+          <td align="left" class="bottom_left_line">只能读取对象的状态</td> 
+          <td align="left" class="bottom_left_line">def get_<span class="lsp_code">PROPERTYNAME</span> || </td> 
+        </tr> 
+        <tr> 
+          <td align="left" class="bottom_left_line">只写属性</td> 
+          <td align="left" class="bottom_left_line">只能修改对象的状态</td> 
+          <td align="left" class="bottom_left_line">def set_<span class="lsp_code">PROPERTYNAME</span> |value|</td> 
+        </tr> 
+      </table> 
+      <br> 
+      属性具有以下特点和要求：<br> 
+      <ul> 
+        <li>只读属性的函数前缀为“get_”且只能有 <strong>this</strong> 一个参数；</li> 
+        <li>只写属性的函数前缀为“set_”且必须有两个参数，第一个参数为 <strong>this</strong>，第二个参数为新的属性值；。</li> 
+        <li>只读属性可以参加表达式运算。</li> 
+        <li>只写属性只能出现在等号“=”的左边被赋值。</li> 
+        <li>只读属性可以与只写属性同名。</li> 
+        <li>同名的只读属性和只写属性要保持相同的类型。</li> 
+        <li>属性只是一种简化类成员函数调用，减少代码书写量的语法糖衣。</li> 
+        <li>属性比普通的函数调用更贴近人的思维习惯和表达习惯，用好属性能够加强代码的可读性。</li> 
+      </ul> 
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0"> 
+        <tr> 
+          <td nowrap class="dosprompt">&gt;&gt;&gt; = varlist.get_length;<br> 
+            def sys::varlist.get_length:int ||<br> 
+&gt;&gt;&gt; = varlist.set_length;<br> 
+            def sys::varlist.set_length:void |count:int|<br> 
+&gt;&gt;&gt; a = [];<br> 
+&gt;&gt;&gt; a.length = 10;<br> 
+&gt;&gt;&gt; =a.length;<br> 
+            10<br> 
+&gt;&gt;&gt; =a;<br> 
+            [,,,,,,,,,]<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"> <a name="noname" id="noname"></a><strong>6.6. 匿名属性</strong><br> 
+      <br> 
+      匿名属性是指无法预先定义，只能用 getpv 方法读取、用 setpv 方法修改的属性。<br> 
+      <ul> 
+        <li>读属性时，Lysee 首先查找并调用与属性名匹配的 get 方法，如未找到则查找并将属性名作为参数调用 getpv 方法。</li> 
+        <li>写属性时，Lysee 首先查找并调用与属性名匹配的 set 方法，如未找到则查找并将属性名作为参数调用 setpv 方法。</li> 
+      </ul> 
+      <br> 
+      下面是两段完全等价的读写哈希值代码，请仔细阅读并体会匿名属性的含义和读写模式。<br> 
+      <br> 
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0"> 
+        <tr valign="top"> 
+          <td width="50%" nowrap class="dosprompt">&gt;&gt;&gt; h = {};<br> 
+&gt;&gt;&gt; h.setpv(&quot;today&quot;, now());<br> 
+&gt;&gt;&gt; = h.getpv(&quot;today&quot;);<br> 
+            Tue, 03 Aug 2010 22:46:59 GMT<br> 
+&gt;&gt;&gt;<br></td> 
+          <td nowrap class="dosprompt">&gt;&gt;&gt; h = {};<br> 
+&gt;&gt;&gt; h.today = now();<br> 
+&gt;&gt;&gt; = h.today;<br> 
+            Tue, 03 Aug 2010 22:47:25 GMT<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table></td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="hash" id="hash"></a><strong>6.7. HASH存储</strong><br>
+      <br>
+用户自定义类来自于 hashed 类，因此可以隐含转化为 hashed 类型，但将 hashed 类型转化为用户自定义类将会失败。<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="50%" nowrap class="dosprompt">&gt;&gt;&gt; p:Person = Person(&quot;Mike&quot;, &quot;Engineer&quot;);<br>
+      &gt;&gt;&gt; h:hashed = p;<br>
+      &gt;&gt;&gt; for key in h.keys do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = key, &quot;=&quot;, h.read(key), eol;<br>
+&nbsp;&nbsp;&gt; end;<br>
+00E51B00_job = Engineer<br>
+00E51B00_name = Mike<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; p.showName();<br>
+My name is Mike<br>
+&gt;&gt;&gt; p = h;<br>
+&gt;&gt;&gt; p.showName();<br>
+[PersonError]: (module=main row=3 col=38 errno=1250) getpv() - this is nil<br>
+&gt;&gt;&gt;</td>
+    </tr>
+</table></td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/11</td> 
+  </tr> 
+</table> 
+</body>
+</html>

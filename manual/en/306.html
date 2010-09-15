@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Classes</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="305.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="307.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line">3.6 <a href="index.html">Lysee Manual</a> - <a href="300.html">Language Reference</a> - <strong>Classes</strong><br> 
+      <br> 
+    Define user class use <strong>class</strong> keyword.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="define" id="define"></a><strong><strong>3.</strong>6.1 What is class?</strong><br> 
+      <br> 
+      Class is collection of method, Lysee class features:<br> 
+      <ul> 
+        <li>Can not inherite class.</li> 
+        <li>Class has only methods.</li> 
+        <li>Class has no destructor method.</li> 
+    </ul></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong><strong>3.</strong>6.2 Define New Class</strong><br> 
+      <br> 
+      Syntax: <strong>class</strong> ClassName |Constructing Arguments| <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Constructing Statements] <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>def</strong> Method1 |Arguments| <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>def</strong> MethodN |Arguments| <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
+      <br> 
+      Here is a example:<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" align="left" valign="top" nowrap class="dosprompt">&gt;&gt;&gt; class Person |name, job|<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;my.name = name;<br> 
+&nbsp;&nbsp;&gt;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;def showName ||<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= &quot;My name is&quot;, my.name, eol;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;end<br> 
+&nbsp;&nbsp;&gt;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;my.job = job;<br> 
+&nbsp;&nbsp;&gt;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;def showJob ||<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= &quot;My job is&quot;, my.job, eol;<br> 
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;end<br> 
+&nbsp;&nbsp;&gt;&nbsp;end<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table> 
+      <br>      <br> 
+    <strong>my</strong> stands for  the object of the class, just like <strong>self</strong> to PASCAL and <strong>this</strong> to C++.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="method" id="method"></a><strong><strong>3.</strong>6.3 Create Object</strong><br> 
+      <br> 
+      Create object by call the class, Lysee interpreter will find and run the class's constructor. <strong>nil</strong> will be  returned if constructor of the class not exists:<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; p.showName();<br>
+My name is Mike<br>
+&gt;&gt;&gt; p.showJob();<br>
+My job is Engineer<br>
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="method" id="method"></a><strong><strong>3.</strong>6.4 Method </strong><br> 
+      <br> 
+      It is the function defined in class, and it is the only way to access object.<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; a = [1, 2, 3];<br> 
+&gt;&gt;&gt; a.add(&quot;hello world&quot;);<br> 
+&gt;&gt;&gt; = a;<br> 
+&gt;&gt;&gt; [1,2,3,hello world]<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="property" id="property"></a><strong><strong>3.</strong>6.5 Property </strong><br> 
+      <br> 
+      Property is the runtime status of the object. It is method calling in Lysee:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Property Type </th> 
+          <th class="bottom_line">Description</th> 
+          <th class="bottom_line">Method Syntax </th> 
+        </tr> 
+        <tr> 
+          <td align="left" class="bottom_left_line">Readonly Property </td> 
+          <td align="left" class="bottom_left_line">Get object status </td> 
+          <td align="left" class="bottom_left_line">def get_<span class="lsp_code">PROPERTYNAME</span> || </td> 
+        </tr> 
+        <tr> 
+          <td align="left" class="bottom_left_line">Writeonly Property</td> 
+          <td align="left" class="bottom_left_line">Set object status</td> 
+          <td align="left" class="bottom_left_line">def set_<span class="lsp_code">PROPERTYNAME</span> |value|</td> 
+        </tr> 
+      </table> 
+      <br> 
+      Property functions mets:<br> 
+      <ul> 
+        <li>Prefix or readonly property method is &quot;get_&quot; and has only 1 parameter.</li> 
+        <li>Prefix or writeonly property method is &quot;set_&quot; and has two parameters.</li> 
+        <li>Readonly can take part in expression.</li> 
+        <li>Writeonly property must be left side of &quot;=&quot;.</li> 
+        <li></li> 
+      </ul> 
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0"> 
+        <tr> 
+          <td nowrap class="dosprompt">&gt;&gt;&gt; = varlist.get_length;<br> 
+            def sys::varlist.get_length:int ||<br> 
+&gt;&gt;&gt; = varlist.set_length;<br> 
+            def sys::varlist.set_length:void |count:int|<br> 
+&gt;&gt;&gt; a = [];<br> 
+&gt;&gt;&gt; a.length = 10;<br> 
+&gt;&gt;&gt; =a.length;<br> 
+            10<br> 
+&gt;&gt;&gt; =a;<br> 
+            [,,,,,,,,,]<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"> <a name="noname" id="noname"></a><strong><strong>3.</strong>6.6 
+
+
+ Anonymous
+
+ Property</strong><br> 
+      <br> 
+      Anonymous
+
+property is dynamicly defined, and can be accessed by method getpv and setpv:<br> 
+      <ul> 
+        <li>get_XXX is prior than getpv</li> 
+        <li>set_XXX is prior than setpv</li> 
+      </ul> 
+      <br> 
+      Compare the following two scripts, they are actually same:<br> 
+      <br> 
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0"> 
+        <tr valign="top"> 
+          <td width="50%" nowrap class="dosprompt">&gt;&gt;&gt; h = {};<br> 
+&gt;&gt;&gt; h.setpv(&quot;today&quot;, now());<br> 
+&gt;&gt;&gt; = h.getpv(&quot;today&quot;);<br> 
+            Tue, 03 Aug 2010 22:46:59 GMT<br> 
+&gt;&gt;&gt;<br></td> 
+          <td nowrap class="dosprompt">&gt;&gt;&gt; h = {};<br> 
+&gt;&gt;&gt; h.today = now();<br> 
+&gt;&gt;&gt; = h.today;<br> 
+            Tue, 03 Aug 2010 22:47:25 GMT<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table></td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="hash" id="hash"></a><strong><strong>3.</strong>6.7 HASH Storage</strong><br>
+      <br>
+User defined class is from hashed class and can be converted to  hashed freely:<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="50%" nowrap class="dosprompt">&gt;&gt;&gt; p:Person = Person(&quot;Mike&quot;, &quot;Engineer&quot;);<br>
+      &gt;&gt;&gt; h:hashed = p;<br>
+      &gt;&gt;&gt; for key in h.keys do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = key, &quot;=&quot;, h.read(key), eol;<br>
+&nbsp;&nbsp;&gt; end;<br>
+00E51B00_job = Engineer<br>
+00E51B00_name = Mike<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; p.showName();<br>
+My name is Mike<br>
+&gt;&gt;&gt; p = h;<br>
+&gt;&gt;&gt; p.showName();<br>
+[PersonError]: (module=main row=3 col=38 errno=1250) getpv() - this is nil<br>
+&gt;&gt;&gt;</td>
+    </tr>
+</table></td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/29</td> 
+  </tr> 
+</table> 
+</body>
+</html>

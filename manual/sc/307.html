@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.7.表达式</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>7.表达式</strong><br>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="definition" id="definition"></a><strong>7.1 什么是表达式</strong><br> 
+      <br> 
+表达式是一段连续的、用于求值的代码序列，通常用于赋值操作和条件判断。下面这些红色的代码就是表达式：<br>
+<br>
+<table  border="0" align="center" cellpadding="4" cellspacing="0">
+  <tr>
+    <th class="bottom_line">类型</th>
+    <th class="bottom_line">示例</th>
+    </tr>
+  <tr>
+    <td align="center" bgcolor="#FFDFFF" class="bottom_line">赋值</td>
+    <td align="left" class="bottom_left_line"> magic = <span class="lsp_code">sys::random() % 100</span>;</td>
+    </tr>
+  <tr>
+    <td align="center" bgcolor="#FFDFFF" class="bottom_line">判断</td>
+    <td align="left" class="bottom_left_line"><strong>if</strong> <span class="lsp_code">handle != 0</span> <strong>then</strong> throw(&quot;Failed open file&quot;)<strong> end</strong> </td>
+    <tr>
+    <td align="center" bgcolor="#FFDFFF" class="bottom_line">常量</td>
+    <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;OK&quot;</span>;</td>
+    <tr>
+    <td align="center" bgcolor="#FFDFFF" class="bottom_line">调用</td>
+    <td align="left" class="bottom_left_line"><span class="lsp_code">sys::genid()</span>;</td>
+    </table></td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="operator" id="operator"></a><strong>7.2. 运算符</strong><br> 
+      <br> 
+      运算符按优先级排列分为以下几种: <br> 
+<br>
+      <table  border="0" align="center" cellpadding="4" cellspacing="0">
+        <tr>
+          <th class="bottom_line">Lysee 运算符</th>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">NEG&nbsp;&nbsp;:&nbsp;-&nbsp;&nbsp;&nbsp;|&nbsp;NOT&nbsp;:&nbsp;not&nbsp;|&nbsp;BNOT:&nbsp;~&nbsp;|&nbsp;FMT&nbsp;:&nbsp;@&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 单目&nbsp;&nbsp;: 高</td>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">MUL&nbsp;&nbsp;:&nbsp;*&nbsp;&nbsp;&nbsp;| DIV&nbsp;:&nbsp;/&nbsp;&nbsp;&nbsp;|&nbsp;MOD&nbsp;:&nbsp;%&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 乘除模:&nbsp;&nbsp;1</td>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">ADD&nbsp;&nbsp;:&nbsp;+&nbsp;&nbsp;&nbsp;|&nbsp;DEC&nbsp;:&nbsp;-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 加减&nbsp;&nbsp;:&nbsp;&nbsp;2</td>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">BXOR :&nbsp;^&nbsp;&nbsp;&nbsp;|&nbsp;BAND:&nbsp;&amp;&nbsp;&nbsp;&nbsp;|&nbsp;BOR&nbsp;:&nbsp;|&nbsp;|&nbsp;BSHL:&nbsp;&lt;&lt;&nbsp;|&nbsp;BSHR:&nbsp;&gt;&gt;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 位运算:&nbsp;&nbsp;3</td>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">IS&nbsp;&nbsp;&nbsp;:&nbsp;is&nbsp;&nbsp;|&nbsp;AS&nbsp;&nbsp;:&nbsp;as&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|  测试&nbsp;&nbsp;:&nbsp;&nbsp;4</td>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">EQ&nbsp;&nbsp;&nbsp;:&nbsp;==&nbsp;&nbsp;|&nbsp;NE&nbsp;&nbsp;:&nbsp;!=&nbsp;&nbsp;|&nbsp;LT&nbsp;&nbsp;:&nbsp;&lt;&nbsp;|&nbsp;LE&nbsp;&nbsp;:&nbsp;&lt;=&nbsp;|&nbsp;GT&nbsp;&nbsp;:&nbsp;&gt;&nbsp;&nbsp;|&nbsp;GE:&nbsp;&gt;=&nbsp;|&nbsp;IN: in | AE: === | MP: like | 比较&nbsp;&nbsp;:&nbsp;&nbsp;5</td>
+        </tr>
+        <tr>
+          <td align="left" class="bottom_left_line">AND&nbsp;&nbsp;:&nbsp;and&nbsp;|&nbsp;OR&nbsp;&nbsp;:&nbsp;or&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 关系&nbsp;&nbsp;: 低</td>
+        </tr>
+      </table>
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"><tr></table>      
+      表达式的求值顺序是从左向右，运算符从高到低的方向进行，过于复杂的表达式建议用括号来明确计算顺序。</td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="concate" id="concate"></a><strong>7.3. 字符串连接</strong><br>
+      <br>
+Lysee 使用加号“+”进行字符串连接。当加号的操作数中有一个是字符串时另一个操作数自动转换为字符串并完成连接。<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;=&nbsp;&quot;hello&quot;&nbsp;+&nbsp;&quot;world&quot;;<br>
+helloworld<br>
+&gt;&gt;&gt;&nbsp;=&nbsp;&quot;TIME:&nbsp;&quot;&nbsp;+&nbsp;now();<br>
+TIME:&nbsp;Fri,&nbsp;18&nbsp;Apr&nbsp;2008&nbsp;18:57:52&nbsp;GMT<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="repeats" id="repeats"></a><strong>7.4. 加倍连接</strong><br>
+      <br>
+Lysee 使用乘号“*”进行字符串加倍连接。当乘号左侧是字符串，右侧是整数时，运算结果是加倍连接后的新串，否则结果是 <strong>nil</strong>。<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; = &quot;Aa&quot; * 4;<br>
+      AaAaAaAa<br>
+      &gt;&gt;&gt; = &quot;Cc&quot; * 1.42;
+      <p>&gt;&gt;&gt;</p>      </td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="redirect" id="redirect"></a><strong>7.5. 左移插值</strong><br>
+      <br>
+当左移运算符“&lt;&lt;”左侧是对象类型时，运算结果是对象自身，左移运算符尝试将右侧的值增加到左侧的对象中。<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; cout &lt;&lt; &quot;I love &quot; &lt;&lt; &quot;coding&quot; &lt;&lt; &quot;!&quot;;<br>
+      I love coding!<br>
+    &gt;&gt;&gt; = varlist() &lt;&lt; 1 &lt;&lt; 2 &lt;&lt; &quot;hello&quot; &lt;&lt; 4;<br>
+      [1,2,hello,4]<br>
+    &gt;&gt;&gt; = strlist() &lt;&lt; &quot;hello&quot; &lt;&lt; &quot;world&quot;;<br>
+      hello<br>
+      world<br>
+    &gt;&gt;&gt;
+</td>
+  </tr>
+</table>
+
+<br>
+说明：支持左移运算符插值的对象类型包括 stream、strlist 和 varlist。</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="varlist" id="varlist"></a><strong>7.6. 列表<strong>定义</strong></strong><br>
+      <br>
+符号“[”和“]”用于定义列表常量，“[]”等同于 varlist()。下面是等价的两段代码：<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="50%" nowrap class="dosprompt">&gt;&gt;&gt; a = [1, 2, 3];<br>      &gt;&gt;&gt; = a;<br>
+      [1,2,3]<br>
+      &gt;&gt;&gt;
+      <p>&nbsp;</p></td>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; a = varlist();<br> 
+      &gt;&gt;&gt; a.add(1);<br>
+&gt;&gt;&gt; a.add(2);<br>
+&gt;&gt;&gt; a.add(3);<br>
+&gt;&gt;&gt; = a;<br>
+[1,2,3]<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="hashed" id="hashed"></a><strong>7.6. 哈希表<strong>定义</strong></strong><br>
+      <br>
+符号“{”和“}”用于定义哈希表常量，“{}”等同于 hashed()。下面是等价的两段代码：<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="50%" nowrap class="dosprompt">&gt;&gt;&gt; a = {&quot;name&quot;: &quot;libudi&quot;,<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;sex&quot; : &quot;male&quot;,<br>
+&nbsp;&nbsp;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;age&quot; : 40};<br>
+&gt;&gt;&gt; for s in a.keys do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = s, a.read(s), eol;<br>
+&nbsp;&nbsp;&gt; end;<br>
+  age 40<br>
+  sex male<br>
+  name libudi<br>
+&gt;&gt;&gt;</td>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; a = hashed();<br>
+      &gt;&gt;&gt; a.name = &quot;libudi&quot;;<br>
+      &gt;&gt;&gt; a.sex = &quot;male&quot;;<br>
+      &gt;&gt;&gt; a.age = 40;<br>
+      &gt;&gt;&gt; for s in a.keys do<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; = s, a.read(s), eol;<br>
+&nbsp;&nbsp;&gt; end;<br>
+age 40<br>
+sex male<br>
+name libudi<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/02</td> 
+  </tr> 
+</table> 
+</body>
+</html>

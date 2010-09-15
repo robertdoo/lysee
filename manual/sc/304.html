@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.4.常量</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>4.常量</strong><br>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="definition" id="definition"></a><strong>4.1 什么是常量</strong><br> 
+      <br> 
+    常量是指在程序代码中直接输入的数字、字符、字符串等具体的值，关键字 <strong>const</strong> 用于定义有名称的常量。</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="direct" id="direct"></a><strong>4.2. 数值常量</strong><br> 
+      <br> 
+      数值常量是在代码中直接输入的数字、字符、字符串等具体的值，对应着 Lysee 的<a href="302.html#basis">简单数据类型</a>：<br>
+      <br>
+      <table  border="0" align="center" cellpadding="4" cellspacing="0">
+        <tr>
+          <th colspan="2" class="bottom_line">类型</th>
+          <th class="bottom_line">示例</th>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">bool</strong></td>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line">布尔值</td>
+          <td align="left" class="bottom_left_line"><strong>true</strong>,<strong> false </strong></td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">char</strong></td>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line">字符</td>
+          <td align="left" class="bottom_left_line"> 'A', '\0', '\x34'</td>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">float</strong></td>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line">浮点型</td>
+          <td align="left" class="bottom_left_line">3.1415926, 0.618 （黄金分割） </td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">int</strong></td>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line">整型</td>
+          <td align="left" class="bottom_left_line">-843, 0, 1, 2008</td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">string</strong></td>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line">字符串</td>
+          <td align="left" class="bottom_left_line">&quot;I like coding&quot;</td>
+        </tr>
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="named" id="named"></a><strong>4.3. 命名常量</strong><br> 
+      <br> 
+      Lysee 中的命名常量是特殊的按名称调用函数，但求值表达式或语句仅执行一次。<br>
+      <br>
+      定义命名常量的语法有以下两种:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;1. <strong>const</strong> ConstantName [:DateType] = Expression ; <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;2. <strong>const</strong> ConstantName [:DateType] = <strong>do</strong> Statements <strong>end</strong><br>
+<br>
+第一种语法是第二种语法的简化形式，等同于：<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>const</strong> ConstantName [:DateType] = <strong>do return </strong> Expression <strong>end</strong><br>
+<br>
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+        <tr>
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; const MAGIC:int = 3 * random(10);<br>
+            &gt;&gt;&gt; = dumpc(which(&quot;MAGIC&quot;));<br>
+            const MAGIC:int = do <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;PUSH 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PUSH FUNC: sys::random<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PUSH 10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CASK [2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CALC *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;RETURN LAST<br> 
+end<br>
+&gt;&gt;&gt; = MAGIC, MAGIC;<br>
+ 6 6<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>      </td>
+  </tr>
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/07/27</td> 
+  </tr> 
+</table> 
+</body>
+</html>

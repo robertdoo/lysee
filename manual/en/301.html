@@ -1,0 +1,332 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Tokens</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="300.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="302.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line">3.1 <a href="index.html">Lysee Manual</a> - <a href="300.html">Language Reference</a> - <strong>Tokens</strong><br> 
+      <br> 
+    There are lysee keywords, identities, numbers and strings here.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="symbols" id="symbols"></a><strong><strong>3.</strong>1.1 Charactors</strong><br> 
+      <br> 
+      Lysee script is is made of these charactors:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Type</th> 
+          <th class="bottom_line">Range</th> 
+          <th class="bottom_line">Usage</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">letter</div></td> 
+          <td align="left" class="bottom_left_line">a..z A..Z _ </td> 
+          <td class="bottom_left_line">identities, keywords</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">digit</div></td> 
+          <td align="left" class="bottom_left_line">0..9</td> 
+          <td class="bottom_left_line">numbers, identities</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">char</div></td> 
+          <td align="left" class="bottom_left_line">+ - * / \ = &lt; &gt; [ ] . , ( ) : ^ @ { } $ # ` </td> 
+          <td class="bottom_left_line">operators, delimiters, comments</td> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">char pair </td> 
+          <td align="left" class="bottom_left_line">// /* */ == != &gt;= &lt;= </td> 
+          <td class="bottom_left_line">comments, operators</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">space</td> 
+          <td align="left" class="bottom_left_line">SPACE, TAB, \n, \r, ... </td> 
+          <td class="bottom_left_line">delimiters</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="comments" id="comments"></a><strong><strong>3.</strong>1.2 Comments</strong><br> 
+      <br> 
+      Line comments and block comments:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Type</th> 
+          <th class="bottom_line">Begin Tag</th> 
+          <th class="bottom_line">End Tag</th> 
+          <th class="bottom_line">Samples</th> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><div align="center">Line Comment 1 </div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">#</span></td> 
+          <td align="left" class="bottom_left_line">#13, #10, EOF</td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">#</span> <span class="comment">This is a shell comment</span></td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><div align="center">Line Comment 2 </div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">//</span></td> 
+          <td align="left" class="bottom_left_line">#13, #10, EOF</td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">//</span> <span class="comment">This a normal line comment</span></td> 
+        </tr> 
+        <tr> 
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><div align="center">Block Comment</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">/*</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">*/</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">/*</span> <span class="comment">This is a block comment</span> <span class="lsp_code">*/</span></td> 
+        </tr> 
+      </table>    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="ident" id="ident"></a><strong><strong>3.</strong>1.3 Identity</strong><br> 
+      <br> 
+      Identity consists of alpha, '_' and digit charactors, and the first charactor must not be digit.:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">*</th> 
+          <th class="bottom_line">Identity</th> 
+          <th class="bottom_line">Reason</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">Yes</div></td> 
+          <td align="left" class="bottom_left_line">JAMES_is_007</td> 
+          <td align="left" class="bottom_left_line">&nbsp;</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">Yes</div></td> 
+          <td align="left" class="bottom_left_line">_007</td> 
+          <td align="left" class="bottom_left_line">&nbsp;</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">No</div></td> 
+          <td align="left" class="bottom_left_line">007_is_JAMES</td> 
+          <td align="left" class="bottom_left_line">Fist is digit<span class="lsp_code"></span></td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line">No</td> 
+          <td align="left" class="bottom_left_line">JAMES is 007 </td> 
+          <td align="left" class="bottom_left_line">Has space char</td> 
+        </tr> 
+      </table> 
+      <br>       
+    Identity is case sensitive, abc、Abc、ABc and ABC are different.</td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="reserved" id="reserved"></a><strong><strong>3.</strong>1.4 Keywords</strong><br> 
+      <br> 
+      <table cellpadding="0" cellspacing="0" class="console">
+        <tr>
+          <td class="dosprompt">&gt;&gt;&gt; = ${keywords};<br>
+      __clen__,and,as,bool,break,case,char,class,const,continue,def,do,else,elseif,end<br>
+        ,endinc,except,false,finally,float,for,if,import,in,include,int,is,like,main,nil<br>
+        ,not,object,or,recall,repeat,return,string,super,switch,sys,then,this,time,true,<br>
+        try,type,until,variant,void,while<br>
+        &gt;&gt;&gt;</td>
+        </tr>
+      </table>    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="number" id="number"></a><strong><strong>3.</strong>1.5 Number</strong><br> 
+      <br> 
+      Number has 3 types, integer, float and  money:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Type</th> 
+          <th class="bottom_line">Base 10</th> 
+          <th class="bottom_line">Base 16</th> 
+          <th class="bottom_line">Base 8</th> 
+          <th class="bottom_line">Base 2</th> 
+          <th class="bottom_line">Science</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center"><strong>int</strong></div></td> 
+          <td align="center" class="bottom_left_line">2008</td> 
+          <td align="center" class="bottom_left_line"><span class="lsp_code">0x</span>07D8</td> 
+          <td align="center" class="bottom_left_line"><span class="lsp_code">0o</span>3730</td> 
+          <td align="center" class="bottom_left_line"><span class="lsp_code">0b</span>11111011000</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><strong>double</strong></td> 
+          <td align="center" class="bottom_left_line">2008.4</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">2.0084e3</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center"><strong>money</strong></div></td> 
+          <td align="center" class="bottom_left_line">100.0712</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+          <td align="center" class="bottom_left_line">-</td> 
+        </tr> 
+      </table> 
+      <br>      
+    <strong>bool</strong> is special integer type, it has only two values: true(1), false(0).</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="char" id="char"></a><strong><strong><strong>3.</strong>1.</strong>6 Char and string</strong><br> 
+      <br> 
+      Lysee char is single byte ANSI char(0..255): 'a'..'z', '0'..'9', ...<br> 
+      <br> 
+      Escaped charactors are listed below:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Char</th> 
+          <th class="bottom_line">Base 16 Escape</th> 
+          <th class="bottom_line">ASCII</th> 
+          <th class="bottom_line">Description</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">\0</div></td> 
+          <td align="center" class="bottom_left_line">\x00</td> 
+          <td align="center" class="bottom_left_line">0</td> 
+          <td align="center" class="bottom_left_line">end of string </td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\a</td> 
+          <td align="center" class="bottom_left_line">\x07</td> 
+          <td align="center" class="bottom_left_line">7</td> 
+          <td align="center" class="bottom_left_line">BELL</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\b</td> 
+          <td align="center" class="bottom_left_line">\x08</td> 
+          <td align="center" class="bottom_left_line">8</td> 
+          <td align="center" class="bottom_left_line">BACKSPACE</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\e</td> 
+          <td align="center" class="bottom_left_line">\x1B</td> 
+          <td align="center" class="bottom_left_line">27</td> 
+          <td align="center" class="bottom_left_line">ESCAPE</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\f</td> 
+          <td align="center" class="bottom_left_line">\x0C</td> 
+          <td align="center" class="bottom_left_line">12</td> 
+          <td align="center" class="bottom_left_line">FORMFEED</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\n</td> 
+          <td align="center" class="bottom_left_line">\x0A</td> 
+          <td align="center" class="bottom_left_line">10</td> 
+          <td align="center" class="bottom_left_line">NEWLINE</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\r</td> 
+          <td align="center" class="bottom_left_line">\x0D</td> 
+          <td align="center" class="bottom_left_line">13</td> 
+          <td align="center" class="bottom_left_line">CARRIGE RETURN</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\t</td> 
+          <td align="center" class="bottom_left_line">\x09</td> 
+          <td align="center" class="bottom_left_line">9</td> 
+          <td align="center" class="bottom_left_line">TAB</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\v</td> 
+          <td align="center" class="bottom_left_line">\x0B</td> 
+          <td align="center" class="bottom_left_line">11</td> 
+          <td align="center" class="bottom_left_line">VERTICAL TAB</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\\</td> 
+          <td align="center" class="bottom_left_line">\x5C</td> 
+          <td align="center" class="bottom_left_line">92</td> 
+          <td align="center" class="bottom_left_line">转义符</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\'</td> 
+          <td align="center" class="bottom_left_line">\x27</td> 
+          <td align="center" class="bottom_left_line">39</td> 
+          <td align="center" class="bottom_left_line">单引号</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">\&quot;</td> 
+          <td align="center" class="bottom_left_line">\x22</td> 
+          <td align="center" class="bottom_left_line">34</td> 
+          <td align="center" class="bottom_left_line">双引号</td> 
+        </tr> 
+      </table> 
+      <br> 
+      string is sequence of char, ended with '\0'. string has 3 formats:<br> 
+      <br> 
+      <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
+        <tr> 
+          <th class="bottom_line">Format</th> 
+          <th class="bottom_line">Begin Tag </th> 
+          <th class="bottom_line">End Tag </th> 
+          <th class="bottom_line">Example</th> 
+          <th class="bottom_line">Escape</th>
+          <th class="bottom_line">Description</th> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">1</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span>kite\'s mother is<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jessy<span class="lsp_code">&quot;</span> </td> 
+          <td class="bottom_left_line">Yes</td>
+          <td class="bottom_left_line">Escape when encounter '\'</td> 
+        </tr> 
+        <tr> 
+          <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">2</div></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">R&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">R&quot;</span>kite's mother is <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jessy<span class="lsp_code">&quot;</span> </td> 
+          <td class="bottom_left_line">No</td>
+          <td class="bottom_left_line">Has no escape char</td> 
+        </tr> 
+        <tr> 
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">3</td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;&quot;</span><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;&quot;</span><span class="lsp_code">&quot;</span></td> 
+          <td align="left" class="bottom_left_line"><span class="lsp_code">&quot;&quot;&quot;</span>kite's mother is <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jessy<span class="lsp_code">&quot;&quot;&quot;</span></td> 
+          <td class="bottom_left_line">No</td>
+          <td class="bottom_left_line">Has no escape char </td> 
+        </tr> 
+      </table> 
+      <br> 
+      Lysee string can span over two or more lines.<br> 
+      <br> 
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt"> &gt;&gt;&gt; = &quot;&quot;&quot;How many charactors in this string?&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;;<br> 
+            How many charactors in this string?&quot;&quot;&quot;&quot;&quot;<br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+    </table>      </td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/29</td> 
+  </tr> 
+</table> 
+</body>
+</html>

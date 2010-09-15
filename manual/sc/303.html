@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 3.3.变量</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+<style type="text/css">
+<!--
+.style1 {
+	color: #FF00FF;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>3.变量</strong><br>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="definition" id="definition"></a><strong>3.1 什么是变量</strong><br> 
+      <br> 
+    变量是指具有一定类型并经过命名的内存地址，Lysee 程序中只允许在函数内部定义临时的局部变量。</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="local" id="local"></a><strong>3.2. 局部变量</strong><br> 
+      <br> 
+      Lysee 通过赋值语句定义局部变量，可以为变量明确指定各种类型，缺省为 variant 类型：<br>
+      <br>
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+        <tr>
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;def  get_min_value |v1, v2|<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;if v1 &gt; v2 then<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temp = v1; <span class="comment"># define  temp, type variant </span><br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v1 = v2;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v2 = temp;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;end<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;return v1;<br>
+&nbsp;&nbsp;&gt;&nbsp;end;<br>
+&gt;&gt;&gt; = get_min_value(10, 4);<br>4<br>
+&gt;&gt;&gt;</td>
+        </tr>
+      </table>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="param" id="param"></a><strong>3.3. 形参变量</strong><br> 
+      <br> 
+      形参变量指的是函数的参数（形参）。</td>
+  </tr>
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/08/03</td> 
+  </tr> 
+</table> 
+</body>
+</html>

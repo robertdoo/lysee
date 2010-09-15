@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Script the host program</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="402.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="404.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong><strong>4.3 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html"></a></strong><a href="400.html">Developments</a> - Script the host program<br>
+      <br>
+This page explains how to register host program as a lysee module.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>4.3.1 Embed Lysee</strong><br> 
+      <br> 
+    See chapter 4.2: <a href="402.html"> Embed Lysee</a>.</td> 
+  </tr> 
+  <tr>
+    <td class="footer_line"><strong>4.3.2 Prepare functions</strong><br>
+      <br>
+Exports 2 script functions:<br>
+<blockquote>
+  <table  border="0" cellpadding="4" cellspacing="0">
+    <tr>
+      <th class="bottom_line">Name</th>
+      <th class="bottom_line">Description</th>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#FFDFFF" class="bottom_line">showMsg</td>
+      <td align="left" class="bottom_left_line"> Display a message box</td>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#FFDFFF" class="bottom_line">quit</td>
+      <td align="left" class="bottom_left_line">Terminate host program</td>
+    </table>
+</blockquote>
+How to realize and register these functions, see chapter 4.1: <a href="401.html#prepare">Create module/Prepare functions</a>.</td>
+  </tr>
+  <tr> 
+    <td class="footer_line"><strong>4.3.3 Register  as module</strong><br> 
+      <br> 
+      (1) Declare a RLseModule constant: <br> 
+      <blockquote>
+    <strong>const</strong> <span class="lsp_code">HostModule</span>: RLseModuleRec = (<br>
+    &nbsp;&nbsp;iw_production: PROGRAM_DESCRIPTION;<br>
+    &nbsp;&nbsp;iw_version&nbsp;&nbsp;&nbsp;: PROGRAM_VERSION;<br>
+    &nbsp;&nbsp;iw_copyright : PROGRAM_COPYRIGHT;<br>
+    &nbsp;&nbsp;iw_desc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: PROGRAM_DESCRIPTION;<br>
+    &nbsp;&nbsp;iw_homepage&nbsp;&nbsp;: PROGRAM_HOMEPAGE;<br>
+    &nbsp;&nbsp;iw_email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: PROGRAM_OWNER_EMAIL;<br>
+    &nbsp;&nbsp;iw_classes&nbsp;&nbsp; : (count: CLASS_COUNT; entry:@CLASS_LIST);<br>
+    &nbsp;&nbsp;iw_libfuncs&nbsp; : (count: FUNC_COUNT; entry:@FUNC_LIST);<br>
+    &nbsp;&nbsp;iw_import&nbsp;&nbsp;&nbsp; : <strong>nil</strong>;<br>
+    &nbsp;&nbsp;iw_invoke&nbsp;&nbsp;&nbsp; :@lse_call_gate<br>
+    )      </blockquote>
+      (2) register with lse_setup_module function:<br>
+      <blockquote><strong>procedure</strong> TMainForm.FormCreate(Sender: TObject);<br>
+          <strong>begin</strong><br>
+&nbsp;&nbsp;...<br>
+  <strong></strong>&nbsp;&nbsp;lse_load_kernel('c:\lysee\' + LSE_KERNEL);<br>
+&nbsp;&nbsp;lse_set_program_file(Application.ExeName);<br>
+&nbsp;&nbsp;FEngine := TLseEngine.Create(<strong>nil</strong>);<br>
+&nbsp;&nbsp;...<br>
+<strong></strong>&nbsp;&nbsp;lse_setup_module('host', Application.ExeName, @<span class="lsp_code">HostModule</span>);<br>
+&nbsp;&nbsp;ExecScript('import host;');<br>
+<strong></strong>&nbsp;&nbsp;...<br>
+  <strong>end</strong></blockquote></td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>4.3.4 Test</strong><br>      <blockquote><strong>procedure</strong> TMainForm.btnTestClick(Sender: TObject);<br>
+          <strong>var</strong><br>
+          &nbsp;&nbsp;script<strong>: string;</strong><br>
+          <strong>begin</strong><br>
+&nbsp;&nbsp;script := Format('showMsg(&quot;%s&quot;);', [edtMsg.Text]);<br>
+<strong></strong>&nbsp;&nbsp;<strong>if</strong> chkQuit.Checked <strong>then</strong><br>
+<strong></strong>&nbsp;&nbsp;&nbsp;&nbsp;script := script + 'quit();';<br>
+<strong></strong>&nbsp;&nbsp;ExecScript(script);<br>
+  <strong>end</strong></blockquote>      </td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified: 2010/08/30</td> 
+  </tr> 
+</table> 
+</body>
+</html>

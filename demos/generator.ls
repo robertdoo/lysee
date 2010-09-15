@@ -1,7 +1,7 @@
 def generator_func |seed:int|  
-  return |this|
-    ++ this.seed; 
-    return this.seed; 
+  return |?|
+    ++ my.seed;
+    return my.seed;
   end; 
 end
   

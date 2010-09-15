@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Directives</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="309.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="400.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>3.10 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html">Language Reference</a> - <strong>Directives</strong><br><br>
+    Includes {$SET}, {$SET::FILE}, {$SET::PATH} and {$INCLUDE}, directives are not casesensitive.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>3.10.1 {$SET NAME_PATH VALUE}</strong><br> 
+      <br> 
+ Assign expanded VALUE to global NAME_PATH, likes: ${NAME_PATH} = @VALUE.<br>
+    <br>
+    <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td nowrap class="dosprompt">&gt;&gt;&gt; {$SET SITE.TITLE Lysee Programming Language};<br>
+          &gt;&gt;&gt; = ${SITE.TITLE};<br>
+          Lysee Programming Language<br>
+          &gt;&gt;&gt;</td>
+      </tr>
+    </table>    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong><strong>3.</strong>10.2 <strong>{$SET::FILE NAME_PATH FILE_NAME}</strong></strong><br>
+      <br>
+Expand FILE_NAME and assign to global NAME_PATH, likes: ${NAME_PATH} = FILE_NAME.fullFileName().excPD().<br>
+
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; {$SET::FILE FILE.WINI ${WINDIR}/win.ini};<br>
+      &gt;&gt;&gt; = ${FILE.WINI};<br>
+      C:\WINDOWS\win.ini<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table></td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><strong><strong>3.</strong>10.3<strong>{$SET::PATH NAME_PATH PATH_NAME}</strong></strong><br>
+      <br>
+Expand PATH_NAME and assign to global NAME_PATH, likes: ${NAME_PATH} = PATHE_NAME.fullFileName().incPD().<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt; {$SET::PATH demo_path ${kndir}/demos};<br>
+      &gt;&gt;&gt; = ${demo_path};<br>
+      C:\lysee\demos\<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><strong><strong>3.</strong>10.4 {$INCLUDE FILE_NAME}</strong><br>
+      <br>
+      Include file to current script, same as statement: <strong>incldue</strong> FILE_NAME;<br>
+      <br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">&gt;&gt;&gt; {$INCLUDE ${demo_path}eval.ls};<br>
+            Input expression to evaluate or &quot;quit&quot; to leave!<br><br>
+            lysee&gt; 78 * 34<br>
+            78 * 34 ==&gt; 2652<br>
+            lysee&gt; quit<br>
+            quit ==&gt; bye-bye!<br>
+          &gt;&gt;&gt;</td>
+        </tr>
+    </table></td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/30</td> 
+  </tr> 
+</table> 
+</body>
+</html>

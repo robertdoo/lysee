@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Constants</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr>
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="303.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="305.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line">3.4 <a href="index.html">Lysee Manual</a> - <a href="300.html">Language Reference</a> - <strong>Constants</strong><br>      </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="definition" id="definition"></a><strong><strong>3.</strong>4.1 What is constant value?</strong><br> 
+      <br> 
+    Contant is the readonly value.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="direct" id="direct"></a><strong><strong>3.</strong>4.2 Simple Constants </strong><br> 
+      <br> 
+      Contant values of builtin simple types:<br>
+      <br>
+      <table  border="0" align="center" cellpadding="4" cellspacing="0">
+        <tr>
+          <th class="bottom_line">Type</th>
+          <th class="bottom_line">Example Constant Values </th>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">bool</strong></td>
+          <td align="left" class="bottom_left_line"><strong>true</strong>,<strong> false </strong></td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">char</strong></td>
+          <td align="left" class="bottom_left_line"> 'A', '\0', '\x34'</td>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">float</strong></td>
+          <td align="left" class="bottom_left_line">3.1415926, 0.618</td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">int</strong></td>
+          <td align="left" class="bottom_left_line">-843, 0, 1, 2008</td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#FFDFFF" class="bottom_line"><strong class="lsp_code">string</strong></td>
+          <td align="left" class="bottom_left_line">&quot;I like coding&quot;</td>
+        </tr>
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="named" id="named"></a><strong><strong>3.</strong>4.3 Named Constants</strong><br> 
+      <br> 
+      Named constants are functions that can be run only once.<br>
+      <br>
+      Named constants has 2 formats:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;1. <strong>const</strong> ConstantName [:DateType] = Expression ; <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;2. <strong>const</strong> ConstantName [:DateType] = <strong>do</strong> Statements <strong>end</strong><br>
+<br>
+The first format is sugar for the second format:<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>const</strong> ConstantName [:DateType] = <strong>do return </strong> Expression <strong>end</strong><br>
+<br>
+      <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+        <tr>
+          <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; const MAGIC:int = 3 * random(10);<br>
+            &gt;&gt;&gt; = dumpc(which(&quot;MAGIC&quot;));<br>
+            const MAGIC:int = do <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;PUSH 3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PUSH FUNC: sys::random<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PUSH 10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CASK [2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CALC *<br>
+&nbsp;&nbsp;&nbsp;&nbsp;RETURN LAST<br> 
+end<br>
+&gt;&gt;&gt; = MAGIC, MAGIC;<br>
+ 6 6<br>
+&gt;&gt;&gt;</td>
+        </tr>
+    </table>      </td>
+  </tr>
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/29</td> 
+  </tr> 
+</table> 
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee 参考手册 - 4.2.脚本化</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
+        </tr> 
+        <tr> 
+          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
+            Lysee 脚本引擎</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a href="400.html">4.嵌入式开发</a> - <strong>2.脚本化</strong><br> 
+      <br> 
+    脚本化就是将程序功能和逻辑分解为函数调用后注册到 Lysee 内核中，通过脚本加以调用。<br>
+<br>
+脚本化与 COM 中的 Automation 概念类似，都是将程序的功能对外公布，不同的是 Automation 是将程序的功能通过 COM 接口公布出来供其它进程调用，为其它进程提供服务，而 Lysee 脚本化后的程序则是通过脚本对自身进行管理。<br><br>
+脚本化必须将程序功能分解为函数后以模块的形式统一注册到 Lysee 内核中，本文将对<a href="401.html">上一节</a>创建的程序进行扩展，通过向 Lysee 内核注册 me 模块为其输出以下几个函数：<br>
+<br>
+<table  border="0" align="center" cellpadding="4" cellspacing="0">
+  <tr>
+    <th class="bottom_line">函数名称</th>
+    <th class="bottom_line">函数原型</th>
+    <th class="bottom_line">函数说明</th>
+  </tr>
+  <tr>
+    <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">appname</div></td>
+    <td align="left" class="bottom_left_line">def appname:string ||</td>
+    <td class="bottom_left_line">返回程序文件名</td>
+  </tr>
+  <tr>
+    <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">halt</div></td>
+    <td align="left" class="bottom_left_line">def halt ||</td>
+    <td class="bottom_left_line">中断执行立即退出</td>
+  </tr>
+  <tr>
+    <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">print</div></td>
+    <td align="left" class="bottom_left_line">def print |S:string|</td>
+    <td class="bottom_left_line">打印字符串</td>
+  </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>2.1 创建模块单元</strong><br> 
+      <br> 
+      通常将一个模块的内容封装到一个单独的文件中，按菜单“File/New Unit” 的顺序创建一个单元文件并保存为 me.pas，在 interface 区间的 uses 列表中加入 lseu 单元，我们将在此文件填写 me 模块的注册信息。<br>
+      <br>      <center><img src="images/402/01.png" width="568" height="470">
+</center></td> 
+  </tr> 
+  <tr>
+    <td class="footer_line"><strong>2.2. 定义脚本化函数</strong><br>
+      <br>
+Lysee 的脚本化函数无论是在内核定义还是在用户模块中定义都遵循统一的原型定义：<br>
+<br>
+<center>
+  <table width="400"  border="0" align="center" cellpadding="4" cellspacing="0">
+    <tr>
+      <th class="bottom_line">脚本化函数原型定义</th>
+    </tr>
+    <tr>
+      <td align="left" nowrap class="bottom_left_line">TLseFuncCall = <strong>procedure</strong>(Param: pointer);<strong>cdecl</strong>;</td>
+    </tr>
+  </table>
+</center><br>
+用户程序必须通过 Param 参数获取函数的调用参数并设置返回值。<br><br>
+为简化模块开发的难度， Lysee 接口文件提供了将 Param 包装为 TLseInvoke 对象的机制，我们可以按以下格式定义我们的函数：<br>
+<br>
+<center>
+  <table width="400"  border="0" align="center" cellpadding="4" cellspacing="0">
+    <tr>
+      <th class="bottom_line">包装后的脚本化函数原型定义</th>
+    </tr>
+    <tr>
+      <td align="left" nowrap class="bottom_left_line">TLseFuncCall = <strong>procedure</strong>(invoker: TLseInvoke);<strong>cdecl</strong>;</td>
+    </tr>
+  </table>
+</center><br>
+我们用这种包装过后的函数原型定义 me 模块需要脚本化的三个函数：<br><br>
+<center><img src="images/402/03.png" width="573" height="445">
+</center><br>
+然后将函数登记到 Lysee 内核可以识别的函数列表中以备注册使用：<br>
+<br>
+<center>
+  <img src="images/402/04.png" width="573" height="445">
+</center><br>
+RLseFuncRec 用于登记脚本化函数的信息，结构体的定义为：<br>
+<br>
+<center>
+  <table  border="0" align="center" cellpadding="4" cellspacing="0">
+    <tr>
+      <th class="bottom_line">RLseFuncRec 结构定义</th>
+    </tr>
+    <tr>
+      <td width="400" align="left" class="bottom_left_line"> 
+000001:&nbsp;&nbsp;&nbsp;&nbsp;<strong>type</strong><br>
+000002:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RLseFuncRec&nbsp;=&nbsp;<strong>packed&nbsp;record</strong><br>
+000003:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_prot:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--function&nbsp;prototype}</span><br>
+000004:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_addr:&nbsp;pointer;&nbsp;&nbsp;<span class="comment">{&lt;--function&nbsp;address}</span><br>
+000005:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_desc:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--function&nbsp;description}</span><br>
+000006:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold">end</span>;<br>
+000007:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLseFuncRec&nbsp;=&nbsp;^RLseFuncRec;</td>
+    </tr>
+  </table>
+</center><br>
+三个成员变量的用途为：<br>
+<br>
+<table width="400"  border="0" align="center" cellpadding="4" cellspacing="0">
+  <tr>
+    <th class="bottom_line">名称</th>
+    <th class="bottom_line">类型</th>
+    <th class="bottom_line">说明</th>
+    </tr>
+  <tr>
+    <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">fr_prot</div></td>
+    <td align="left" class="bottom_left_line">pchar</td>
+    <td class="bottom_left_line">声明脚本化函数在 Lysee 脚本中的函数原型</td>
+    </tr>
+  <tr>
+    <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">fr_addr</div></td>
+    <td align="left" class="bottom_left_line">pointer</td>
+    <td class="bottom_left_line">函数的实际地址</td>
+    </tr>
+  <tr>
+    <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">fr_desc</div></td>
+    <td align="left" class="bottom_left_line">pchar</td>
+    <td class="bottom_left_line">函数功能的说明</td>
+    </table></td>
+  </tr>
+  <tr> 
+    <td class="footer_line"><strong>2.3. 声明模块注册函数</strong><br> 
+      <br> 
+      建立用于注册 me 模块的 setup_me_module 函数：<br> 
+      <br> 
+      <center><img src="images/402/02.png" width="573" height="445">
+      </center><br> 
+      将 iw_invoke 设置为 lse_call_gate 函数将激活前面提到的将 Param 转化为 TLseInvoke 对象的机制。<br><br>
+      lse_setup_module 函数用于向 Lysee 内核注册用户自定义模块。<br>
+      <br>
+RLseInitRec 用于填写用户自定义模块的信息，结构体定义为：<br> 
+      <br> 
+      <center>
+        <table  border="0" align="center" cellpadding="4" cellspacing="0">
+          <tr>
+            <th class="bottom_line">RLseInitRec 结构定义</th>
+          </tr>
+          <tr>
+            <td align="left" class="bottom_left_line">
+000001:&nbsp;&nbsp;&nbsp;&nbsp;<strong>type</strong><br>
+000002:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RLseInitRec&nbsp;=&nbsp;<strong>packed&nbsp;record</strong><br>
+000003:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ir_size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;integer;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--record&nbsp;size}</span><br>
+000004:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ir_cik_proc&nbsp;&nbsp;&nbsp;:&nbsp;TLseCikFunc;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--address&nbsp;of&nbsp;CallInKernel}</span><br>
+000005:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ir_handle&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;cardinal;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--handle&nbsp;of&nbsp;<span style="">main</span>&nbsp;window}</span><br>
+000006:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_production&nbsp;:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--production&nbsp;name}</span><br>
+000007:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_version&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--production&nbsp;version}</span><br>
+000008:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_copyright&nbsp;&nbsp;:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--copyright}</span><br>
+000009:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_desc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--description}</span><br>
+000010:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_homepage&nbsp;&nbsp;&nbsp;:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--homepage}</span><br>
+000011:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;pchar;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--email&nbsp;address}</span><br>
+000012:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_classes&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;RLseClassListRec;&nbsp;<span class="comment">{&lt;--<span style="">class</span>&nbsp;list}</span><br>
+000013:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_libfuncs&nbsp;&nbsp;&nbsp;:&nbsp;RLseFuncListRec;&nbsp;&nbsp;<span class="comment">{&lt;--module&nbsp;function&nbsp;list}</span><br>
+000014:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_import&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;TLseFuncCall;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--<span style="">import</span>&nbsp;notify}</span><br>
+000015:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iw_invoke&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;TLseCallGate;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">{&lt;--call&nbsp;gate&nbsp;notify}</span><br>
+000016:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bold;">end</span>;<br>
+000017:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLseInitRec&nbsp;&nbsp;&nbsp;=&nbsp;^RLseInitRec;</td>
+          </tr>
+        </table>
+      </center><br> 
+    其成员变量的用途和含义是：<br>
+    <br>
+    <table  border="0" align="center" cellpadding="4" cellspacing="0">
+      <tr>
+        <th class="bottom_line">名称</th>
+        <th class="bottom_line">类型</th>
+        <th class="bottom_line">说明</th>
+        <th class="bottom_line">备注</th>
+      </tr>
+      <tr>
+        <td bgcolor="#FFDFFF" class="bottom_line">ir_size</td>
+        <td align="left" class="bottom_left_line">integer</td>
+        <td class="bottom_left_line">结构体的大小（字节数）</td>
+        <td class="bottom_left_line">由模块注册发起程序填写</td>
+      </tr>
+      <tr>
+        <td bgcolor="#FFDFFF" class="bottom_line">ir_cik_proc</td>
+        <td align="left" class="bottom_left_line">TLseCikFunc</td>
+        <td class="bottom_left_line">Lysee 内核功能调用函数</td>
+        <td class="bottom_left_line">暂时不用管</td>
+      </tr>
+      <tr>
+        <td bgcolor="#FFDFFF" class="bottom_line">ir_handle</td>
+        <td align="left" class="bottom_left_line">cardinal</td>
+        <td class="bottom_left_line">主窗口句柄</td>
+        <td class="bottom_left_line">暂时不用管</td>
+      </tr>
+      <tr>
+        <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">iw_production</div></td>
+        <td align="left" class="bottom_left_line">pchar</td>
+        <td class="bottom_left_line">产品名称</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      </tr>
+      <tr>
+        <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">iw_version</div></td>
+        <td align="left" class="bottom_left_line">pchar</td>
+        <td class="bottom_left_line">版本号</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      </tr>
+      <tr>
+        <td bgcolor="#FFDFFF" class="bottom_line"><div align="center">iw_copyright</div></td>
+        <td align="left" class="bottom_left_line">pchar</td>
+        <td class="bottom_left_line">版权信息</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_desc</td>
+        <td align="left" class="bottom_left_line">pchar</td>
+        <td class="bottom_left_line">模块说明</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_homepage</td>
+        <td align="left" class="bottom_left_line">pchar</td>
+        <td class="bottom_left_line">软件主页</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_email</td>
+        <td align="left" class="bottom_left_line">pchar</td>
+        <td class="bottom_left_line">作者信箱</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_classes</td>
+        <td align="left" class="bottom_left_line">RLseClassListRec</td>
+        <td class="bottom_left_line">用户定义类列表</td>
+        <td class="bottom_left_line">暂时不用管</td>
+      </tr>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_libfuncs</td>
+        <td align="left" class="bottom_left_line">RLseFuncListRec</td>
+        <td class="bottom_left_line">模块函数列表</td>
+        <td class="bottom_left_line">&nbsp;</td>
+      </tr>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_import</td>
+        <td align="left" class="bottom_left_line">TLseFuncCall</td>
+        <td class="bottom_left_line">本模块装载事件处理函数</td>
+        <td class="bottom_left_line">暂时不用管</td>
+      </tr>
+      <tr>
+        <td align="center" bgcolor="#FFDFFF" class="bottom_line">iw_invoke</td>
+        <td align="left" class="bottom_left_line">TLseFuncCall</td>
+        <td class="bottom_left_line">模块函数调用入口函数</td>
+        <td class="bottom_left_line">将 Param 转化为 TLseInvoke 对象</td>
+      </tr>
+    </table></td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>2.4. 执行模块注册函数</strong><br> 
+      <br>
+      在程序的启动代码中调用 setup_me_module 函数注册 me 模块：<br>
+      <br> 
+      <center><img src="images/402/05.png" width="573" height="445">
+      </center>
+      <center>
+      </center>
+      <br>
+编译运行 cembed 确保没有错误。</td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>2.6. 编写测试文件</strong><br> 
+      <br> 
+      创建 test.ls 文件，在代码中调用 me 模块所有的输出函数以备测试：<br> 
+      <br><center><img src="images/402/06.png" width="490" height="453">
+      </center>    </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>2.7. 完成</strong><br> 
+      <br>
+      打开一个命令行窗口，执行“cembed test.ls”进行测试运行：<br>
+      <br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">D:\cembed&gt;cembed&nbsp;test.ls<br>
+Please&nbsp;select:&nbsp;1&nbsp;==&gt;&nbsp;print&nbsp;program&nbsp;name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;==&gt;&nbsp;halt&nbsp;and&nbsp;return&nbsp;to&nbsp;shell<br>
+&gt;&gt;&gt;&nbsp;1<br>
+D:\cembed\cembed.exe<br>
+Please&nbsp;select:&nbsp;1&nbsp;==&gt;&nbsp;print&nbsp;program&nbsp;name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;==&gt;&nbsp;halt&nbsp;and&nbsp;return&nbsp;to&nbsp;shell<br>
+&gt;&gt;&gt;&nbsp;3<br>
+wrong&nbsp;selection!<br>
+Please&nbsp;select:&nbsp;1&nbsp;==&gt;&nbsp;print&nbsp;program&nbsp;name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;==&gt;&nbsp;halt&nbsp;and&nbsp;return&nbsp;to&nbsp;shell<br>
+&gt;&gt;&gt;&nbsp;2<br>
+*****&nbsp;HALTED&nbsp;*****<br>
+<br>
+D:\cembed&gt;</td>
+        </tr>
+      </table>
+      <br>
+      没有问题，证明 me 模块的创建已经完成。<br><br>
+建议你试着为 me 模块增加一些函数或创建一些新的模块，Lysee 对模块及函数的数量是没有限制的。 </td> 
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">本页最后更新: 2010/07/27 </td> 
+  </tr> 
+</table> 
+</body>
+</html>

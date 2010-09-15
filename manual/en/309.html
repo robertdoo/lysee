@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Program files</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="308.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="310.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>3.9 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html">Language Reference</a> - <strong>Program Files</strong><br>
+      <br>
+      Three kinds of program files:<br>
+      <br>
+      <table  border="0" align="center" cellpadding="4" cellspacing="0">
+        <tr>
+          <th class="bottom_line">Type</th>
+          <th class="bottom_line">Description</th>
+          <th class="bottom_line">Ext</th>
+          <th class="bottom_line">Samples</th>
+        </tr>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">Program File </td>
+          <td align="left" class="bottom_left_line">Consists of lysee statements </td>
+          <td align="left" class="bottom_left_line">.ls</td>
+          <td align="left" class="bottom_left_line">$ lysee <span class="lsp_code">backup.ls</span></td>
+        </tr>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">Module File </td>
+          <td align="left" class="bottom_left_line">File to be <strong> import</strong>ed</td>
+          <td align="left" class="bottom_left_line">.ls,.dll,.so</td>
+          <td align="left" class="bottom_left_line">import <span class="lsp_code">curl</span>, <span class="lsp_code">mail</span>;</td>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">Included File</td>
+          <td align="left" class="bottom_left_line">Used to be <strong>include</strong>d</td>
+          <td align="left" class="bottom_left_line">.inc or else</td>
+          <td align="left" class="bottom_left_line">include <span class="lsp_code">${kndir}/top.htm</span>;</td>
+      </table><br>  
+    Module file should in ${search} path or be specifid with full file name.</td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="ls" id="ls"></a><strong>3.9.1 .ls file </strong><br> 
+      <br> 
+ .ls is the default program file of lysee, file name or &quot;main&quot; is its namespace.<br>
+ <br>
+ Let's see a robot used to fetch news from www.sina.com:<br>
+    <br>
+    <table  border="0" align="center" cellpadding="4" cellspacing="0">
+      <tr>
+        <th class="bottom_line">sina_news_robot.ls</th>
+      </tr>
+<tr>
+  <td align="left" class="bottom_left_line"><strong>import</strong>&nbsp;net,&nbsp;cgi,&nbsp;config,&nbsp;spider,&nbsp;uppwr;<br>
+          <br>
+          <strong>def</strong> get_sina_news |href|<br>
+&nbsp;&nbsp;ID&nbsp;=&nbsp;href.lower().md5sum();<br>
+&nbsp;&nbsp;<strong>return&nbsp;true if</strong>&nbsp;news_exists(ID);<br>
+
+&nbsp;&nbsp;add_news_log(ID, href);<br>
+
+&nbsp;&nbsp;text:strbuf&nbsp;=&nbsp;wgets(href);<br>
+&nbsp;&nbsp;begx&nbsp;=&nbsp;......;<br>
+
+&nbsp;&nbsp;endx&nbsp;=&nbsp;......;<br>
+&nbsp;&nbsp;title&nbsp;=&nbsp;fetch_title(text.copy(begx,&nbsp;endx&nbsp;-&nbsp;begx).trim());<br>
+&nbsp;&nbsp;<strong>return&nbsp;true if&nbsp;not</strong>&nbsp;title;<br>
+&nbsp;&nbsp;<strong>return</strong>&nbsp;news_save(title,&nbsp;href,&nbsp;text.copy(begx,&nbsp;endx&nbsp;-&nbsp;begx),&nbsp;ID);<br>
+<strong>end</strong><br>
+<br>initRobot(&quot;sina.news.robot&quot;, now());<br>
+<strong>try</strong><br>
+&nbsp;&nbsp;add_log(&quot;FETCH NEWS: &quot;&nbsp;+&nbsp;&quot;http://www.sina.com.cn&quot;);<br>
+&nbsp;&nbsp;text&nbsp;=&nbsp;net::wgets(&quot;http://www.sina.com.cn&quot;);<br>
+&nbsp;&nbsp;begx&nbsp;=&nbsp;......;<br>
+&nbsp;&nbsp;endx&nbsp;=&nbsp;......;<br>
+&nbsp;&nbsp;text.delete(endx,&nbsp;length(text));<br>
+&nbsp;&nbsp;text.delete(0,&nbsp;begx);<br>
+&nbsp;&nbsp;begx&nbsp;=&nbsp;text.pos(&quot;&lt;li&gt;&quot;,&nbsp;true,&nbsp;0);<br>
+&nbsp;&nbsp;<strong>while</strong>&nbsp;begx&nbsp;&gt;=&nbsp;0 <strong>do</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;begx&nbsp;=&nbsp;text.pos(&quot;href=&#92;&quot;&quot;,&nbsp;true,&nbsp;begx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>return if</strong>&nbsp;begx&nbsp;&lt;&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;begx&nbsp;=&nbsp;begx&nbsp;+&nbsp;length(&quot;href=&#92;&quot;&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endx&nbsp;=&nbsp;text.pos(&quot;&#92;&quot;&quot;,&nbsp;true,&nbsp;begx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>return if</strong>&nbsp;endx&nbsp;&lt;&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;href&nbsp;=&nbsp;text.copy(begx,&nbsp;endx&nbsp;-&nbsp;begx);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong>&nbsp;href&nbsp;and&nbsp;href.pos(&quot;/index.&quot;,&nbsp;true)&nbsp;&lt;&nbsp;0 <strong>then</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get_sina_news(href);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;begx&nbsp;=&nbsp;text.pos(&quot;&lt;li&gt;&quot;,&nbsp;true,&nbsp;endx);<br>
+&nbsp;&nbsp;<strong>end</strong><br>
+<strong>except</strong><br>
+&nbsp;&nbsp;add_err_log();<br> 
+<strong>end</strong></td>
+    </table>    </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="program" id="program"></a><strong><strong>3.</strong>9.2 Run program file</strong><br>
+      <br>
+Usually run program file in console likes below:<br>
+
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;lysee sina_news_robot.ls;<br>
+
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="module" id="module"></a><strong><strong>3.</strong>9.3 module file</strong><br>
+      <br>
+     Module file is load by keyword <strong>import</strong>, it must exists in ${search} path, file name is its namespace.<br>
+<br>
+
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;import&nbsp;net;<br>
+
+&gt;&gt;&gt;&nbsp;wgetf(&quot;http://www.lysee.net&quot;,&nbsp;R&quot;c:&#92;lysee&#92;temp&#92;lysee.html&quot;);<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>
+<br>
+You can use MODULE::OBJECT to  get the OBJECT directly:<br>
+<br>
+<table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td nowrap class="dosprompt">&gt;&gt;&gt;&nbsp;import&nbsp;net, www;<br>
+&gt;&gt;&gt;&nbsp;www::wgetf(&quot;http://www.lysee.net&quot;,&nbsp;R&quot;c:&#92;lysee&#92;temp&#92;lysee.html&quot;);<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table>    </td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="search" id="search"></a><strong><strong>3.</strong>9.4 ${search}</strong><br>
+      <br>
+    When import module, lysee searches paths in  ${search}. ${search} consists of paths delimited with ';', for example: ${knpath}modules;d:/robot/moduels;${HOME}/moduels. Chhange it by rewrite lse_search variable in file lysee.config.</td>
+  </tr>
+  <tr>
+    <td class="footer_line"><a name="include" id="include"></a><strong><strong>3.</strong>9.5 included file </strong><br>
+      <br>
+      You'd better supply a full file name. You can use ${XXX} constants in file name.<br>
+      <br>
+      <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap class="dosprompt">www.lysee.net&gt;echo&nbsp;=&quot;HELLO&nbsp;FROM&nbsp;INCLUDE&quot;&nbsp;&gt;&nbsp;hello.inc<br>
+<br> 
+www.lysee.net
+&gt;lysee<br>
+Lysee&nbsp;0.1.6.387&nbsp;-&nbsp;Copyright&nbsp;(C)&nbsp;2003-2010&nbsp;LiBUDI&nbsp;-&nbsp;www.lysee.net<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;/C=CANCEL&nbsp;/F=FILE&nbsp;/Q=QUIT&nbsp;/R=RESTART&nbsp;::<br>
+<br>
+&gt;&gt;&gt;&nbsp;include hello.inc;<br>
+HELLO&nbsp;FROM&nbsp;INCLUDE<br>
+&gt;&gt;&gt;</td>
+        </tr>
+    </table></td>
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/30</td> 
+  </tr> 
+</table> 
+</body>
+</html>

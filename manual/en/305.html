@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Functions</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="304.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="306.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line">3.5 <a href="index.html">Lysee Manual</a> - <a href="300.html">Language Reference</a> - <strong>Functions</strong><br>
+      <br>
+    Lysee function includes <a href="304.html#named">named constants</a>, normal functions, name-call functions and 
+
+
+ anonymous
+
+ functions.</td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><strong><strong>3.</strong>5.1 Normal Function</strong><br>
+    <br>
+    Syntax: <strong>def</strong> FuncName [:FuncType] <strong>|</strong>[Prm1 [:Prm1Type], ..., PrmN [:PrmNType]]<strong>|</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;Statements ] <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; def repeatStr |S, times|<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; for times do R:string += S end<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; return R;<br>
+&nbsp;&nbsp;&gt; end;<br>
+&gt;&gt;&gt; = repeatStr(&quot;Aa&quot;, 4);<br>
+  AaAaAaAa<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><strong><strong>3.</strong>5.2 Name-Call Function</strong><br>
+    <br>    
+    Name-call function has no parameters and can be called just by name without ( ).<br>
+    <br>
+    Syntax: <strong>def</strong> CallName [:FuncType]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;Statements ] <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; def BEGIN_TABLE = &quot;&lt;table&gt;&quot; end;<br>
+&gt;&gt;&gt; def END_TABLE  = &quot;&lt;/table&gt;&quot; end;<br>
+&gt;&gt;&gt; BEGIN_TABLE; END_TABLE;<br>
+&lt;table&gt;&lt;/table&gt;<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="footer_line"><strong><strong>3.</strong>5.3 Anonymous
+
+Functions</strong><br>
+    <br>
+    Syntax: <strong>|</strong>[Prm1 [:Prm1Type], ..., PrmN [:PrmNType]]<strong>|</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;Statements ] <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; = map(10, |X| return X * 2 end);<br>
+      [0,2,4,6,8,10,12,14,16,18]<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table><br><br>
+Closure is a kind of function that contains runtime context of another function. In lysee you can use <strong>curry</strong> or <strong>curryOne</strong> to create such a function:<br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; a = 0;<br>
+      &gt;&gt;&gt; b = 1;<br>
+      &gt;&gt;&gt; f = curryOne(|E, V| E.a += V; E.b * = V end, this);<br>
+      &gt;&gt;&gt; f(10);<br>
+      &gt;&gt;&gt; =a, b;<br>
+      10 10<br>
+      &gt;&gt;&gt; f(10);<br>
+      &gt;&gt;&gt; =a, b;<br>
+      20 100<br>
+      &gt;&gt;&gt;</td>
+  </tr>
+</table><br><br>
+You can simplify the above code like this: <strong>|this</strong> [,Prms ...]<strong>|</strong> ... <strong>end</strong><br>
+<br>
+<table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console">
+  <tr>
+    <td width="400" nowrap class="dosprompt">&gt;&gt;&gt; a = 0;<br>
+      &gt;&gt;&gt; b = 1;<br>
+      &gt;&gt;&gt; f = |this, V|<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; this.a += V;<br>
+&nbsp;&nbsp;&gt;&nbsp;&nbsp; this.b *= V;<br>
+&nbsp;&nbsp;&gt; end;<br>
+&gt;&gt;&gt; f(10);<br>
+&gt;&gt;&gt; =a, b;<br>
+10 10<br>
+&gt;&gt;&gt; f(10);<br>
+&gt;&gt;&gt; =a, b;<br>
+20 100<br>
+&gt;&gt;&gt;</td>
+  </tr>
+</table><br></td>
+  </tr>
+  <tr> 
+    <td align="left" class="footer_line">Last Modified: 2010/08/29</td> 
+  </tr> 
+</table> 
+</body>
+</html>

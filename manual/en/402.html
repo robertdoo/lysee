@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Embed Lysee</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="401.html">&lt;PREV</a></td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+        <td align="right" valign="bottom"><a href="403.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line">
+      <strong><strong>4.2 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html"></a></strong><a href="400.html">Developments</a> - <strong>Embed Lysee</strong><br> 
+          <br> 
+        This page will tell you how to embed Lysee into your program.<br><br>
+        Maybe, the best document of how to embed lysee is the project <strong>lysee_fpc.lpi</strong>. </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>4.2.1 Prepare</strong><br> 
+      <br> 
+      Install lysee and its source code into your computer:
+      <br>      <blockquote> Install to: c:\lysee<br>
+  Source dir: c:\lysee\source</blockquote>
+    </td> 
+  </tr>
+  <tr>
+    <td class="footer_line"><strong>4.2.2 Use interface unit</strong><br>
+      <br>
+Find <strong>lseu.pas</strong> in source directory and add it to your project.<br><br>
+Add &quot;lseu&quot; to  unit's <strong>uses</strong> clause. </td>
+  </tr>
+  <tr>
+    <td class="footer_line"><strong>4.2.3 Start up</strong><br>
+      <br>
+      At the position program starts up:<br> 
+      <blockquote><strong>procedure</strong> TMainForm.FormCreate(Sender: TObject);<br>
+        <strong>begin</strong><br>
+        &nbsp;&nbsp;...<br>
+        <strong></strong>&nbsp;&nbsp;lse_load_kernel('c:\lysee\' + LSE_KERNEL);<br>
+&nbsp;&nbsp;lse_set_program_file(Application.ExeName);<br>
+&nbsp;&nbsp;FEngine := TLseEngine.Create(<strong>nil</strong>);<br>
+&nbsp;&nbsp;...<br>
+        <strong>end</strong><br>
+</blockquote> </td>
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>4.2.4 Clean up</strong><br>
+      <br>
+At the position program cleans up:<br>
+<blockquote><strong>procedure</strong> TMainForm.FormDestroy(Sender: TObject);<br>
+  <strong>begin</strong><br>
+&nbsp;&nbsp;...<br>
+<strong></strong>&nbsp;&nbsp; FreeAndNil(FEngine);<br>
+&nbsp;&nbsp; lse_cleanup;<br>
+&nbsp;&nbsp;...<br>
+<strong>end</strong><br>
+</blockquote></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>4.2.5. Define procedures</strong><br> 
+      <br> 
+      Define two procedures to execute lysee script and file:<br>      <blockquote>
+<strong>procedure</strong> TMainForm.ExecScript(<strong>const</strong> Script: <strong>string</strong>);<br>
+        <strong>begin</strong><br>
+        &nbsp;&nbsp;FEngine.ExecuteCode(Script);<br>
+        <strong>end</strong><br>
+        <br>
+<strong>procedure</strong> TMainForm.ExecScriptFile(<strong>const</strong> FileName: <strong>string</strong>);<br>
+        <strong>begin</strong><br>
+        &nbsp;&nbsp;FEngine.ExecuteFile(FileName);<br>
+        <strong>end</strong></blockquote>      
+    </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>4.2.6 Execute script or script file</strong><br>
+<blockquote><strong>procedure</strong> TMainForm.btnExecuteClick(Sender: TObject);<br>
+  <strong>begin</strong><br>
+  &nbsp;&nbsp;<strong>if not</strong> FExecuteFile <strong>then</strong><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;ExecScript(Memo1.Lines.Text) <strong>else</strong><br>
+  &nbsp;&nbsp;<strong>if</strong> dlgOpen.Execute <strong>then</strong><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;ExecScriptFile(dlgOpen.FileName);<br>
+  <strong>end</strong></blockquote></td> 
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/30</td> 
+  </tr> 
+</table> 
+</body>
+</html>

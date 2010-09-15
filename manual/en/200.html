@@ -1,0 +1,488 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>Lysee Manual - Install and configure</title>
+<meta name="author" content="libudi@hotmail.com">
+<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<link href="index.css" rel="stylesheet" type="text/css">
+<link href="logo.ico" rel="Shortcut Icon">
+</head>
+<body> 
+<table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
+  <tr> 
+    <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
+        <tr> 
+          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
+          <td align="right" valign="bottom"><a href="100.html">&lt;PREV</a>  </td>
+        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
+          <td align="right" valign="bottom"><a href="300.html">NEXT&gt;</a></td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><strong>2 <a href="index.html">Lysee Manual</a> - <a href="300.html"></a></strong><strong>Install and configure</strong><br> </td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="install"></a><strong>2.1 Install</strong><br> 
+      <br> 
+      Download the latest installer or source code:<br> 
+      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDDFF">Platform</th> 
+          <th>How to</th> 
+          <th>Default Position </th>
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Windows</td> 
+          <td>Run the installer</td> 
+          <td>c:\lysee</td>
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Linux/Unix</td> 
+          <td>make; sudo make install</td> 
+          <td>/usr/local/lib/lysee</td>
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="folder"></a><strong>2.2 File Structure<br> 
+      <br> 
+      </strong> 
+      <table width="0%"  border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">Name</th> 
+          <th>Type</th> 
+          <th>Linux/Unix</th> 
+          <th>Windows</th> 
+          <th>Description</th> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">modules</div></td> 
+          <td><div align="center">folder</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>stores lysee module</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">manual</div></td> 
+          <td><div align="center">folder</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>this manual </td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">temp</div></td> 
+          <td><div align="center">folder</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>temporary file directory </td> 
+        </tr>
+        <tr bgcolor="#FFFFFF">
+          <td bgcolor="#FFDFFF"><div align="center">LICENSE</div></td>
+          <td><div align="center">file</div></td>
+          <td><div align="center">*</div></td>
+          <td align="center">*</td>
+          <td>license file </td>
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">COPYING</div></td> 
+          <td><div align="center">file</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>GPL2</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.dll</div></td> 
+          <td><div align="center">library</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>lysee kernel for windows</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.so</div></td> 
+          <td><div align="center">library</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">&nbsp;</td> 
+          <td>lysee kernel for linux/unix</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.config</div></td> 
+          <td><div align="center">file</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>configuration file</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee.exe</div></td> 
+          <td><div align="center">program</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>interpreter</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_fpc.exe</div></td> 
+          <td><div align="center">program</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>interpreter build with FPC </td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee</div></td> 
+          <td><div align="center">program</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">&nbsp;</td> 
+          <td>interpreter build with FPC </td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_pad.exe</div></td> 
+          <td><div align="center">program</div></td> 
+          <td><div align="center"></div></td> 
+          <td align="center">*</td> 
+          <td>Lysee script syntax highlighter editor</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">lysee_pad</div></td> 
+          <td><div align="center">program</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">&nbsp;</td> 
+          <td>Lysee script syntax highlighter editor</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF"><div align="center">classes.htm</div></td> 
+          <td><div align="center">文件</div></td> 
+          <td><div align="center">*</div></td> 
+          <td align="center">*</td> 
+          <td>Builtin classes reference </td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="config"></a><strong>2.3 Configuration</strong><br> 
+      <br> 
+      Add installation path to system search PATH:<br> 
+      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">Platform</th> 
+          <th>How to</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">Windows</td> 
+          <td>attch installation path to system environment variable PATH</td> 
+        </tr> 
+      </table> 
+      <br> 
+      Edit file <strong>lysee.config</strong> to configure lysee:<br> 
+      <strong><br> 
+      </strong> 
+      <table width="0%"  border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr bgcolor="#FFFFFF"> 
+          <th>Variable</th> 
+          <th>Description</th> 
+          <th>Default Value</th> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td align="left">lse_tmpath</td> 
+          <td>temporary directory</td> 
+          <td>${LYSEE}/temp</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td align="left">lse_search</td> 
+          <td>module search path </td> 
+          <td>${LYSEE}/modules</td> 
+        </tr> 
+        <tr bgcolor="#FFFFFF"> 
+          <td align="left">lse_create_log</td> 
+          <td>if create log file? </td> 
+          <td>false</td> 
+        </tr> 
+      </table> 
+      <br> 
+      The following constants can be used in lysee.config:<br> 
+      <strong><br> 
+      </strong> 
+      <table width="0%"  border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr bgcolor="#FFFFFF"> 
+          <th>Constant</th> 
+          <th>Description</th> 
+          <th>Value</th> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${confile}</div></td> 
+          <td>Configuration file name</td> 
+          <td>Full file name of file lysee.config</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${kernel}</div></td> 
+          <td>Kernel file name </td> 
+          <td>Full file name of kernel</td> 
+        </tr>
+        <tr align="left" bgcolor="#FFFFFF">
+          <td><div align="left">${kndir}</div></td>
+          <td>Kernel directory </td>
+          <td>Full file name of kernel directory </td>
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${knpath}</div></td> 
+          <td>Kernel path </td> 
+          <td>Full file name of kernel path</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${home}</div></td> 
+          <td>Home path of user </td> 
+          <td>Full file name of current user home path</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${program}</div></td> 
+          <td>current program</td> 
+          <td>ParamStr(0)</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${tmpath}</div></td> 
+          <td>temporary path</td> 
+          <td>Set by lse_tmpath in lysee.config</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${search}</div></td> 
+          <td>module search path</td> 
+          <td>Set by lse_search in lysee.config</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td><div align="left">${keywords}</div></td> 
+          <td>keyword list</td> 
+          <td>&nbsp;</td> 
+        </tr> 
+        <tr align="left" bgcolor="#FFFFFF"> 
+          <td>${mimefile}</td> 
+          <td>MIME file</td> 
+          <td>${knpath} + mime.config</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="test"></a><strong>2.4 Test</strong><br> 
+      <br> 
+      After type &quot;lysee&quot; and ENTER  in a console, you will see something like below.<br> 
+      <br> 
+      <table  border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">lysee</span><br> 
+            Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net<br> 
+            <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::<br> 
+            <br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      If wrong, you'd have to use the absolute file name:<br> 
+      <br> 
+      <table border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">c:\lysee\lysee.exe</span><br> 
+            Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net<br> 
+            <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::<br> 
+            <br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      <center> </center></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="hello" id="hello"></a><strong>2.5 Hello World</strong><br> 
+      <br> 
+      Let's print &quot;Hello World&quot;:<br> 
+      <br> 
+      <table border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">lysee</span><br> 
+            Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net<br> 
+            <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::<br> 
+            <br> 
+&gt;&gt;&gt; <span class="lsp_code">= &quot;Hello World&quot;;</span><br> 
+            Hello World <br> 
+&gt;&gt;&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      Is it simple?<br> 
+      <br> 
+      <table border="0" cellspacing="0" cellpadding="0"> 
+        <tr align="left" valign="top"> 
+          <th>Expl:</th> 
+          <td>&nbsp;</td> 
+          <td>1. &quot;&gt;&gt;&gt;&quot; prompts you enter lysee command or script.</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>2. &quot;=&quot; means print.</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>3. last &quot;;&quot; means end of input and lysee should execute the command or script.</td> 
+        </tr> 
+      </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="file" id="file"></a><strong>2.6 Execute Script File</strong><br> 
+      <br> 
+      Save &quot;<span class="lsp_code">= &quot;hello world&quot;;&quot;</span> to file hw.ls, and run it with lysee:<br> 
+      <br> 
+      <table border="0" cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">echo =&quot;hello world&quot;; &gt; hw.ls</span><br> 
+            D:\www.lysee.net&gt;<span class="lsp_code">lysee hw.ls</span><br> 
+            Hello World <br> 
+            D:\www.lysee.net&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      <table border="0" cellspacing="0" cellpadding="0"> 
+        <tr align="left" valign="top"> 
+          <td>[Expl]</td> 
+          <td>&nbsp;</td> 
+          <td>1. Lysee script file's extension is &quot;.ls&quot;.</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>2. Lysee interpreter quits after execute the file.</td> 
+        </tr> 
+        <tr align="left" valign="top"> 
+          <td>&nbsp;</td> 
+          <td>&nbsp;</td> 
+          <td>3. File consists of any lysee statements.</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td class="footer_line"><a name="usage" id="usage"></a><strong>2.7 Command Line Arguments</strong><br> 
+      <br> 
+      Run &quot; <span class="lsp_code">lysee --help</span>&quot; to print Lysee usages:<br> 
+      <br> 
+      <table cellpadding="0" cellspacing="0" class="console"> 
+        <tr> 
+          <td nowrap class="dosprompt">D:\www.lysee.net&gt;<span class="lsp_code">lysee --help</span><br> 
+            Lysee&nbsp;0.1.6.387&nbsp;-&nbsp;interactive&nbsp;LYSEE&nbsp;script&nbsp;interpreter<br> 
+            <br> 
+            Usage:&nbsp;lysee&nbsp;[OPTION]...&nbsp;[FILE&nbsp;[ARGS]...]<br> 
+            <br> 
+            Option:<br>&nbsp;&nbsp;-v,&nbsp;--version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;the&nbsp;version&nbsp;of&nbsp;lysee&nbsp;and&nbsp;exit.<br>&nbsp;&nbsp;-h,&nbsp;--help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;this&nbsp;help&nbsp;and&nbsp;exit.<br> 
+&nbsp;&nbsp;-s,&nbsp;--search=PATH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;module&nbsp;search&nbsp;path.<br>&nbsp;&nbsp;-S,&nbsp;--script=SCRIPT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute&nbsp;script.<br>&nbsp;&nbsp;-w,&nbsp;--wait=SECONDS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wait&nbsp;for&nbsp;some&nbsp;seconds&nbsp;before&nbsp;going&nbsp;on.<br>&nbsp;&nbsp;-t,&nbsp;--times=COUNT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute&nbsp;specified&nbsp;times.<br> 
+&nbsp;&nbsp;-p, --pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pause after execute script file.<br>            <br> 
+            File:<br>&nbsp;&nbsp;.ls&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute&nbsp;this&nbsp;file&nbsp;directly.<br>&nbsp;&nbsp;.lsp,&nbsp;.html,&nbsp;.htm,&nbsp;.*&nbsp;&nbsp;&nbsp;execute&nbsp;as&nbsp;a&nbsp;LSP&nbsp;file&nbsp;(Lysee&nbsp;Script&nbsp;Page).<br> 
+            <br> 
+            Args:<br>&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arguments&nbsp;for&nbsp;file&nbsp;execution.<br> 
+            <br> 
+            D:\www.lysee.net&gt;</td> 
+        </tr> 
+      </table> 
+      <br> 
+      Options:<br>      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th colspan="2" bgcolor="#FFDFFF">Option</th> 
+          <th>Attachments</th> 
+          <th>Description</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-v</td> 
+          <td bgcolor="#FFDFFF">--version</td> 
+          <td align="center">None</td> 
+          <td>Print version  informations and quit</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-h</td> 
+          <td bgcolor="#FFDFFF">--help</td> 
+          <td align="center">None</td> 
+          <td>Print usages and quit </td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-s</td> 
+          <td bgcolor="#FFDFFF">--search</td> 
+          <td align="center">Path list seperated with ';'</td> 
+          <td>Add search path</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-w</td> 
+          <td bgcolor="#FFDFFF">--wait</td> 
+          <td align="center">Seconds</td> 
+          <td>Wait for seconds before running</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-t</td> 
+          <td bgcolor="#FFDFFF">--times</td> 
+          <td align="center">Times</td> 
+          <td>Repeat running times</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td bgcolor="#FFDFFF">-p</td> 
+          <td bgcolor="#FFDFFF">--pause</td> 
+          <td align="center">None</td> 
+          <td>Pause after execute a file</td> 
+        </tr> 
+      </table> 
+      <br> 
+      File:<br>      
+      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF"> Ext </th> 
+          <th>File Type</th> 
+          <th>Description</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">.ls</td> 
+          <td align="left">Lysee program of module</td> 
+          <td>Pure lysee statement</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">.lsp</td> 
+          <td align="left"> LSP（<span class="lsp_code">L</span>ysee <span class="lsp_code">S</span>cript <span class="lsp_code">P</span>age）</td> 
+          <td>Active HTML web page contains lysee statements</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="center" bgcolor="#FFDFFF">*</td> 
+          <td align="left">&nbsp;</td> 
+          <td>Deal as .lsp file</td> 
+        </tr> 
+      </table> 
+      <br> 
+      Args：<br> 
+      <br> 
+      Can be accessed with string list <strong>__args__</strong>.<br> 
+      <br> 
+      Command Lines:<br>      <br> 
+      <table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC"> 
+        <tr valign="top" bgcolor="#FFFFFF"> 
+          <th bgcolor="#FFDFFF">Command Line </th> 
+          <th>Description</th> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">lysee backup.ls &quot;skip=.tmp,.bak,....,.dcu,.ppu&quot; </td> 
+          <td>backup lysee project, some files will be ignored</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">lysee -w 3600 -t 9999 spider.ls </td> 
+          <td>run web spider once an hour</td> 
+        </tr> 
+        <tr align="left" valign="top" bgcolor="#FFFFFF"> 
+          <td align="left" bgcolor="#FFDFFF">lysee logout.lsp user=mack</td> 
+          <td>user mack logout</td> 
+        </tr> 
+    </table></td> 
+  </tr> 
+  <tr> 
+    <td align="left" class="footer_line">Last Modified : 2010/08/28</td> 
+  </tr> 
+</table> 
+</body>
+</html>
