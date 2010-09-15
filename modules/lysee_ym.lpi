@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="7"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=".exe"/>
+      <Title Value="lysee_ym"/>
+      <ActiveEditorIndexAtStart Value="0"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
+      <CurrentMajorRevNr Value="2"/>
+      <CurrentMinorRevNr Value="1"/>
+      <CurrentBuildNr Value="370"/>
+      <ProjectVersion Value="0.1.1.315"/>
+      <FileDescription Value="year-month module"/>
+      <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <Units Count="12">
+      <Unit0>
+        <Filename Value="lysee_ym.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_ym"/>
+        <CursorPos X="1" Y="57"/>
+        <TopLine Value="43"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="..\..\..\..\Develop\lazarus\fpc\2.2.2\source\packages\fcl-base\examples\testunzip.pp"/>
+        <UnitName Value="testunzip"/>
+        <CursorPos X="17" Y="26"/>
+        <TopLine Value="9"/>
+        <UsageCount Value="10"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\..\..\Develop\lazarus\fpc\2.2.2\source\packages\fcl-base\examples\testzip.pp"/>
+        <UnitName Value="testzip"/>
+        <CursorPos X="9" Y="28"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\..\..\Develop\lazarus\fpc\2.2.2\source\packages\paszlib\src\zipper.pp"/>
+        <UnitName Value="zipper"/>
+        <CursorPos X="15" Y="298"/>
+        <TopLine Value="284"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\fpc\zipper\zipper_funcs.pas"/>
+        <UnitName Value="zipper_funcs"/>
+        <CursorPos X="3" Y="133"/>
+        <TopLine Value="110"/>
+        <UsageCount Value="21"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\lseu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lseu"/>
+        <CursorPos X="3" Y="3825"/>
+        <TopLine Value="3823"/>
+        <UsageCount Value="23"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\..\Developments\lazarus\fpc\2.2.2\source\packages\paszlib\src\zipper.pp"/>
+        <UnitName Value="zipper"/>
+        <CursorPos X="4" Y="1062"/>
+        <TopLine Value="1038"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="lysee_zipper_funcs.pas"/>
+        <UnitName Value="lysee_zipper_funcs"/>
+        <CursorPos X="1" Y="143"/>
+        <TopLine Value="120"/>
+        <UsageCount Value="22"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\..\..\..\Developments\lazarus\fpc\2.2.4\source\packages\paszlib\src\zipper.pp"/>
+        <UnitName Value="zipper"/>
+        <CursorPos X="3" Y="1422"/>
+        <TopLine Value="1409"/>
+        <UsageCount Value="11"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="lysee_ym_funcs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lysee_ym_funcs"/>
+        <CursorPos X="42" Y="30"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="20"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\lse_api.pas"/>
+        <UnitName Value="lse_api"/>
+        <CursorPos X="1" Y="4820"/>
+        <TopLine Value="4809"/>
+        <UsageCount Value="10"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\lse_funcs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="lse_funcs"/>
+        <CursorPos X="10" Y="709"/>
+        <TopLine Value="700"/>
+        <UsageCount Value="20"/>
+      </Unit11>
+    </Units>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="6" Column="34" TopLine="1"/>
+      </Position1>
+      <Position2>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="45" Column="25" TopLine="33"/>
+      </Position2>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <OtherUnitFiles Value="D:\budi\lysee\lse\lysee\"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <CStyleOperator Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <Optimizations>
+        <VariablesInRegisters Value="True"/>
+        <OptimizationLevel Value="2"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseLineInfoUnit Value="False"/>
+        <StripSymbols Value="True"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+      <Options>
+        <ExecutableType Value="Library"/>
+      </Options>
+    </Linking>
+    <Other>
+      <WriteFPCLogo Value="False"/>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
