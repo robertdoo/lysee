@@ -1,6 +1,6 @@
-body, a, input, select, td, div, th, table { 
+ï»¿body, a, input, select, td, div, th, table { 
 	font-size:12px; 
-	font-family:"ËÎÌå";
+	font-family:"å®‹ä½“";
 }
 body {
 	margin-bottom:0;
@@ -30,7 +30,7 @@ a:active {
 	text-decoration: underline;
 }
 .songti10 {
-	font-family: "ËÎÌå";
+	font-family: "å®‹ä½“";
 	font-size: 10pt;
 	font-style: normal;
 	line-height: normal;
@@ -82,7 +82,7 @@ a:active {
 	text-decoration: none;
 }
 .songsubject {
-	font-family: "ËÎÌå";
+	font-family: "å®‹ä½“";
 	font-size: 20pt;
 	font-weight: bold;
 	color: #0066CC;
@@ -134,6 +134,14 @@ DL.wicon {
 	line-height: 20px;
 	color: #FFFFFF;
 	background-color: #000000;
+	border-top-width: 1px;
+	border-top-style: none;
+	border-top-color: #FFF992;
+	border-right-color: #FFF992;
+	border-bottom-color: #FFF992;
+	border-left-color: #FFF992;
+	border-left-width: 1px;
+	border-left-style: dotted;
 }
 .bottom_line {
 	border-top: 1px none #9F7B57;
@@ -152,7 +160,5 @@ DL.wicon {
 }
 .console {
 	position: relative;
-	left: 64px;
-	top: 0px;
-	width: 600;
+	width: 600px;
 }

@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
-<title>Lysee �ο��ֲ� - 3.6.��</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Lysee 参考手册 - 3.6.类</title>
 <meta name="author" content="libudi@hotmail.com">
 <meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
 <link href="index.css" rel="stylesheet" type="text/css">
@@ -15,30 +15,29 @@
     <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
         <tr>
           <td align="left" valign="top"><a href="index.html"><img src="logo.png" width="327" height="70" border="0"></a></td> 
-          <td align="right" valign="bottom"> С�ɡ����١��ɿ�����ƽ̨<br> 
-            Lysee �ű�����</td> 
+          <td align="right" valign="bottom"> <a href="305.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="307.html">NEXT&gt;</a></td> 
         </tr> 
       </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a href="300.html">3.���Բο�</a> - <strong>6.��</strong><br> 
+    <td class="footer_line"><a href="300.html">3.语言参考</a> - <strong>6.类</strong><br> 
       <br> 
-      �ؼ��� <strong>class</strong> ���ڶ����û����͡����⣬����л�Ƶ���õ����ں˺�ģ���ж�����ࡣ </td> 
+      关键字 <strong>class</strong> 用于定义用户类型。此外，编程中会频繁用到在内核和模块中定义的类。 </td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="define" id="define"></a><strong>6.1 ʲô����</strong><br> 
+    <td><a name="define" id="define"></a><strong>6.1 什么是类</strong><br> 
       <br> 
-      ���Ǻ����ļ��ϣ�Lysee ����������ص㣺<br> 
+      类是函数的集合，Lysee 类具有以下特点：<br> 
       <ul> 
-        <li>��֧�ּ̳С�</li> 
-        <li>���ʶ���ֻ��ͨ���������á�</li> 
-        <li>������������</li> 
-      </ul></td> 
+        <li>不支持继承。</li> 
+        <li>访问对象只能通过函数调用。</li> 
+        <li>无析构函数。</li> 
+    </ul></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><strong>6.2 ��������</strong><br> 
+    <td><strong>6.2 定义新类</strong><br> 
       <br> 
-      �﷨��<strong>class</strong> ClassName |Constructing Arguments| <br> 
+      语法：<strong>class</strong> ClassName |Constructing Arguments| <br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Constructing Statements] <br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>def</strong> Method1 |Arguments| <br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Statements]<br> 
@@ -49,7 +48,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end</strong><br> 
       <br> 
-      �뿴����������ӡ�<br> 
+      请看下面这个例子。<br> 
       <br> 
       <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
         <tr> 
@@ -70,12 +69,12 @@
         </tr> 
       </table> 
       <br>      <br> 
-      my ���ຯ�����������캯�����ĵ�һ����������������������� <strong>this</strong> ����������ʱ���������Ӽ��� </td> 
+    my 是类函数（包括构造函数）的第一个参数，代表类对象本身，是 <strong>this</strong> （函数运行时环境）的子集。 </td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="method" id="method"></a><strong>6.3. ��������</strong><br> 
+    <td><a name="method" id="method"></a><strong>6.3. 创建对象</strong><br> 
       <br> 
-      �����༴�ɴ�������Lysee �����������Ҳ�������Ĺ��캯���������޹��캯���򷵻�һ���ն���ȱʡֵ����<br> 
+      调用类即可创建对象，Lysee 解释器将查找并调用类的构造函数，如类无构造函数则返回一个空对象（缺省值）。<br> 
       <br> 
       <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
         <tr> 
@@ -85,12 +84,12 @@ My name is Mike<br>
 My job is Engineer<br>
 &gt;&gt;&gt;</td> 
         </tr> 
-      </table></td> 
+    </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="method" id="method"></a><strong>6.4. ����</strong><br> 
+    <td><a name="method" id="method"></a><strong>6.4. 方法</strong><br> 
       <br> 
-      ������ָ�����ж���ĺ��������ഴ������󣬶�ȡ���޸Ķ����״ֻ̬��ͨ��������<br> 
+      方法是指在类中定义的函数，用类创建对象后，读取或修改对象的状态只能通过方法。<br> 
       <br> 
       <table width="0%"  border="0" cellpadding="0" cellspacing="0" class="console"> 
         <tr> 
@@ -100,41 +99,41 @@ My job is Engineer<br>
 &gt;&gt;&gt; [1,2,3,hello world]<br> 
 &gt;&gt;&gt;</td> 
         </tr> 
-      </table></td> 
+    </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="property" id="property"></a><strong>6.5. ����</strong><br> 
+    <td><a name="property" id="property"></a><strong>6.5. 属性</strong><br> 
       <br> 
-      �������ڱ�����������ʱ״̬���� Lysee �����Ա����Ϊ�򵥵����Ա�������ã����������֣�<br> 
+      属性用于表达对象的运行时状态，在 Lysee 中属性被归结为简单的类成员函数调用，分以下两种：<br> 
       <br> 
       <table  border="0" align="center" cellpadding="4" cellspacing="0"> 
         <tr> 
-          <th class="bottom_line">��������</th> 
-          <th class="bottom_line">˵��</th> 
-          <th class="bottom_line">���Ա������ʽ</th> 
+          <th class="bottom_line">属性类型</th> 
+          <th class="bottom_line">说明</th> 
+          <th class="bottom_line">类成员函数格式</th> 
         </tr> 
         <tr> 
-          <td align="left" class="bottom_left_line">ֻ������</td> 
-          <td align="left" class="bottom_left_line">ֻ�ܶ�ȡ�����״̬</td> 
+          <td align="left" class="bottom_left_line">只读属性</td> 
+          <td align="left" class="bottom_left_line">只能读取对象的状态</td> 
           <td align="left" class="bottom_left_line">def get_<span class="lsp_code">PROPERTYNAME</span> || </td> 
         </tr> 
         <tr> 
-          <td align="left" class="bottom_left_line">ֻд����</td> 
-          <td align="left" class="bottom_left_line">ֻ���޸Ķ����״̬</td> 
+          <td align="left" class="bottom_left_line">只写属性</td> 
+          <td align="left" class="bottom_left_line">只能修改对象的状态</td> 
           <td align="left" class="bottom_left_line">def set_<span class="lsp_code">PROPERTYNAME</span> |value|</td> 
         </tr> 
       </table> 
       <br> 
-      ���Ծ��������ص��Ҫ��<br> 
+      属性具有以下特点和要求：<br> 
       <ul> 
-        <li>ֻ�����Եĺ���ǰ׺Ϊ��get_����ֻ���� <strong>this</strong> һ��������</li> 
-        <li>ֻд���Եĺ���ǰ׺Ϊ��set_���ұ�����������������һ������Ϊ <strong>this</strong>���ڶ�������Ϊ�µ�����ֵ����</li> 
-        <li>ֻ�����Կ��Բμӱ���ʽ���㡣</li> 
-        <li>ֻд����ֻ�ܳ����ڵȺš�=������߱���ֵ��</li> 
-        <li>ֻ�����Կ�����ֻд����ͬ����</li> 
-        <li>ͬ����ֻ�����Ժ�ֻд����Ҫ������ͬ�����͡�</li> 
-        <li>����ֻ��һ�ּ����Ա�������ã����ٴ�����д�����﷨���¡�</li> 
-        <li>���Ա���ͨ�ĺ������ø������˵�˼άϰ�ߺͱ���ϰ�ߣ��ú������ܹ���ǿ����Ŀɶ��ԡ�</li> 
+        <li>只读属性的函数前缀为“get_”且只能有 <strong>this</strong> 一个参数；</li> 
+        <li>只写属性的函数前缀为“set_”且必须有两个参数，第一个参数为 <strong>this</strong>，第二个参数为新的属性值；。</li> 
+        <li>只读属性可以参加表达式运算。</li> 
+        <li>只写属性只能出现在等号“=”的左边被赋值。</li> 
+        <li>只读属性可以与只写属性同名。</li> 
+        <li>同名的只读属性和只写属性要保持相同的类型。</li> 
+        <li>属性只是一种简化类成员函数调用，减少代码书写量的语法糖衣。</li> 
+        <li>属性比普通的函数调用更贴近人的思维习惯和表达习惯，用好属性能够加强代码的可读性。</li> 
       </ul> 
       <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0"> 
         <tr> 
@@ -150,18 +149,18 @@ My job is Engineer<br>
             [,,,,,,,,,]<br> 
 &gt;&gt;&gt;</td> 
         </tr> 
-      </table></td> 
+    </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"> <a name="noname" id="noname"></a><strong>6.6. ��������</strong><br> 
+    <td> <a name="noname" id="noname"></a><strong>6.6. 匿名属性</strong><br> 
       <br> 
-      ����������ָ�޷�Ԥ�ȶ��壬ֻ���� getpv ������ȡ���� setpv �����޸ĵ����ԡ�<br> 
+      匿名属性是指无法预先定义，只能用 getpv 方法读取、用 setpv 方法修改的属性。<br> 
       <ul> 
-        <li>������ʱ��Lysee ���Ȳ��Ҳ�������������ƥ��� get ��������δ�ҵ�����Ҳ�����������Ϊ�������� getpv ������</li> 
-        <li>д����ʱ��Lysee ���Ȳ��Ҳ�������������ƥ��� set ��������δ�ҵ�����Ҳ�����������Ϊ�������� setpv ������</li> 
+        <li>读属性时，Lysee 首先查找并调用与属性名匹配的 get 方法，如未找到则查找并将属性名作为参数调用 getpv 方法。</li> 
+        <li>写属性时，Lysee 首先查找并调用与属性名匹配的 set 方法，如未找到则查找并将属性名作为参数调用 setpv 方法。</li> 
       </ul> 
       <br> 
-      ������������ȫ�ȼ۵Ķ�д��ϣֵ���룬����ϸ�Ķ�������������Եĺ���Ͷ�дģʽ��<br> 
+      下面是两段完全等价的读写哈希值代码，请仔细阅读并体会匿名属性的含义和读写模式。<br> 
       <br> 
       <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0"> 
         <tr valign="top"> 
@@ -176,12 +175,12 @@ My job is Engineer<br>
             Tue, 03 Aug 2010 22:47:25 GMT<br> 
 &gt;&gt;&gt;</td> 
         </tr> 
-      </table></td> 
+    </table></td> 
   </tr>
   <tr>
-    <td class="footer_line"><a name="hash" id="hash"></a><strong>6.7. HASH�洢</strong><br>
+    <td><a name="hash" id="hash"></a><strong>6.7. HASH存储</strong><br>
       <br>
-�û��Զ����������� hashed �࣬��˿�������ת��Ϊ hashed ���ͣ����� hashed ����ת��Ϊ�û��Զ����ཫ��ʧ�ܡ�<br>
+用户自定义类来自于 hashed 类，因此可以隐含转化为 hashed 类型，但将 hashed 类型转化为用户自定义类将会失败。<br>
 <br>
 <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
   <tr valign="top">
@@ -203,7 +202,7 @@ My name is Mike<br>
 </table></td>
   </tr> 
   <tr> 
-    <td align="left" class="footer_line">��ҳ������: 2010/08/11</td> 
+    <td align="right" class="footer_line"><a href="305.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="307.html">NEXT&gt;</a></td> 
   </tr> 
 </table> 
 </body>

@@ -2,10 +2,8 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
-<title>Lysee 参考手册 - 4.1.嵌入内核</title>
-<meta name="author" content="libudi@hotmail.com">
-<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Lysee Reference Manual - Create module</title>
 <link href="index.css" rel="stylesheet" type="text/css">
 <link href="logo.ico" rel="Shortcut Icon">
 </head>
@@ -13,83 +11,129 @@
 <table width="760" border="0" align="center" cellpadding="0" cellspacing="8"> 
   <tr> 
     <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
-        <tr>
+        <tr> 
           <td align="left" valign="top"><a href="index.html"><img src="logo.png" width="327" height="70" border="0"></a></td> 
-          <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
-            Lysee 脚本引擎</td> 
+        <td align="right" valign="bottom"><a href="400.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="402.html">NEXT&gt;</a></td>
         </tr> 
       </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a href="400.html">4.嵌入式开发</a> - <strong>1.嵌入内核</strong><br> 
-      <br> 
-    正文将通过代码介绍如何将 Lysee 嵌入应用程序并用嵌入的 Lysee 执行命令行指定的程序文件。<br>
-<br>
-嵌入 Lysee 只需 lseu.pas 和 lysee.dll（或lysee.so）两个文件，它们是 Lysee 安装的必要部分，具体位置可以查阅<a href="200.html#folder">安装目录结构</a>。</td> 
+    <td class="footer_line">
+      <strong><strong>4.1 <a href="index.html">Lysee Reference Manual</a> - </strong><a href="300.html"></a></strong><a href="400.html">Developments</a> - <strong>Create module</strong><br> 
+          <br> 
+    This page explains how to write LYSEE module with project lysee_zipper.</td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><strong>1.1 建立工程</strong><br> 
+    <td><strong>4.1.1 Load zipper </strong><br> 
       <br> 
-      启动 <a href="http://www.lazarus.freepascal.org/" target="_blank">Lazarus</a> 后按“Project/New Project ...”的顺序打开建立工程对话框：<br>
-      <br>
-      <center><img src="images/401/01.png" width="398" height="267"></center><br>
-      选择“Console application”类型后按“Create”按钮打开控制台项目设置对话框：<br> 
-    <br>
-    <center><img src="images/401/02.png" width="466" height="315"></center><br>
-    示例程序无须继承 TCustomApplication 类，按“Cancel”按钮生成最为简洁的程序代码：<br>
-    <br>
-    <center><img src="images/401/03.png" width="568" height="470"></center><br>
-    简单整理一下将程序命名保存到 cembed 文件夹中：<br>
-    <br>
-    <center><img src="images/401/04.png" width="568" height="470"></center><br>
-    在继续后面的内容前请编译运行 cembed 确保没有错误。</td> 
-  </tr> 
-  <tr> 
-    <td class="footer_line"><strong>1.2. 嵌入 Lysee</strong><br> 
-      <br> 
-      进入 Lysee <a href="200.html#folder">安装目录</a>，找到文件 lseu.pas 和 lysee.dll 并将它们复制到 cembed 文件夹。<br>
-      <br>
-将 lseu.pas 加入 cembed 程序：<br> 
-      <br> 
-      <center><img src="images/401/05.png" width="568" height="470"></center><br> 
-      在启动代码块中加入装载 Lysee 内核并执行退出前清理的函数调用：<br> 
-      <br> 
-      <center><img src="images/401/06.png" width="573" height="445">
-      </center><br> 
-    编译运行 cembed 确保没有错误。</td> 
-  </tr> 
-  <tr> 
-    <td class="footer_line"><strong>1.3. 执行文件</strong><br> 
-      <br> 
-      创建 Lysee 执行引擎（TLseEngine）对象执行命令行文件：<br> 
-      <br><center><img src="images/401/07.png" width="573" height="445">
-      </center>
-      <center>
-      </center>
-      <br>
-编译运行 cembed 确保没有错误。</td> 
-  </tr> 
-  <tr> 
-    <td class="footer_line"><strong>1.4. 完成</strong><br> 
-      <br>
-      打开一个命令行窗口，测试运行随 Lysee 安装的示例程序：<br>
-      <br>
       <table width="600"  border="0" align="center" cellpadding="0" cellspacing="0">
         <tr>
-          <td nowrap class="dosprompt">d:\cembed&gt;cembed<br>
-Usage:&nbsp;cembed&nbsp;lysee_script_file&nbsp;d:\cembed&gt;cembed&nbsp;hello.ls<br>
-File&nbsp;&quot;hello.ls&quot;&nbsp;not&nbsp;exists!<br>
-
-d:\cembed&gt;cembed&nbsp;c:\lysee\demos\hello.ls<br>
-Hello&nbsp;world!<br>
-d:\cembed&gt;</td>
+          <td nowrap class="dosprompt">&gt;&gt;&gt; import zipper;<br>
+            &gt;&gt;&gt; = zipper.file;<br>
+            C:\lysee\modules\zipper.dll<br>
+          &gt;&gt;&gt;</td>
         </tr>
-      </table>
+      </table><br>
+      There are the steps LYSEE load zipper module:<br>      
+      <ol>
+        <li>Search and find zipper.dll in ${search} path.</li>
+        <li>Load zipper.dll into LYSEE space.</li>
+        <li> Setup zipper module.</li>
+        <li> Get address of InitExchange function from zipper.dll.</li>
+        <li> Call InitExchange with zipper module and function  QueryEntry.<br>
+        At this time, zipper.dll registers its informations into zipper module.</li>
+        <li>Setup classes, functions in zipper module with zipper's informations.</li>
+    </ol>
+      Important:<br>
+    <ol>
+      <li>LYSEE module must export function InitExchange.</li>
+      <li>Module must register its information (classes, function and others) in  InitExchange function.</li>
+    </ol></td> 
+  </tr>
+  <tr>
+    <td><strong><a name="prepare"></a>4.1.2 Prepare functions</strong><br>
       <br>
-      至此对 Lysee 的嵌入已经完成，在后面我们将学习一些更高级的 Lysee 开发技术，包括程序的<a href="402.html">脚本化</a>和数据库的代理访问等。</td> 
+      zipper exports 4 module functions:<br>
+      <blockquote>
+      <table  border="0" cellpadding="4" cellspacing="0">
+        <tr>
+          <th class="bottom_line">Name</th>
+          <th class="bottom_line">Description</th>
+        </tr>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">list</td>
+          <td align="left" class="bottom_left_line"> List sub file names in a zip file</td>
+        </tr>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">unzip</td>
+          <td align="left" class="bottom_left_line">unzip all files</td>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line">unzipf</td>
+          <td align="left" class="bottom_left_line">unzip one file </td>
+        <tr>
+          <td align="center" bgcolor="#FFDFFF" class="bottom_line"> zip </td>
+          <td align="left" class="bottom_left_line">create zip file </td>
+      </table></blockquote>
+      (1) Realize these functions: <br> 
+      <blockquote><strong>procedure</strong> zipper_list(invoker: TLseInvoke);<strong>cdecl</strong>;<br>
+        <strong>procedure</strong> zipper_unzip(invoker: TLseInvoke);<strong>cdecl</strong>;<br>
+        <strong>procedure</strong> zipper_unzip_file(invoker: TLseInvoke);<strong>cdecl</strong>;<br>
+        <strong>procedure</strong> zipper_zip(invoker: TLseInvoke);<strong>cdecl</strong>;<strong>        </strong>
+</blockquote>
+      (2) Register these functions in array: <br>
+      <blockquote><strong>const</strong><br>
+        &nbsp;&nbsp;zipper_func_count = 4;<br>
+        &nbsp;&nbsp;zipper_func_array: array[0..zipper_func_count - 1] <strong>of</strong> RLseFuncRec = (<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;(fr_prot:'strlist list(string zipFile)';<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_addr:<span class="lsp_code">@zipper_list</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_desc:'list sub-files in source zip file'<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;(fr_prot:'void unzip(string zipFile, string outputPath)';<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_addr:<span class="lsp_code">@zipper_unzip</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_desc:'unzip all files to specified path'<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;(fr_prot:'void unzipf(string zipFile, string subFile, string outputPath)';<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_addr:<span class="lsp_code">@zipper_unzip_file</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_desc:'unzip specified sub file'<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;(fr_prot:'int zip(string zipFile, string sourceFile)';<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_addr:<span class="lsp_code">@zipper_zip</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fr_desc:'create zip file with passed source file or LB delimited list'<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
+    &nbsp;&nbsp;);</blockquote>    </td>
   </tr> 
+  <tr>
+    <td>
+      <strong>4.1.3 Realize InitExchange function</strong><br>
+          <br>
+    The following is zipper's InitExchange function.<br><blockquote>
+    <strong>procedure</strong> InitExchange(<strong>const</strong> MR: PLseModuleRec; <strong>const</strong> QE: TLseQueryEntry);<strong>cdecl</strong>;<br>
+    <strong>begin</strong><br>
+    &nbsp;&nbsp;<span class="lsp_code">lse_prepare(QE);</span><br>
+    &nbsp;&nbsp;MR^.iw_production := 'fpc zip/unzip module for lysee';<br>
+    &nbsp;&nbsp;MR^.iw_version := LSE_VERSION;<br>
+    &nbsp;&nbsp;MR^.iw_copyright := LSE_COPYRIGHT;<br>
+    &nbsp;&nbsp;MR^.iw_desc := MR^.iw_production;<br>
+    &nbsp;&nbsp;MR^.iw_homepage := LSE_HOMEPAGE;<br>
+    &nbsp;&nbsp;MR^.iw_email := LSE_EMAIL;<br>
+    &nbsp;&nbsp;<span class="lsp_code">MR^.iw_libfuncs.count := zipper_func_count;</span><br>
+    &nbsp;&nbsp;<span class="lsp_code">MR^.iw_libfuncs.entry :=@zipper_func_array;</span><br>
+    &nbsp;&nbsp;<span class="lsp_code">MR^.iw_invoke :=@lse_call_gate;</span><br>
+    <strong>end</strong>;<br><br>
+    <span class="lsp_code"><strong>exports</strong>&nbsp;InitExchange; </span> </blockquote>Explains:<br>
+    <ol>
+      <li><span class="lsp_code">lse_prepare(QE);</span><br>
+      get and save call-into-kernel function entries.<br>
+      </li>
+        <li><span class="lsp_code">MR^.iw_libfuncs.count := zipper_func_count;</span><br>set module function count.<br></li>
+        <li><span class="lsp_code">MR^.iw_libfuncs.entry :=@zipper_func_array;</span><br>set module function array address.<br></li>
+        <li><span class="lsp_code">MR^.iw_invoke :=@lse_call_gate;</span><br>tell kernel, the  module functions are TLseFuncInvoke type.<br></li>
+        <li><span class="lsp_code"><strong>exports</strong>&nbsp;InitExchange;</span><br>
+          exports InitExchange function.</li>
+    </ol></td>
+  </tr>
   <tr> 
-    <td align="left" class="footer_line">本页最后更新: 2010/07/27 </td> 
+    <td align="right" class="footer_line"><a href="400.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="402.html">NEXT&gt;</a></td> 
   </tr> 
 </table> 
 </body>
