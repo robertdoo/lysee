@@ -1,4 +1,4 @@
-body, a, input, select, td, div, th, table { 
+ï»¿body, a, input, select, td, div, th, table { 
 	font-size:12px; 
 	font-family:"Courier New", Courier, mono;
 }
@@ -30,7 +30,7 @@ a:active {
 	text-decoration: underline;
 }
 .songti10 {
-	font-family: "ËÎÌå";
+	font-family: "å®‹ä½“";
 	font-size: 10pt;
 	font-style: normal;
 	line-height: normal;
@@ -82,7 +82,7 @@ a:active {
 	text-decoration: none;
 }
 .songsubject {
-	font-family: "ËÎÌå";
+	font-family: "å®‹ä½“";
 	font-size: 20pt;
 	font-weight: bold;
 	color: #0066CC;
@@ -162,5 +162,5 @@ DL.wicon {
 	position: relative;
 	left: 64px;
 	top: 0px;
-	width: 600;
+	width: 600px;
 }
