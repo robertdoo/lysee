@@ -3,9 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
-<title>Lysee Manual - Expression</title>
-<meta name="author" content="libudi@hotmail.com">
-<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<title>Lysee Reference Manual - Expression</title>
 <link href="index.css" rel="stylesheet" type="text/css">
 <link href="logo.ico" rel="Shortcut Icon">
 </head>
@@ -14,18 +12,16 @@
   <tr> 
     <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
         <tr> 
-          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
-        <td align="right" valign="bottom"><a href="306.html">&lt;PREV</a></td>
-        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
-        <td align="right" valign="bottom"><a href="308.html">NEXT&gt;</a></td>
+          <td align="left" valign="top"><a href="index.html"><img src="logo.png" width="490" height="70" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="306.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="308.html">NEXT&gt;</a></td>
         </tr> 
       </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><strong>3.7 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html">Language Reference</a> - <strong>Expressions</strong><br>      </td> 
+    <td class="footer_line"><strong>3.7 <a href="index.html">Lysee Reference Manual</a> - </strong><a href="300.html">Language Reference</a> - <strong>Expressions</strong><br>      </td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="definition" id="definition"></a><strong><strong>3.</strong>7.1 What is expression?</strong><br> 
+    <td><a name="definition" id="definition"></a><strong><strong>3.</strong>7.1 What is expression?</strong><br> 
       <br> 
  Expression is any legal combination of symbols that represents a value:<br>
 <br>
@@ -51,7 +47,7 @@
     Expression in Lysee is calculated from left to right. </td>
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="operator" id="operator"></a><strong><strong>3.</strong>7.2 Operators</strong><br> 
+    <td><a name="operator" id="operator"></a><strong><strong>3.</strong>7.2 Operators</strong><br> 
       <br> 
       Operators in Lysee has different priority levels. They are list below from hight to low:<br> 
 <br>
@@ -83,7 +79,7 @@
     </table>      </td> 
   </tr>
   <tr>
-    <td class="footer_line"><a name="concate" id="concate"></a><strong><strong>3.</strong>7.3 Concatenate Strings </strong><br>
+    <td><a name="concate" id="concate"></a><strong><strong>3.</strong>7.3 Concatenate Strings </strong><br>
       <br>
 Use operator + to concatenate strings, at this time left or right value of + must be string type:<br>
 <br>
@@ -98,7 +94,7 @@ TIME:&nbsp;Fri,&nbsp;18&nbsp;Apr&nbsp;2008&nbsp;18:57:52&nbsp;GMT<br>
 </table></td>
   </tr>
   <tr>
-    <td class="footer_line"><a name="repeats" id="repeats"></a><strong><strong>3.</strong>7.4 Times Concatenate</strong><br>
+    <td><a name="repeats" id="repeats"></a><strong><strong>3.</strong>7.4 Times Concatenate</strong><br>
       <br>
 Use operator * to cocatenate string by specified times. In this case left value must be a string and right value must be a integer, or else <strong>nil</strong> is returned:<br>
 <br>
@@ -112,7 +108,7 @@ Use operator * to cocatenate string by specified times. In this case left value 
 </table></td>
   </tr>
   <tr>
-    <td class="footer_line"><a name="redirect" id="redirect"></a><strong><strong>3.</strong>7.5 Shift Left Insert</strong><br>
+    <td><a name="redirect" id="redirect"></a><strong><strong>3.</strong>7.5 Shift Left Insert</strong><br>
       <br>
 When calculate OBJECT &lt;&lt; VALUE, Lysee interpreter will try to insert/add VALUE into/to OBJECT, and expression result is the object:<br>
 <br>
@@ -134,7 +130,7 @@ When calculate OBJECT &lt;&lt; VALUE, Lysee interpreter will try to insert/add V
 Now, the OBJECT should be stream、strlist or varlist.</td>
   </tr>
   <tr>
-    <td class="footer_line"><a name="varlist" id="varlist"></a><strong><strong>3.</strong>7.6 Define varlist Object </strong><br>
+    <td><a name="varlist" id="varlist"></a><strong><strong>3.</strong>7.6 Define varlist Object </strong><br>
       <br>
 Symbol [ and ] are used to define varlist object, [] equals with varlist():<br>
 <br>
@@ -156,7 +152,7 @@ Symbol [ and ] are used to define varlist object, [] equals with varlist():<br>
 </table></td>
   </tr>
   <tr>
-    <td class="footer_line"><a name="hashed" id="hashed"></a><strong><strong>3.</strong>7.7 Define hashed Object</strong><br>
+    <td><a name="hashed" id="hashed"></a><strong><strong>3.</strong>7.7 Define hashed Object</strong><br>
       <br>
 Symbol { and } are used to define hashed object, {} equals with hashed():<br>
 <br>
@@ -187,7 +183,7 @@ name libudi<br>
 </table></td>
   </tr>
   <tr> 
-    <td align="left" class="footer_line">Last Modified : 2010/08/30</td> 
+    <td align="right" class="footer_line"><a href="306.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="308.html">NEXT&gt;</a></td> 
   </tr> 
 </table> 
 </body>

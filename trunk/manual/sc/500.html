@@ -14,30 +14,28 @@
   <tr> 
     <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
         <tr> 
-          <td rowspan="2" align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
-          <td align="right" valign="top"><a href="index.html">Lysee 参考手册</a></td> 
-        </tr> 
-        <tr> 
+          <td align="left" valign="top"><a href="index.html"><img src="logo.png" width="327" height="70" border="0"></a></td> 
           <td align="right" valign="bottom"> 小巧、快速、可靠、跨平台<br> 
             Lysee 脚本引擎</td> 
         </tr> 
       </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><strong>网站开发简明教程</strong>
+    <td class="footer_line"><strong>网站开发简明教程</strong> 
       <ul> 
-          <li> <a href="500.html#first_lsp">第一个 LSP 页面</a></li> 
-          <li> <a href="500.html#offen_used">最常用，最实用，必须掌握的脚本</a></li> 
-          <li><a href="500.html#form_lsp">表单处理</a></li> 
-          <li><a href="500.html#upload_file">向服务器上传文件</a></li> 
+        <li> <a href="500.html#first_lsp">第一个 LSP 页面</a></li> 
+        <li> <a href="500.html#offen_used">最常用，最实用，必须掌握的脚本</a></li> 
+        <li><a href="500.html#form_lsp">表单处理</a></li> 
+        <li><a href="500.html#upload_file">向服务器上传文件</a></li> 
       </ul> 
-        本章将给出关于 Lysee 网站开发的简明教程，内容仅限如何生成动态的 web 页面。<br> 
-        <br> 
-        加入 Lysee 代码的 HTML 页面统称为 LSP（<strong>L</strong>ysee <strong>S</strong>cript <strong>P</strong>age)，缺省的文件后缀名为“.lsp”，换局话说，LSP 就是加入了 Lysee 代码的 HTML 文件，这些代码可以为你做任何你想做的事情。LSP 文件的生成和修改与普通 HTML 文件完全一样，可以用你习惯的页面设计工具（DreamWave, FrontPage, Composer, CoffeeCup, HotDog, ...）来建立和编辑它们。<br> 
-        <br> 
-        本教程假设用户的服务器已经安装并运行了 Lysee，且所有以 .lsp 结尾的文件都配置为由 Lysee 来处理。我们即将要做的就是试着编写一些 LSP 文件，并将它们放置在服务器上有效的 web 目录中，之外没有任何其它多余的操作。服务器将自动解析这些文件。<br> 
-        <br> 
-    为方便学习和开发，你可以试着把自己的机器改装为 HTTP 服务器，这样做只需安装 Lysee 和一个 HTTP 服务器（Abyss, Apache, Lighttpd, ...）就行了，必要时还可以安装一个 SQL 数据库系统（PostgreSQL, FireBird, MySQL, ...）。 </td></tr> 
+      本章将给出关于 Lysee 网站开发的简明教程，内容仅限如何生成动态的 web 页面。<br> 
+      <br> 
+      加入 Lysee 代码的 HTML 页面统称为 LSP（<strong>L</strong>ysee <strong>S</strong>cript <strong>P</strong>age)，缺省的文件后缀名为“.lsp”，换局话说，LSP 就是加入了 Lysee 代码的 HTML 文件，这些代码可以为你做任何你想做的事情。LSP 文件的生成和修改与普通 HTML 文件完全一样，可以用你习惯的页面设计工具（DreamWave, FrontPage, Composer, CoffeeCup, HotDog, ...）来建立和编辑它们。<br> 
+      <br> 
+      本教程假设用户的服务器已经安装并运行了 Lysee，且所有以 .lsp 结尾的文件都配置为由 Lysee 来处理。我们即将要做的就是试着编写一些 LSP 文件，并将它们放置在服务器上有效的 web 目录中，之外没有任何其它多余的操作。服务器将自动解析这些文件。<br> 
+      <br> 
+      为方便学习和开发，你可以试着把自己的机器改装为 HTTP 服务器，这样做只需安装 Lysee 和一个 HTTP 服务器（Abyss, Apache, Lighttpd, ...）就行了，必要时还可以安装一个 SQL 数据库系统（PostgreSQL, FireBird, MySQL, ...）。 </td> 
+  </tr> 
   <tr> 
     <td class="footer_line"><strong><a name="first_lsp"></a>第一个 LSP 页面</strong><br> 
       <br> 
@@ -49,7 +47,8 @@
 &lt;head&gt; <br> 
 &lt;title&gt;Hello World&lt;/title&gt; <br> 
 &lt;/head&gt; <br> 
-&lt;body&gt; <br>            <strong>{: = &quot;Hello World&quot; :} </strong><br> 
+&lt;body&gt; <br> 
+            <strong>{: = &quot;Hello World&quot; :} </strong><br> 
 &lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
@@ -74,7 +73,8 @@
 &lt;head&gt; <br> 
 &lt;title&gt;Hello World&lt;/title&gt; <br> 
 &lt;/head&gt; <br> 
-&lt;body&gt; <br>            Hello World<br> 
+&lt;body&gt; <br> 
+            Hello World<br> 
 &lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
@@ -91,7 +91,7 @@
         <tr> 
           <td>{：<br> 
             = <strong>__vals__</strong>.text.html(), <strong>__envs__</strong>.text.html();<br> 
-          ：}</td> 
+            ：}</td> 
         </tr> 
       </table> 
       <br> 
@@ -102,35 +102,35 @@
       <table width="0%"  border="0" align="center" cellpadding="6" cellspacing="0"> 
         <tr> 
           <td valign="middle">1.</td> 
-          <td>{：<br>
-  = <strong>__envs__</strong>.read(&quot;HTTP_USER_AGENT&quot;);<br> 
-          ：}</td> 
+          <td>{：<br> 
+            = <strong>__envs__</strong>.read(&quot;HTTP_USER_AGENT&quot;);<br> 
+            ：}</td> 
         </tr> 
         <tr> 
           <td valign="middle">2.</td> 
           <td>{：<br> 
             = <strong>__envs__</strong>.HTTP_USER_AGENT;<br> 
-          ：}</td> 
+            ：}</td> 
         </tr> 
         <tr> 
           <td valign="middle">3.</td> 
           <td>{：<br> 
             = ${HTTP_USER_AGENT};<br> 
-          ：}</td> 
+            ：}</td> 
         </tr> 
       </table> 
-      <br>      
+      <br> 
       ${HTTP_USER_AGENT} 是一种兼容 UNIX Shell 环境变量的表达模式，${} 表示取环境变量值，中间的标识符为要取值的环境变量名称。在 Lysee 中 ${} 不仅可以读取环境变量的值，而且可以读取 CGI 请求参数 <strong>__vals__ </strong>的值，以及 Lysee 内核的配置参数。<br> 
       <br> 
       3、判断访问者浏览器是否是 IE。 <br> 
       <br> 
       <table width="0%"  border="0" align="center" cellpadding="6" cellspacing="0"> 
         <tr> 
-          <td>{:<br>
-            <strong>if</strong> ${HTTP_USER_AGENT}.pos(&quot;MSIE&quot;) &gt;= 0 <strong>then</strong><br>
+          <td>{:<br> 
+            <strong>if</strong> ${HTTP_USER_AGENT}.pos(&quot;MSIE&quot;) &gt;= 0 <strong>then</strong><br> 
 &nbsp;&nbsp;= &quot;you are using Internet Explorer&quot;;<br> 
-          <strong>end</strong><br>
-          :}</td> 
+            <strong>end</strong><br> 
+            :}</td> 
         </tr> 
       </table> 
       <br> 
@@ -141,13 +141,12 @@
           <td>I guess:<br> 
             {: <strong>if</strong> ${HTTP_USER_AGENT}.pos(&quot;MSIE&quot;) &gt;= 0 <strong>then</strong> :}<br> 
 &nbsp;&nbsp;you are using Internet Explorer<br> 
-{: <strong>else</strong> :} <br> 
+            {: <strong>else</strong> :} <br> 
 &nbsp;&nbsp;Maybe you are using FireFox<br> 
             {: <strong>end</strong> :}<br> 
             is it right?</td> 
         </tr> 
-      </table> 
-    </td>
+      </table></td> 
   </tr> 
   <tr> 
     <td class="footer_line"><strong><a name="form_lsp"></a>表单处理</strong><br> 
@@ -160,7 +159,12 @@
 &lt;head&gt; <br> 
 &lt;title&gt;input name and age&lt;/title&gt; <br> 
 &lt;/head&gt; <br> 
-&lt;body&gt; <br>            &lt;form action=&quot;nameage.lsp&quot; method=&quot;GET&quot;&gt;<br>&lt;p&gt;your name &lt;input type=&quot;text&quot; name=&quot;name&quot; /&gt;&lt;/p&gt;<br>&lt;p&gt;your age &lt;input type=&quot;text&quot; name=&quot;age&quot; /&gt;&lt;/p&gt;<br>&lt;p&gt;&lt;input type=&quot;submit&quot; /&gt;&lt;/p&gt;<br>&lt;/form&gt;<br> 
+&lt;body&gt; <br> 
+&lt;form action=&quot;nameage.lsp&quot; method=&quot;GET&quot;&gt;<br> 
+&lt;p&gt;your name &lt;input type=&quot;text&quot; name=&quot;name&quot; /&gt;&lt;/p&gt;<br> 
+&lt;p&gt;your age &lt;input type=&quot;text&quot; name=&quot;age&quot; /&gt;&lt;/p&gt;<br> 
+&lt;p&gt;&lt;input type=&quot;submit&quot; /&gt;&lt;/p&gt;<br> 
+&lt;/form&gt;<br> 
 &lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
@@ -186,7 +190,7 @@
 &lt;title&gt;display name and age&lt;/title&gt; <br> 
 &lt;/head&gt; <br> 
 &lt;body&gt;<br> 
-            &lt;!--{:=@&quot;Hi! %{request.name}, I know you are %{request.age} years old.&quot;:}--&gt;<br> 
+&lt;!--{:=@&quot;Hi! %{request.name}, I know you are %{request.age} years old.&quot;:}--&gt;<br> 
 &lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
@@ -210,7 +214,8 @@
       说明：nameage.lsp 的第二种编码使用了格式化字符串操作符“@”，在格式化字符串的处理过程中，标记 %{} 表示取环境变量值，标记中间的内容为环境变量名称。</td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="upload_file"></a><strong>向服务器上传文件</strong><br>      <br> 
+    <td class="footer_line"><a name="upload_file"></a><strong>向服务器上传文件</strong><br> 
+      <br> 
       向服务器上传文件其实也是表单处理的一部分，但与普通表单不同的是采用了“multipart/form-data”的编码方式，鉴于文件上传的特殊性有必要单独提出来讲一下。在处理“multipart/form-data”表单时，Lysee 自动将上传的文件保存到 ${tmpath} 目录，并将临时文件名与原始文件名捆绑在一起存储到 <strong>__vals__</strong> 列表中供 LSP 代码使用。看下面这个例子：<br> 
       <br> 
       <table width="0%"  border="0" align="center" cellpadding="6" cellspacing="0"> 
@@ -219,8 +224,12 @@
 &lt;head&gt; <br> 
 &lt;title&gt;upload album picture &lt;/title&gt; <br> 
 &lt;/head&gt; <br> 
-&lt;body&gt; <br>&lt;form action=&quot;album.lsp&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;<br>
-Picture: &lt;br&gt;<br>&lt;input type=&quot;file&quot; name=&quot;eImage&quot; size=&quot;24&quot;&gt;&lt;br&gt;<br>&lt;input type=&quot;submit&quot; name=&quot;Submit&quot; value=&quot;Upload&quot;&gt;<br>&lt;/form&gt;<span class="lsp_code"><br> 
+&lt;body&gt; <br> 
+&lt;form action=&quot;album.lsp&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;<br> 
+            Picture: &lt;br&gt;<br> 
+&lt;input type=&quot;file&quot; name=&quot;eImage&quot; size=&quot;24&quot;&gt;&lt;br&gt;<br> 
+&lt;input type=&quot;submit&quot; name=&quot;Submit&quot; value=&quot;Upload&quot;&gt;<br> 
+&lt;/form&gt;<span class="lsp_code"><br> 
             </span>&lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
@@ -235,18 +244,19 @@ Picture: &lt;br&gt;<br>&lt;input type=&quot;file&quot; name=&quot;eImage&quot; s
 &lt;title&gt;save album picture &lt;/title&gt; <br> 
 &lt;/head&gt; <br> 
 &lt;body&gt; <br> 
-            &lt;!--{:<br> 
+&lt;!--{:<br> 
             f_src = ${tmpath} + ${request.eImage--&gt;file};<br> 
-            <strong>if</strong> sys::isfile(f_src) <strong>then</strong><br>
-&nbsp;&nbsp;f_dst = R&quot;d:\album\&quot; + ${request.eImage-&gt;file};<br>
-&nbsp;&nbsp;<strong>if</strong> sys::cp(f_src, f_dst, true) <strong>then</strong> <br>
-&nbsp;&nbsp;&nbsp;&nbsp;= &quot;Picture Saved!&quot;;<br>
-            &nbsp;&nbsp;<strong>end</strong><br>
-            <strong>end</strong><br>
-            :}--&gt;<br>            &lt;/body&gt; <br> 
+            <strong>if</strong> sys::isfile(f_src) <strong>then</strong><br> 
+&nbsp;&nbsp;f_dst = R&quot;d:\album\&quot; + ${request.eImage-&gt;file};<br> 
+&nbsp;&nbsp;<strong>if</strong> sys::cp(f_src, f_dst, true) <strong>then</strong> <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;= &quot;Picture Saved!&quot;;<br> 
+&nbsp;&nbsp;<strong>end</strong><br> 
+            <strong>end</strong><br> 
+            :}--&gt;<br> 
+&lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
-      </table>      </td> 
+      </table></td> 
   </tr> 
   <tr> 
     <td align="left" class="footer_line">本页最后更新: 2010/08/01</td> 

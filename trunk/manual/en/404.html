@@ -3,9 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
-<title>Lysee Manual - Develop web site</title>
-<meta name="author" content="libudi@hotmail.com">
-<meta name="copyright" content="copyright 2003-2010 LiBUDI(libudi@hotmail.com)">
+<title>Lysee Reference Manual - Develop web site</title>
 <link href="index.css" rel="stylesheet" type="text/css">
 <link href="logo.ico" rel="Shortcut Icon">
 </head>
@@ -14,15 +12,13 @@
   <tr> 
     <td align="left" valign="middle"> <table width="100%"  border="0" cellspacing="0" cellpadding="0"> 
         <tr> 
-          <td align="left" valign="top"><a href="http://www.lysee.net"><img src="logo.png" width="490" height="86" border="0"></a></td> 
-        <td align="right" valign="bottom"><a href="403.html">&lt;PREV</a></td>
-        <td align="right" valign="bottom"><a href="index.html">HOME</a></td>
-        <td align="right" valign="bottom"><a href="501.html">NEXT&gt;</a></td>
+          <td align="left" valign="top"><a href="index.html"><img src="logo.png" width="490" height="70" border="0"></a></td> 
+        <td align="right" valign="bottom"><a href="403.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="501.html">NEXT&gt;</a></td>
         </tr> 
       </table></td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><strong><strong>4.3 <a href="index.html">Lysee Manual</a> - </strong><a href="300.html"></a></strong><a href="400.html">Developments</a> - Develop Web Site <br>
+    <td class="footer_line"><strong><strong>4.3 <a href="index.html">Lysee Reference Manual</a> - </strong><a href="300.html"></a></strong><a href="400.html">Developments</a> - Develop Web Site <br>
       <br>
 This page will tell you what is LSP and how to develop active web site with it.<br> 
         <br> 
@@ -32,7 +28,7 @@ This page will tell you what is LSP and how to develop active web site with it.<
         <br> 
     为方便学习和开发，你可以试着把自己的机器改装为 HTTP 服务器，这样做只需安装 Lysee 和一个 HTTP 服务器（Abyss, Apache, Lighttpd, ...）就行了，必要时还可以安装一个 SQL 数据库系统（PostgreSQL, FireBird, MySQL, ...）。 </td></tr> 
   <tr> 
-    <td class="footer_line"><strong><a name="first_lsp"></a>第一个 LSP 页面</strong><br> 
+    <td><strong><a name="first_lsp"></a>第一个 LSP 页面</strong><br> 
       <br> 
       在 web 服务器根目录下建立一个文件名为 hello.lsp 的文本文件，然后将下面的 HTML 代码粘贴进去并予以保存：<br> 
       <br> 
@@ -73,10 +69,10 @@ This page will tell you what is LSP and how to develop active web site with it.<
         </tr> 
       </table> 
       <br> 
-      hello.lsp 非常简单，它只是用 Lysee 的输出符号 “=” 打印了字符串“Hello World”，但这个例子完整展示了 LSP 的处理流程和模式，即用 LSP 代码的输出替换代码本身，其它内容原样输出，从而达到动态生成网页的目的。LSP 文件的解析的整个过程完全是由服务器在后台控制并完成的，服务器知道要将 .lsp 结尾的文件交给 Lysee 处理，就像服务器知道要将 .php 文件传递给 PHP 处理一样。</td> 
+    hello.lsp 非常简单，它只是用 Lysee 的输出符号 “=” 打印了字符串“Hello World”，但这个例子完整展示了 LSP 的处理流程和模式，即用 LSP 代码的输出替换代码本身，其它内容原样输出，从而达到动态生成网页的目的。LSP 文件的解析的整个过程完全是由服务器在后台控制并完成的，服务器知道要将 .lsp 结尾的文件交给 Lysee 处理，就像服务器知道要将 .php 文件传递给 PHP 处理一样。</td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="offen_used"></a><strong>最常用，最实用，必须掌握的脚本</strong><br> 
+    <td><a name="offen_used"></a><strong>最常用，最实用，必须掌握的脚本</strong><br> 
       <br> 
       1、打印服务器传送的 LSP 参数。 参数分两种，一种是页面（表单）请求的参数，存放在 <strong>__vals__</strong> 字符串列表中，一种是请求的描述信息，存放在 <strong>__envs__</strong> 字符串列表中，让我们把它们打印出来。<br> 
       <br> 
@@ -139,11 +135,10 @@ This page will tell you what is LSP and how to develop active web site with it.<
             {: <strong>end</strong> :}<br> 
             is it right?</td> 
         </tr> 
-      </table> 
-    </td>
+    </table>    </td>
   </tr> 
   <tr> 
-    <td class="footer_line"><strong><a name="form_lsp"></a>表单处理</strong><br> 
+    <td><strong><a name="form_lsp"></a>表单处理</strong><br> 
       <br> 
       表单处理是动态页面开发必须掌握的基本技术，提取并使用表单元素值本身是一个非常烦琐复杂的过程，但在 LSP 中这不是问题，Lysee 能用最简单的表达方式为您解决这个问题。在 LSP 解析的过程中，Lysee 自动把表单元素的值存入 __vals__ 字符串列表，并在元素名前统一加“request.”前缀，这样您只虚按照“${request.ElementName}”的格式就能引用任意一个表单元素值了。让我们看一段示例代码：<br> 
       <br> 
@@ -200,10 +195,11 @@ This page will tell you what is LSP and how to develop active web site with it.<
         </tr> 
       </table> 
       <br> 
-      说明：nameage.lsp 的第二种编码使用了格式化字符串操作符“@”，在格式化字符串的处理过程中，标记 %{} 表示取环境变量值，标记中间的内容为环境变量名称。</td> 
+    说明：nameage.lsp 的第二种编码使用了格式化字符串操作符“@”，在格式化字符串的处理过程中，标记 %{} 表示取环境变量值，标记中间的内容为环境变量名称。</td> 
   </tr> 
   <tr> 
-    <td class="footer_line"><a name="upload_file"></a><strong>向服务器上传文件</strong><br>      <br> 
+    <td><a name="upload_file"></a><strong>向服务器上传文件</strong><br>      
+      <br> 
       向服务器上传文件其实也是表单处理的一部分，但与普通表单不同的是采用了“multipart/form-data”的编码方式，鉴于文件上传的特殊性有必要单独提出来讲一下。在处理“multipart/form-data”表单时，Lysee 自动将上传的文件保存到 ${tmpath} 目录，并将临时文件名与原始文件名捆绑在一起存储到 <strong>__vals__</strong> 列表中供 LSP 代码使用。看下面这个例子：<br> 
       <br> 
       <table width="0%"  border="0" align="center" cellpadding="6" cellspacing="0"> 
@@ -239,10 +235,10 @@ Picture: &lt;br&gt;<br>&lt;input type=&quot;file&quot; name=&quot;eImage&quot; s
             :}--&gt;<br>            &lt;/body&gt; <br> 
 &lt;/html&gt;</td> 
         </tr> 
-      </table>      </td> 
+    </table>      </td> 
   </tr> 
   <tr> 
-    <td align="left" class="footer_line">本页最后更新: 2010/08/01</td> 
+    <td align="right" class="footer_line"><a href="403.html">&lt;PREV</a>&nbsp;&nbsp;<a href="index.html">HOME</a>&nbsp;&nbsp;<a href="501.html">NEXT&gt;</a></td> 
   </tr> 
 </table> 
 </body>
