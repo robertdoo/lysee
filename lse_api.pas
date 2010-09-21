@@ -1,8 +1,8 @@
 {==============================================================================}
 {        UNIT: lse_api                                                         }
-{ DESCRIPTION: APIs builtin in lysee kernel                                     }
+{ DESCRIPTION: APIs builtin in lysee kernel                                    }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/09/14                                                      }
+{    MODIFIED: 2010/09/21                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -381,59 +381,59 @@ const
      fr_addr:@pp_system_msecs;
      fr_desc:'count milliseconds used to call a function';
     ),
-    (fr_prot:'strlist __dbvs__';
+    (fr_prot:'strlist __dbvs__()';
      fr_addr:@pp_system_current_dbvs;
      fr_desc:'database vendor list';
     ),
-    (fr_prot:'module __module__';
+    (fr_prot:'module __module__()';
      fr_addr:@pp_system_current_module;
      fr_desc:'get current module';
     ),
-    (fr_prot:'function __func__';
+    (fr_prot:'function __func__()';
      fr_addr:@pp_system_current_func;
      fr_desc:'get current function';
     ),
-    (fr_prot:'error __error__';
+    (fr_prot:'error __error__()';
      fr_addr:@pp_system_current_error;
      fr_desc:'get current error';
     ),
-    (fr_prot:'strlist __args__';
+    (fr_prot:'strlist __args__()';
      fr_addr:@pp_system_current_args;
      fr_desc:'get argument list';
     ),
-    (fr_prot:'int __prmc__';
+    (fr_prot:'int __prmc__()';
      fr_addr:@pp_system_current_prmc;
      fr_desc:'get actual parametre count';
     ),
-    (fr_prot:'varlist __prms__';
+    (fr_prot:'varlist __prms__()';
      fr_addr:@pp_system_current_prms;
      fr_desc:'get parametre value list';
     ),
-    (fr_prot:'int __xcode__';
+    (fr_prot:'int __xcode__()';
      fr_addr:@pp_system_current_xcode;
      fr_desc:'get last shell exit code';
     ),
-    (fr_prot:'int __line__';
+    (fr_prot:'int __line__()';
      fr_addr:@pp_system_current_line;
      fr_desc:'get current line number';
     ),
-    (fr_prot:'strlist __envs__';
+    (fr_prot:'strlist __envs__()';
      fr_addr:@pp_system_current_envs;
      fr_desc:'get environment value list';
     ),
-    (fr_prot:'string __file__';
+    (fr_prot:'string __file__()';
      fr_addr:@pp_system_current_file;
      fr_desc:'get current file';
     ),
-    (fr_prot:'string __ifile__';
+    (fr_prot:'string __ifile__()';
      fr_addr:@pp_system_current_ifile;
      fr_desc:'get current included file';
     ),
-    (fr_prot:'string __pd__';
+    (fr_prot:'string __pd__()';
      fr_addr:@pp_system_current_pd;
      fr_desc:'get system path delimiter';
     ),
-    (fr_prot:'string eol';
+    (fr_prot:'string eol()';
      fr_addr:@pp_system_eol;
      fr_desc:'get eol(line break)';
     ),
@@ -457,11 +457,11 @@ const
      fr_addr:@pp_system_sum;
      fr_desc:'sum all: |result, item| ... end';
     ),
-    (fr_prot:'int __maxint__';
+    (fr_prot:'int __maxint__()';
      fr_addr:@pp_system_maxint;
      fr_desc:'get max integer value';
     ),
-    (fr_prot:'int __minint__';
+    (fr_prot:'int __minint__()';
      fr_addr:@pp_system_minint;
      fr_desc:'get min integer value';
     ),

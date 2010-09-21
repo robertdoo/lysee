@@ -2,7 +2,7 @@
 {        UNIT: lseu                                                            }
 { DESCRIPTION: lysee script engine unit                                        }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/09/15                                                      }
+{    MODIFIED: 2010/09/20                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -520,7 +520,7 @@ type
   TLseWrite = procedure(Sender: TObject; const Buf: pchar; var Count: integer) of object;
   TLseEof = procedure(Sender: TObject; var Eof: boolean) of object;
 
-  TLseEngine = class(TComponent)
+  TLseEngine = class(TLseObject)
   private
     FEngineRec: RLseEngine;
     FStdin: RLseStream;
@@ -551,7 +551,7 @@ type
     procedure EventBeginExecute;
     procedure EventEndExecute;
   public
-    constructor Create(AOwner: TComponent);override;
+    constructor Create;
     destructor Destroy;override;
     procedure Clear;virtual;
     procedure Terminate;
@@ -3925,9 +3925,8 @@ begin
   Result := (lse_entries^.cik_compile(FEngineRec.kernel_engine, pchar(Code), Ord(IsLspCode)) <> 0);
 end;
 
-constructor TLseEngine.Create(AOwner: TComponent);
+constructor TLseEngine.Create;
 begin
-  inherited;
   FStdin.data := Self;
   FStdin.read := @stdin_read;
   FStdin.readln := @stdin_readln;

@@ -1,0 +1,359 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <PathDelim Value="\"/>
+    <Version Value="7"/>
+    <General>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=".exe"/>
+      <Title Value="testlp"/>
+      <Icon Value="0"/>
+      <UseXPManifest Value="True"/>
+      <ActiveEditorIndexAtStart Value="2"/>
+    </General>
+    <VersionInfo>
+      <ProjectVersion Value=""/>
+      <Language Value=""/>
+      <CharSet Value=""/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="3">
+      <Item1>
+        <PackageName Value="SynEdit"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="lysee_package"/>
+        <MinVersion Minor="2" Release="1" Valid="True"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
+    </RequiredPackages>
+    <Units Count="23">
+      <Unit0>
+        <Filename Value="testlp.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="testlp"/>
+        <CursorPos X="1" Y="8"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="39"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="frmtestlp.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TestlpForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmTestlp"/>
+        <CursorPos X="26" Y="140"/>
+        <TopLine Value="133"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="39"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\..\lseobj.pas"/>
+        <UnitName Value="lseobj"/>
+        <CursorPos X="68" Y="38"/>
+        <TopLine Value="38"/>
+        <UsageCount Value="11"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\lseu.pas"/>
+        <UnitName Value="lseu"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\classesh.inc"/>
+        <CursorPos X="15" Y="1559"/>
+        <TopLine Value="1540"/>
+        <UsageCount Value="11"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <UnitName Value="lysee_laz"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="2"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <CursorPos X="21" Y="812"/>
+        <TopLine Value="790"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\include\custommemo.inc"/>
+        <CursorPos X="3" Y="115"/>
+        <TopLine Value="113"/>
+        <UsageCount Value="10"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\..\lse_kernel.pas"/>
+        <UnitName Value="lse_kernel"/>
+        <CursorPos X="3" Y="10397"/>
+        <TopLine Value="10382"/>
+        <UsageCount Value="14"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\..\package\utest.lfm"/>
+        <CursorPos X="24" Y="804"/>
+        <TopLine Value="780"/>
+        <UsageCount Value="10"/>
+        <SyntaxHighlighter Value="LFM"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\components\synedit\synedit.pp"/>
+        <UnitName Value="SynEdit"/>
+        <CursorPos X="1" Y="1520"/>
+        <TopLine Value="1507"/>
+        <UsageCount Value="10"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\components\synedit\synedittextbase.pas"/>
+        <UnitName Value="SynEditTextBase"/>
+        <CursorPos X="15" Y="120"/>
+        <TopLine Value="103"/>
+        <UsageCount Value="10"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\compon.inc"/>
+        <CursorPos X="3" Y="364"/>
+        <TopLine Value="361"/>
+        <UsageCount Value="11"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\lists.inc"/>
+        <CursorPos X="5" Y="869"/>
+        <TopLine Value="857"/>
+        <UsageCount Value="11"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\..\lse_symbol.pas"/>
+        <UnitName Value="lse_symbol"/>
+        <CursorPos X="3" Y="507"/>
+        <TopLine Value="503"/>
+        <UsageCount Value="13"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\..\lysee_package.lrs"/>
+        <CursorPos X="1" Y="83"/>
+        <TopLine Value="59"/>
+        <UsageCount Value="10"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\components\sqldb\sqlstringspropertyeditordlg.lrs"/>
+        <CursorPos X="1" Y="205"/>
+        <TopLine Value="204"/>
+        <UsageCount Value="10"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\components\printers\printersdlgs.lrs"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="70"/>
+        <UsageCount Value="10"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\components\printers\unix\jobsimglist.lrs"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\lresources.pp"/>
+        <UnitName Value="LResources"/>
+        <CursorPos X="1" Y="157"/>
+        <TopLine Value="157"/>
+        <UsageCount Value="10"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\dialogs.pp"/>
+        <UnitName Value="Dialogs"/>
+        <CursorPos X="10" Y="516"/>
+        <TopLine Value="504"/>
+        <UsageCount Value="10"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\..\lysee_package.pas"/>
+        <UnitName Value="lysee_package"/>
+        <CursorPos X="1" Y="6"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="frmtestlp.lfm"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+        <SyntaxHighlighter Value="LFM"/>
+      </Unit22>
+    </Units>
+    <JumpHistory Count="29" HistoryIndex="28">
+      <Position1>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="947" Column="1" TopLine="935"/>
+      </Position1>
+      <Position2>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="948" Column="1" TopLine="936"/>
+      </Position2>
+      <Position3>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="949" Column="1" TopLine="937"/>
+      </Position3>
+      <Position4>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="950" Column="1" TopLine="938"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="940" Column="1" TopLine="928"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="941" Column="1" TopLine="929"/>
+      </Position6>
+      <Position7>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="954" Column="1" TopLine="942"/>
+      </Position7>
+      <Position8>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="940" Column="1" TopLine="928"/>
+      </Position8>
+      <Position9>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="945" Column="1" TopLine="933"/>
+      </Position9>
+      <Position10>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="946" Column="1" TopLine="934"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="947" Column="1" TopLine="935"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="948" Column="1" TopLine="936"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="949" Column="1" TopLine="937"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="950" Column="1" TopLine="938"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="951" Column="1" TopLine="939"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="952" Column="1" TopLine="940"/>
+      </Position16>
+      <Position17>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="120" Column="1" TopLine="113"/>
+      </Position17>
+      <Position18>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="127" Column="1" TopLine="113"/>
+      </Position18>
+      <Position19>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="40" Column="29" TopLine="27"/>
+      </Position19>
+      <Position20>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="147" Column="1" TopLine="130"/>
+      </Position20>
+      <Position21>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="84" Column="35" TopLine="79"/>
+      </Position21>
+      <Position22>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="83" Column="11" TopLine="71"/>
+      </Position22>
+      <Position23>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="63" Column="78" TopLine="49"/>
+      </Position23>
+      <Position24>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="157" Column="1" TopLine="133"/>
+      </Position24>
+      <Position25>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="144" Column="28" TopLine="133"/>
+      </Position25>
+      <Position26>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="36" Column="69" TopLine="25"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="948" Column="23" TopLine="942"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="8" Column="53" TopLine="1"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\..\lysee_laz.pas"/>
+        <Caret Line="92" Column="1" TopLine="85"/>
+      </Position29>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)\"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
