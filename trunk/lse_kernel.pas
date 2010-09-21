@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/09/15                                                      }
+{    MODIFIED: 2010/09/21                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -283,6 +283,7 @@ type
     FState: KLiFuncStates; {<--function state}
     FCodes: KLiExprList;   {<--instruction buffer}
     FProc: pointer;        {<--call back function}
+    FComponent: TComponent;{<--lazarus or delphi component}
     function HasState(Index: KLiFuncState): boolean;
     procedure SetState(Index: KLiFuncState; Value: boolean);
   public
@@ -324,6 +325,7 @@ type
     property Proc: pointer read FProc write FProc;
     property OwnerClass: KLiClass read FOwnerClass;
     property Codes: KLiExprList read FCodes;
+    property Component: TComponent read FComponent write FComponent;
   end;
 
   KLiExprList = class(KLiObject)
@@ -1519,23 +1521,6 @@ function __SetupModule(const name: string; initrec: PLseModuleRec): KLiModule;
 (----------------------------------------------------------------------}
 function __searchModule(var Name: string;
   const SearchPath: string; var DLL: boolean): boolean;
-
-{-----------------------------------------------------------------------
-( F_NAME: __parseTypeID
-( 
-( F_DESC: parse type and ID name
-(
-( F_ARGS: var S: string - function prototype
-(         var ID: string - ID name
-(         var IDType: KLiClass - ID type
-(         Owner: KLiClass - owner class
-( 
-( F_TYPE: char - #0 if failed
-( 
-( EXCEPT:
-(----------------------------------------------------------------------}
-function __parseTypeID(var S, ID: string; var VT: KLiClass;
-                       Owner: KLiClass): char;
 
 {-----------------------------------------------------------------------
 ( F_NAME: __runner_XXXX
@@ -5455,6 +5440,7 @@ begin
     sys_encodeS       := sys_module.FindFunc('encodeS');
     sys_decodeS       := sys_module.FindFunc('decodeS');
     sys_curryone_func := sys_module.FindFunc('curryOne');
+    sys_module.FindFunc('eol').IsNameCall := true;
     sys_vargen_eof    := KT_VARGEN.FindMethod(cmMethod, 'get_eof');
     sys_vargen_map    := KT_VARGEN.FindMethod(cmMethod, 'map');
     sys_vargen_reduce := KT_VARGEN.FindMethod(cmMethod, 'reduce');
@@ -5465,51 +5451,6 @@ begin
     sys_varlist_getpv := KT_VARLIST.FindMethod(cmMethod, 'getpv');
     sys_varlist_setpv := KT_VARLIST.FindMethod(cmMethod, 'setpv');
   end;
-end;
-
-function __parseTypeID(var S, ID: string; var VT: KLiClass;
-                       Owner: KLiClass): char;
-var
-  index, slen: integer;
-  class_name: string;
-  module: KLiModule;
-begin
-  slen := Length(S);
-  index := 1;
-  while (index <= slen) and
-    not (S[index] in ['(', ',', ')', ';']) do
-      Inc(index);
-  if index <= slen then
-  begin
-    Result := S[index];
-    class_name := Trim(Copy(S, 1, index - 1));
-    S := Trim(Copy(S, index + 1, slen));
-    class_name := Trim(__extractNameValue(class_name, ID, ' '));
-    VT := Owner.FModule.FindClass(class_name);
-    if VT = nil then
-    begin
-      lock_kernel;
-      try
-        for index := 0 to sys_libraries.Count - 1 do
-        begin
-          module := KLiModule(sys_libraries.Objects[index]);
-          if module.IsBuiltin and (module <> Owner.FModule) then
-          begin
-            VT := module.FindClass(class_name);
-            if VT <> nil then Break;
-          end;
-        end;
-      finally
-        unlock_kernel;
-      end;
-    end;
-    if VT <> nil then
-    begin
-      ID := Trim(ID);
-      if __IsIDStr(pchar(ID)) then Exit;
-    end;
-  end;
-  Result := #0;
 end;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -10405,17 +10346,82 @@ end;
 
 function KLiClass.SetupMethod(Func: PLseFuncRec): KLiFunc;
 var
-  f_name, p_name, f_prot: string;
+  line, f_name, p_name: string;
   f_type, p_type: KLiClass;
   f_cate: KLiMethodType;
+  cfmt: boolean;
   endc: char;
-  name_call: boolean;
+
+  function parse_next(var ID: string; var VT: KLiClass): char;
+  var
+    slen, index: integer;
+    clss: string;
+  begin
+    slen := Length(line);
+    if slen > 0 then
+    begin
+      index := 1;
+      while (index <= slen) and
+        not (line[index] in ['(', ',', ')', ';', '|']) do
+          Inc(index);
+
+      Result := line[index];
+      if cfmt and (Result = '|') then
+        cfmt := false;
+        
+      clss := Trim(Copy(line, 1, index - 1));
+      line := Trim(Copy(line, index + 1, slen));
+
+      if cfmt then
+      begin
+        index := Pos(' ', clss);
+        if index > 0 then
+        begin
+          ID := Trim(Copy(clss, index + 1, MaxInt));
+          clss := Trim(Copy(clss, 1, index - 1));
+        end
+        else
+        begin
+          ID := clss;
+          clss := 'variant';
+        end;
+      end
+      else
+      begin
+        index := Pos(':', clss);
+        if index > 0 then
+        begin
+          ID := Trim(Copy(clss, 1, index - 1));
+          clss := Trim(Copy(clss, index + 1, MaxInt));
+        end
+        else
+        begin
+          ID := clss;
+          clss := 'variant';
+        end;
+      end;
+
+      if __IsIDStr(pchar(ID)) then
+      begin
+        VT := FModule.FindClass(clss);
+        if VT = nil then
+          if FModule <> sys_module then
+            VT := sys_module.FindClass(clss);
+        if VT <> nil then Exit;
+      end;
+    end;
+
+    Result := #0;
+  end;
+
 begin
   Result := nil;
-  f_prot := Trim(Func^.fr_prot) + ';';
-  endc := __parseTypeID(f_prot, f_name, f_type, Self);
-  name_call := (endc = ';') and isModuleClass;
-  if name_call or (endc = '(') then
+
+  cfmt := true;
+  line := Trim(Func^.fr_prot) + ';';
+  endc := parse_next(f_name, f_type);
+  
+  if endc in ['(', '|'] then
   begin
     // 1. decide function type
     if IsModuleClass then
@@ -10431,7 +10437,6 @@ begin
     end
     else
     begin
-//    if not CanDeclare(f_name) then Exit;
       if FindDeclared(f_name, nil) then Exit;
       f_cate := cmMethod;
     end;
@@ -10440,20 +10445,14 @@ begin
     Result := KLiFunc.Create(Self, f_type, f_name, Func^.fr_desc,
                              nil, Func^.fr_addr, f_cate);
 
-    if name_call then
-    begin
-      Result.IsNameCall := true;
-      Exit;
-    end;
-
     if f_cate <> cmNormal then
       Result.AddParam('this', Self);
 
     // 3. parse parametres
-    if f_prot[1] <> ')' then
+    if not (line[1] in [')', '|']) then
     repeat
-      endc := __parseTypeID(f_prot, p_name, p_type, Self);
-      if not (endc in [',', ')'])
+      endc := parse_next(p_name, p_type);
+      if not (endc in [',', ')', '|'])
       or (p_type = KT_VOID)
       or (p_name = f_name)
       or Result.Params.Exists(p_name)
@@ -10463,10 +10462,12 @@ begin
         Exit;
       end;
       Result.AddParam(p_name, p_type);
-    until endc = ')';
+    until endc in [')', '|'];
 
     // 4. try to set single method
-    DispSingleMethod(Result);
+    if (Result.ParamCount = 0) and ('__' = Copy(f_name, 1, 2)) then
+      Result.IsNameCall := true else
+      DispSingleMethod(Result);
   end;
 end;
 

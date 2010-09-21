@@ -2,7 +2,7 @@
 {        UNIT: lse_console                                                     }
 { DESCRIPTION: console implementation of lysee script interpreter              }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/08/31                                                      }
+{    MODIFIED: 2010/09/20                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -275,7 +275,7 @@ end;
 
 constructor KLiCommander.Create;
 begin
-  FEngine := TLseEngine.Create(nil);
+  FEngine := TLseEngine.Create;
 end;
 
 destructor KLiCommander.Destroy;
