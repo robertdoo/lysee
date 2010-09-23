@@ -9,7 +9,7 @@
       <Title Value="testlp"/>
       <Icon Value="0"/>
       <UseXPManifest Value="True"/>
-      <ActiveEditorIndexAtStart Value="2"/>
+      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
@@ -41,16 +41,14 @@
         <PackageName Value="LCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="39">
       <Unit0>
         <Filename Value="testlp.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="testlp"/>
         <CursorPos X="1" Y="8"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="0"/>
-        <UsageCount Value="39"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="49"/>
       </Unit0>
       <Unit1>
         <Filename Value="frmtestlp.pas"/>
@@ -58,10 +56,10 @@
         <ComponentName Value="TestlpForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmTestlp"/>
-        <CursorPos X="26" Y="140"/>
-        <TopLine Value="133"/>
-        <EditorIndex Value="1"/>
-        <UsageCount Value="39"/>
+        <CursorPos X="26" Y="134"/>
+        <TopLine Value="122"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="49"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -74,31 +72,28 @@
       <Unit3>
         <Filename Value="..\..\lseu.pas"/>
         <UnitName Value="lseu"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="26" Y="5"/>
         <TopLine Value="1"/>
-        <UsageCount Value="16"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="19"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\..\..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\classesh.inc"/>
-        <CursorPos X="15" Y="1559"/>
-        <TopLine Value="1540"/>
+        <CursorPos X="25" Y="1786"/>
+        <TopLine Value="1772"/>
         <UsageCount Value="11"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\..\lysee_laz.pas"/>
         <UnitName Value="lysee_laz"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="16"/>
-        <Loaded Value="True"/>
+        <CursorPos X="29" Y="254"/>
+        <TopLine Value="241"/>
+        <UsageCount Value="19"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
-        <CursorPos X="21" Y="812"/>
-        <TopLine Value="790"/>
+        <CursorPos X="15" Y="539"/>
+        <TopLine Value="527"/>
         <UsageCount Value="10"/>
       </Unit6>
       <Unit7>
@@ -110,8 +105,8 @@
       <Unit8>
         <Filename Value="..\..\lse_kernel.pas"/>
         <UnitName Value="lse_kernel"/>
-        <CursorPos X="3" Y="10397"/>
-        <TopLine Value="10382"/>
+        <CursorPos X="19" Y="10437"/>
+        <TopLine Value="10424"/>
         <UsageCount Value="14"/>
       </Unit8>
       <Unit9>
@@ -188,8 +183,8 @@
       <Unit20>
         <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
-        <CursorPos X="10" Y="516"/>
-        <TopLine Value="504"/>
+        <CursorPos X="1" Y="493"/>
+        <TopLine Value="493"/>
         <UsageCount Value="10"/>
       </Unit20>
       <Unit21>
@@ -201,129 +196,204 @@
       </Unit21>
       <Unit22>
         <Filename Value="frmtestlp.lfm"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
+        <CursorPos X="4" Y="865"/>
+        <TopLine Value="841"/>
         <UsageCount Value="10"/>
         <SyntaxHighlighter Value="LFM"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\ideintf\componenteditors.pas"/>
+        <UnitName Value="ComponentEditors"/>
+        <CursorPos X="3" Y="145"/>
+        <TopLine Value="133"/>
+        <UsageCount Value="10"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\ideintf\actionseditor.pas"/>
+        <ComponentName Value="ActionListEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ActionsEditor"/>
+        <CursorPos X="6" Y="30"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="10"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\fpc\2.2.4\source\packages\fcl-base\src\contnrs.pp"/>
+        <UnitName Value="contnrs"/>
+        <CursorPos X="3" Y="86"/>
+        <TopLine Value="72"/>
+        <UsageCount Value="10"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\ideintf\actionseditor.lrs"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\..\lysee_class_editor.pas"/>
+        <ComponentName Value="LyseeClassEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="lysee_class_editor"/>
+        <CursorPos X="45" Y="7"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="13"/>
+        <Bookmarks Count="1">
+          <Item0 X="3" Y="382" ID="0"/>
+        </Bookmarks>
+      </Unit27>
+      <Unit28>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\actnlist.pas"/>
+        <UnitName Value="ActnList"/>
+        <CursorPos X="31" Y="330"/>
+        <TopLine Value="318"/>
+        <UsageCount Value="10"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\ideintf\objinspstrconsts.pas"/>
+        <UnitName Value="ObjInspStrConsts"/>
+        <CursorPos X="3" Y="226"/>
+        <TopLine Value="214"/>
+        <UsageCount Value="10"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\lclproc.pas"/>
+        <UnitName Value="LCLProc"/>
+        <CursorPos X="3" Y="1331"/>
+        <TopLine Value="1329"/>
+        <UsageCount Value="10"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <CursorPos X="3" Y="1502"/>
+        <TopLine Value="1490"/>
+        <UsageCount Value="10"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\ideintf\propedits.pp"/>
+        <UnitName Value="PropEdits"/>
+        <CursorPos X="28" Y="1176"/>
+        <TopLine Value="1164"/>
+        <UsageCount Value="10"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\lcl\include\customlistbox.inc"/>
+        <CursorPos X="3" Y="624"/>
+        <TopLine Value="622"/>
+        <UsageCount Value="10"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\..\lysee_class_editor.lrs"/>
+        <CursorPos X="68" Y="11"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="..\..\..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\objpas\classes\cregist.inc"/>
+        <CursorPos X="3" Y="174"/>
+        <TopLine Value="168"/>
+        <UsageCount Value="10"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\..\lysee_module_editor.pas"/>
+        <ComponentName Value="LyseeModuleEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="lysee_module_editor"/>
+        <CursorPos X="44" Y="7"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\..\lysee_laz.lrs"/>
+        <CursorPos X="1" Y="54"/>
+        <TopLine Value="30"/>
+        <UsageCount Value="10"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="..\..\lse_funcs.pas"/>
+        <UnitName Value="lse_funcs"/>
+        <CursorPos X="3" Y="2227"/>
+        <TopLine Value="2225"/>
+        <UsageCount Value="10"/>
+      </Unit38>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="947" Column="1" TopLine="935"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="33" Column="56" TopLine="32"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="948" Column="1" TopLine="936"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="34" Column="56" TopLine="32"/>
       </Position2>
       <Position3>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="949" Column="1" TopLine="937"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="44" Column="1" TopLine="30"/>
       </Position3>
       <Position4>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="950" Column="1" TopLine="938"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="76" Column="1" TopLine="58"/>
       </Position4>
       <Position5>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="940" Column="1" TopLine="928"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="78" Column="1" TopLine="58"/>
       </Position5>
       <Position6>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="941" Column="1" TopLine="929"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="46" Column="1" TopLine="35"/>
       </Position6>
       <Position7>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="954" Column="1" TopLine="942"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="15" Column="69" TopLine="1"/>
       </Position7>
       <Position8>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="940" Column="1" TopLine="928"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="9" Column="27" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="945" Column="1" TopLine="933"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
       </Position9>
       <Position10>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="946" Column="1" TopLine="934"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="37" Column="61" TopLine="27"/>
       </Position10>
       <Position11>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="947" Column="1" TopLine="935"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="37" Column="52" TopLine="27"/>
       </Position11>
       <Position12>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="948" Column="1" TopLine="936"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="38" Column="50" TopLine="25"/>
       </Position12>
       <Position13>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="949" Column="1" TopLine="937"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="39" Column="50" TopLine="26"/>
       </Position13>
       <Position14>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="950" Column="1" TopLine="938"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="137" Column="39" TopLine="135"/>
       </Position14>
       <Position15>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="951" Column="1" TopLine="939"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="41" Column="31" TopLine="40"/>
       </Position15>
       <Position16>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="952" Column="1" TopLine="940"/>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="142" Column="39" TopLine="135"/>
       </Position16>
       <Position17>
         <Filename Value="frmtestlp.pas"/>
-        <Caret Line="120" Column="1" TopLine="113"/>
+        <Caret Line="145" Column="61" TopLine="135"/>
       </Position17>
       <Position18>
         <Filename Value="frmtestlp.pas"/>
-        <Caret Line="127" Column="1" TopLine="113"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position18>
-      <Position19>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="40" Column="29" TopLine="27"/>
-      </Position19>
-      <Position20>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="147" Column="1" TopLine="130"/>
-      </Position20>
-      <Position21>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="84" Column="35" TopLine="79"/>
-      </Position21>
-      <Position22>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="83" Column="11" TopLine="71"/>
-      </Position22>
-      <Position23>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="63" Column="78" TopLine="49"/>
-      </Position23>
-      <Position24>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="157" Column="1" TopLine="133"/>
-      </Position24>
-      <Position25>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="144" Column="28" TopLine="133"/>
-      </Position25>
-      <Position26>
-        <Filename Value="frmtestlp.pas"/>
-        <Caret Line="36" Column="69" TopLine="25"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="948" Column="23" TopLine="942"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="8" Column="53" TopLine="1"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\..\lysee_laz.pas"/>
-        <Caret Line="92" Column="1" TopLine="85"/>
-      </Position29>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

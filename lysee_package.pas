@@ -8,7 +8,8 @@ interface
 
 uses
     lseu, lse_api, lse_cgi, lse_export, lse_funcs, lse_kernel, lse_patten, 
-  lse_spawn, lse_symbol, lse_syncobj, lysee_laz, LazarusPackageIntf;
+  lse_spawn, lse_symbol, lse_syncobj, lysee_laz, lysee_class_editor, 
+  lysee_module_editor, LazarusPackageIntf;
 
 implementation
 

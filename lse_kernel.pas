@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/09/21                                                      }
+{    MODIFIED: 2010/09/23                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -10362,13 +10362,11 @@ var
     begin
       index := 1;
       while (index <= slen) and
-        not (line[index] in ['(', ',', ')', ';', '|']) do
+        not (line[index] in ['(', ',', ')', '|']) do
           Inc(index);
 
       Result := line[index];
-      if cfmt and (Result = '|') then
-        cfmt := false;
-        
+
       clss := Trim(Copy(line, 1, index - 1));
       line := Trim(Copy(line, index + 1, slen));
 
@@ -10417,10 +10415,14 @@ var
 begin
   Result := nil;
 
-  cfmt := true;
-  line := Trim(Func^.fr_prot) + ';';
+  line := Trim(__replaceAll(Func^.fr_prot, '{c}', FName));
+  if line = '' then Exit;
+
+  endc := line[Length(line)];
+  if not (endc in [')', '|']) then Exit;
+  cfmt := (endc = ')');
+
   endc := parse_next(f_name, f_type);
-  
   if endc in ['(', '|'] then
   begin
     // 1. decide function type
@@ -10432,6 +10434,7 @@ begin
     else
     if f_name = FName then {<--constructor}
     begin
+      if f_type = KT_VARIANT then f_type := Self;
       if (f_type <> Self) or HasCreator then Exit;
       f_cate := cmCreator;
     end
