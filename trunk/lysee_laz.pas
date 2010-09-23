@@ -1,3 +1,44 @@
+{==============================================================================}
+{        UNIT: lysee_laz                                                       }
+{ DESCRIPTION: lysee components for lazarus                                    }
+{     CREATED: 2010/09/20                                                      }
+{    MODIFIED: 2010/09/23                                                      }
+{==============================================================================}
+{ Copyright (c) 2010, Li Yun Jie                                               }
+{ All rights reserved.                                                         }
+{                                                                              }
+{ Redistribution and use in source and binary forms, with or without           }
+{ modification, are permitted provided that the following conditions are met:  }
+{                                                                              }
+{ Redistributions of source code must retain the above copyright notice, this  }
+{ list of conditions and the following disclaimer.                             }
+{                                                                              }
+{ Redistributions in binary form must reproduce the above copyright notice,    }
+{ this list of conditions and the following disclaimer in the documentation    }
+{ and/or other materials provided with the distribution.                       }
+{                                                                              }
+{ Neither the name of Li Yun Jie nor the names of its contributors may         }
+{ be used to endorse or promote products derived from this software without    }
+{ specific prior written permission.                                           }
+{                                                                              }
+{ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  }
+{ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    }
+{ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   }
+{ ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR  }
+{ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL       }
+{ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR   }
+{ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER   }
+{ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT           }
+{ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    }
+{ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH  }
+{ DAMAGE.                                                                      }
+{==============================================================================}
+{ The Initial Developer of the Original Code is Li Yun Jie (CHINA).            }
+{ Portions created by Li Yun Jie are Copyright (C) 2003-2010.                  }
+{ All Rights Reserved.                                                         }
+{==============================================================================}
+{ Contributor(s):                                                              }
+{==============================================================================}
 unit lysee_laz;
 
 {$mode objfpc}{$H+}
@@ -108,6 +149,8 @@ type
     FModule: KLiModule;
     FFuncs: TList;
     FClasses: TList;
+    FPrevModule: TLyseeModule;
+    FNextModule: TLyseeModule;
     function GetClass(Index: integer): TLyseeClass;
     function GetClassCount: integer;
     function GetFunc(Index: integer): TLyseeFunc;
@@ -122,11 +165,12 @@ type
     destructor Destroy;override;
     procedure Setup;
     function AddFunc(const Prototype: string; Proc: TLseFuncCall): KLiFunc;
+    function FuncExists(AFunc: TLyseeFunc): boolean;
     property KernelModule: KLiModule read FModule;
     property ClassCount: integer read GetClassCount;
     property Classes[Index: integer]: TLyseeClass read GetClass;
     property FuncCount: integer read GetFuncCount;
-    property Funces[Index: integer]: TLyseeFunc read GetFunc;
+    property Funcs[Index: integer]: TLyseeFunc read GetFunc;
   published
     property ModuleName: string read FModuleName write SetModuleName;
     property Description: string read FDescription write SetDescription;
@@ -134,16 +178,14 @@ type
 
   { TLyseeFunc }
 
-  TEventExecute = procedure(Sender: TObject; Param: PLseParam) of object;
-  TEventInvoke = procedure(Sender: TObject; Invoker: TLseInvoke) of object;
+  TEventFunc = procedure(Invoker: TLseInvoke) of object;
 
   TLyseeFunc = class(TComponent)
   private
     FDescription: string;
     FFunc: KLiFunc;
     FModule: TLyseeModule;
-    FOnExecute: TEventExecute;
-    FOnInvoke: TEventInvoke;
+    FOnExecute: TEventFunc;
     FPrototype: string;
     function GetKernelClass: KLiClass;
     procedure SetDescription(const AValue: string);
@@ -151,7 +193,6 @@ type
     procedure SetPrototype(const AValue: string);
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation);override;
-    procedure Loaded;override;
     procedure Leave;
   public
     constructor Create(AOwner: TComponent);override;
@@ -164,8 +205,7 @@ type
     property Prototype: string read FPrototype write SetPrototype;
     property Description: string read FDescription write SetDescription;
     property Module: TLyseeModule read FModule write SetModule;
-    property OnInvoke: TEventInvoke read FOnInvoke write FOnInvoke;
-    property OnExecute: TEventExecute read FOnExecute write FOnExecute;
+    property OnExecute: TEventFunc read FOnExecute write FOnExecute;
   end;
 
   { TLyseeClass }
@@ -189,7 +229,6 @@ type
     procedure SetModule(const AValue: TLyseeModule);
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation);override;
-    procedure Loaded;override;
     procedure Leave;
     procedure SetupClass;
   public
@@ -198,6 +237,7 @@ type
     procedure Setup;
     function AddMethod(const Prototype: string; Proc: TLseFuncCall): KLiFunc;
     function FindMethod(Method: KLiFunc): TLyseeMethod;
+    function Exists(Method: TLyseeMethod): boolean;
     property KernelClass: KLiClass read FClass;
     property MethodCount: integer read GetMethodCount;
     property Methods[Index: integer]: TLyseeMethod read GetMethod;
@@ -211,13 +251,14 @@ type
 
   { TLyseeMethod }
 
+  TEventMethod = procedure(Lobj: TLyseeObject; Invoker: TLseInvoke) of object;
+
   TLyseeMethod = class(TComponent)
   private
     FDescription: string;
     FMethod: KLiFunc;
     FClass: TLyseeClass;
-    FOnExecute: TEventExecute;
-    FOnInvoke: TEventInvoke;
+    FOnExecute: TEventMethod;
     FPrototype: string;
     function GetKernelClass: KLiClass;
     procedure SetClass(const AValue: TLyseeClass);
@@ -225,7 +266,6 @@ type
     procedure SetPrototype(const AValue: string);
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation);override;
-    procedure Loaded;override;
     procedure Leave;
   public
     constructor Create(AOwner: TComponent);override;
@@ -238,8 +278,7 @@ type
     property Prototype: string read FPrototype write SetPrototype;
     property Description: string read FDescription write SetDescription;
     property LyseeClass: TLyseeClass read FClass write SetClass;
-    property OnInvoke: TEventInvoke read FOnInvoke write FOnInvoke;
-    property OnExecute: TEventExecute read FOnExecute write FOnExecute;
+    property OnExecute: TEventMethod read FOnExecute write FOnExecute;
   end;
 
   { TLyseeObject }
@@ -259,36 +298,48 @@ type
     property Data: pointer read FData write SetData;
   end;
 
+var
+  HeadModule: TLyseeModule = nil;
+
 procedure Register;
 
-procedure InitLysee(const Modules: array of TLyseeModule);overload;
-procedure InitLysee(const ExeName: string;
-                    const Modules: array of TLyseeModule);overload;
-procedure InitLysee(const ExeName, Kernel: string;
-                    const Modules: array of TLyseeModule);overload;
-procedure ExitLysee;
+procedure SetupLyseeModules;
+procedure StartLysee;overload;
+procedure StartLysee(const ExeName: string);overload;
+procedure StartLysee(const ExeName, Kernel: string);overload;
+procedure CloseLysee;
 
 implementation
 
 procedure Register;
 begin
-  RegisterComponents('Lysee', [TLyseeEngine, TLyseeModule,
-    TLyseeFunc, TLyseeClass, TLyseeMethod]);
+  RegisterComponents('Lysee', [TLyseeEngine, TLyseeModule, TLyseeClass]);
+  RegisterNoIcon([TLyseeFunc, TLyseeMethod]);
 end;
 
-procedure InitLysee(const Modules: array of TLyseeModule);
+procedure SetupLyseeModules;
+var
+  module: TLyseeModule;
 begin
-  InitLysee(ParamStr(0), Modules);
+  module := HeadModule;
+  while module <> nil do
+  begin
+    module.Setup;
+    module := module.FNextModule;
+  end;
 end;
 
-procedure InitLysee(const ExeName: string;
-                    const Modules: array of TLyseeModule);
+procedure StartLysee;
 begin
-  InitLysee(ExeName, ExeName, Modules);
+  StartLysee(ParamStr(0));
 end;
 
-procedure InitLysee(const ExeName, Kernel: string;
-                    const Modules: array of TLyseeModule);
+procedure StartLysee(const ExeName: string);
+begin
+  StartLysee(ExeName, ExeName);
+end;
+
+procedure StartLysee(const ExeName, Kernel: string);
 var
   X: integer;
 begin
@@ -302,16 +353,15 @@ begin
     lse_set_kernel_file(ExeName) else
     lse_set_kernel_file(ParamStr(0));
 
-  for X := 0 to Length(Modules) - 1 do
-    Modules[X].Setup;
+  SetupLyseeModules;
 end;
 
-procedure ExitLysee;
+procedure CloseLysee;
 begin
   lse_cleanup;
 end;
 
-procedure ModuleFuncProc(const Param: PLseParam);cdecl;
+procedure ExecModuleFunc(const Param: PLseParam);cdecl;
 var
   func: TLyseeFunc;
 begin
@@ -320,7 +370,7 @@ begin
     func.Execute(Param);
 end;
 
-procedure ClassMethodProc(const Param: PLseParam);cdecl;
+procedure ExecClassMethod(const Param: PLseParam);cdecl;
 var
   curr: KLiFunc;
   func: TLyseeMethod;
@@ -597,6 +647,13 @@ begin
   else Result := nil;
 end;
 
+function TLyseeModule.FuncExists(AFunc: TLyseeFunc): boolean;
+begin
+  if FFuncs <> nil then
+    Result := FFuncs.IndexOf(AFunc) >= 0 else
+    Result := false;
+end;
+
 procedure TLyseeModule.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited Notification(AComponent, Operation);
@@ -658,6 +715,11 @@ begin
   inherited Create(AOwner);
   FFuncs := TList.Create;
   FClasses := TList.Create;
+  FPrevModule := nil;
+  FNextModule := HeadModule;
+  if HeadModule <> nil then
+    HeadModule.FPrevModule := Self;
+  HeadModule := Self;
 end;
 
 destructor TLyseeModule.Destroy;
@@ -666,6 +728,12 @@ var
   F: TLyseeFunc;
   C: TLyseeClass;
 begin
+  if FNextModule <> nil then
+    FNextModule.FPrevModule := FPrevModule;
+  if FPrevModule <> nil then
+    FPrevModule.FNextModule := FNextModule else
+    HeadModule := FNextModule;
+
   for X := 0 to FFuncs.Count - 1 do
   begin
     F := TLyseeFunc(FFuncs[X]);
@@ -731,7 +799,6 @@ begin
     begin
       FreeNotification(FModule);
       FModule.FFuncs.Add(Self);
-      Setup;
     end;
   end;
 end;
@@ -773,12 +840,6 @@ begin
       Leave;
 end;
 
-procedure TLyseeFunc.Loaded;
-begin
-  inherited Loaded;
-  Setup;
-end;
-
 constructor TLyseeFunc.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -802,7 +863,7 @@ begin
         if (FModule <> nil) and (FModule.FModule <> nil) then
         begin
           R.fr_prot := pchar(FPrototype);
-          R.fr_addr := @ModuleFuncProc;
+          R.fr_addr :=@ExecModuleFunc;
           R.fr_desc := pchar(FDescription);
           FFunc := FModule.FModule.ModuleClass.SetupMethod(@R);
           if FFunc <> nil then
@@ -814,18 +875,15 @@ procedure TLyseeFunc.Execute(Param: PLseParam);
 var
   call: TLseInvoke;
 begin
-  if Assigned(FOnInvoke) then
+  if Assigned(FOnExecute) then
   begin
     call := TLseInvoke.Create(Param);
     try
-      FOnInvoke(Self, call);
+      FOnExecute(call);
     finally
       call.Free;
     end;
-  end
-  else
-  if Assigned(FOnExecute) then
-    FOnExecute(Self, Param);
+  end;
 end;
 
 { TLyseeClass }
@@ -886,7 +944,6 @@ begin
     begin
       FreeNotification(FModule);
       FModule.FClasses.Add(Self);
-      Setup;
     end;
   end;
 end;
@@ -898,12 +955,6 @@ begin
     if AComponent = FModule then Leave else
     if FMethods <> nil then
       FMethods.Remove(AComponent);
-end;
-
-procedure TLyseeClass.Loaded;
-begin
-  inherited Loaded;
-  Setup;
 end;
 
 procedure TLyseeClass.Leave;
@@ -975,6 +1026,13 @@ begin
   Result := nil;
 end;
 
+function TLyseeClass.Exists(Method: TLyseeMethod): boolean;
+begin
+  if FMethods <> nil then
+    Result := FMethods.IndexOf(Method) >= 0 else
+    Result := false;
+end;
+
 { TLyseeMethod }
 
 procedure TLyseeMethod.SetDescription(const AValue: string);
@@ -994,7 +1052,6 @@ begin
     begin
       FreeNotification(FClass);
       FClass.FMethods.Add(Self);
-      Setup;
     end;
   end;
 end;
@@ -1018,12 +1075,6 @@ begin
   if Operation = opRemove then
     if AComponent = FClass then
       Leave;
-end;
-
-procedure TLyseeMethod.Loaded;
-begin
-  inherited Loaded;
-  Setup;
 end;
 
 procedure TLyseeMethod.Leave;
@@ -1058,7 +1109,7 @@ begin
         if (FClass <> nil) and (FClass.FClass <> nil) then
         begin
           R.fr_prot := pchar(FPrototype);
-          R.fr_addr := @ClassMethodProc;
+          R.fr_addr :=@ExecClassMethod;
           R.fr_desc := pchar(FDescription);
           FMethod := FClass.FClass.SetupMethod(@R);
           if FMethod <> nil then
@@ -1069,19 +1120,18 @@ end;
 procedure TLyseeMethod.Execute(Param: PLseParam);
 var
   call: TLseInvoke;
+  this: TLyseeObject;
 begin
-  if Assigned(FOnInvoke) then
-  begin
-    call := TLseInvoke.Create(Param);
-    try
-      FOnInvoke(Self, call);
-    finally
-      call.Free;
+  if __getThis(Param, this) then
+    if Assigned(FOnExecute) then
+    begin
+      call := TLseInvoke.Create(Param);
+      try
+        FOnExecute(this, call);
+      finally
+        call.Free;
+      end;
     end;
-  end
-  else
-  if Assigned(FOnExecute) then
-    FOnExecute(Self, Param);
 end;
 
 { TLyseeObject }

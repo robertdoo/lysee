@@ -1,7 +1,7 @@
 object TestlpForm: TTestlpForm
-  Left = 195
+  Left = 203
   Height = 473
-  Top = 120
+  Top = 180
   Width = 642
   BorderWidth = 8
   Caption = 'Test Lysee Package'
@@ -656,6 +656,10 @@ object TestlpForm: TTestlpForm
           'alert(input("Please input your words:"));'
           ''
           'clear();'
+          ''
+          'a = hello(now());'
+          'a.say();'
+          'a.xx(" - " + now());'
         )
         ScrollBars = ssVertical
         BracketHighlightStyle = sbhsBoth
@@ -815,13 +819,6 @@ object TestlpForm: TTestlpForm
     left = 336
     top = 64
   end
-  object lsfAlert: TLyseeFunc
-    Prototype = 'alert|msg:string|'
-    Module = lsmHii
-    OnInvoke = lsfAlertInvoke
-    left = 392
-    top = 64
-  end
   object Lysee: TLyseeEngine
     IsLSP = False
     OnReadln = LyseeReadln
@@ -830,32 +827,36 @@ object TestlpForm: TTestlpForm
     left = 280
     top = 64
   end
-  object lsfInput: TLyseeFunc
-    Prototype = 'input:string|prompt:string|'
-    Module = lsmHii
-    OnInvoke = lsfInputInvoke
-    left = 448
-    top = 64
-  end
   object lscHello: TLyseeClass
     ClassName = 'hello'
     Module = lsmHii
     OnDestroyObject = lscHelloDestroyObject
-    left = 280
-    top = 152
+    left = 392
+    top = 64
   end
-  object lsmSay: TLyseeMethod
+  object hello_say: TLyseeMethod
     Prototype = 'say||'
     LyseeClass = lscHello
-    OnExecute = lsmSayExecute
-    left = 336
-    top = 152
+    OnExecute = hello_sayExecute
   end
-  object lsmHello: TLyseeMethod
-    Prototype = 'hello:hello|S:string|'
+  object hello_xx: TLyseeMethod
+    Prototype = 'xx|msg:string|'
     LyseeClass = lscHello
-    OnInvoke = lsmHelloInvoke
-    left = 392
-    top = 152
+    OnExecute = hello_xxExecute
+  end
+  object hello_hello: TLyseeMethod
+    Prototype = '{c}|msg:string|'
+    LyseeClass = lscHello
+    OnExecute = hello_helloExecute
+  end
+  object hii_alert: TLyseeFunc
+    Prototype = 'alert|msg:string|'
+    Module = lsmHii
+    OnExecute = hii_alertExecute
+  end
+  object hii_input: TLyseeFunc
+    Prototype = 'input:string|prompt:string|'
+    Module = lsmHii
+    OnExecute = hii_inputExecute
   end
 end

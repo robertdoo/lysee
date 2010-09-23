@@ -2,7 +2,7 @@
 {        UNIT: lseu                                                            }
 { DESCRIPTION: lysee script engine unit                                        }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/09/20                                                      }
+{    MODIFIED: 2010/09/23                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -458,41 +458,41 @@ type
   public
     constructor Create(Param: PLseParam);virtual;
     procedure Print(const Str: string);
-    procedure returnInt(const Value: integer);
-    procedure returnInt64(const Value: int64);
-    procedure returnFloat(const Value: double);
-    procedure returnMoney(const Value: currency);
-    procedure returnTime(const Value: TDateTime);
-    procedure returnStr(const Value: string);
-    procedure returnChar(const Value: char);
-    procedure returnBool(const Value: boolean);
-    procedure returnObject(AClass, AObject: pointer);
-    procedure returnObj(AClass: PLseClassRec; AObject: pointer);
-    procedure returnStream(Value: TStream);overload;
-    procedure returnStream(Value: PLseStream);overload;
-    procedure returnStrlist(strlist: pointer);overload;
-    procedure returnError(const ID: string; Errno: integer; const Msg: string);
+    procedure ReturnInt(const Value: integer);
+    procedure ReturnInt64(const Value: int64);
+    procedure ReturnFloat(const Value: double);
+    procedure ReturnMoney(const Value: currency);
+    procedure ReturnTime(const Value: TDateTime);
+    procedure ReturnStr(const Value: string);
+    procedure ReturnChar(const Value: char);
+    procedure ReturnBool(const Value: boolean);
+    procedure ReturnObject(AClass, AObject: pointer);
+    procedure ReturnObj(AClass: PLseClassRec; AObject: pointer);
+    procedure ReturnStream(Value: TStream);overload;
+    procedure ReturnStream(Value: PLseStream);overload;
+    procedure ReturnStrlist(strlist: pointer);overload;
+    procedure ReturnError(const ID: string; Errno: integer; const Msg: string);
     function Read(const Buf: pchar; Count: integer): integer;
     function Readln: string;
     function FormatStr(const Str: string): string;
     function KernelEngine: pointer;
     function GetThis(var obj): boolean;
     function ParamCount: integer;
-    function paramInt(Index: integer): integer;
-    function paramInt64(Index: integer): int64;
-    function paramFloat(Index: integer): double;
-    function paramMoney(Index: integer): currency;
-    function paramStr(Index: integer): string;
-    function paramCStr(Index: integer; var Size: integer): pchar;
-    function paramStrec(Index: integer): PLseString;
-    function paramFmt(Index: integer): string;
-    function paramChar(Index: integer): char;
-    function paramBool(Index: integer): boolean;
-    function paramObject(Index: integer): pointer;
-    function paramClass(Index: integer): pointer;
-    function paramClassRec(Index: integer): PLseClassRec;
-    function paramTime(Index: integer): TDateTime;
-    function paramStream(Index: integer): PLseStream;
+    function ParamInt(Index: integer): integer;
+    function ParamInt64(Index: integer): int64;
+    function ParamFloat(Index: integer): double;
+    function ParamMoney(Index: integer): currency;
+    function ParamStr(Index: integer): string;
+    function ParamCStr(Index: integer; var Size: integer): pchar;
+    function ParamStrec(Index: integer): PLseString;
+    function ParamFmt(Index: integer): string;
+    function ParamChar(Index: integer): char;
+    function ParamBool(Index: integer): boolean;
+    function ParamObject(Index: integer): pointer;
+    function ParamClass(Index: integer): pointer;
+    function ParamClassRec(Index: integer): PLseClassRec;
+    function ParamTime(Index: integer): TDateTime;
+    function ParamStream(Index: integer): PLseStream;
   end;
 
 {======================================================================)
@@ -2311,7 +2311,7 @@ begin
       try
         Call(invoker);
       except
-        invoker.returnError('', 0, lse_exception_str);
+        invoker.ReturnError('', 0, lse_exception_str);
       end;
     finally
       invoker.Free;
@@ -3702,17 +3702,17 @@ begin
   lse_strec_declife(sr);
 end;
 
-procedure TLseInvoke.returnBool(const Value: boolean);
+procedure TLseInvoke.ReturnBool(const Value: boolean);
 begin
   lse_set_bool(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnChar(const Value: char);
+procedure TLseInvoke.ReturnChar(const Value: char);
 begin
   lse_set_char(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnError(const ID: string; Errno: integer; const Msg: string);
+procedure TLseInvoke.ReturnError(const ID: string; Errno: integer; const Msg: string);
 begin
   lse_entries^.cik_set_error(FParam, pchar(ID), Errno, pchar(Msg));
 end;
@@ -3736,57 +3736,57 @@ begin
   else Result := '';
 end;
 
-procedure TLseInvoke.returnFloat(const Value: double);
+procedure TLseInvoke.ReturnFloat(const Value: double);
 begin
   lse_set_float(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnInt64(const Value: int64);
+procedure TLseInvoke.ReturnInt64(const Value: int64);
 begin
   lse_set_int64(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnMoney(const Value: currency);
+procedure TLseInvoke.ReturnMoney(const Value: currency);
 begin
   lse_set_money(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnObject(AClass, AObject: pointer);
+procedure TLseInvoke.ReturnObject(AClass, AObject: pointer);
 begin
   lse_entries^.cik_set_object(FParam^.result, AObject, AClass);
 end;
 
-procedure TLseInvoke.returnObj(AClass: PLseClassRec; AObject: pointer);
+procedure TLseInvoke.ReturnObj(AClass: PLseClassRec; AObject: pointer);
 begin
   lse_set_object(FParam^.result, AClass, AObject);
 end;
 
-procedure TLseInvoke.returnStr(const Value: string);
+procedure TLseInvoke.ReturnStr(const Value: string);
 begin
   lse_set_string(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnStream(Value: TStream);
+procedure TLseInvoke.ReturnStream(Value: TStream);
 begin
   returnStream(lse_wrap_stream(Value, true));
 end;
 
-procedure TLseInvoke.returnStream(Value: PLseStream);
+procedure TLseInvoke.ReturnStream(Value: PLseStream);
 begin
   lse_entries^.cik_set_stream(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnStrlist(strlist: pointer);
+procedure TLseInvoke.ReturnStrlist(strlist: pointer);
 begin
   returnObj(lse_entries^.cik_strlist_class(), strlist);
 end;
 
-procedure TLseInvoke.returnTime(const Value: TDateTime);
+procedure TLseInvoke.ReturnTime(const Value: TDateTime);
 begin
   lse_set_time(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.returnInt(const Value: integer);
+procedure TLseInvoke.ReturnInt(const Value: integer);
 begin
   lse_set_integer(FParam^.result, Value);
 end;
@@ -3812,22 +3812,22 @@ begin
   Result := lse_entries^.cik_get_engine(FParam);
 end;
 
-function TLseInvoke.paramBool(Index: integer): boolean;
+function TLseInvoke.ParamBool(Index: integer): boolean;
 begin
   Result := FParam^.param[Index]^.VBool;
 end;
 
-function TLseInvoke.paramChar(Index: integer): char;
+function TLseInvoke.ParamChar(Index: integer): char;
 begin
   Result := FParam^.param[Index]^.VChar;
 end;
 
-function TLseInvoke.paramClass(Index: integer): pointer;
+function TLseInvoke.ParamClass(Index: integer): pointer;
 begin
   Result:= lse_class(FParam^.param[Index]);
 end;
 
-function TLseInvoke.paramClassRec(Index: integer): PLseClassRec;
+function TLseInvoke.ParamClassRec(Index: integer): PLseClassRec;
 begin
   Result:= lse_class_rec(FParam^.param[Index]);
 end;
@@ -3837,42 +3837,42 @@ begin
   Result := FParam^.count;
 end;
 
-function TLseInvoke.paramFloat(Index: integer): double;
+function TLseInvoke.ParamFloat(Index: integer): double;
 begin
   Result := FParam^.param[Index]^.VFloat;
 end;
 
-function TLseInvoke.paramFmt(Index: integer): string;
+function TLseInvoke.ParamFmt(Index: integer): string;
 begin
   Result := FormatStr(paramStr(Index));
 end;
 
-function TLseInvoke.paramInt(Index: integer): integer;
+function TLseInvoke.ParamInt(Index: integer): integer;
 begin
   Result := FParam^.param[Index]^.VInteger;
 end;
 
-function TLseInvoke.paramInt64(Index: integer): int64;
+function TLseInvoke.ParamInt64(Index: integer): int64;
 begin
   Result := FParam^.param[Index]^.VInteger;
 end;
 
-function TLseInvoke.paramMoney(Index: integer): currency;
+function TLseInvoke.ParamMoney(Index: integer): currency;
 begin
   Result := FParam^.param[Index]^.VMoney;
 end;
 
-function TLseInvoke.paramObject(Index: integer): pointer;
+function TLseInvoke.ParamObject(Index: integer): pointer;
 begin
   Result := FParam^.param[Index]^.VObject;
 end;
 
-function TLseInvoke.paramStr(Index: integer): string;
+function TLseInvoke.ParamStr(Index: integer): string;
 begin
   Result := lse_strec_string(FParam^.param[Index]^.VString);
 end;
 
-function TLseInvoke.paramCStr(Index: integer; var Size: integer): pchar;
+function TLseInvoke.ParamCStr(Index: integer; var Size: integer): pchar;
 var
   strec: PLseString;
 begin
@@ -3881,17 +3881,17 @@ begin
   Size := lse_strec_length(strec);
 end;
 
-function TLseInvoke.paramStrec(Index: integer): PLseString;
+function TLseInvoke.ParamStrec(Index: integer): PLseString;
 begin
   Result := FParam^.param[Index]^.VString;
 end;
 
-function TLseInvoke.paramStream(Index: integer): PLseStream;
+function TLseInvoke.ParamStream(Index: integer): PLseStream;
 begin
   Result := PLseStream(FParam^.param[Index]^.VObject);
 end;
 
-function TLseInvoke.paramTime(Index: integer): TDateTime;
+function TLseInvoke.ParamTime(Index: integer): TDateTime;
 begin
   Result := FParam^.param[Index]^.VTime;
 end;

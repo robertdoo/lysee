@@ -17,7 +17,7 @@
     <Description Value="lysee script interpreter"/>
     <License Value="modified BSD license"/>
     <Version Minor="2" Release="1"/>
-    <Files Count="12">
+    <Files Count="18">
       <Item1>
         <Filename Value="lseu.pas"/>
         <UnitName Value="lseu"/>
@@ -67,16 +67,43 @@
         <Filename Value="lysee_laz.lrs"/>
         <Type Value="LRS"/>
       </Item12>
+      <Item13>
+        <Filename Value="lysee_class_editor.lfm"/>
+        <Type Value="LFM"/>
+      </Item13>
+      <Item14>
+        <Filename Value="lysee_class_editor.pas"/>
+        <UnitName Value="lysee_class_editor"/>
+      </Item14>
+      <Item15>
+        <Filename Value="lysee_class_editor.lrs"/>
+        <Type Value="LRS"/>
+      </Item15>
+      <Item16>
+        <Filename Value="lysee_module_editor.lfm"/>
+        <Type Value="LFM"/>
+      </Item16>
+      <Item17>
+        <Filename Value="lysee_module_editor.lrs"/>
+        <Type Value="LRS"/>
+      </Item17>
+      <Item18>
+        <Filename Value="lysee_module_editor.pas"/>
+        <UnitName Value="lysee_module_editor"/>
+      </Item18>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="IDEIntf"/>
       </Item1>
       <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+      <Item3>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Valid="True"/>
-      </Item2>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)\"/>
