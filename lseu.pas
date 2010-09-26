@@ -2,7 +2,7 @@
 {        UNIT: lseu                                                            }
 { DESCRIPTION: lysee script engine unit                                        }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/09/23                                                      }
+{    MODIFIED: 2010/09/25                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -519,6 +519,8 @@ type
   TLseReadln = procedure(Sender: TObject; var S: string) of object;
   TLseWrite = procedure(Sender: TObject; const Buf: pchar; var Count: integer) of object;
   TLseEof = procedure(Sender: TObject; var Eof: boolean) of object;
+
+  { TLseEngine }
 
   TLseEngine = class(TLseObject)
   private

@@ -830,6 +830,7 @@ object TestlpForm: TTestlpForm
   object lscHello: TLyseeClass
     ClassName = 'hello'
     Module = lsmHii
+    OnCreateObject = lscHelloCreateObject
     OnDestroyObject = lscHelloDestroyObject
     left = 392
     top = 64
