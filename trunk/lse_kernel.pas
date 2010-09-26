@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/09/23                                                      }
+{    MODIFIED: 2010/09/25                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -73,6 +73,7 @@ type
   KLiRunner       = class;
   KLiSatisfy      = class;
   KLiHashed       = class;
+  KLiInvoke       = class;
 
   KLiObjRecState  = (orsInChain, orsMarked);
   KLiObjRecStates = set of KLiObjRecState;
@@ -717,6 +718,7 @@ type
     FStdinStream: PLseStream;
     FStdoutStream: PLseStream;
     FStderrStream: PLseStream;
+    FInvoker: KLiInvoke;
     function GetResultText: string;
     function GetResultType: KLiClass;
     procedure SetMainFile(const AValue: string);
@@ -796,6 +798,7 @@ type
     property Ready: boolean read FReady;
     property Exited: boolean read FExited write FExited;
     property CGI: TLseObject read FCGI write FCGI;
+    property Invoker: KLiInvoke read FInvoker write FInvoker;
     property OnReadBuf: KLiReadBuf read FOnReadBuf write FOnReadBuf;
     property OrChain: PLiObjRec read FOrChain write FOrChain;
     property StdinStream: PLseStream read GetStdinStream write SetStdinStream;
@@ -1071,6 +1074,54 @@ type
     procedure EndPage;
   public
     procedure Execute(const FileName: string);
+  end;
+
+  { KLiInvoke }
+
+  KLiInvoke = class(TLseObject)
+  private
+    FEngine: KLiEngine;
+    FParam: PLseParam;
+    procedure SetNil(Value: PLseValue);
+  public
+    constructor Create(const AEngine: KLiEngine);
+    procedure ReturnInt(const Value: integer);
+    procedure ReturnInt64(const Value: int64);
+    procedure ReturnFloat(const Value: double);
+    procedure ReturnMoney(const Value: currency);
+    procedure ReturnTime(const Value: TDateTime);
+    procedure ReturnStr(const Value: string);
+    procedure ReturnChar(const Value: char);
+    procedure ReturnBool(const Value: boolean);
+    procedure ReturnObject(const Value: pointer; AClass: KLiClass);
+    procedure ReturnObj(const Value: pointer; AClass: PLseClassRec);
+    procedure ReturnStream(const Value: TStream);overload;
+    procedure ReturnStream(const Value: PLseStream);overload;
+    procedure ReturnStrlist(const Value: KLiStrList);overload;
+    procedure ReturnError(const ID: string; Errno: integer; const Msg: string);
+    procedure Print(const Str: string);
+    function Read(const Buf: pchar; Count: integer): integer;
+    function Readln: string;
+    function FormatStr(const Str: string): string;
+    function GetThis(var This): boolean;
+    function ParamCount: integer;
+    function ParamInt(Index: integer): integer;
+    function ParamInt64(Index: integer): int64;
+    function ParamFloat(Index: integer): double;
+    function ParamMoney(Index: integer): currency;
+    function ParamStr(Index: integer): string;
+    function ParamCStr(Index: integer; var Size: integer): pchar;
+    function ParamStrec(Index: integer): PLseString;
+    function ParamFmt(Index: integer): string;
+    function ParamChar(Index: integer): char;
+    function ParamBool(Index: integer): boolean;
+    function ParamObject(Index: integer): pointer;
+    function ParamClass(Index: integer): KLiClass;
+    function ParamClassRec(Index: integer): PLseClassRec;
+    function ParamTime(Index: integer): TDateTime;
+    function ParamStream(Index: integer): PLseStream;
+    property Param: PLseParam read FParam write FParam;
+    property Engine: KLiEngine read FEngine;
   end;
 
   TInitProc = procedure;
@@ -11845,12 +11896,15 @@ begin
 
   FTempValues := __NewVarlist(Self);
   FTempValues.IncRefcount;
+
+  FInvoker := KLiInvoke.Create(Self);
 end;
 
 destructor KLiEngine.Destroy;
 begin
   Clear;
 
+  __freeAndNil(FInvoker);
   __freeAndNil(FMainValues);
   __freeAndNil(FTempValues);
   __freeAndNil(FMainSnap);
@@ -13619,6 +13673,230 @@ begin
   end;
 
   Inc(FModuleCount);
+end;
+
+{ KLiInvoke }
+
+function KLiInvoke.FormatStr(const Str: string): string;
+begin
+  Result := __AsRunner(Param).FormatFor(Str, nil);
+end;
+
+procedure KLiInvoke.ReturnBool(const Value: boolean);
+begin
+  SetNil(FParam^.result);
+  __PutBool(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnChar(const Value: char);
+begin
+  SetNil(FParam^.result);
+  __PutChar(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnError(const ID: string; Errno: integer; const Msg: string);
+begin
+  __SetError(FParam, ID, Errno, Msg);
+end;
+
+function KLiInvoke.Read(const Buf: pchar; Count: integer): integer;
+begin
+  Result := lse_stream_read(FEngine.StdinStream, Buf, Count);
+end;
+
+function KLiInvoke.Readln: string;
+var
+  sr: PLseString;
+begin
+  sr := lse_stream_readln(FEngine.StdinStream);
+  lse_strec_inclife(sr);
+  Result := lse_strec_string(sr);
+  lse_strec_declife(sr);
+end;
+
+procedure KLiInvoke.ReturnFloat(const Value: double);
+begin
+  SetNil(FParam^.result);
+  __PutFloat(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnInt64(const Value: int64);
+begin
+  SetNil(FParam^.result);
+  __PutInt64(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnMoney(const Value: currency);
+begin
+  SetNil(FParam^.result);
+  __PutMoney(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnObject(const Value: pointer; AClass: KLiClass);
+begin
+  SetNil(FParam^.result);
+  __PutObject(FParam^.result, AClass.ClassRec, Value);
+end;
+
+procedure KLiInvoke.ReturnObj(const Value: pointer; AClass: PLseClassRec);
+begin
+  SetNil(FParam^.result);
+  __PutObject(FParam^.result, AClass, Value);
+end;
+
+procedure KLiInvoke.ReturnStr(const Value: string);
+begin
+  SetNil(FParam^.result);
+  __PutString(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnStream(const Value: TStream);
+begin
+  SetNil(FParam^.result);
+  ReturnStream(lse_wrap_stream(Value, true));
+end;
+
+procedure KLiInvoke.ReturnStream(const Value: PLseStream);
+begin
+  SetNil(FParam^.result);
+  __PutObject(Param^.result, KR_STREAM, Value);
+end;
+
+procedure KLiInvoke.ReturnStrlist(const Value: KLiStrList);
+begin
+  SetNil(FParam^.result);
+  __PutObject(Param^.result, KR_STRLIST, Value);
+end;
+
+procedure KLiInvoke.ReturnTime(const Value: TDateTime);
+begin
+  SetNil(FParam^.result);
+  __PutTime(FParam^.result, Value);
+end;
+
+procedure KLiInvoke.ReturnInt(const Value: integer);
+begin
+  SetNil(FParam^.result);
+  __PutInt64(FParam^.result, Value);
+end;
+
+function KLiInvoke.GetThis(var This): boolean;
+var
+  lobj: pointer;
+begin
+  lobj := ParamObject(0);
+  Result := (lobj <> nil);
+  if Result then
+    pointer(This) := lobj else
+    __SetError(FParam, 'this was not supplied');
+end;
+
+procedure KLiInvoke.SetNil(Value: PLseValue);
+var
+  cr: PLseClassRec;
+begin
+  cr := Value^.value_class;
+  if cr <> nil then
+    if cr^.vtype = LSV_STRING then
+      lse_strec_declife(Value^.VString) else
+    if cr^.vtype = LSV_OBJECT then
+      cr^.decRefcount(Value^.VObject);
+end;
+
+constructor KLiInvoke.Create(const AEngine: KLiEngine);
+begin
+  FEngine := AEngine;
+  FParam := nil;
+end;
+
+function KLiInvoke.ParamBool(Index: integer): boolean;
+begin
+  Result := FParam^.param[Index]^.VBool;
+end;
+
+function KLiInvoke.ParamChar(Index: integer): char;
+begin
+  Result := FParam^.param[Index]^.VChar;
+end;
+
+function KLiInvoke.ParamClass(Index: integer): KLiClass;
+begin
+  Result:= KLiClass(ParamClassRec(Index)^.lysee_class);
+end;
+
+function KLiInvoke.ParamClassRec(Index: integer): PLseClassRec;
+begin
+  Result:= FParam^.param[Index]^.value_class;
+  if Result = nil then Result := KR_VOID;
+end;
+
+function KLiInvoke.ParamCount: integer;
+begin
+  Result := FParam^.count;
+end;
+
+function KLiInvoke.ParamFloat(Index: integer): double;
+begin
+  Result := FParam^.param[Index]^.VFloat;
+end;
+
+function KLiInvoke.ParamFmt(Index: integer): string;
+begin
+  Result := FormatStr(ParamStr(Index));
+end;
+
+function KLiInvoke.ParamInt(Index: integer): integer;
+begin
+  Result := FParam^.param[Index]^.VInteger;
+end;
+
+function KLiInvoke.ParamInt64(Index: integer): int64;
+begin
+  Result := FParam^.param[Index]^.VInteger;
+end;
+
+function KLiInvoke.ParamMoney(Index: integer): currency;
+begin
+  Result := FParam^.param[Index]^.VMoney;
+end;
+
+function KLiInvoke.ParamObject(Index: integer): pointer;
+begin
+  Result := FParam^.param[Index]^.VObject;
+end;
+
+function KLiInvoke.ParamStr(Index: integer): string;
+begin
+  Result := lse_strec_string(FParam^.param[Index]^.VString);
+end;
+
+function KLiInvoke.ParamCStr(Index: integer; var Size: integer): pchar;
+var
+  sr: PLseString;
+begin
+  sr := FParam^.param[Index]^.VString;
+  Result := lse_strec_data(sr);
+  Size := lse_strec_length(sr);
+end;
+
+function KLiInvoke.ParamStrec(Index: integer): PLseString;
+begin
+  Result := FParam^.param[Index]^.VString;
+end;
+
+function KLiInvoke.ParamStream(Index: integer): PLseStream;
+begin
+  Result := PLseStream(FParam^.param[Index]^.VObject);
+end;
+
+function KLiInvoke.ParamTime(Index: integer): TDateTime;
+begin
+  Result := FParam^.param[Index]^.VTime;
+end;
+
+procedure KLiInvoke.Print(const Str: string);
+begin
+  lse_stream_write(FEngine.StdoutStream, Str);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////

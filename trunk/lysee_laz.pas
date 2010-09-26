@@ -2,7 +2,7 @@
 {        UNIT: lysee_laz                                                       }
 { DESCRIPTION: lysee components for lazarus                                    }
 {     CREATED: 2010/09/20                                                      }
-{    MODIFIED: 2010/09/23                                                      }
+{    MODIFIED: 2010/09/26                                                      }
 {==============================================================================}
 { Copyright (c) 2010, Li Yun Jie                                               }
 { All rights reserved.                                                         }
@@ -10,7 +10,7 @@
 { Redistribution and use in source and binary forms, with or without           }
 { modification, are permitted provided that the following conditions are met:  }
 {                                                                              }
-{ Redistributions of source code must retain the above copyright notice, this  }
+{ Redistributions of source code must retain the above copyright notice, obj  }
 { list of conditions and the following disclaimer.                             }
 {                                                                              }
 { Redistributions in binary form must reproduce the above copyright notice,    }
@@ -178,7 +178,7 @@ type
 
   { TLyseeFunc }
 
-  TEventFunc = procedure(Invoker: TLseInvoke) of object;
+  TEventFunc = procedure(Invoker: KLiInvoke) of object;
 
   TLyseeFunc = class(TComponent)
   private
@@ -210,8 +210,8 @@ type
 
   { TLyseeClass }
 
-  TCreateObject = procedure(Sender: TObject; var Obj: TLyseeObject) of object;
-  TDestroyObject = procedure(Sender: TObject; Obj: TLyseeObject) of object;
+  TCreateObject = procedure(Sender: TObject; var Lobj: TLyseeObject) of object;
+  TDestroyObject = procedure(Sender: TObject; Lobj: TLyseeObject) of object;
 
   TLyseeClass = class(TComponent)
   private
@@ -251,7 +251,7 @@ type
 
   { TLyseeMethod }
 
-  TEventMethod = procedure(Lobj: TLyseeObject; Invoker: TLseInvoke) of object;
+  TEventMethod = procedure(Lobj: TLyseeObject; Invoker: KLiInvoke) of object;
 
   TLyseeMethod = class(TComponent)
   private
@@ -379,25 +379,24 @@ var
 begin
   curr := KLiFunc(Param^.func);
   func := TLyseeMethod(curr.Component);
-  if func <> nil then
-    if curr.IsConstructor then
-    begin
-      nobj := nil;
-      clss := func.FClass;
-      if Assigned(clss.FOnCreateObject) then
-        clss.FOnCreateObject(clss, nobj);
-      if nobj = nil then
-        nobj := TLyseeObject.Create(clss);
-      nobj.IncRefcount;
-      try
-        __SetObject(Param^.param[0], clss.FClass, nobj);
-        func.Execute(Param);
-      finally
-        __SetObject(Param^.result, clss.FClass, nobj);
-        nobj.DecRefcount;
-      end;
-    end
-    else func.Execute(Param);
+  if curr.IsConstructor then
+  begin
+    nobj := nil;
+    clss := func.FClass;
+    if Assigned(clss.FOnCreateObject) then
+      clss.FOnCreateObject(clss, nobj);
+    if nobj = nil then
+      nobj := TLyseeObject.Create(clss);
+    nobj.IncRefcount;
+    try
+      __SetObject(Param^.param[0], clss.FClass, nobj);
+      func.Execute(Param);
+    finally
+      __SetObject(Param^.result, clss.FClass, nobj);
+      nobj.DecRefcount;
+    end;
+  end
+  else func.Execute(Param);
 end;
 
 { TLyseeEngine }
@@ -873,15 +872,18 @@ end;
 
 procedure TLyseeFunc.Execute(Param: PLseParam);
 var
-  call: TLseInvoke;
+  ivk: KLiInvoke;
+  prm: PLseParam;
 begin
   if Assigned(FOnExecute) then
   begin
-    call := TLseInvoke.Create(Param);
+    ivk := __AsEngine(Param).Invoker;
+    prm := ivk.Param;
     try
-      FOnExecute(call);
+      ivk.Param := Param;
+      FOnExecute(ivk);
     finally
-      call.Free;
+      ivk.Param := prm;
     end;
   end;
 end;
@@ -1119,19 +1121,20 @@ end;
 
 procedure TLyseeMethod.Execute(Param: PLseParam);
 var
-  call: TLseInvoke;
-  this: TLyseeObject;
+  ivk: KLiInvoke;
+  prm: PLseParam;
 begin
-  if __getThis(Param, this) then
-    if Assigned(FOnExecute) then
-    begin
-      call := TLseInvoke.Create(Param);
-      try
-        FOnExecute(this, call);
-      finally
-        call.Free;
-      end;
+  if Assigned(FOnExecute) then
+  begin
+    ivk := __AsEngine(Param).Invoker;
+    prm := ivk.Param;
+    try
+      ivk.Param := Param;
+      FOnExecute(TLyseeObject(Param^.param[0]^.VObject), ivk);
+    finally
+      ivk.Param := prm;
     end;
+  end;
 end;
 
 { TLyseeObject }

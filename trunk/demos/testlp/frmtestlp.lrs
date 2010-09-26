@@ -169,15 +169,15 @@ LazarusResources.Add('TTestlpForm','FORMDATA',[
   +'P'#1#3'top'#2'@'#0#0#12'TLyseeEngine'#5'Lysee'#5'IsLSP'#8#8'OnReadln'#7#11
   +'LyseeReadln'#6'OnRead'#7#9'LyseeRead'#7'OnWrite'#7#10'LyseeWrite'#4'left'#3
   +#24#1#3'top'#2'@'#0#0#11'TLyseeClass'#8'lscHello'#9'ClassName'#6#5'hello'#6
-  +'Module'#7#6'lsmHii'#15'OnDestroyObject'#7#21'lscHelloDestroyObject'#4'left'
-  +#3#136#1#3'top'#2'@'#0#0#12'TLyseeMethod'#9'hello_say'#9'Prototype'#6#5'say|'
-  +'|'#10'LyseeClass'#7#8'lscHello'#9'OnExecute'#7#16'hello_sayExecute'#0#0#12
-  +'TLyseeMethod'#8'hello_xx'#9'Prototype'#6#14'xx|msg:string|'#10'LyseeClass'#7
-  +#8'lscHello'#9'OnExecute'#7#15'hello_xxExecute'#0#0#12'TLyseeMethod'#11'hell'
-  +'o_hello'#9'Prototype'#6#15'{c}|msg:string|'#10'LyseeClass'#7#8'lscHello'#9
-  +'OnExecute'#7#18'hello_helloExecute'#0#0#10'TLyseeFunc'#9'hii_alert'#9'Proto'
-  +'type'#6#17'alert|msg:string|'#6'Module'#7#6'lsmHii'#9'OnExecute'#7#16'hii_a'
-  +'lertExecute'#0#0#10'TLyseeFunc'#9'hii_input'#9'Prototype'#6#27'input:string'
-  +'|prompt:string|'#6'Module'#7#6'lsmHii'#9'OnExecute'#7#16'hii_inputExecute'#0
-  +#0#0
+  +'Module'#7#6'lsmHii'#14'OnCreateObject'#7#20'lscHelloCreateObject'#15'OnDest'
+  +'royObject'#7#21'lscHelloDestroyObject'#4'left'#3#136#1#3'top'#2'@'#0#0#12'T'
+  +'LyseeMethod'#9'hello_say'#9'Prototype'#6#5'say||'#10'LyseeClass'#7#8'lscHel'
+  +'lo'#9'OnExecute'#7#16'hello_sayExecute'#0#0#12'TLyseeMethod'#8'hello_xx'#9
+  +'Prototype'#6#14'xx|msg:string|'#10'LyseeClass'#7#8'lscHello'#9'OnExecute'#7
+  +#15'hello_xxExecute'#0#0#12'TLyseeMethod'#11'hello_hello'#9'Prototype'#6#15
+  +'{c}|msg:string|'#10'LyseeClass'#7#8'lscHello'#9'OnExecute'#7#18'hello_hello'
+  +'Execute'#0#0#10'TLyseeFunc'#9'hii_alert'#9'Prototype'#6#17'alert|msg:string'
+  +'|'#6'Module'#7#6'lsmHii'#9'OnExecute'#7#16'hii_alertExecute'#0#0#10'TLyseeF'
+  +'unc'#9'hii_input'#9'Prototype'#6#27'input:string|prompt:string|'#6'Module'#7
+  +#6'lsmHii'#9'OnExecute'#7#16'hii_inputExecute'#0#0#0
 ]);

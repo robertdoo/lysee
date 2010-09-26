@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, lysee_laz, SynEdit, lseu;
+  StdCtrls, ExtCtrls, lysee_laz, lse_kernel, SynEdit, lseu;
 
 type
 
@@ -34,12 +34,13 @@ type
     procedure btnRunClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure hello_helloExecute(Lobj: TLyseeObject; Invoker: TLseInvoke);
-    procedure hello_sayExecute(Lobj: TLyseeObject; Invoker: TLseInvoke);
-    procedure hello_xxExecute(Lobj: TLyseeObject; Invoker: TLseInvoke);
-    procedure hii_alertExecute(Invoker: TLseInvoke);
-    procedure hii_inputExecute(Invoker: TLseInvoke);
-    procedure lscHelloDestroyObject(Sender: TObject; Obj: TLyseeObject);
+    procedure hello_helloExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+    procedure hello_sayExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+    procedure hello_xxExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+    procedure hii_alertExecute(Invoker: KLiInvoke);
+    procedure hii_inputExecute(Invoker: KLiInvoke);
+    procedure lscHelloCreateObject(Sender: TObject; var Lobj: TLyseeObject);
+    procedure lscHelloDestroyObject(Sender: TObject; Lobj: TLyseeObject);
     procedure LyseeRead(Sender: TObject; const Buf: pchar; var Count: integer);
     procedure LyseeReadln(Sender: TObject; var S: string);
     procedure LyseeWrite(Sender: TObject; const Buf: pchar; var Count: integer);
@@ -49,13 +50,18 @@ type
     { public declarations }
   end; 
 
+  THelloObject = class(TLyseeObject)
+  private
+    Text: string;
+  end;
+
 var
   TestlpForm: TTestlpForm;
 
 implementation
 
 uses
-  Math, lse_kernel;
+  Math;
 
 procedure hii_clear(const Param: PLseParam);cdecl;
 begin
@@ -118,28 +124,28 @@ begin
   CloseLysee;
 end;
 
-procedure TTestlpForm.hello_helloExecute(Lobj: TLyseeObject; Invoker: TLseInvoke);
+procedure TTestlpForm.hello_helloExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
 begin
-  string(Lobj.Data) := Invoker.paramStr(1);
+  THelloObject(Lobj).Text := Invoker.paramStr(1);
 end;
 
-procedure TTestlpForm.hello_sayExecute(Lobj: TLyseeObject; Invoker: TLseInvoke);
+procedure TTestlpForm.hello_sayExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
 begin
-  ShowMessage(string(Lobj.Data));
+  ShowMessage(THelloObject(Lobj).Text);
 end;
 
-procedure TTestlpForm.hello_xxExecute(Lobj: TLyseeObject; Invoker: TLseInvoke);
+procedure TTestlpForm.hello_xxExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
 begin
-  string(Lobj.Data) := string(Lobj.Data) + Invoker.paramStr(1);
-  ShowMessage(string(Lobj.Data));
+  THelloObject(Lobj).Text := THelloObject(Lobj).Text + Invoker.paramStr(1);
+  ShowMessage(THelloObject(Lobj).Text);
 end;
 
-procedure TTestlpForm.hii_alertExecute(Invoker: TLseInvoke);
+procedure TTestlpForm.hii_alertExecute(Invoker: KLiInvoke);
 begin
   ShowMessage(Invoker.ParamStr(0));
 end;
 
-procedure TTestlpForm.hii_inputExecute(Invoker: TLseInvoke);
+procedure TTestlpForm.hii_inputExecute(Invoker: KLiInvoke);
 var
   S: string;
 begin
@@ -147,9 +153,14 @@ begin
   Invoker.returnStr(S);
 end;
 
-procedure TTestlpForm.lscHelloDestroyObject(Sender: TObject; Obj: TLyseeObject);
+procedure TTestlpForm.lscHelloCreateObject(Sender: TObject; var Lobj: TLyseeObject);
 begin
-  string(Obj.Data) := '';
+  Lobj := THelloObject.Create(lscHello);
+end;
+
+procedure TTestlpForm.lscHelloDestroyObject(Sender: TObject; Lobj: TLyseeObject);
+begin
+  THelloObject(Lobj).Text := '';
 end;
 
 initialization
