@@ -77,6 +77,7 @@ object TestlpForm: TTestlpForm
         ParentColor = False
         ParentFont = False
         TabOrder = 1
+        BookMarkOptions.OnChange = nil
         Gutter.Visible = False
         Gutter.Width = 0
         Gutter.MouseActions = <        
@@ -814,8 +815,7 @@ object TestlpForm: TTestlpForm
       ResizeAnchor = akBottom
     end
   end
-  object lsmHii: TLyseeModule
-    ModuleName = 'hii'
+  object hii: TLyseeModule
     left = 336
     top = 64
   end
@@ -827,37 +827,46 @@ object TestlpForm: TTestlpForm
     left = 280
     top = 64
   end
-  object lscHello: TLyseeClass
-    ClassName = 'hello'
-    Module = lsmHii
-    OnCreateObject = lscHelloCreateObject
-    OnDestroyObject = lscHelloDestroyObject
+  object hello: TLyseeClass
+    Module = hii
+    OnCreateObject = helloCreateObject
     left = 392
     top = 64
   end
   object hello_say: TLyseeMethod
     Prototype = 'say||'
-    LyseeClass = lscHello
+    LyseeClass = hello
     OnExecute = hello_sayExecute
   end
-  object hello_xx: TLyseeMethod
+  object hello_xxx: TLyseeMethod
     Prototype = 'xx|msg:string|'
-    LyseeClass = lscHello
-    OnExecute = hello_xxExecute
+    LyseeClass = hello
+    OnExecute = hello_xxxExecute
   end
   object hello_hello: TLyseeMethod
     Prototype = '{c}|msg:string|'
-    LyseeClass = lscHello
+    LyseeClass = hello
     OnExecute = hello_helloExecute
   end
   object hii_alert: TLyseeFunc
     Prototype = 'alert|msg:string|'
-    Module = lsmHii
+    Module = hii
     OnExecute = hii_alertExecute
   end
   object hii_input: TLyseeFunc
     Prototype = 'input:string|prompt:string|'
-    Module = lsmHii
+    Module = hii
     OnExecute = hii_inputExecute
+  end
+  object god: TLyseeClass
+    Module = hii
+  end
+  object LyseeMethod2: TLyseeMethod
+  end
+  object LyseeFunc1: TLyseeFunc
+    Module = hii
+  end
+  object LyseeMethod1: TLyseeMethod
+    LyseeClass = god
   end
 end

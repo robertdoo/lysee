@@ -2,7 +2,7 @@
 {        UNIT: lse_console                                                     }
 { DESCRIPTION: console implementation of lysee script interpreter              }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/09/20                                                      }
+{    MODIFIED: 2010/10/03                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -78,13 +78,9 @@ uses
   DateUtils, Math;
 
 procedure Execute;
-var
-  exe_name: string;
 begin
-  exe_name := ParamStr(0);
-  lse_load_kernel(ExtractFilePath(exe_name) + LSE_KERNEL);
+  lse_startup;
   try
-    lse_set_program_file(exe_name);
     with KLiCommander.Create do
     try
       Command;

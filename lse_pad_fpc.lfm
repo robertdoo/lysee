@@ -1,7 +1,7 @@
 object LspadForm: TLspadForm
-  Left = 110
+  Left = 44
   Height = 492
-  Top = 110
+  Top = 44
   Width = 760
   ActiveControl = smLysee
   Caption = 'Lysee PAD'
@@ -49,7 +49,6 @@ object LspadForm: TLspadForm
     PopupMenu = popEdit
     TabOrder = 1
     BookMarkOptions.Xoffset = 15
-    BookMarkOptions.OnChange = nil
     Gutter.Color = 15000804
     Gutter.LeftOffset = 2
     Gutter.Visible = False

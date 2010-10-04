@@ -7,3 +7,5 @@ rmdir temp
 rmdir backup
 rmdir modules\backup
 rmdir modules\__history
+rmdir lib\i386-win32
+rmdir lib
