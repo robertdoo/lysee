@@ -222,11 +222,11 @@ begin
   end;
 
   lse_load_kernel(FPath + LSE_KERNEL);
-  if lse_entries <> nil then
+  if lse_startup then
   begin
     lse_set_program_file(Application.ExeName);
     Keywords := lse_keywords;
-    FEngine := TLseEngine.Create(Self);
+    FEngine := TLseEngine.Create;
   end
   else
   begin
@@ -240,6 +240,7 @@ end;
 
 procedure TLspadForm.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(FEngine);
   lse_cleanup;
 end;
 

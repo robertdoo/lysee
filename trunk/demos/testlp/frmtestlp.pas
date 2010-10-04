@@ -6,22 +6,31 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, lysee_laz, lse_kernel, SynEdit, lseu;
+  StdCtrls, ExtCtrls, ActnList, lse_components, lse_kernel, SynEdit, lseu;
 
 type
+
+  THelloObject = class(TLyseeObject)
+  private
+    Text: string;
+  end;
 
   { TTestlpForm }
 
   TTestlpForm = class(TForm)
     btnRun: TButton;
     Lysee: TLyseeEngine;
-    lsmHii: TLyseeModule;
-    lscHello: TLyseeClass;
+    hii: TLyseeModule;
+    hello: TLyseeClass;
     hello_say: TLyseeMethod;
-    hello_xx: TLyseeMethod;
+    hello_xxx: TLyseeMethod;
     hello_hello: TLyseeMethod;
     hii_alert: TLyseeFunc;
     hii_input: TLyseeFunc;
+    god: TLyseeClass;
+    LyseeFunc1: TLyseeFunc;
+    LyseeMethod1: TLyseeMethod;
+    LyseeMethod2: TLyseeMethod;
     Outputs: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -34,13 +43,12 @@ type
     procedure btnRunClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure hello_helloExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
-    procedure hello_sayExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
-    procedure hello_xxExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+    procedure hello_helloExecute(Lobj: THelloObject; Invoker: KLiInvoke);
+    procedure hello_sayExecute(Lobj: THelloObject; Invoker: KLiInvoke);
+    procedure hello_xxxExecute(Lobj: THelloObject; Invoker: KLiInvoke);
     procedure hii_alertExecute(Invoker: KLiInvoke);
     procedure hii_inputExecute(Invoker: KLiInvoke);
-    procedure lscHelloCreateObject(Sender: TObject; var Lobj: TLyseeObject);
-    procedure lscHelloDestroyObject(Sender: TObject; Lobj: TLyseeObject);
+    procedure helloCreateObject(Sender: TObject; var Lobj: THelloObject);
     procedure LyseeRead(Sender: TObject; const Buf: pchar; var Count: integer);
     procedure LyseeReadln(Sender: TObject; var S: string);
     procedure LyseeWrite(Sender: TObject; const Buf: pchar; var Count: integer);
@@ -49,11 +57,6 @@ type
   public
     { public declarations }
   end; 
-
-  THelloObject = class(TLyseeObject)
-  private
-    Text: string;
-  end;
 
 var
   TestlpForm: TTestlpForm;
@@ -116,7 +119,8 @@ end;
 procedure TTestlpForm.FormCreate(Sender: TObject);
 begin
   StartLysee;
-  lsmHii.AddFunc('clear||', @hii_clear);
+  hii.AddFunc('clear||', @hii_clear);
+  Caption := ParamStr(0);
 end;
 
 procedure TTestlpForm.FormDestroy(Sender: TObject);
@@ -124,20 +128,20 @@ begin
   CloseLysee;
 end;
 
-procedure TTestlpForm.hello_helloExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+procedure TTestlpForm.hello_helloExecute(Lobj: THelloObject; Invoker: KLiInvoke);
 begin
-  THelloObject(Lobj).Text := Invoker.paramStr(1);
+  Lobj.Text := Invoker.paramStr(1);
 end;
 
-procedure TTestlpForm.hello_sayExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+procedure TTestlpForm.hello_sayExecute(Lobj: THelloObject; Invoker: KLiInvoke);
 begin
-  ShowMessage(THelloObject(Lobj).Text);
+  ShowMessage(Lobj.Text);
 end;
 
-procedure TTestlpForm.hello_xxExecute(Lobj: TLyseeObject; Invoker: KLiInvoke);
+procedure TTestlpForm.hello_xxxExecute(Lobj: THelloObject; Invoker: KLiInvoke);
 begin
-  THelloObject(Lobj).Text := THelloObject(Lobj).Text + Invoker.paramStr(1);
-  ShowMessage(THelloObject(Lobj).Text);
+  Lobj.Text := Lobj.Text + Invoker.paramStr(1);
+  ShowMessage(Lobj.Text);
 end;
 
 procedure TTestlpForm.hii_alertExecute(Invoker: KLiInvoke);
@@ -153,14 +157,9 @@ begin
   Invoker.returnStr(S);
 end;
 
-procedure TTestlpForm.lscHelloCreateObject(Sender: TObject; var Lobj: TLyseeObject);
+procedure TTestlpForm.helloCreateObject(Sender: TObject; var Lobj: THelloObject);
 begin
-  Lobj := THelloObject.Create(lscHello);
-end;
-
-procedure TTestlpForm.lscHelloDestroyObject(Sender: TObject; Lobj: TLyseeObject);
-begin
-  THelloObject(Lobj).Text := '';
+  Lobj := THelloObject.Create(hello);
 end;
 
 initialization

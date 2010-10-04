@@ -2,7 +2,7 @@
 {        UNIT: lse_funcs                                                       }
 { DESCRIPTION: classes and functions used by kernel                            }
 {     CREATED: 2008/01/21                                                      }
-{    MODIFIED: 2010/09/11                                                      }
+{    MODIFIED: 2010/10/03                                                      }
 {==============================================================================}
 { Copyright (c) 2008-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -978,17 +978,17 @@ function __md5sumFile(const fname: string): string;
 function __programFile: string;
 
 {-----------------------------------------------------------------------
-( F_NAME: __kernelFile
+( F_NAME: __libraryFile
 ( 
-( F_DESC: lysee kernel file name
+( F_DESC: get current library file name
 ( 
 ( F_ARGS:
 (
-( F_TYPE: string - kernel file name
+( F_TYPE: string - library file name
 ( 
 ( EXCEPT: 
 (----------------------------------------------------------------------}
-function __kernelFile: string;
+function __libraryFile: string;
 
 {----------------------------------------------------------------------)
 (                                                                      )
@@ -2568,25 +2568,31 @@ var
 {$ENDIF}
 begin
   {$IFDEF WINDOWS}
-  GetModuleFileName(MainInstance, buffer, sizeof(buffer));
-  Result := lse_expand_fname(buffer);
-  {$ELSE}
-  Result := lse_expand_fname(ParamStr(0));
+  if IsLibrary then
+  begin
+    GetModuleFileName(MainInstance, buffer, sizeof(buffer));
+    Result := lse_expand_fname(buffer);
+    Exit;
+  end;
   {$ENDIF}
+  Result := lse_expand_fname(ParamStr(0));
 end;
 
-function __kernelFile: string;
+function __libraryFile: string;
 {$IFDEF WINDOWS}
 var
   buffer: array[0..MAX_PATH] of char;
 {$ENDIF}
 begin
   {$IFDEF WINDOWS}
-  GetModuleFileName(HInstance, buffer, sizeof(buffer));
-  Result := lse_expand_fname(buffer);
-  {$ELSE}
-  Result := __programFile;
+  if IsLibrary then
+  begin
+    GetModuleFileName(HInstance, buffer, sizeof(buffer));
+    Result := lse_expand_fname(buffer);
+    Exit;
+  end;
   {$ENDIF}
+  Result := __programFile;
 end;
 
 {----------------------------------------------------------------------)

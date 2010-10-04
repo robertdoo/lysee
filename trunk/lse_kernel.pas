@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/09/25                                                      }
+{    MODIFIED: 2010/10/04                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -1152,7 +1152,7 @@ procedure __ExportAPI(const HTMLFileName: string);
 ( 
 ( F_TYPE:
 (----------------------------------------------------------------------}
-procedure __LoadConfig;
+procedure __LoadConfig(const ConfigFile: string);
 
 {-----------------------------------------------------------------------
 ( F_NAME: __ReadConfig
@@ -1869,26 +1869,18 @@ begin
   end;
 end;
 
-procedure __LoadConfig;
+procedure __LoadConfig(const ConfigFile: string);
 
-  function Read(const Key, Value: string): string;
-  begin
-    if sys_configures <> nil then
-      Result := sys_configures.ReadValue(Key, Value) else
-      Result := Value;
-  end;
-
-  function Load(const FileName: string): boolean;
+  procedure Load(const FileName: string);
   var
     list: KLiStrlist;
     index: integer;
-    source, ID, value: string;
+    ID, value: string;
   begin
-    source := lse_expand_fname(FileName);
-    Result := FileExists(source) and not __sameFileName(source, sys_confile);
-    if Result then
+    sys_confile := lse_expand_fname(FileName);
+    sys_configures.Clear;
+    if FileExists(sys_confile) then
     begin
-      sys_confile := source;
       list := KLiStrlist.Create;
       try
         list.LoadFromFile(sys_confile);
@@ -1901,13 +1893,20 @@ procedure __LoadConfig;
     end;
   end;
 
+  function ReadCex(const Key, Value: string): string;
+  begin
+    if sys_configures <> nil then
+      Result := __ExpandValue(sys_configures.ReadValue(Key, Value), nil) else
+      Result := __ExpandValue(Value, nil);
+  end;
+
 begin
   try
     if sys_process_ID = '' then
     begin
       sys_process_ID := __genid;
       sys_program := __programFile;
-      sys_kernel := __kernelFile;
+      sys_kernel := __libraryFile;
       {$IFDEF WINDOWS}
       sys_home_path := __fullPath(lse_getenv('HOMEDRIVER') + lse_getenv('HOMEPATH'));
       {$ELSE}
@@ -1920,21 +1919,24 @@ begin
 
     sys_knpath := ExtractFilePath(sys_kernel);
     sys_kndir := ExcludeTrailingPathDelimiter(sys_knpath);
-
-    sys_configures.Clear;
-    Load(sys_knpath + LSE_CONFILE);
-
+    sys_confile := sys_knpath + LSE_CONFILE;
     sys_mimefile := sys_knpath + LSE_MIMEFILE;
+
+    if ConfigFile = '' then
+      Load(sys_confile) else
+      Load(ConfigFile);
+
+    sys_tmpath := __fullPath(ReadCex('lse_tmpath', LSE_TEMP_PATH));
+    sys_search_path := ReadCex('lse_search', LSE_SEARCH_PATH);
+    sys_create_log := __parseInt(pchar(ReadCex('lse_create_log', '0'))) <> 0;
+    sys_mimefile := lse_expand_fname(ReadCex('lse_mimefile', sys_mimefile));
+
     if sys_mimes <> nil then
     begin
       sys_mimes.DecRefcount;
       sys_mimes := nil;
     end;
 
-    sys_tmpath := __fullPath(__ExpandValue(Read('lse_tmpath', LSE_TEMP_PATH), nil));
-    sys_search_path := __ExpandValue(Read('lse_search', LSE_SEARCH_PATH), nil);
-    sys_create_log := __parseInt(pchar(Read('lse_create_log', '0'))) <> 0;
-    
     {$IFDEF WINDOWS}
     ForceDirectories(sys_tmpath);
     {$ENDIF}
@@ -11863,7 +11865,7 @@ constructor KLiEngine.Create(const AEngineRec: PLseEngine);
 begin
   FEngineRec := AEngineRec;
   if FEngineRec <> nil then
-    FEngineRec^.kernel_engine := Self;
+    FEngineRec^.krnl_engine := Self;
 
   IncRefcount;
 
@@ -13917,7 +13919,7 @@ begin
       sys_libraries := __newNamedList(false);
       sys_spinlock := TLseSpinLock.Create;
       sys_version := LSE_VERSION;
-      __LoadConfig;
+      __LoadConfig('');
       __SetupLseClasses;
 
       for X := Low(KLiSymbol) to High(KLiSymbol) do
