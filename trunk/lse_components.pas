@@ -2,7 +2,7 @@
 {        UNIT: lse_components                                                  }
 { DESCRIPTION: lysee components for lazarus and delphi                         }
 {     CREATED: 2010/09/20                                                      }
-{    MODIFIED: 2010/10/03                                                      }
+{    MODIFIED: 2010/10/15                                                      }
 {==============================================================================}
 { Copyright (c) 2010, Li Yun Jie                                               }
 { All rights reserved.                                                         }
@@ -192,7 +192,7 @@ type
 
   { TLyseeFunc }
 
-  TEventFunc = procedure(Invoker: KLiInvoke) of object;
+  TEventFunc = procedure(Invoker: TLseInvoke) of object;
 
   TLyseeFunc = class(TLyseeComponent)
   private
@@ -252,7 +252,7 @@ type
 
   { TLyseeMethod }
 
-  TEventMethod = procedure(Lobj: TLyseeObject; Invoker: KLiInvoke) of object;
+  TEventMethod = procedure(Lobj: TLyseeObject; Invoker: TLseInvoke) of object;
 
   TLyseeMethod = class(TLyseeComponent)
   private
@@ -393,10 +393,10 @@ begin
     nobj := TLyseeObject.Create(clss);
   nobj.IncRefcount;
   try
-    __SetObject(Param^.param[0], clss.KernelClass, nobj);
+    lse_set_object(Param^.param[0], clss.KernelClass.ClassRec, nobj);
     func.Execute(Param);
   finally
-    __SetObject(Param^.result, clss.KernelClass, nobj);
+    lse_set_object(Param^.result, clss.KernelClass.ClassRec, nobj);
     nobj.DecRefcount;
   end;
 end;
@@ -854,7 +854,7 @@ end;
 
 procedure TLyseeFunc.Execute(Param: PLseParam);
 var
-  ivk: KLiInvoke;
+  ivk: TLseInvoke;
   prm: PLseParam;
 begin
   if Assigned(FOnExecute) then
@@ -1058,7 +1058,7 @@ end;
 
 procedure TLyseeMethod.Execute(Param: PLseParam);
 var
-  ivk: KLiInvoke;
+  ivk: TLseInvoke;
   prm: PLseParam;
 begin
   if Assigned(FOnExecute) then

@@ -2,7 +2,7 @@
 {        UNIT: lse_api                                                         }
 { DESCRIPTION: APIs builtin in lysee kernel                                    }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/09/21                                                      }
+{    MODIFIED: 2010/10/12                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -3542,22 +3542,22 @@ end;
 
 procedure pp_system_dir(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, GetCurrentDir);
+  lse_set_string(Param^.result, GetCurrentDir);
 end;
 
 procedure pp_system_cd(const Param: PLseParam);cdecl;
 begin
-  __PutBool(Param^.result, SetCurrentDir(__AsFileName(Param^.param[0])));
+  lse_set_bool(Param^.result, SetCurrentDir(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_system_mkdir(const Param: PLseParam);cdecl;
 begin
-  __PutBool(Param^.result, ForceDirectories(__AsFileName(Param^.param[0])));
+  lse_set_bool(Param^.result, ForceDirectories(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_system_rmdir(const Param: PLseParam);cdecl;
 begin
-  __PutBool(Param^.result, RemoveDir(__AsFileName(Param^.param[0])));
+  lse_set_bool(Param^.result, RemoveDir(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_system_cp(const Param: PLseParam);cdecl;
@@ -3566,7 +3566,7 @@ var
 begin
   src := __AsFileName(Param^.param[0]);
   dst := __AsFileName(Param^.param[1]);
-  __PutBool(Param^.result, __copyFile(src, dst));
+  lse_set_bool(Param^.result, __copyFile(src, dst));
 end;
 
 procedure pp_system_rm(const Param: PLseParam);cdecl;
@@ -3574,7 +3574,7 @@ var
   src: string;
 begin
   src := __AsFileName(Param^.param[0]);
-  __PutBool(Param^.result, SysUtils.DeleteFile(src));
+  lse_set_bool(Param^.result, SysUtils.DeleteFile(src));
 end;
 
 procedure pp_system_mv(const Param: PLseParam);cdecl;
@@ -3583,7 +3583,7 @@ var
 begin
   src := __AsFileName(Param^.param[0]);
   dst := __AsFileName(Param^.param[1]);
-  __PutBool(Param^.result, SysUtils.RenameFile(src, dst));
+  lse_set_bool(Param^.result, SysUtils.RenameFile(src, dst));
 end;
 
 procedure pp_system_isdir(const Param: PLseParam);cdecl;
@@ -3591,7 +3591,7 @@ var
   dir: string;
 begin
   dir := __AsFileName(Param^.param[0]);
-  __PutBool(Param^.result, DirectoryExists(dir));
+  lse_set_bool(Param^.result, DirectoryExists(dir));
 end;
 
 procedure pp_system_isfile(const Param: PLseParam);cdecl;
@@ -3599,7 +3599,7 @@ var
   fname: string;
 begin
   fname := __AsFileName(Param^.param[0]);
-  __PutBool(Param^.result, __IsFile(fname));
+  lse_set_bool(Param^.result, __IsFile(fname));
 end;
 
 procedure pp_system_modules(const Param: PLseParam);cdecl;
@@ -3667,7 +3667,7 @@ end;
 
 procedure pp_system_readln(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result,
+  lse_set_string(Param^.result,
     lse_stream_readln(__AsEngine(Param).StdinStream));
 end;
 
@@ -3689,7 +3689,7 @@ begin
     F := Random(Abs(F - T)) + Min(F, T) else
   if F = 0 then
     F := Random(MaxInt);
-  __PutInt64(Param^.result, F);
+  lse_set_int64(Param^.result, F);
 end;
 
 procedure pp_system_sleep(const Param: PLseParam);cdecl;
@@ -3707,8 +3707,8 @@ var
 begin
   ID := __AsString(Param^.param[0]);
   if ID <> '' then
-    __PutString(Param^.result, lse_getenv(ID)) else
-    __PutString(Param^.result, '', 0);
+    lse_set_string(Param^.result, lse_getenv(ID)) else
+    lse_set_string(Param^.result, '', 0);
 end;
 
 procedure pp_system_dumpc(const Param: PLseParam);cdecl;
@@ -3724,7 +3724,7 @@ begin
     stream := TStringStream.Create('');
     try
       __AsEngine(Param).DumpCodeToStream(stream, '');
-      __PutString(Param^.result, stream.DataString);
+      lse_set_string(Param^.result, stream.DataString);
     finally
       Stream.Free;
     end;
@@ -3740,7 +3740,7 @@ begin
       list := TStringList.Create;
       try
         func.DumpCode(list, '');
-        __PutString(Param^.result, list.Text);
+        lse_set_string(Param^.result, list.Text);
       finally
         list.Free;
       end;
@@ -3764,7 +3764,7 @@ begin
             vtype := KT_MODULE;
         end;
         vtype.DumpCodeToStream(stream, '');
-        __PutString(Param^.result, stream.DataString);
+        lse_set_string(Param^.result, stream.DataString);
       finally
         stream.Free;
       end;
@@ -3926,7 +3926,7 @@ end;
 
 procedure pp_system_genid(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, __genid);
+  lse_set_string(Param^.result, __genid);
 end;
 
 procedure pp_system_load(const Param: PLseParam);cdecl;
@@ -3987,7 +3987,7 @@ begin
   if module <> nil then
     if not is_str or __sameFileName(f_name, module.FileName) then
     begin
-      __PutObject(Param^.result, KR_MODULE, module);
+      lse_set_object(Param^.result, KR_MODULE, module);
       Exit;
     end
     else lse_error('reload module %s from another file', [m_name]);
@@ -4030,7 +4030,7 @@ begin
     unlock_kernel;
   end;
 
-  __PutObject(Param^.result, KR_MODULE, module);
+  lse_set_object(Param^.result, KR_MODULE, module);
 end;
 
 procedure pp_system_parse(const Param: PLseParam);cdecl;
@@ -4091,12 +4091,12 @@ var
 begin
   frmt := __AsString(Param^.param[0]);
   args := KLiVarList(__AsObject(Param^.param[1]));
-  __PutString(Param^.result, __AsRunner(Param).FormatFor(frmt, args));
+  lse_set_string(Param^.result, __AsRunner(Param).FormatFor(frmt, args));
 end;
 
 procedure pp_system_now(const Param: PLseParam);cdecl;
 begin
-  __PutTime(Param^.result, Now);
+  lse_set_time(Param^.result, Now);
 end;
 
 procedure pp_system_max(const Param: PLseParam);cdecl;
@@ -4108,8 +4108,8 @@ begin
     v1 := Param^.param[0];
     v2 := Param^.param[1];
     if (Param^.count = 1) or (__compare(V1, V2) in [crEqual, crMore]) then
-      __PutValue(Param^.result, v1) else
-      __PutValue(Param^.result, v2);
+      lse_set_value(Param^.result, v1) else
+      lse_set_value(Param^.result, v2);
   end;
 end;
 
@@ -4122,14 +4122,14 @@ begin
     v1 := Param^.param[0];
     v2 := Param^.param[1];
     if (Param^.count = 1) or (__compare(V1, V2) in [crEqual, crLess]) then
-      __PutValue(Param^.result, v1) else
-      __PutValue(Param^.result, v2);
+      lse_set_value(Param^.result, v1) else
+      lse_set_value(Param^.result, v2);
   end;
 end;
 
 procedure pp_system_leap(const Param: PLseParam);cdecl;
 begin
-  __PutBool(Param^.result, IsLeapYear(__AsInt64(Param^.param[0])));
+  lse_set_bool(Param^.result, IsLeapYear(__AsInt64(Param^.param[0])));
 end;
 
 procedure pp_system_which(const Param: PLseParam);cdecl;
@@ -4144,7 +4144,7 @@ begin
       foFunc : __SetFunc(Param^.result, rec.VFunc);
       foClass: if rec.VClass.IsModuleClass then
                  __SetModule(Param^.result, rec.VClass.Module) else
-                 __PutClass(Param^.result, rec.VClass);
+                 lse_set_class(Param^.result, rec.VClass.ClassRec);
     end;
 end;
 
@@ -4209,7 +4209,7 @@ end;
 
 procedure pp_system_gc(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, __AsEngine(Param).GarbageCollect);
+  lse_set_int64(Param^.result, __AsEngine(Param).GarbageCollect);
 end;
 
 procedure pp_system_apply(const Param: PLseParam);cdecl;
@@ -4240,7 +4240,7 @@ begin
   Y := __AsInt64(Param^.param[0]);
   M := __AsInt64(Param^.param[1]);
   D := __AsInt64(Param^.param[2]);
-  __PutBool(Param^.result, IsValidDate(Y, M, D));
+  lse_set_bool(Param^.result, IsValidDate(Y, M, D));
 end;
 
 // time time.encodeDateTime(int year, int month, int day, int hour, int minute,
@@ -4256,7 +4256,7 @@ begin
   N := __AsInt64(Param^.param[4]);
   S := __AsInt64(Param^.param[5]);
   L := __AsInt64(Param^.param[6]);
-  __PutTime(Param^.result, EncodeDateTime(Y, M, D, H, N, S, L));
+  lse_set_time(Param^.result, EncodeDateTime(Y, M, D, H, N, S, L));
 end;
 
 procedure pp_system_tmpfname(const Param: PLseParam);cdecl;
@@ -4264,42 +4264,42 @@ var
   fname: string;
 begin
   fname := sys_tmpath + __genid + __AsFileName(Param^.param[0]);
-  __PutString(Param^.result, fname);
+  lse_set_string(Param^.result, fname);
 end;
 
 procedure pp_system_encodeGMT(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, lse_encode_GMT(__AsTime(Param^.param[0])));
+  lse_set_string(Param^.result, lse_encode_GMT(__AsTime(Param^.param[0])));
 end;
 
 procedure pp_system_decodeGMT(const Param: PLseParam);cdecl;
 begin
-  __PutTime(Param^.result, lse_decode_GMT(__AsString(Param^.param[0])));
+  lse_set_time(Param^.result, lse_decode_GMT(__AsString(Param^.param[0])));
 end;
 
 procedure pp_system_encodeUTF8(const Param: PLseParam);cdecl;
 begin
   if Param^.count > 0 then
-    __PutString(Param^.result, __encodeUTF8(__AsString(Param^.param[0])));
+    lse_set_string(Param^.result, __encodeUTF8(__AsString(Param^.param[0])));
 end;
 
 procedure pp_system_decodeUTF8(const Param: PLseParam);cdecl;
 begin
   if Param^.count > 0 then
-    __PutString(Param^.result, __decodeUTF8(__AsString(Param^.param[0])));
+    lse_set_string(Param^.result, __decodeUTF8(__AsString(Param^.param[0])));
 end;
 
 procedure pp_system_encodeS(const Param: PLseParam);cdecl;
 begin
   if Param^.count > 0 then
-    __PutString(Param^.result, __encodeS(__AsString(Param^.param[0]),
+    lse_set_string(Param^.result, __encodeS(__AsString(Param^.param[0]),
       __AsBool(Param^.param[1])));
 end;
 
 procedure pp_system_decodeS(const Param: PLseParam);cdecl;
 begin
   if Param^.count > 0 then
-    __PutString(Param^.result, __decodeS(__AsString(Param^.param[0])));
+    lse_set_string(Param^.result, __decodeS(__AsString(Param^.param[0])));
 end;
 
 const
@@ -4318,7 +4318,7 @@ begin
   if __strToFileMode(fmode, open_mode, read, write) then
   begin
     stream := lse_file_stream(fname, open_mode);
-    __SetStream(Param^.result, stream);
+    lse_set_stream(Param^.result, stream);
   end
   else __SetError(Param, EOPENMODE, [fmode]);
 end;
@@ -4328,7 +4328,7 @@ var
   stream: PLseStream;
 begin
   stream := lse_memory_stream;
-  __SetStream(Param^.result, stream);
+  lse_set_stream(Param^.result, stream);
   if Param^.count > 1 then
     lse_stream_resize(stream, Max(0, Param^.param[0]^.VInteger));
 end;
@@ -4338,7 +4338,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutString(Param^.result, IncludeTrailingPathDelimiter(Trim(lse_strec_data(this))));
+  lse_set_string(Param^.result, IncludeTrailingPathDelimiter(Trim(lse_strec_data(this))));
 end;
 
 procedure pp_system_excPD(const Param: PLseParam);cdecl;
@@ -4346,17 +4346,17 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutString(Param^.result, ExcludeTrailingPathDelimiter(Trim(lse_strec_data(this))));
+  lse_set_string(Param^.result, ExcludeTrailingPathDelimiter(Trim(lse_strec_data(this))));
 end;
 
 procedure pp_system_veryPD(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, lse_veryPD(__AsString(Param^.param[0])));
+  lse_set_string(Param^.result, lse_veryPD(__AsString(Param^.param[0])));
 end;
 
 procedure pp_system_veryUD(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, lse_veryUD(__AsString(Param^.param[0])));
+  lse_set_string(Param^.result, lse_veryUD(__AsString(Param^.param[0])));
 end;
 
 procedure pp_system_system(const Param: PLseParam);cdecl;
@@ -4366,7 +4366,7 @@ var
 begin
   v_cmd := Trim(__FormatParam(Param, 0));
   v_dir := Trim(__FormatParam(Param, 1));
-  __PutString(Param^.result, spawn_shouts(v_cmd, v_dir, status));
+  lse_set_string(Param^.result, spawn_shouts(v_cmd, v_dir, status));
   __AsRunner(Param).ShellExitCode := status;
 end;
 
@@ -4377,7 +4377,7 @@ var
 begin
   v_cmd := Trim(__FormatParam(Param, 0));
   v_dir := Trim(__FormatParam(Param, 1));
-  __PutBool(Param^.result, spawn_shexec(v_cmd, v_dir,
+  lse_set_bool(Param^.result, spawn_shexec(v_cmd, v_dir,
     __AsBool(Param^.param[2]), status));
   __AsRunner(Param).ShellExitCode := status;
 end;
@@ -4403,7 +4403,7 @@ begin
     rnnr.Goon(func, prms, Param^.result);
     lse_set_int64(Param^.result, MilliSecondsBetween(Now, beg_time));
   end
-  else __PutInt64(Param^.result, 0);
+  else lse_set_int64(Param^.result, 0);
 end;
 
 procedure pp_system_current_module(const Param: PLseParam);cdecl;
@@ -4421,7 +4421,7 @@ end;
 
 procedure pp_system_current_error(const Param: PLseParam);cdecl;
 begin
-  __SetObject(Param^.result, KT_ERROR, __AsEngine(Param).Error);
+  lse_set_object(Param^.result, KR_ERROR, __AsEngine(Param).Error);
 end;
 
 procedure pp_system_current_args(const Param: PLseParam);cdecl;
@@ -4431,7 +4431,7 @@ end;
 
 procedure pp_system_current_prmc(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, __AsRunner(Param).Current^.values.ActualParamCount);
+  lse_set_int64(Param^.result, __AsRunner(Param).Current^.values.ActualParamCount);
 end;
 
 procedure pp_system_current_prms(const Param: PLseParam);cdecl;
@@ -4445,12 +4445,12 @@ end;
 
 procedure pp_system_current_xcode(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, __AsRunner(Param).ShellExitCode);
+  lse_set_int64(Param^.result, __AsRunner(Param).ShellExitCode);
 end;
 
 procedure pp_system_current_line(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, int64(__AsRunner(Param).Exprrec^.Pos.row) + 1);
+  lse_set_int64(Param^.result, int64(__AsRunner(Param).Exprrec^.Pos.row) + 1);
 end;
 
 procedure pp_system_current_envs(const Param: PLseParam);cdecl;
@@ -4467,22 +4467,22 @@ end;
 
 procedure pp_system_current_file(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, __AsRunner(Param).CurrentFunc.Module.FileName);
+  lse_set_string(Param^.result, __AsRunner(Param).CurrentFunc.Module.FileName);
 end;
 
 procedure pp_system_current_ifile(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, __AsRunner(Param).IncludedFile);
+  lse_set_string(Param^.result, __AsRunner(Param).IncludedFile);
 end;
 
 procedure pp_system_current_pd(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, LSE_PATH_DELIMITER);
+  lse_set_string(Param^.result, LSE_PATH_DELIMITER);
 end;
 
 procedure pp_system_eol(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result, sys_LB);
+  lse_set_string(Param^.result, sys_LB);
 end;
 
 procedure pp_system_each(const Param: PLseParam);cdecl;
@@ -4514,7 +4514,7 @@ var
 begin
   rnnr := __AsRunner(Param);
   list := __NewVarlist(rnnr.Engine);
-  __PutObject(Param^.result, KR_VARLIST, list);
+  lse_set_object(Param^.result, KR_VARLIST, list);
   if Param^.count > 0 then
   begin
     this := lse_vargen_this(Param);
@@ -4540,7 +4540,7 @@ var
 begin
   if Param^.count > 1 then
   begin
-    __PutValue(Param^.result, Param^.param[1]);
+    lse_set_value(Param^.result, Param^.param[1]);
     func := __AsFunc(Param^.param[2]);
     if func <> nil then
     begin
@@ -4566,7 +4566,7 @@ var
 begin
   rnnr := __AsRunner(Param);
   list := __NewVarlist(rnnr.Engine);
-  __PutObject(Param^.result, KR_VARLIST, list);
+  lse_set_object(Param^.result, KR_VARLIST, list);
   func := __AsFunc(Param^.param[1]);
   if func <> nil then
   begin
@@ -4596,11 +4596,11 @@ begin
   if Param^.count > 0 then
   begin
     G := __AsVargen(__AsEngine(Param), Param^.param[0]);
-    __PutObject(Param^.param[0], KR_VARGEN, G);
+    lse_set_object(Param^.param[0], KR_VARGEN, G);
 
     if Param^.count = 1 then
     begin
-      __PutObject(Param^.param[1], KR_FUNC, sys_oper_inc);
+      lse_set_object(Param^.param[1], KR_FUNC, sys_oper_inc);
       Param^.count := 2;
     end;
 
@@ -4620,12 +4620,12 @@ end;
 
 procedure pp_system_maxint(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, high(int64));
+  lse_set_int64(Param^.result, high(int64));
 end;
 
 procedure pp_system_minint(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, low(int64));
+  lse_set_int64(Param^.result, low(int64));
 end;
 
 procedure pp_system_gget(const Param: PLseParam);cdecl;
@@ -4643,7 +4643,7 @@ end;
 
 procedure pp_system_get_stdin(const Param: PLseParam);cdecl;
 begin
-  __SetStream(Param^.result, __AsEngine(Param).StdinStream);
+  lse_set_stream(Param^.result, __AsEngine(Param).StdinStream);
 end;
 
 procedure pp_system_set_stdin(const Param: PLseParam);cdecl;
@@ -4653,7 +4653,7 @@ end;
 
 procedure pp_system_get_stdout(const Param: PLseParam);cdecl;
 begin
-  __SetStream(Param^.result, __AsEngine(Param).StdoutStream);
+  lse_set_stream(Param^.result, __AsEngine(Param).StdoutStream);
 end;
 
 procedure pp_system_set_stdout(const Param: PLseParam);cdecl;
@@ -4663,7 +4663,7 @@ end;
 
 procedure pp_system_get_stderr(const Param: PLseParam);cdecl;
 begin
-  __SetStream(Param^.result, __AsEngine(Param).StderrStream);
+  lse_set_stream(Param^.result, __AsEngine(Param).StderrStream);
 end;
 
 procedure pp_system_set_stderr(const Param: PLseParam);cdecl;
@@ -4688,12 +4688,12 @@ var
   clss: PLseClassRec;
 begin
   data := Param^.param[0];
-  clss := lse_class_rec(data);
+  clss := lse_class(data);
   case clss^.vtype of
-    LSV_INT  : __PutInt64(Param^.result, Abs(data^.VInteger));
-    LSV_FLOAT: __PutFloat(Param^.result, Abs(data^.VFloat));
-    LSV_MONEY: __PutMoney(Param^.result, Abs(data^.VMoney));
-          else __PutValue(Param^.result, data);
+    LSV_INT  : lse_set_int64(Param^.result, Abs(data^.VInteger));
+    LSV_FLOAT: lse_set_float(Param^.result, Abs(data^.VFloat));
+    LSV_MONEY: lse_set_money(Param^.result, Abs(data^.VMoney));
+          else lse_set_value(Param^.result, data);
   end;
 end;
 
@@ -4772,7 +4772,7 @@ begin
     or not init_patten(mp, Param^.param[1])
       or not exec_patten(mp, Param^.param[0]) then
       begin
-        __PutString(Param^.result, Param^.param[0]^.VString);
+        lse_set_string(Param^.result, Param^.param[0]^.VString);
         Exit;
       end;
 
@@ -4804,7 +4804,7 @@ begin
   if result_len < 1 then Exit;
 
   srec := lse_strec_alloc(nil, result_len);
-  __PutString(Param^.result, srec);
+  lse_set_string(Param^.result, srec);
   result_str := lse_strec_data(srec);
 
   for X := 0 to times - 1 do
@@ -4887,7 +4887,7 @@ end;
 
 procedure pp_system_getcs(const Param: PLseParam);cdecl;
 begin
-  __PutObject(Param^.result, KR_VARLIST,
+  lse_set_object(Param^.result, KR_VARLIST,
     __AsRunner(Param).CallStack.GetCallSnap(__AsInt64(Param^.param[0])));
 end;
 
@@ -4935,7 +4935,7 @@ begin
     if Param^.count > 1 then
     begin
       V := Param^.param[1];
-      R := lse_class_rec(V);
+      R := lse_class(V);
       case R^.vtype of
         lSV_STRING: L := lse_stream_write(S, V^.VString);
         LSV_INT   : L := lse_stream_write(S, @V^.VInteger, sizeof(Int64));
@@ -4948,7 +4948,7 @@ begin
                       L := R^.writeTo(V^.VObject, S);
       end;
     end;
-    __PutInt64(Param^.result, L);
+    lse_set_int64(Param^.result, L);
   end
   else __SetError(Param, 'Output stream not supplied.');
 end;
@@ -4960,7 +4960,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.ErrorText);
+    lse_set_string(Param^.result, this.ErrorText);
 end;
 
 procedure pp_error_module(const Param: PLseParam);cdecl;
@@ -4968,7 +4968,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.module);
+    lse_set_string(Param^.result, this.module);
 end;
 
 procedure pp_error_name(const Param: PLseParam);cdecl;
@@ -4976,7 +4976,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Name);
+    lse_set_string(Param^.result, this.Name);
 end;
 
 procedure pp_error_message(const Param: PLseParam);cdecl;
@@ -4984,7 +4984,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.msg);
+    lse_set_string(Param^.result, this.msg);
 end;
 
 procedure pp_error_row(const Param: PLseParam);cdecl;
@@ -4992,7 +4992,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.row);
+    lse_set_int64(Param^.result, this.row);
 end;
 
 procedure pp_error_col(const Param: PLseParam);cdecl;
@@ -5000,7 +5000,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.col);
+    lse_set_int64(Param^.result, this.col);
 end;
 
 procedure pp_error_errno(const Param: PLseParam);cdecl;
@@ -5008,7 +5008,7 @@ var
   this: KLiError;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.errno);
+    lse_set_int64(Param^.result, this.errno);
 end;
 
 { function }
@@ -5018,7 +5018,7 @@ var
   this: KLiFunc;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Name);
+    lse_set_string(Param^.result, this.Name);
 end;
 
 procedure pp_func_type(const Param: PLseParam);cdecl;
@@ -5026,7 +5026,7 @@ var
   this: KLiFunc;
 begin
   if __GetThis(Param, this) then
-    __PutClass(Param^.result, this.ResultType);
+    lse_set_class(Param^.result, this.ResultType.ClassRec);
 end;
 
 procedure pp_func_prototype(const Param: PLseParam);cdecl;
@@ -5034,7 +5034,7 @@ var
   this: KLiFunc;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, otos_function(pointer(this)));
+    lse_set_string(Param^.result, otos_function(pointer(this)));
 end;
 
 procedure pp_func_module(const Param: PLseParam);cdecl;
@@ -5050,7 +5050,7 @@ var
   this: KLiFunc;
 begin
   if __GetThis(Param, this) then
-    __PutClass(Param^.result, this.OwnerClass);
+    lse_set_class(Param^.result, this.OwnerClass.ClassRec);
 end;
 
 procedure pp_func_params(const Param: PLseParam);cdecl;
@@ -5089,7 +5089,7 @@ begin
     buckets := 1;
   hash := KLiHashed.Create(__AsEngine(Param), buckets); 
   clss := __AsClass(Param^.param[0]);
-  __SetObject(Param^.result, clss, hash);
+  lse_set_object(Param^.result, clss.ClassRec, hash);
 end;
 
 procedure pp_hashed_length(const Param: PLseParam);cdecl;
@@ -5097,7 +5097,7 @@ var
   this: KLiHashed;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.ItemCount);
+    lse_set_int64(Param^.result, this.ItemCount);
 end;
 
 procedure pp_hashed_exchange(const Param: PLseParam);cdecl;
@@ -5210,7 +5210,7 @@ begin
     data := this.FindValue(key);
     if data = nil then
       __SetError(Param, 'key "%s" not found', [key]) else
-      __PutValue(Param^.result, data);
+      lse_set_value(Param^.result, data);
   end;
 end;
 
@@ -5234,7 +5234,7 @@ begin
     data := this.FindValueByChain(key);
     if data = nil then
       __SetError(Param, 'key "%s" not found', [key]) else
-      __PutValue(Param^.result, data);
+      lse_set_value(Param^.result, data);
   end;
 end;
 
@@ -5257,8 +5257,8 @@ begin
     key := __AsString(Param^.param[1]);
     data := this.FindValue(key);
     if data = nil then
-      __PutValue(Param^.result, Param^.param[2]) else
-      __PutValue(Param^.result, data);
+      lse_set_value(Param^.result, Param^.param[2]) else
+      lse_set_value(Param^.result, data);
   end;
 end;
 
@@ -5270,7 +5270,7 @@ begin
   if __GetThis(Param, this) and (Param^.count > 1) then
   begin
     key := __AsString(Param^.param[1]);
-    __PutBool(Param^.result, this.IsSet(key));
+    lse_set_bool(Param^.result, this.IsSet(key));
   end;
 end;
 
@@ -5326,7 +5326,7 @@ begin
   digits := Length(text);
   if digits < size then
     text := StringOfChar('0', size - digits) + text;
-  __PutString(Param^.Result, text);
+  lse_set_string(Param^.Result, text);
 end;
 
 procedure pp_int_bitlist(const Param: PLseParam);cdecl;
@@ -5346,7 +5346,7 @@ begin
   base := list;
   for index := 1 to size do
     if base^ = '0' then Inc(base) else break;
-  __PutString(Param^.result, base);
+  lse_set_string(Param^.result, base);
 end;
 
 procedure pp_int_upto(const Param: PLseParam);cdecl;
@@ -5364,7 +5364,7 @@ begin
                       step, __AsEngine(Param));
   end
   else varg := nil;
-  __SetVarGen(Param^.result, lse_vargen_ensure(varg));
+  lse_set_vargen(Param^.result, lse_vargen_ensure(varg));
 end;
 
 procedure pp_int_downto(const Param: PLseParam);cdecl;
@@ -5386,7 +5386,7 @@ begin
                         step, __AsEngine(Param));
   end
   else varg := nil;
-  __SetVarGen(Param^.result, lse_vargen_ensure(varg));
+  lse_set_vargen(Param^.result, lse_vargen_ensure(varg));
 end;
 
 { module }
@@ -5396,7 +5396,7 @@ var
   this: KLiModule;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Name);
+    lse_set_string(Param^.result, this.Name);
 end;
 
 procedure pp_module_file(const Param: PLseParam);cdecl;
@@ -5404,7 +5404,7 @@ var
   this: KLiModule;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.FileName);
+    lse_set_string(Param^.result, this.FileName);
 end;
 
 procedure pp_module_modules(const Param: PLseParam);cdecl;
@@ -5455,7 +5455,7 @@ var
   this: KLiModule;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Version);
+    lse_set_string(Param^.result, this.Version);
 end;
 
 procedure pp_module_getpv(const Param: PLseParam);cdecl;
@@ -5474,7 +5474,7 @@ begin
     begin
       if clss.IsModuleClass then
         __SetModule(Param^.result, clss.Module) else
-        __SetClass(Param^.result, clss);
+        lse_set_class(Param^.result, clss.ClassRec);
       Exit;
     end;
 
@@ -5527,7 +5527,7 @@ var
   vendor: string;
 begin
   vendor := lse_strec_string(Param^.param[1]^.VString);
-  __PutDB(Param^.result, dbv_provide(vendor));
+  lse_set_db(Param^.result, dbv_provide(vendor));
 end;
 
 procedure pp_database_execSQL(const Param: PLseParam);cdecl;
@@ -5538,7 +5538,7 @@ begin
   if __GetThis(Param, this) then
   begin
     SQL := lse_strec_data(Param^.param[1]^.VString);
-    __PutInt64(Param^.result, lse_db_execSQL(this, SQL));
+    lse_set_int64(Param^.result, lse_db_execSQL(this, SQL));
   end;
 end;
 
@@ -5547,7 +5547,7 @@ var
   this: PLseDB;
 begin
   if __GetThis(Param, this) then
-    __PutDS(Param^.result,
+    lse_set_ds(Param^.result,
       lse_db_openSQL(this, lse_strec_data(Param^.param[1]^.VString)));
 end;
 
@@ -5618,7 +5618,7 @@ var
   this: PLseDB;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, lse_db_transacting(this));
+    lse_set_bool(Param^.result, lse_db_transacting(this));
 end;
 
 procedure pp_database_commit(const Param: PLseParam);cdecl;
@@ -5680,7 +5680,7 @@ var
   this: PLseDB;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, lse_db_connected(this));
+    lse_set_bool(Param^.result, lse_db_connected(this));
 end;
 
 procedure pp_database_escape(const Param: PLseParam);cdecl;
@@ -5691,7 +5691,7 @@ begin
   if __GetThis(Param, this) then
   begin
     srec := lse_db_escape(this, Param^.param[1]^.VString);
-    __PutString(Param^.result, srec);
+    lse_set_string(Param^.result, srec);
   end;
 end;
 
@@ -5716,7 +5716,7 @@ begin
     lse_ds_check(this);
     this^.ds_open(this);
     lse_ds_check(this);
-    __PutDS(Param^.result, this);
+    lse_set_ds(Param^.result, this);
   end;
 end;
 
@@ -5757,7 +5757,7 @@ var
   this: PLseDS;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, lse_ds_eof(this));
+    lse_set_bool(Param^.result, lse_ds_eof(this));
 end;
 
 procedure pp_dataset_bof(const Param: PLseParam);cdecl;
@@ -5765,7 +5765,7 @@ var
   this: PLseDS;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, lse_ds_bof(this));
+    lse_set_bool(Param^.result, lse_ds_bof(this));
 end;
 
 procedure pp_dataset_count(const Param: PLseParam);cdecl;
@@ -5773,7 +5773,7 @@ var
   this: PLseDS;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, lse_ds_count(this));
+    lse_set_int64(Param^.result, lse_ds_count(this));
 end;
 
 procedure pp_dataset_length(const Param: PLseParam);cdecl;
@@ -5781,7 +5781,7 @@ var
   this: PLseDS;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, lse_ds_field_count(this));
+    lse_set_int64(Param^.result, lse_ds_field_count(this));
 end;
 
 procedure pp_dataset_indexOf(const Param: PLseParam);cdecl;
@@ -5789,7 +5789,7 @@ var
   this: PLseDS;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result,
+    lse_set_int64(Param^.result,
       lse_ds_indexof(this, lse_strec_data(Param^.param[1]^.VString)));
 end;
 
@@ -5798,7 +5798,7 @@ var
   this: PLseDS;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result,
+    lse_set_string(Param^.result,
       lse_ds_fname(this, Param^.param[1]^.VInteger, true));
 end;
 
@@ -5817,7 +5817,7 @@ begin
     begin
       index := lse_ds_vary_index(this, Param^.param[1]^.VInteger);
       ftype := lse_ds_field_class(this, index);
-      __PutObject(Param^.result, KR_CLASS, ftype^.lysee_class);
+      lse_set_object(Param^.result, KR_CLASS, ftype^.lysee_class);
     end
     else
     if clss = KT_STRING then
@@ -5827,7 +5827,7 @@ begin
       if index >= 0 then
       begin
         ftype := lse_ds_field_class(this, index);
-        __PutObject(Param^.result, KR_CLASS, ftype^.lysee_class);
+        lse_set_object(Param^.result, KR_CLASS, ftype^.lysee_class);
       end
       else __SetError(Param, 'field "%s" not found', [name]);
     end
@@ -5848,7 +5848,7 @@ begin
     if clss = KT_INT then
     begin
       index := lse_ds_vary_index(this, Param^.param[1]^.VInteger);
-      __PutString(Param^.result, lse_ds_getfs(this, index));
+      lse_set_string(Param^.result, lse_ds_getfs(this, index));
     end
     else
     if clss = KT_STRING then
@@ -5856,7 +5856,7 @@ begin
       name := lse_strec_data(Param^.param[1]^.VString); 
       index := lse_ds_indexof(this, name);
       if index >= 0 then
-        __PutString(Param^.result, lse_ds_getfs(this, index)) else
+        lse_set_string(Param^.result, lse_ds_getfs(this, index)) else
         __SetError(Param, 'field "%s" not found', [name]);
     end
     else __SetError(Param, 'Invalid parametre type %s', [clss.FullName]);
@@ -5876,7 +5876,7 @@ begin
     if clss = KT_INT then
     begin
       index := lse_ds_vary_index(this, Param^.param[1]^.VInteger);
-      __PutInt64(Param^.result, lse_ds_getfi(this, index));
+      lse_set_int64(Param^.result, lse_ds_getfi(this, index));
     end
     else
     if clss = KT_STRING then
@@ -5884,7 +5884,7 @@ begin
       name := lse_strec_data(Param^.param[1]^.VString); 
       index := lse_ds_indexof(this, name);
       if index >= 0 then
-        __PutInt64(Param^.result, lse_ds_getfi(this, index)) else
+        lse_set_int64(Param^.result, lse_ds_getfi(this, index)) else
         __SetError(Param, 'field "%s" not found', [name]);
     end
     else __SetError(Param, 'Invalid parametre type %s', [clss.FullName]);
@@ -5904,7 +5904,7 @@ begin
     if clss = KT_INT then
     begin
       index := lse_ds_vary_index(this, Param^.param[1]^.VInteger);
-      __PutBool(Param^.result, lse_ds_getfb(this, index));
+      lse_set_bool(Param^.result, lse_ds_getfb(this, index));
     end
     else
     if clss = KT_STRING then
@@ -5912,7 +5912,7 @@ begin
       name := lse_strec_data(Param^.param[1]^.VString); 
       index := lse_ds_indexof(this, name);
       if index >= 0 then
-        __PutBool(Param^.result, lse_ds_getfb(this, index)) else
+        lse_set_bool(Param^.result, lse_ds_getfb(this, index)) else
         __SetError(Param, 'field "%s" not found', [name]);
     end
     else __SetError(Param, 'Invalid parametre type %s', [clss.FullName]);
@@ -5932,7 +5932,7 @@ begin
     if clss = KT_INT then
     begin
       index := lse_ds_vary_index(this, Param^.param[1]^.VInteger);
-      __PutFloat(Param^.result, lse_ds_getfd(this, index));
+      lse_set_float(Param^.result, lse_ds_getfd(this, index));
     end
     else
     if clss = KT_STRING then
@@ -5940,7 +5940,7 @@ begin
       name := lse_strec_data(Param^.param[1]^.VString); 
       index := lse_ds_indexof(this, name);
       if index >= 0 then
-        __PutFloat(Param^.result, lse_ds_getfd(this, index)) else
+        lse_set_float(Param^.result, lse_ds_getfd(this, index)) else
         __SetError(Param, 'field "%s" not found', [name]);
     end
     else __SetError(Param, 'Invalid parametre type %s', [clss.FullName]);
@@ -5960,7 +5960,7 @@ begin
     if clss = KT_INT then
     begin
       index := lse_ds_vary_index(this, Param^.param[1]^.VInteger);
-      __PutMoney(Param^.result, lse_ds_getfm(this, index));
+      lse_set_money(Param^.result, lse_ds_getfm(this, index));
     end
     else
     if clss = KT_STRING then
@@ -5968,7 +5968,7 @@ begin
       name := lse_strec_data(Param^.param[1]^.VString); 
       index := lse_ds_indexof(this, name);
       if index >= 0 then
-        __PutMoney(Param^.result, lse_ds_getfm(this, index)) else
+        lse_set_money(Param^.result, lse_ds_getfm(this, index)) else
         __SetError(Param, 'field "%s" not found', [name]);
     end
     else __SetError(Param, 'Invalid parametre type %s', [clss.FullName]);
@@ -5986,12 +5986,12 @@ begin
     index := lse_vary_index(Param^.param[1]^.VInteger, count);
     lse_check_index(index, count);
     case lse_ds_field_type(this, index) of
-      LSV_INT  : __PutInt64(Param^.result, lse_ds_getfi(this, index));
-      LSV_FLOAT: __PutFloat(Param^.result, lse_ds_getfd(this, index));
-      LSV_MONEY: __PutMoney(Param^.result, lse_ds_getfm(this, index));
-      LSV_BOOL : __PutBool(Param^.result, lse_ds_getfb(this, index));
+      LSV_INT  : lse_set_int64(Param^.result, lse_ds_getfi(this, index));
+      LSV_FLOAT: lse_set_float(Param^.result, lse_ds_getfd(this, index));
+      LSV_MONEY: lse_set_money(Param^.result, lse_ds_getfm(this, index));
+      LSV_BOOL : lse_set_bool(Param^.result, lse_ds_getfb(this, index));
      {lSV_STRING, LSV_CHAR}
-            else __PutString(Param^.result, lse_ds_getfs(this, index));
+            else lse_set_string(Param^.result, lse_ds_getfs(this, index));
     end;
   end;
 end;
@@ -6009,12 +6009,12 @@ begin
         [lse_strec_string(Param^.param[1]^.VString)])
     else
     case lse_ds_field_type(this, index) of
-      LSV_INT  : __PutInt64(Param^.result, lse_ds_getfi(this, index));
-      LSV_FLOAT: __PutFloat(Param^.result, lse_ds_getfd(this, index));
-      LSV_MONEY: __PutMoney(Param^.result, lse_ds_getfm(this, index));
-      LSV_BOOL : __PutBool(Param^.result, lse_ds_getfb(this, index));
+      LSV_INT  : lse_set_int64(Param^.result, lse_ds_getfi(this, index));
+      LSV_FLOAT: lse_set_float(Param^.result, lse_ds_getfd(this, index));
+      LSV_MONEY: lse_set_money(Param^.result, lse_ds_getfm(this, index));
+      LSV_BOOL : lse_set_bool(Param^.result, lse_ds_getfb(this, index));
      {lSV_STRING, LSV_CHAR}
-            else __PutString(Param^.result, lse_ds_getfs(this, index));
+            else lse_set_string(Param^.result, lse_ds_getfs(this, index));
     end;
   end;
 end;
@@ -6026,7 +6026,7 @@ var
   this: PLseVargen;
 begin
   this := __AsVargen(__AsEngine(Param), Param^.param[1]); 
-  __SetVarGen(Param^.result, this);
+  lse_set_vargen(Param^.result, this);
 end;
 
 procedure pp_vargen_eof(const Param: PLseParam);cdecl;
@@ -6034,7 +6034,7 @@ var
   this: PLseVargen;
 begin
   this := lse_vargen_this(Param);
-  __PutBool(Param^.result, lse_vargen_eof(this));
+  lse_set_bool(Param^.result, lse_vargen_eof(this));
 end;
 
 procedure pp_vargen_next(const Param: PLseParam);cdecl;
@@ -6050,7 +6050,7 @@ var
   this: PLseVargen;
 begin
   this := lse_vargen_this(Param);
-  __PutBool(Param^.result, lse_vargen_rewind(this));
+  lse_set_bool(Param^.result, lse_vargen_rewind(this));
 end;
 
 procedure pp_vargen_send(const Param: PLseParam);cdecl;
@@ -6066,7 +6066,7 @@ begin
     data := __AsRunner(Param).GetValue(varb);
     if data <> nil then
     begin
-      __PutBool(Param^.result, lse_vargen_send(this, data));
+      lse_set_bool(Param^.result, lse_vargen_send(this, data));
       __SetClassValue(__AsEngine(Param), data, varb.ValueType);
     end;
   end;
@@ -6090,7 +6090,7 @@ var
 begin
   this := PLseStream(Param^.param[0]^.VObject);
   if this <> nil then
-    __PutBool(Param^.result, this^.eof(this) <> 0) else
+    lse_set_bool(Param^.result, this^.eof(this) <> 0) else
     __SetErrorThis(Param);
 end;
 
@@ -6100,7 +6100,7 @@ var
 begin
   this := PLseStream(Param^.param[0]^.VObject);
   if this <> nil then
-    __PutInt64(Param^.result, this^.seek(this, 0, SSF_CURRENT)) else
+    lse_set_int64(Param^.result, this^.seek(this, 0, SSF_CURRENT)) else
     __SetErrorThis(Param);
 end;
 
@@ -6120,7 +6120,7 @@ var
 begin
   this := PLseStream(Param^.param[0]^.VObject);
   if this <> nil then
-    __PutInt64(Param^.result, this^.get_size(this)) else
+    lse_set_int64(Param^.result, this^.get_size(this)) else
     __SetErrorThis(Param);
 end;
 
@@ -6152,12 +6152,12 @@ begin
         size := this^.read(this, pointer(line), size);
         if size > 0 then
         begin
-          __PutString(Param^.result, pchar(line), size);
+          lse_set_string(Param^.result, pchar(line), size);
           Exit;
         end;
       end;
     end;
-    __PutString(Param^.result, '');
+    lse_set_string(Param^.result, '');
   end
   else __SetErrorThis(Param);
 end;
@@ -6168,7 +6168,7 @@ var
 begin
   this := PLseStream(Param^.param[0]^.VObject);
   if this <> nil then
-    __PutString(Param^.result, this^.readln(this)) else
+    lse_set_string(Param^.result, this^.readln(this)) else
     __SetErrorThis(Param);
 end;
 
@@ -6181,7 +6181,7 @@ begin
   if this <> nil then
   begin
     size := lse_stream_write(this, Param^.param[1]^.VString);
-    __PutInt64(Param^.result, size);
+    lse_set_int64(Param^.result, size);
   end
   else __SetErrorThis(Param);
 end;
@@ -6192,7 +6192,7 @@ var
 begin
   this := PLseStream(Param^.param[0]^.VObject);
   if this <> nil then
-    __PutInt64(Param^.result,
+    lse_set_int64(Param^.result,
       lse_stream_writeln(this, Param^.param[1]^.VString)) else
     __SetErrorThis(Param);
 end;
@@ -6209,7 +6209,7 @@ begin
     if (desti <> nil) and (desti <> this) then
       bytes := lse_stream_fill(desti, this, Param^.param[2]^.VInteger) else
       bytes := 0;
-    __PutInt64(Param^.result, bytes);
+    lse_set_int64(Param^.result, bytes);
   end
   else __SetErrorThis(Param);
 end;
@@ -6233,7 +6233,7 @@ begin
   if this <> nil then
   begin
     varg := cvgr_stream_lines(this, __AsEngine(Param));
-    __PutObject(Param^.result, KR_VARGEN, varg);
+    lse_set_object(Param^.result, KR_VARGEN, varg);
   end
   else __SetErrorThis(Param);
 end;
@@ -6245,7 +6245,7 @@ var
   ch: char;
 begin
   ch := __AsChar(Param^.param[0]);
-  __PutInt64(Param^.result, Ord(ch));
+  lse_set_int64(Param^.result, Ord(ch));
 end;
 
 procedure pp_char_inMBCS(const Param: PLseParam);cdecl;
@@ -6253,7 +6253,7 @@ var
   ch: char;
 begin
   ch := __AsChar(Param^.param[0]);
-  __PutBool(Param^.result, ch in LeadBytes);
+  lse_set_bool(Param^.result, ch in LeadBytes);
 end;
 
 { string }
@@ -6263,7 +6263,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutInt64(Param^.result, lse_strec_length(this));
+  lse_set_int64(Param^.result, lse_strec_length(this));
 end;
 
 procedure pp_string_getiv(const Param: PLseParam);cdecl;
@@ -6275,7 +6275,7 @@ begin
   range := lse_strec_length(this);
   index := lse_vary_index(__AsInt64(Param^.param[1]), range);
   lse_check_index(index, range);
-  __PutChar(Param^.result, lse_strec_data(this)[index]);
+  lse_set_char(Param^.result, lse_strec_data(this)[index]);
 end;
 
 procedure pp_string_setAt(const Param: PLseParam);cdecl;
@@ -6289,7 +6289,7 @@ begin
   lse_check_index(index, range);
   this := lse_strec_alloc(lse_strec_data(this), range);
   lse_strec_data(this)[index] := __AsChar(Param^.param[2]);
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_name(const Param: PLseParam);cdecl;
@@ -6297,7 +6297,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutString(Param^.result, __extractName(lse_strec_data(this)));
+  lse_set_string(Param^.result, __extractName(lse_strec_data(this)));
 end;
 
 procedure pp_string_value(const Param: PLseParam);cdecl;
@@ -6305,7 +6305,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutString(Param^.result, __extractValue(lse_strec_data(this)));
+  lse_set_string(Param^.result, __extractValue(lse_strec_data(this)));
 end;
 
 procedure pp_string_lower(const Param: PLseParam);cdecl;
@@ -6313,7 +6313,7 @@ var
   this: PLseString;
 begin
   this := __smrLower(lse_strec_dup(Param^.param[0]^.VString));
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_upper(const Param: PLseParam);cdecl;
@@ -6321,7 +6321,7 @@ var
   this: PLseString;
 begin
   this := __smrUpper(lse_strec_dup(Param^.param[0]^.VString));
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_compare(const Param: PLseParam);cdecl;
@@ -6332,7 +6332,7 @@ begin
   this := Param^.param[0]^.VString;
   value := Param^.param[1]^.VString;
   IgnoreCase := __AsBool(Param^.param[2]);
-  __PutInt64(Param^.Result, __smrComp(this, Value, IgnoreCase));
+  lse_set_int64(Param^.Result, __smrComp(this, Value, IgnoreCase));
 end;
 
 procedure pp_string_replace(const Param: PLseParam);cdecl;
@@ -6348,7 +6348,7 @@ begin
     flags := flags + [rfIgnoreCase];
   if __AsBool(Param^.param[4]) then // FirstOnly
     flags := flags - [rfReplaceAll];
-  __PutString(Param^.result, StringReplace(this, patten, newStr, flags));
+  lse_set_string(Param^.result, StringReplace(this, patten, newStr, flags));
 end;
 
 procedure pp_string_pos(const Param: PLseParam);cdecl;
@@ -6364,8 +6364,8 @@ begin
   pos := __pos(str, lse_strec_length(this), lse_strec_data(patten),
     lse_strec_length(patten), IgnoreCase);
   if pos <> nil then
-    __PutInt64(Param^.Result, pos - str) else
-    __PutInt64(Param^.Result, -1);
+    lse_set_int64(Param^.Result, pos - str) else
+    lse_set_int64(Param^.Result, -1);
 end;
 
 procedure pp_string_lastPos(const Param: PLseParam);cdecl;
@@ -6381,8 +6381,8 @@ begin
   pos := __lastPos(str, lse_strec_length(this), lse_strec_data(patten),
     lse_strec_length(patten), IgnoreCase);
   if pos <> nil then
-    __PutInt64(Param^.Result, pos - str) else
-    __PutInt64(Param^.Result, -1);
+    lse_set_int64(Param^.Result, pos - str) else
+    lse_set_int64(Param^.Result, -1);
 end;
 
 procedure pp_string_left(const Param: PLseParam);cdecl;
@@ -6394,10 +6394,10 @@ begin
   slen := lse_strec_length(this);
   size := min(__AsInt64(Param^.param[1]), slen);
   if size = slen then
-    __PutString(Param^.result, this) else
+    lse_set_string(Param^.result, this) else
   if size > 0 then
-    __PutString(Param^.result, lse_strec_alloc(lse_strec_data(this), size)) else
-    __PutString(Param^.result, '', 0);
+    lse_set_string(Param^.result, lse_strec_alloc(lse_strec_data(this), size)) else
+    lse_set_string(Param^.result, '', 0);
 end;
 
 procedure pp_string_right(const Param: PLseParam);cdecl;
@@ -6410,13 +6410,13 @@ begin
   slen := lse_strec_length(this);
   size := min(__AsInt64(Param^.param[1]), slen);
   if size = slen then
-    __PutString(Param^.result, this) else
+    lse_set_string(Param^.result, this) else
   if size > 0 then
   begin
     base := lse_strec_data(this) + (slen - size);
-    __PutString(Param^.result, lse_strec_alloc(base, size));
+    lse_set_string(Param^.result, lse_strec_alloc(base, size));
   end
-  else __PutString(Param^.result, '', 0);
+  else lse_set_string(Param^.result, '', 0);
 end;
 
 procedure pp_string_trim(const Param: PLseParam);cdecl;
@@ -6430,9 +6430,9 @@ begin
   begin
     M := lse_strec_length(this) - (L + R);
     base := lse_strec_data(this) + L;
-    __PutString(Param^.result, lse_strec_alloc(base, M));
+    lse_set_string(Param^.result, lse_strec_alloc(base, M));
   end
-  else __PutString(Param^.result, this);
+  else lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_trimLeft(const Param: PLseParam);cdecl;
@@ -6446,9 +6446,9 @@ begin
   begin
     M := lse_strec_length(this) - L;
     base := lse_strec_data(this) + L;
-    __PutString(Param^.result, lse_strec_alloc(base, M));
+    lse_set_string(Param^.result, lse_strec_alloc(base, M));
   end
-  else __PutString(Param^.result, this);
+  else lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_trimRight(const Param: PLseParam);cdecl;
@@ -6460,9 +6460,9 @@ begin
   if (__smrCountTab(this, L, M, R) > 0) and (R > 0) then
   begin
     M := lse_strec_length(this) - R;
-    __PutString(Param^.result, lse_strec_alloc(lse_strec_data(this), M));
+    lse_set_string(Param^.result, lse_strec_alloc(lse_strec_data(this), M));
   end
-  else __PutString(Param^.result, this);
+  else lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_trimAll(const Param: PLseParam);cdecl;
@@ -6490,7 +6490,7 @@ begin
       end;
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_copy(const Param: PLseParam);cdecl;
@@ -6509,7 +6509,7 @@ begin
     begin
       if count < slen then
         this := lse_strec_alloc(lse_strec_data(this) + index, count);
-      __PutString(Param^.result, this);
+      lse_set_string(Param^.result, this);
     end;
   end;
 end;
@@ -6549,7 +6549,7 @@ begin
       else this := nil;
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_insert(const Param: PLseParam);cdecl;
@@ -6582,7 +6582,7 @@ begin
       Move(base^, next^, size);
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_isAlpha(const Param: PLseParam);cdecl;
@@ -6590,7 +6590,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this), AlphaChar));
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this), AlphaChar));
 end;
 
 procedure pp_string_isAlnum(const Param: PLseParam);cdecl;
@@ -6598,7 +6598,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this), AlnumChar));
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this), AlnumChar));
 end;
 
 procedure pp_string_isCntrl(const Param: PLseParam);cdecl;
@@ -6606,7 +6606,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this), CntrlChar));
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this), CntrlChar));
 end;
 
 procedure pp_string_isDigit(const Param: PLseParam);cdecl;
@@ -6614,7 +6614,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this), DigitChar));
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this), DigitChar));
 end;
 
 procedure pp_string_isSpace(const Param: PLseParam);cdecl;
@@ -6622,7 +6622,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this), SpaceChar));
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this), SpaceChar));
 end;
 
 procedure pp_string_isHex(const Param: PLseParam);cdecl;
@@ -6630,7 +6630,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this), HexChar));
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this), HexChar));
 end;
 
 procedure pp_string_extractName(const Param: PLseParam);cdecl;
@@ -6642,7 +6642,7 @@ begin
   if Param^.count > 1 then
     midc := __AsString(Param^.param[1]) else
     midc := '=';
-  __PutString(Param^.result, __extractName(lse_strec_data(this), midc));
+  lse_set_string(Param^.result, __extractName(lse_strec_data(this), midc));
 end;
 
 procedure pp_string_extractValue(const Param: PLseParam);cdecl;
@@ -6654,7 +6654,7 @@ begin
   if Param^.count > 1 then
     midc := __AsString(Param^.param[1]) else
     midc := '=';
-  __PutString(Param^.result, __extractValue(lse_strec_data(this), midc));
+  lse_set_string(Param^.result, __extractValue(lse_strec_data(this), midc));
 end;
 
 procedure pp_string_saveToFile(const Param: PLseParam);cdecl;
@@ -6677,7 +6677,7 @@ begin
   with TFileStream.Create(__AsFileName(Param^.param[0]), fmShareDenyWrite) do
   try
     this := lse_strec_alloc(nil, size);
-    __PutString(Param^.result, this);
+    lse_set_string(Param^.result, this);
     if this <> nil then
       Read(lse_strec_data(this)^, size);
   finally
@@ -6711,7 +6711,7 @@ begin
       Inc(next);
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_rformat(const Param: PLseParam);cdecl;
@@ -6739,7 +6739,7 @@ begin
     end;
     Move(base^, next^, size);
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_center(const Param: PLseParam);cdecl;
@@ -6774,7 +6774,7 @@ begin
       Inc(next);
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_randomOrder(const Param: PLseParam);cdecl;
@@ -6806,8 +6806,8 @@ var
 begin
   this := Param^.param[0]^.VString;
   if lse_strec_length(this) > 1 then
-    __PutString(Param^.result, __randomOrder(lse_strec_data(this))) else
-    __PutString(Param^.result, this);
+    lse_set_string(Param^.result, __randomOrder(lse_strec_data(this))) else
+    lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_html(const Param: PLseParam);cdecl;
@@ -6815,7 +6815,7 @@ var
   smr: PLseString;
 begin
   smr := Param^.param[0]^.VString;
-  __PutString(Param^.result, __encodeHTML(lse_strec_data(smr), lse_strec_length(smr), false));
+  lse_set_string(Param^.result, __encodeHTML(lse_strec_data(smr), lse_strec_length(smr), false));
 end;
 
 // string string.reverse()
@@ -6840,7 +6840,7 @@ begin
       Dec(last);
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 // bool string.isLower()
@@ -6849,7 +6849,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this),
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this),
     lse_strec_length(this), ['a'..'z']));
 end;
 
@@ -6859,7 +6859,7 @@ var
   this: PLseString;
 begin
   this := Param^.param[0]^.VString;
-  __PutBool(Param^.result, __inCharSet(lse_strec_data(this),
+  lse_set_bool(Param^.result, __inCharSet(lse_strec_data(this),
     lse_strec_length(this), ['A'..'Z']));
 end;
 
@@ -6896,36 +6896,36 @@ begin
       Inc(base);
     end;
   end;
-  __PutString(Param^.result, this);
+  lse_set_string(Param^.result, this);
 end;
 
 procedure pp_string_filePath(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result,
+  lse_set_string(Param^.result,
     ExtractFilePath(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_string_fullFileName(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result,
+  lse_set_string(Param^.result,
     lse_expand_fname(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_string_fileName(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result,
+  lse_set_string(Param^.result,
     ExtractFileName(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_string_fileExt(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result,
+  lse_set_string(Param^.result,
     ExtractFileExt(__AsFileName(Param^.param[0])));
 end;
 
 procedure pp_string_changeExt(const Param: PLseParam);cdecl;
 begin
-  __PutString(Param^.result,
+  lse_set_string(Param^.result,
     ChangeFileExt(__AsFileName(Param^.param[0]),
                   __AsFileName(Param^.param[1])));
 end;
@@ -6941,7 +6941,7 @@ begin
     sum5 := __md5sumBuf(lse_strec_data(this), lse_strec_length(this));
   end
   else sum5 := __md5sumFile(__AsFileName(Param^.param[0]));
-  __PutString(Param^.result, sum5);
+  lse_set_string(Param^.result, sum5);
 end;
 
 procedure pp_string_hexToInt(const Param: PLseParam);cdecl;
@@ -6950,13 +6950,13 @@ var
 begin
   this := Param^.param[0]^.VString;
   if __inCharSet(lse_strec_data(this), lse_strec_length(this), HexChar) then
-    __PutInt64(Param^.Result, StrToInt64('$' + lse_strec_data(this))) else
-    __PutInt64(Param^.result, __AsInt64(Param^.param[1]));
+    lse_set_int64(Param^.Result, StrToInt64('$' + lse_strec_data(this))) else
+    lse_set_int64(Param^.result, __AsInt64(Param^.param[1]));
 end;
 
 procedure pp_string_hash(const Param: PLseParam);cdecl;
 begin
-  __PutInt64(Param^.result, __hashof(__AsString(Param^.param[0])));
+  lse_set_int64(Param^.result, __hashof(__AsString(Param^.param[0])));
 end;
 
 { strlist }
@@ -6976,7 +6976,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.Count);
+    lse_set_int64(Param^.result, this.Count);
 end;
 
 procedure pp_strlist_getiv(const Param: PLseParam);cdecl;
@@ -6988,7 +6988,7 @@ begin
   begin
     index := lse_vary_index(__AsInt64(Param^.param[1]), this.Count);
     lse_check_index(index, this.Count);
-    __PutString(Param^.result, this.Strings[index]);
+    lse_set_string(Param^.result, this.Strings[index]);
   end;
 end;
 
@@ -7014,7 +7014,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, __getText(this, LB));
+    lse_set_string(Param^.result, __getText(this, LB));
 end;
 
 procedure pp_strlist_setText(const Param: PLseParam);cdecl;
@@ -7036,7 +7036,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.CommaText);
+    lse_set_string(Param^.result, this.CommaText);
 end;
 
 procedure pp_strlist_setCommaText(const Param: PLseParam);cdecl;
@@ -7069,7 +7069,7 @@ begin
         index := this.Add(text);
     end
     else index := this.Add(text);
-    __PutInt64(Param^.result, index);
+    lse_set_int64(Param^.result, index);
   end;
 end;
 
@@ -7214,7 +7214,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.IndexOf(__AsString(Param^.param[1])));
+    lse_set_int64(Param^.result, this.IndexOf(__AsString(Param^.param[1])));
 end;
 
 procedure pp_strlist_indexOfName(const Param: PLseParam);cdecl;
@@ -7222,7 +7222,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.IndexOfName(__AsString(Param^.param[1])));
+    lse_set_int64(Param^.result, this.IndexOfName(__AsString(Param^.param[1])));
 end;
 
 procedure pp_strlist_setName(const Param: PLseParam);cdecl;
@@ -7268,7 +7268,7 @@ begin
   begin
     name := __AsString(Param^.param[1]);
     defv := __AsString(Param^.param[2]);
-    __PutString(Param^.result, this.ReadValue(name, defv));
+    lse_set_string(Param^.result, this.ReadValue(name, defv));
   end;
 end;
 
@@ -7284,7 +7284,7 @@ begin
     index := this.IndexOfName(name);
     if index < 0 then
       __SetError(Param, 'name "%s" not found', [name]) else
-      __PutString(Param^.result, __extractValue(this[index]));
+      lse_set_string(Param^.result, __extractValue(this[index]));
   end;
 end;
 
@@ -7348,7 +7348,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, this.Sorted);
+    lse_set_bool(Param^.result, this.Sorted);
 end;
 
 procedure pp_strlist_setSorted(const Param: PLseParam);cdecl;
@@ -7409,7 +7409,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, this.CaseSensitive);
+    lse_set_bool(Param^.result, this.CaseSensitive);
 end;
 
 procedure pp_strlist_setCaseSensitive(const Param: PLseParam);cdecl;
@@ -7432,7 +7432,7 @@ begin
   if __GetThis(Param, this) then
   begin
     list := KLiStrList.Create();
-    __PutObject(Param^.result, KR_STRLIST, list);
+    lse_set_object(Param^.result, KR_STRLIST, list);
     func := __AsFunc(Param^.param[1]);
     if (func <> nil) and (func.ResultType <> KT_VOID) then
     begin
@@ -7461,7 +7461,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) and (this.Count > 0) then
-    __PutString(Param^.result, this.MinStr);
+    lse_set_string(Param^.result, this.MinStr);
 end;
 
 procedure pp_strlist_max(const Param: PLseParam);cdecl;
@@ -7469,7 +7469,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) and (this.Count > 0) then
-    __PutString(Param^.result, this.MaxStr);
+    lse_set_string(Param^.result, this.MaxStr);
 end;
 
 procedure pp_strlist_first(const Param: PLseParam);cdecl;
@@ -7477,7 +7477,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.First);
+    lse_set_string(Param^.result, this.First);
 end;
 
 procedure pp_strlist_last(const Param: PLseParam);cdecl;
@@ -7485,7 +7485,7 @@ var
   this: KLiStrlist;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Last);
+    lse_set_string(Param^.result, this.Last);
 end;
 
 procedure pp_strlist_shift(const Param: PLseParam);cdecl;
@@ -7494,7 +7494,7 @@ var
 begin
   if __GetThis(Param, this) then
   begin
-    __PutString(Param^.result, this[0]);
+    lse_set_string(Param^.result, this[0]);
     this.Delete(0);
   end;
 end;
@@ -7507,7 +7507,7 @@ begin
   if __GetThis(Param, this) then
   begin
     index := this.Count - 1;
-    __PutString(Param^.result, this[index]);
+    lse_set_string(Param^.result, this[index]);
     this.Delete(index);
   end;
 end;
@@ -7519,7 +7519,7 @@ var
   this: TDateTime;
 begin
   this := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, YearOf(this));
+  lse_set_int64(Param^.Result, YearOf(this));
 end;
 
 procedure pp_time_yearsBetween(const Param: PLseParam);cdecl;
@@ -7528,7 +7528,7 @@ var
 begin
   this := __AsTime(Param^.param[0]);
   time := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, yearsBetween(this, time));
+  lse_set_int64(Param^.Result, yearsBetween(this, time));
 end;
 
 procedure pp_time_incYear(const Param: PLseParam);cdecl;
@@ -7538,7 +7538,7 @@ var
 begin
   this := __AsTime(Param^.param[0]);
   years := __AsInt64(Param^.param[1]);
-  __PutTime(Param^.result, incYear(this, years));
+  lse_set_time(Param^.result, incYear(this, years));
 end;
 
 procedure pp_time_monthOf(const Param: PLseParam);cdecl;
@@ -7546,7 +7546,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, MonthOf(V));
+  lse_set_int64(Param^.Result, MonthOf(V));
 end;
 
 procedure pp_time_monthsBetween(const Param: PLseParam);cdecl;
@@ -7555,7 +7555,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, monthsBetween(V1, V2));
+  lse_set_int64(Param^.Result, monthsBetween(V1, V2));
 end;
 
 procedure pp_time_incMonth(const Param: PLseParam);cdecl;
@@ -7565,7 +7565,7 @@ var
 begin
   V := __AsTime(Param^.param[0]);
   N := __AsInt64(Param^.param[1]);
-  __PutTime(Param^.result, incMonth(V, N));
+  lse_set_time(Param^.result, incMonth(V, N));
 end;
 
 procedure pp_time_dayOf(const Param: PLseParam);cdecl;
@@ -7573,7 +7573,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, DayOf(V));
+  lse_set_int64(Param^.Result, DayOf(V));
 end;
 
 procedure pp_time_dayOfWeek(const Param: PLseParam);cdecl;
@@ -7581,7 +7581,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, DayOfTheWeek(V));
+  lse_set_int64(Param^.Result, DayOfTheWeek(V));
 end;
 
 procedure pp_time_dayOfYear(const Param: PLseParam);cdecl;
@@ -7589,7 +7589,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, DayOfTheYear(V));
+  lse_set_int64(Param^.Result, DayOfTheYear(V));
 end;
 
 procedure pp_time_daysBetween(const Param: PLseParam);cdecl;
@@ -7598,7 +7598,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, DaysBetween(V1, V2));
+  lse_set_int64(Param^.Result, DaysBetween(V1, V2));
 end;
 
 procedure pp_time_incDay(const Param: PLseParam);cdecl;
@@ -7608,7 +7608,7 @@ var
 begin
   V := __AsTime(Param^.param[0]);
   N := __AsInt64(Param^.param[1]);
-  __PutTime(Param^.result, incDay(V, N));
+  lse_set_time(Param^.result, incDay(V, N));
 end;
 
 procedure pp_time_format(const Param: PLseParam);cdecl;
@@ -7620,7 +7620,7 @@ begin
   F := __AsString(Param^.param[1]);
   if F = '' then
     F :=  'yyyy/mm/dd hh:nn:ss zzz';
-  __PutString(Param^.Result, FormatDateTime(F, D));
+  lse_set_string(Param^.Result, FormatDateTime(F, D));
 end;
 
 procedure pp_time_weekOf(const Param: PLseParam);cdecl;
@@ -7628,7 +7628,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, WeekOf(V));
+  lse_set_int64(Param^.Result, WeekOf(V));
 end;
 
 procedure pp_time_weekOfMonth(const Param: PLseParam);cdecl;
@@ -7636,7 +7636,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, WeekOfTheMonth(V));
+  lse_set_int64(Param^.Result, WeekOfTheMonth(V));
 end;
 
 procedure pp_time_weeksBetween(const Param: PLseParam);cdecl;
@@ -7645,7 +7645,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, WeeksBetween(V1, V2));
+  lse_set_int64(Param^.Result, WeeksBetween(V1, V2));
 end;
 
 procedure pp_time_hourOf(const Param: PLseParam);cdecl;
@@ -7653,7 +7653,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, HourOf(V));
+  lse_set_int64(Param^.Result, HourOf(V));
 end;
 
 procedure pp_time_hoursBetween(const Param: PLseParam);cdecl;
@@ -7662,7 +7662,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, HoursBetween(V1, V2));
+  lse_set_int64(Param^.Result, HoursBetween(V1, V2));
 end;
 
 procedure pp_time_minuteOf(const Param: PLseParam);cdecl;
@@ -7670,7 +7670,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, MinuteOf(V));
+  lse_set_int64(Param^.Result, MinuteOf(V));
 end;
 
 procedure pp_time_minutesBetween(const Param: PLseParam);cdecl;
@@ -7679,7 +7679,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, MinutesBetween(V1, V2));
+  lse_set_int64(Param^.Result, MinutesBetween(V1, V2));
 end;
 
 procedure pp_time_secondOf(const Param: PLseParam);cdecl;
@@ -7687,7 +7687,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, SecondOf(V));
+  lse_set_int64(Param^.Result, SecondOf(V));
 end;
 
 procedure pp_time_secondsBetween(const Param: PLseParam);cdecl;
@@ -7696,7 +7696,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, SecondsBetween(V1, V2));
+  lse_set_int64(Param^.Result, SecondsBetween(V1, V2));
 end;
 
 procedure pp_time_milliSecondOf(const Param: PLseParam);cdecl;
@@ -7704,7 +7704,7 @@ var
   V: TDateTime;
 begin
   V := __AsTime(Param^.param[0]);
-  __PutInt64(Param^.Result, MilliSecondOf(V));
+  lse_set_int64(Param^.Result, MilliSecondOf(V));
 end;
 
 procedure pp_time_milliSecondsBetween(const Param: PLseParam);cdecl;
@@ -7713,7 +7713,7 @@ var
 begin
   V1 := __AsTime(Param^.param[0]);
   V2 := __AsTime(Param^.param[1]);
-  __PutInt64(Param^.Result, MilliSecondsBetween(V1, V2));
+  lse_set_int64(Param^.Result, MilliSecondsBetween(V1, V2));
 end;
 
 { type }
@@ -7723,7 +7723,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Name);
+    lse_set_string(Param^.result, this.Name);
 end;
 
 procedure pp_type_description(const Param: PLseParam);cdecl;
@@ -7731,7 +7731,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Description);
+    lse_set_string(Param^.result, this.Description);
 end;
 
 procedure pp_type_simple(const Param: PLseParam);cdecl;
@@ -7739,7 +7739,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, this.IsSimpleType);
+    lse_set_bool(Param^.result, this.IsSimpleType);
 end;
 
 procedure pp_type_builtin(const Param: PLseParam);cdecl;
@@ -7747,7 +7747,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, this.Builtin);
+    lse_set_bool(Param^.result, this.Builtin);
 end;
 
 procedure pp_type_info(const Param: PLseParam);cdecl;
@@ -7755,7 +7755,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Infomation);
+    lse_set_string(Param^.result, this.Infomation);
 end;
 
 procedure pp_type_module(const Param: PLseParam);cdecl;
@@ -7793,7 +7793,7 @@ begin
     func := this.FindMethod(cmMethod, name);
     if func = nil then
       __SetError(Param, 'method %s.%s() not found.', [this.FullName, name]) else
-      __PutObject(Param^.result, KR_FUNC, func);
+      lse_set_object(Param^.result, KR_FUNC, func);
   end;
 end;
 
@@ -7802,7 +7802,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutBool(Param^.result, this.IsHashed and (this <> KT_HASHED));
+    lse_set_bool(Param^.result, this.IsHashed and (this <> KT_HASHED));
 end;
 
 procedure pp_type_addr(const Param: PLseParam);cdecl;
@@ -7810,7 +7810,7 @@ var
   this: KLiClass;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.UID);
+    lse_set_string(Param^.result, this.UID);
 end;
 
 { variable }
@@ -7820,7 +7820,7 @@ var
   this: KLiVarb;
 begin
   if __GetThis(Param, this) then
-    __PutString(Param^.result, this.Name);
+    lse_set_string(Param^.result, this.Name);
 end;
 
 procedure pp_varb_type(const Param: PLseParam);cdecl;
@@ -7828,7 +7828,7 @@ var
   this: KLiVarb;
 begin
   if __GetThis(Param, this) then
-    __PutClass(Param^.result, this.ValueType);
+    lse_set_class(Param^.result, this.ValueType.ClassRec);
 end;
 
 procedure pp_varb_func(const Param: PLseParam);cdecl;
@@ -7868,13 +7868,13 @@ begin
       data := snap.GetByName(name, varb);
       if data = nil then
         __SetError(Param, 'variable %s not found', [name]) else
-        __PutValue(Param^.result, data);
+        lse_set_value(Param^.result, data);
     end
     else
     begin
       data := this.GetNamed(name);
       if data <> nil then
-        __PutValue(Param^.result, data) else
+        lse_set_value(Param^.result, data) else
         __setError(Param, 'value "%s" not found', [name]);
     end;
   end;
@@ -7921,9 +7921,9 @@ begin
     if this.IsSnap then
     begin
       snap := this as KLiVarSnap;
-      __PutBool(Param^.result, snap.FindVarb(name) <> nil);
+      lse_set_bool(Param^.result, snap.FindVarb(name) <> nil);
     end
-    else __PutBool(Param^.result, this.ValueIndex(name) >= 0);
+    else lse_set_bool(Param^.result, this.ValueIndex(name) >= 0);
   end;
 end;
 
@@ -7941,7 +7941,7 @@ begin
       data := (this as KLiVarSnap).GetByName(name, varb) else
       data := this.GetNamed(name);
     if data <> nil then
-      __PutValue(Param^.result, data);
+      lse_set_value(Param^.result, data);
   end;
 end;
 
@@ -7954,7 +7954,7 @@ begin
     if not this.IsSnap then
     begin
       name := lse_strec_data(Param^.param[1]^.VString);
-      __PutBool(Param^.result, this.RemoveNamed(name));
+      lse_set_bool(Param^.result, this.RemoveNamed(name));
     end;
 end;
 
@@ -7974,7 +7974,7 @@ begin
       for index := 0 to snap.Count - 1 do
         list.Add(snap.Varbs[index].Name);
     end
-    else __PutObject(Param^.result, KR_STRLIST,
+    else lse_set_object(Param^.result, KR_STRLIST,
       this.GetNameList(__AsBool(Param^.param[1])));
 end;
 
@@ -7990,7 +7990,7 @@ begin
     if this.IsSnap then
       name := (this as KLiVarSnap).Varbs[index].Name else
       name := this.Names[index];
-    __PutString(Param^.result, name);
+    lse_set_string(Param^.result, name);
   end;
 end;
 
@@ -7999,7 +7999,7 @@ var
   this: KLiVarList;
 begin
   if __GetThis(Param, this) then
-    __PutInt64(Param^.result, this.Count);
+    lse_set_int64(Param^.result, this.Count);
 end;
 
 procedure pp_varlist_set_length(const Param: PLseParam);cdecl;
@@ -8020,7 +8020,7 @@ begin
   begin
     index := lse_vary_index(__AsInt64(Param^.param[1]), this.Count);
     lse_check_index(index, this.Count);
-    __PutValue(Param^.result, this[index]);
+    lse_set_value(Param^.result, this[index]);
   end;
 end;
 
@@ -8082,7 +8082,7 @@ begin
   if __GetThis(Param, this) then
     if not this.IsSnap then
     begin
-      __PutInt64(Param^.result, this.Count);
+      lse_set_int64(Param^.result, this.Count);
       this.Push(Param^.param[1]);
     end;
 end;
@@ -8215,7 +8215,7 @@ begin
   begin
     rnnr := __AsRunner(Param);
     list := __NewVarlist(rnnr.Engine);
-    __PutObject(Param^.result, KR_VARLIST, list);
+    lse_set_object(Param^.result, KR_VARLIST, list);
     func := __AsFunc(Param^.param[1]);
     if (func <> nil) and (func.ResultType <> KT_VOID) then
     begin
@@ -8242,7 +8242,7 @@ var
   this: KLiVarList;
 begin
   if __GetThis(Param, this) and (this.Count > 0) then
-    __PutValue(Param^.result, this.MinValue);
+    lse_set_value(Param^.result, this.MinValue);
 end;
 
 procedure pp_varlist_max(const Param: PLseParam);cdecl;
@@ -8250,7 +8250,7 @@ var
   this: KLiVarList;
 begin
   if __GetThis(Param, this) and (this.Count > 0) then
-    __PutValue(Param^.result, this.MaxValue);
+    lse_set_value(Param^.result, this.MaxValue);
 end;
 
 procedure pp_varlist_first(const Param: PLseParam);cdecl;
@@ -8258,7 +8258,7 @@ var
   this: KLiVarList;
 begin
   if __GetThis(Param, this) then
-    __PutValue(Param^.result, this.First);
+    lse_set_value(Param^.result, this.First);
 end;
 
 procedure pp_varlist_last(const Param: PLseParam);cdecl;
@@ -8266,7 +8266,7 @@ var
   this: KLiVarList;
 begin
   if __GetThis(Param, this) then
-    __PutValue(Param^.result, this.Last);
+    lse_set_value(Param^.result, this.Last);
 end;
 
 procedure pp_varlist_shift(const Param: PLseParam);cdecl;
@@ -8275,7 +8275,7 @@ var
 begin
   if __GetThis(Param, this) then
   begin
-    __PutValue(Param^.result, this[0]);
+    lse_set_value(Param^.result, this[0]);
     if not this.IsSnap then
       this.Delete(0);
   end;
@@ -8289,7 +8289,7 @@ begin
   if __GetThis(Param, this) then
   begin
     index := this.Count - 1;
-    __PutValue(Param^.result, this[index]);
+    lse_set_value(Param^.result, this[index]);
     if not this.IsSnap then
       this.Delete(index);
   end;

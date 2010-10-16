@@ -56,8 +56,12 @@ uses
   lse_syncobj,
   lse_patten;
 
-exports
-  lse_export.QueryEntry;
+function QueryEntry(const ID: pchar): pointer;cdecl;
+begin
+  Result := qe_query(ID);
+end;
+
+exports QueryEntry;
   
 {$IFDEF WINDOWS}{$R lysee_kernel.rc}{$ENDIF}
 

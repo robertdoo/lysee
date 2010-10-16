@@ -2,7 +2,7 @@
 {        UNIT: lseu                                                            }
 { DESCRIPTION: lysee script engine unit                                        }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/10/04                                                      }
+{    MODIFIED: 2010/10/12                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -465,38 +465,7 @@ type
     lseu_stdin       : PLseStream;      {<--L: stdin stream}
     lseu_stdout      : PLseStream;      {<--L: stdout stream}
     lseu_stderr      : PLseStream;      {<--L: stderr stream}
-    krnl_engine      : pointer;         {<--K: kernel engine instance}
-    krnl_destroy: procedure(const Engine: pointer);cdecl;
-    krnl_compile: function(const Engine: pointer; const code: pchar; IsLsp: integer): integer;cdecl;
-    krnl_compile_file: function(const Engine: pointer; const fname: pchar; IsLsp: integer): integer;cdecl;
-    krnl_execute: function(const Engine: pointer; const code: pchar; IsLsp: integer): integer;cdecl;
-    krnl_execute_file: function(const Engine: pointer; const fname: pchar; IsLsp: integer): integer;cdecl;
-    krnl_terminate: procedure(const Engine: pointer);cdecl;
-    krnl_clear: procedure(const Engine: pointer);cdecl;
-    krnl_get_args: function(const Engine: pointer): PLseString;cdecl;
-    krnl_set_args: procedure(const Engine: pointer; const Args: pchar);cdecl;
-    krnl_result_type: function(const Engine: pointer): pchar;cdecl;
-    krnl_result_text: function(const Engine: pointer): pchar;cdecl;
-    krnl_errno: function(const Engine: pointer): integer;cdecl;
-    krnl_error_row: function(const Engine: pointer): integer;cdecl;
-    krnl_error_col: function(const Engine: pointer): integer;cdecl;
-    krnl_error_name: function(const Engine: pointer): pchar;cdecl;
-    krnl_error_msg: function(const Engine: pointer): pchar;cdecl;
-    krnl_error_module: function(const Engine: pointer): pchar;cdecl;
-    krnl_error_ifile: function(const Engine: pointer): pchar;cdecl;
-    krnl_get_search_path: function(const Engine: pointer): pchar;cdecl;
-    krnl_set_search_path: procedure(const Engine: pointer; const Path: pchar);cdecl;
-    krnl_get_main_file: function(const Engine: pointer): pchar;cdecl;
-    krnl_set_main_file: procedure(const Engine: pointer; const fname: pchar);cdecl;
-    krnl_ready: function(const Engine: pointer): integer;cdecl;
-    krnl_running: function(const Engine: pointer): integer;cdecl;
-    krnl_terminated: function(const Engine: pointer): integer;cdecl;
-    krnl_exited: function(const Engine: pointer): integer;cdecl;
-    krnl_write: procedure(const Engine: pointer; const Text: pchar; Count: integer);cdecl;
-    krnl_read: function(const Engine: pointer; const Buf: pchar; Count: integer): integer;cdecl;
-    krnl_readln: function(const Engine: pointer): PLseString;cdecl;
-    krnl_begin_cgi: procedure(const Engine: pointer);cdecl;
-    krnl_end_cgi: procedure(const Engine: pointer);cdecl;
+    kernel_engine    : pointer;         {<--K: kernel engine instance}
   end;
 
   TLseRead = procedure(Sender: TObject; const Buf: pchar; var Count: integer) of object;
@@ -607,8 +576,8 @@ type
     procedure ReturnStr(const Value: string);
     procedure ReturnChar(const Value: char);
     procedure ReturnBool(const Value: boolean);
-    procedure ReturnObject(AClass, AObject: pointer);
-    procedure ReturnObj(AClass: PLseClassRec; AObject: pointer);
+    procedure ReturnObject(KernelClass: pointer; Value: pointer);
+    procedure ReturnObj(Klass: PLseClassRec; Value: pointer);
     procedure ReturnStream(Value: TStream);overload;
     procedure ReturnStream(Value: PLseStream);overload;
     procedure ReturnError(const ID: string; Errno: integer; const Msg: string);
@@ -631,10 +600,10 @@ type
     function ParamChar(Index: integer): char;
     function ParamBool(Index: integer): boolean;
     function ParamObject(Index: integer): pointer;
-    function ParamClass(Index: integer): pointer;
-    function ParamClassRec(Index: integer): PLseClassRec;
+    function ParamClass(Index: integer): PLseClassRec;
     function ParamTime(Index: integer): TDateTime;
     function ParamStream(Index: integer): PLseStream;
+    property Param: PLseParam read FParam write FParam;
   end;
 
 {======================================================================)
@@ -643,47 +612,89 @@ type
 
   RLseEntryRec = packed record
     cik_classes: PLseKernelClassList;
-    cik_create_engine: function(const EngineRec: PLseEngine): pointer;cdecl;
+    { engine }
+    cik_create: function(const EngineRec: PLseEngine): pointer;cdecl;
+    cik_destroy: procedure(const Engine: pointer);cdecl;
+    cik_compile: function(const Engine: pointer; const code: pchar; IsLsp: integer): integer;cdecl;
+    cik_fcompile: function(const Engine: pointer; const fname: pchar; IsLsp: integer): integer;cdecl;
+    cik_execute: function(const Engine: pointer; const code: pchar; IsLsp: integer): integer;cdecl;
+    cik_fexecute: function(const Engine: pointer; const fname: pchar; IsLsp: integer): integer;cdecl;
+    cik_terminate: procedure(const Engine: pointer);cdecl;
+    cik_clear: procedure(const Engine: pointer);cdecl;
+    cik_get_args: function(const Engine: pointer): PLseString;cdecl;
+    cik_set_args: procedure(const Engine: pointer; const Args: pchar);cdecl;
+    cik_errno: function(const Engine: pointer): integer;cdecl;
+    cik_error_row: function(const Engine: pointer): integer;cdecl;
+    cik_error_col: function(const Engine: pointer): integer;cdecl;
+    cik_error_name: function(const Engine: pointer): pchar;cdecl;
+    cik_error_msg: function(const Engine: pointer): pchar;cdecl;
+    cik_error_module: function(const Engine: pointer): pchar;cdecl;
+    cik_error_file: function(const Engine: pointer): pchar;cdecl;
+    cik_result_type: function(const Engine: pointer): pchar;cdecl;
+    cik_result_text: function(const Engine: pointer): pchar;cdecl;
+    cik_get_search_path: function(const Engine: pointer): pchar;cdecl;
+    cik_set_search_path: procedure(const Engine: pointer; const Path: pchar);cdecl;
+    cik_get_main_file: function(const Engine: pointer): pchar;cdecl;
+    cik_set_main_file: procedure(const Engine: pointer; const fname: pchar);cdecl;
+    cik_ready: function(const Engine: pointer): integer;cdecl;
+    cik_running: function(const Engine: pointer): integer;cdecl;
+    cik_terminated: function(const Engine: pointer): integer;cdecl;
+    cik_exited: function(const Engine: pointer): integer;cdecl;
+    cik_write: procedure(const Engine: pointer; const Text: pchar; Count: integer);cdecl;
+    cik_read: function(const Engine: pointer; const Buf: pchar; Count: integer): integer;cdecl;
+    cik_readln: function(const Engine: pointer): PLseString;cdecl;
+    cik_begin_cgi: procedure(const Engine: pointer);cdecl;
+    cik_end_cgi: procedure(const Engine: pointer);cdecl;
+    { module }
     cik_module_count: function: integer;cdecl;
-    cik_get_module: function(Index: integer): pointer;cdecl;
-    cik_setup_module: function(const Name: pchar; const MR: PLseModuleRec): pointer;cdecl;
-    cik_find_module: function(const Name: pchar): pointer;cdecl;
+    cik_module: function(Index: integer): pointer;cdecl;
+    cik_module_setup: function(const Name: pchar; const MR: PLseModuleRec): pointer;cdecl;
+    cik_module_find: function(const Name: pchar): pointer;cdecl;
     cik_module_class: function(const Module: pointer): PLseClassRec;cdecl;
-    cik_setup_class: function(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
-    cik_find_class: function(const Name: pchar): PLseClassRec;cdecl;
-    cik_class_module: function(const ClassRec: PLseClassRec): pointer;cdecl;
-    cik_setup_method: function(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
-    cik_find_method: function(const ClassRec: PLseClassRec; const Name: pchar): pointer;cdecl;
+    { class }
+    cik_class_count: function(const Module: pointer): integer;cdecl;
+    cik_class: function(const Module: pointer; Index: integer): PLseClassRec;cdecl;
+    cik_class_setup: function(const Module: pointer; const Klass: PLseClassRec): PLseClassRec;cdecl;
+    cik_class_find: function(const Name: pchar): PLseClassRec;cdecl;
+    cik_class_module: function(const Klass: PLseClassRec): pointer;cdecl;
+    cik_class_rec: function(const KernelClass: pointer): PLseClassRec;cdecl;
+    { method }
+    cik_method_count: function(const Klass: PLseClassRec): integer;cdecl;
+    cik_method: function(const Klass: PLseClassRec; Index: integer): pointer;cdecl;
+    cik_method_setup: function(const Klass: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
+    cik_method_find: function(const Klass: PLseClassRec; const Name: pchar): pointer;cdecl;
     cik_method_name: function(const Method: pointer): pchar;cdecl;
-    cik_get_engine: function(const Param: PLseParam): PLseEngine;cdecl;
-    cik_format: function(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
-    cik_set_error: procedure(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
-    cik_push: function(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
-    cik_goon: function(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
-    cik_set_object: procedure(const Data, obj, obj_class: pointer);cdecl;
-    cik_set_stream: procedure(const Data: pointer; Value: PLseStream);cdecl;
+    cik_method_type: function(const Method: pointer): PLseClassRec;cdecl;
+    cik_method_class: function(const Method: pointer): PLseClassRec;cdecl;
+    cik_method_param_count: function(const Method: pointer): integer;cdecl;
+    cik_method_param_name: function(const Method: pointer; Index: integer): pchar;cdecl;
+    cik_method_param_type: function(const Method: pointer; Index: integer): PLseClassRec;cdecl;
+    { param }
+    cik_param_engine: function(const Param: PLseParam): PLseEngine;cdecl;
+    cik_param_format: function(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
+    cik_param_error: procedure(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
+    cik_param_push: function(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
+    cik_param_goon: function(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
+    { database }
     cik_dbv_provide: function(const Vendor: pchar): PLseDB;cdecl;
     cik_dbv_register: function(const dbv: PLseDBVendor): integer;cdecl;
     cik_encode_TUPSP: function (const Target, User, Password, Source, Params: pchar): PLseString;cdecl;
     cik_decode_TUPSP: procedure(const ConnectionStr: pchar; const TUPSP: PLseTUPSP);cdecl;
+    { others }
     cik_production: function: pchar;cdecl;
     cik_version: function: pchar;cdecl;
     cik_copyright: function: pchar;cdecl;
     cik_tmpath: function: pchar;cdecl;
     cik_query: TLseQueryEntry;
-    cik_malloc: function(count: integer): pointer;cdecl;
-    cik_free: procedure(const memory: pointer; count: integer);cdecl;
     cik_simple_test: function(const Code: pchar): integer;cdecl;
     cik_startup: function: integer;cdecl;
     cik_cleanup: procedure;cdecl;
-    cik_reserved_words: function: pchar;cdecl;
+    cik_keywords: function: pchar;cdecl;
     cik_get_kernel_file: function: pchar;cdecl;
     cik_set_kernel_file: procedure(const KernelFile: pchar);cdecl;
     cik_get_program_file: function: pchar;cdecl;
     cik_set_program_file: procedure(const ProgramFile: pchar);cdecl;
     cik_load_config: procedure(const ConfigFile: pchar);cdecl;
-    cik_expand_fname: function(const fname, buf: pchar; buf_size: integer):integer;cdecl;
-    cik_complete_fname: function(const fname, buf: pchar; buf_size: integer):integer;cdecl;
     cik_log: procedure(const Msg: pchar; Count: integer);cdecl;
   end;
 
@@ -707,7 +718,7 @@ const
 (
 (  EXCEPT:
 (----------------------------------------------------------------------}
-procedure lse_prepare(QE: TLseQueryEntry);
+function lse_prepare(QE: TLseQueryEntry): boolean;
 
 {-----------------------------------------------------------------------
 (  F_NAME: lse_query_entry
@@ -864,9 +875,9 @@ function lse_is_lsp_file(const fname: string): boolean;
 ( lse_mem_alloc_zero: allocate memroy and fill with zero
 ( lse_mem_free      : free memory
 (----------------------------------------------------------------------}
-function  lse_mem_alloc(count: integer): pointer;cdecl;
+function  lse_mem_alloc(count: integer): pointer;
 function  lse_mem_alloc_zero(count: integer): pointer;
-procedure lse_mem_free(const memory: pointer; count: integer);cdecl;
+procedure lse_mem_free(const memory: pointer; count: integer);
 
 {======================================================================)
 (======== kernel - load/manifest lysee kernel =========================)
@@ -878,8 +889,6 @@ procedure lse_mem_free(const memory: pointer; count: integer);cdecl;
 ( lse_set_kernel_file  : set kernel file name
 ( lse_program_file     : get program file name
 ( lse_set_program_file : set program file name
-( lse_kernel_alloc     : allocate memory in lysee kernel
-( lse_kernel_free      : free memory allocated by lysee kernel
 ( lse_kernel_production: get kernel production name
 ( lse_kernel_version   : get kernel version
 ( lse_kernel_copyright : get kernel copyright
@@ -893,8 +902,6 @@ function  lse_kernel_file: string;
 procedure lse_set_kernel_file(const KernelFile: string);
 function  lse_program_file: string;
 procedure lse_set_program_file(const ProgramFile: string);
-function  lse_kernel_alloc(count: integer): pointer;
-procedure lse_kernel_free(memory: pointer; count: integer);
 function  lse_kernel_production(IncludeVC: boolean = false): string;
 function  lse_kernel_version: string;
 function  lse_kernel_copyright: string;
@@ -904,34 +911,60 @@ procedure lse_kernel_log(const Msg: string);overload;
 {======================================================================)
 (======== expand - dynamicly add modules, classs and funtions =========)
 (======================================================================)
-( lse_module_count   : get module count
-( lse_get_module     : get module by index
-( lse_setup_module   : setup module
-( lse_find_module    : find module by name
-( lse_module_name    : get module name
-( lse_module_class   : get module class
-( lse_is_module_class: is module class?
-( lse_setup_class    : setup class
-( lse_find_class     : find kernel class by 'module::name'
-( lse_setup_method   : setup class method
+( lse_module_count      : get module count
+( lse_module_get        : get module by index
+( lse_module_setup      : setup module
+( lse_module_find       : find module by name
+( lse_module_class      : get module class
+( lse_module_name       : get module name
+(-----------------------------------------------------------------------
+( lse_class_count       : get class count of a module
+( lse_class_get         : get class by index
+( lse_class_setup       : setup class
+( lse_class_find        : find kernel class by 'module::name'
+( lse_class_name        : get class name
+( lse_class_module      : get owner module of a class
+( lse_class_ismc        : is module class?
+(-----------------------------------------------------------------------
+( lse_method_count      : get class method count
+( lse_method_get        : get class method
+( lse_method_setup      : setup class method
+( lse_method_find       : find method by name
+( lse_method_name       : get method name
+( lse_method_type       : get method result type
+( lse_method_class      : get method owner class
+( lse_method_param_count: get method argument count
+( lse_method_param_name : get method parametre name
+( lse_method_param_type : get method parametre type
 (----------------------------------------------------------------------}
 function lse_module_count: integer;
-function lse_get_module(Index: integer): pointer;
-function lse_setup_module(const Name, FileName: string; MR: PLseModuleRec): pointer;overload;
-function lse_setup_module(const Name, FileName: string): pointer;overload;
-function lse_find_module(const Name: string): pointer;
+function lse_module_get(Index: integer): pointer;
+function lse_module_setup(const Name, FileName: string; MR: PLseModuleRec): pointer;overload;
+function lse_module_setup(const Name, FileName: string): pointer;overload;
+function lse_module_find(const Name: string): pointer;
 function lse_module_class(const Module: pointer): PLseClassRec;
 function lse_module_name(const Module: pointer): string;
-function lse_setup_class(const Module: pointer; const CR: PLseClassRec): PLseClassRec;overload;
-function lse_setup_class(const Module: pointer; const Name: string): PLseClassRec;overload;
-function lse_find_class(const Name: string): PLseClassRec;
-function lse_class_name(const CR: PLseClassRec): string;
-function lse_class_module(const CR: PLseClassRec): pointer;
-function lse_is_module_class(const CR: PLseClassRec): boolean;
-function lse_setup_method(const CR: PLseClassRec; const MR: PLseFuncRec): pointer;overload;
-function lse_setup_method(const CR: PLseClassRec; const Prototype: string; Proc: pointer): pointer;overload;
-function lse_find_method(const CR: PLseClassRec; const Name: string): pointer;
+function lse_class_count(const Module: pointer): integer;
+function lse_class_get(const Module: pointer; Index: integer): PLseClassRec;
+function lse_class_setup(const Module: pointer; const Klass: PLseClassRec): PLseClassRec;overload;
+function lse_class_setup(const Module: pointer; const Name: string): PLseClassRec;overload;
+function lse_class_find(const Name: string): PLseClassRec;
+function lse_class_name(const Klass: PLseClassRec): string;
+function lse_class_module(const Klass: PLseClassRec): pointer;
+function lse_class_ismc(const Klass: PLseClassRec): boolean;
+function lse_class_rec(const KernelClass: pointer): PLseClassRec;
+function lse_method_count(const Klass: PLseClassRec): integer;
+function lse_method_get(const Klass: PLseClassRec; Index: integer): PLseClassRec;
+function lse_method_setup(const Klass: PLseClassRec; const MR: PLseFuncRec): pointer;overload;
+function lse_method_setup(const Klass: PLseClassRec; const Prototype: string; Proc: pointer): pointer;overload;
+function lse_method_find(const Klass: PLseClassRec; const Name: string): pointer;
 function lse_method_name(const Method: pointer): string;
+function lse_method_type(const Method: pointer): PLseClassRec;
+function lse_method_class(const Method: pointer): PLseClassRec;
+function lse_method_module(const Method: pointer): pointer;
+function lse_method_param_count(const Method: pointer): integer;
+function lse_method_param_name(const Method: pointer; Index: integer): string;
+function lse_method_param_type(const Method: pointer; Index: integer): PLseClassRec;
 
 {======================================================================)
 (======== database vendor =============================================)
@@ -1067,21 +1100,10 @@ function lse_getenv_string(Index: integer): string;
 {======================================================================)
 (======== PLseClassRec ================================================)
 (======================================================================)
-( F_NAME: lse_fill_class
-(
-( F_DESC: fill class record
-(
-( F_ARGS: R: PLseClassRec - class record
-(         Name: pchar - name
-(         Desc: pchar - description
-(         VT: TLseValue - value type
-(
-( F_TYPE:
-(
-( EXCEPT:
+( lse_fill_class: fill class registration record
 (----------------------------------------------------------------------}
-procedure lse_fill_class(R: PLseClassRec; Name, Desc: pchar; VT: TLseValue);overload;
-procedure lse_fill_class(R: PLseClassRec; VT: TLseValue);overload;
+procedure lse_fill_class(Klass: PLseClassRec; Name, Desc: pchar; VT: TLseValue);overload;
+procedure lse_fill_class(Klass: PLseClassRec; VT: TLseValue);overload;
 
 {======================================================================)
 (======== PLseString ==================================================)
@@ -1204,22 +1226,22 @@ function  lse_stream_resize(Stream: PLseStream; NewSize: int64): int64;
 ( lse_is_object  : test if is object type
 ( lse_is_void    : test if is void type
 ( lse_vtype      : get value type
-( lse_class_rec  : get class record
-( lse_class      : get kernel class
+( lse_class      : get value class record
 ( lse_set_XXXX   : change value
 (----------------------------------------------------------------------}
 function lse_init_value(V: PLseValue): PLseValue;
 function lse_clear_value(V: PLseValue): PLseValue;
+function lse_inclife(V: PLseValue): PLseValue;
+function lse_declife(V: PLseValue): PLseValue;
+function lse_set_nil(V: PLseValue): PLseValue;
 function lse_is_defv(V: PLseValue): boolean;
 function lse_is_object(V: PLseValue): boolean;
 function lse_is_void(V: PLseValue): boolean;
 function lse_vtype(V: PLseValue): TLseValue;
-function lse_class_rec(V: TLseKernelClass): PLseClassRec;overload;
-function lse_class_rec(V: TLseValue): PLseClassRec;overload;
-function lse_class_rec(V: PLseValue): PLseClassRec;overload;
-function lse_class(V: TLseKernelClass): pointer;overload;
-function lse_class(V: TLseValue): pointer;overload;
-function lse_class(V: PLseValue): pointer;overload;
+function lse_class(V: TLseKernelClass): PLseClassRec;overload;
+function lse_class(V: TLseValue): PLseClassRec;overload;
+function lse_class(V: PLseValue): PLseClassRec;overload;
+function lse_set_void(V: PLseValue): PLseValue;
 function lse_set_int64(V: PLseValue; Value: int64): PLseValue;
 function lse_set_integer(V: PLseValue; Value: integer): PLseValue;
 function lse_set_float(V: PLseValue; Value: double): PLseValue;
@@ -1230,8 +1252,13 @@ function lse_set_char(V: PLseValue; Value: char): PLseValue;
 function lse_set_string(V: PLseValue; Value: PLseString): PLseValue;overload;
 function lse_set_string(V: PLseValue; const Value: string): PLseValue;overload;
 function lse_set_string(V: PLseValue; const Value: pchar): PLseValue;overload;
-function lse_set_object(V: PLseValue; Clss: PLseClassRec; Obj: pointer): PLseValue;
-function lse_set_nil(V: PLseValue): PLseValue;
+function lse_set_string(V: PLseValue; const Value: pchar; Length: integer): PLseValue;overload;
+function lse_set_object(V: PLseValue; Klass: PLseClassRec; Value: pointer): PLseValue;
+function lse_set_class(V: PLseValue; Value: PLseClassRec): PLseValue;
+function lse_set_db(V: PLseValue; Value: PLseDB): PLseValue;
+function lse_set_ds(V: PLseValue; Value: PLseDS): PLseValue;
+function lse_set_stream(V: PLseValue; Value: PLseStream): PLseValue;
+function lse_set_vargen(V: PLseValue; Value: PLseVargen): PLseValue;
 function lse_set_value(V: PLseValue; Value: PLseValue): PLseValue;
 
 {======================================================================)
@@ -1272,11 +1299,12 @@ implementation
 uses
   DateUtils, Math;
 
-procedure lse_prepare(QE: TLseQueryEntry);
+function lse_prepare(QE: TLseQueryEntry): boolean;
 begin
   if lse_entries = nil then
     if Assigned(QE) then
       lse_entries := PLseEntryRec(QE('qe_entries'));
+  Result := (lse_entries <> nil);
 end;
 
 function lse_query_entry(const ID: string): pointer;
@@ -1358,7 +1386,7 @@ end;
 
 function lse_keywords: string;
 begin
-  Result := lse_entries^.cik_reserved_words();
+  Result := lse_entries^.cik_keywords();
 end;
 
 function lse_simple_test(const Script: string): integer;
@@ -1371,33 +1399,33 @@ begin
   Result := lse_entries^.cik_module_count();
 end;
 
-function lse_get_module(Index: integer): pointer;
+function lse_module_get(Index: integer): pointer;
 begin
-  Result := lse_entries^.cik_get_module(Index);
+  Result := lse_entries^.cik_module(Index);
 end;
 
-function lse_setup_module(const Name, FileName: string; MR: PLseModuleRec): pointer;
+function lse_module_setup(const Name, FileName: string; MR: PLseModuleRec): pointer;
 var
   mname: string;
 begin
   if FileName <> '' then
     mname := Name + '=' + FileName else
     mname := Name;
-  Result := lse_entries^.cik_setup_module(pchar(mname), MR);
+  Result := lse_entries^.cik_module_setup(pchar(mname), MR);
 end;
 
-function lse_setup_module(const Name, FileName: string): pointer;
+function lse_module_setup(const Name, FileName: string): pointer;
 var
   MR: RLseModuleRec;
 begin
   FillChar(MR, sizeof(RLseModuleRec), 0);
   MR.iw_version := LSE_VERSION;
-  Result := lse_setup_module(Name, FileName, @MR);
+  Result := lse_module_setup(Name, FileName, @MR);
 end;
 
-function lse_find_module(const Name: string): pointer;
+function lse_module_find(const Name: string): pointer;
 begin
-  Result := lse_entries^.cik_find_module(pchar(Name));
+  Result := lse_entries^.cik_module_find(pchar(Name));
 end;
 
 function lse_module_class(const Module: pointer): PLseClassRec;
@@ -1410,12 +1438,22 @@ begin
   Result := lse_class_name(lse_module_class(Module));
 end;
 
-function lse_setup_class(const Module: pointer; const CR: PLseClassRec): PLseClassRec;
+function lse_class_count(const Module: pointer): integer;
 begin
-  Result := lse_entries^.cik_setup_class(Module, CR);
+  Result := lse_entries^.cik_class_count(Module);
 end;
 
-function lse_setup_class(const Module: pointer; const Name: string): PLseClassRec;
+function lse_class_get(const Module: pointer; Index: integer): PLseClassRec;
+begin
+  Result := lse_entries^.cik_class(Module, Index);
+end;
+
+function lse_class_setup(const Module: pointer; const Klass: PLseClassRec): PLseClassRec;
+begin
+  Result := lse_entries^.cik_class_setup(Module, Klass);
+end;
+
+function lse_class_setup(const Module: pointer; const Name: string): PLseClassRec;
 var
   R: RLseClassRec;
 begin
@@ -1425,54 +1463,99 @@ begin
   R.desc := nil;
   R.incRefcount := @lse_incRefcount;
   R.decRefcount := @lse_decRefcount;
-  Result := lse_setup_class(Module, PLseClassRec(@R));
+  Result := lse_class_setup(Module, PLseClassRec(@R));
 end;
 
-function lse_find_class(const Name: string): PLseClassRec;
+function lse_class_find(const Name: string): PLseClassRec;
 begin
-  Result := lse_entries^.cik_find_class(pchar(Name));
+  Result := lse_entries^.cik_class_find(pchar(Name));
 end;
 
-function lse_class_name(const CR: PLseClassRec): string;
+function lse_class_name(const Klass: PLseClassRec): string;
 begin
-  if CR <> nil then
-    Result := CR^.name else
+  if Klass <> nil then
+    Result := Klass^.name else
     Result := '';
 end;
 
-function lse_class_module(const CR: PLseClassRec): pointer;
+function lse_class_module(const Klass: PLseClassRec): pointer;
 begin
-  Result := lse_entries^.cik_class_module(CR);
+  Result := lse_entries^.cik_class_module(Klass);
 end;
 
-function lse_is_module_class(const CR: PLseClassRec): boolean;
+function lse_class_ismc(const Klass: PLseClassRec): boolean;
 begin
-  Result := (CR <> nil) and (CR = lse_module_class(lse_class_module(CR)));
+  Result := (Klass <> nil) and (Klass = lse_module_class(lse_class_module(Klass)));
 end;
 
-function lse_setup_method(const CR: PLseClassRec; const MR: PLseFuncRec): pointer;
+function lse_class_rec(const KernelClass: pointer): PLseClassRec;
 begin
-  Result := lse_entries^.cik_setup_method(CR, MR);
+  Result := lse_entries^.cik_class_rec(KernelClass);
 end;
 
-function lse_setup_method(const CR: PLseClassRec; const Prototype: string; Proc: pointer): pointer;
+function lse_method_count(const Klass: PLseClassRec): integer;
+begin
+  Result := lse_entries^.cik_method_count(Klass);
+end;
+
+function lse_method_get(const Klass: PLseClassRec; Index: integer): PLseClassRec;
+begin
+  Result := lse_entries^.cik_method(Klass, Index);
+end;
+
+function lse_method_setup(const Klass: PLseClassRec; const MR: PLseFuncRec): pointer;
+begin
+  Result := lse_entries^.cik_method_setup(Klass, MR);
+end;
+
+function lse_method_setup(const Klass: PLseClassRec; const Prototype: string; Proc: pointer): pointer;
 var
   MR: RLseFuncRec;
 begin
   MR.fr_prot := pchar(Prototype);
   MR.fr_addr := Proc;
   MR.fr_desc := nil;
-  Result := lse_setup_method(CR, @MR);
+  Result := lse_method_setup(Klass, @MR);
 end;
 
-function lse_find_method(const CR: PLseClassRec; const Name: string): pointer;
+function lse_method_find(const Klass: PLseClassRec; const Name: string): pointer;
 begin
-  Result := lse_entries^.cik_find_method(CR, pchar(Name));
+  Result := lse_entries^.cik_method_find(Klass, pchar(Name));
 end;
 
 function lse_method_name(const Method: pointer): string;
 begin
   Result := lse_entries^.cik_method_name(Method);
+end;
+
+function lse_method_type(const Method: pointer): PLseClassRec;
+begin
+  Result := lse_entries^.cik_method_type(Method);
+end;
+
+function lse_method_class(const Method: pointer): PLseClassRec;
+begin
+  Result := lse_entries^.cik_method_class(Method);
+end;
+
+function lse_method_module(const Method: pointer): pointer;
+begin
+  Result := lse_class_module(lse_method_class(Method));
+end;
+
+function lse_method_param_count(const Method: pointer): integer;
+begin
+  Result := lse_entries^.cik_method_param_count(Method);
+end;
+
+function lse_method_param_name(const Method: pointer; Index: integer): string;
+begin
+  Result := lse_entries^.cik_method_param_name(Method, Index);
+end;
+
+function lse_method_param_type(const Method: pointer; Index: integer): PLseClassRec;
+begin
+  Result := lse_entries^.cik_method_param_type(Method, Index);
 end;
 
 {======================================================================)
@@ -1907,12 +1990,12 @@ end;
 function lse_ds_field_class(dso: PLseDS; Index: integer): PLseClassRec;
 begin
   case lse_ds_field_type(dso, Index) of
-    LSV_INT   : Result := lse_class_rec(LSV_INT);
-    lSV_STRING: Result := lse_class_rec(LSV_STRING);
-    LSV_FLOAT : Result := lse_class_rec(LSV_FLOAT);
-    LSV_MONEY : Result := lse_class_rec(LSV_MONEY);
-    LSV_BOOL  : Result := lse_class_rec(LSV_BOOL);
-           else Result := lse_class_rec(LSV_STRING);
+    LSV_INT   : Result := lse_class(LSV_INT);
+    lSV_STRING: Result := lse_class(LSV_STRING);
+    LSV_FLOAT : Result := lse_class(LSV_FLOAT);
+    LSV_MONEY : Result := lse_class(LSV_MONEY);
+    LSV_BOOL  : Result := lse_class(LSV_BOOL);
+           else Result := lse_class(LSV_STRING);
   end;
 end;
 
@@ -1975,30 +2058,27 @@ end;
 procedure lse_check_index(index, range: int64);
 begin
   if (index < 0) or (index >= range) then
-    raise TLseException.CreateFmt(
-      'index %d is out of range %d', [index, range]);
+    lse_error('index %d is out of range %d', [index, range]);
 end;
 
 {======================================================================)
 (======== PLseClassRec ================================================)
 (======================================================================}
 
-procedure lse_fill_class(R: PLseClassRec; Name, Desc: pchar; VT: TLseValue);overload;
+procedure lse_fill_class(Klass: PLseClassRec; Name, Desc: pchar; VT: TLseValue);overload;
 begin
-  FillChar(R^, sizeof(RLseClassRec), 0);
-  R^.vtype := Ord(VT);
-  R^.name := Name;
-  R^.desc := Desc;
-  R^.incRefcount := @lse_incRefcount;
-  R^.decRefcount := @lse_decRefcount;
-  R^.lysee_class := nil;
+  FillChar(Klass^, sizeof(RLseClassRec), 0);
+  Klass^.vtype := Ord(VT);
+  Klass^.name := Name;
+  Klass^.desc := Desc;
+  Klass^.incRefcount := @lse_incRefcount;
+  Klass^.decRefcount := @lse_decRefcount;
+  Klass^.lysee_class := nil;
 end;
 
-procedure lse_fill_class(R: PLseClassRec; VT: TLseValue);
+procedure lse_fill_class(Klass: PLseClassRec; VT: TLseValue);
 begin
-  lse_fill_class(R, pchar(lse_vtype_names[VT]),
-                    pchar(lse_vtype_names[VT]),
-                    VT);
+  lse_fill_class(Klass, pchar(lse_vtype_names[VT]), nil, VT);
 end;
 
 {======================================================================)
@@ -2438,7 +2518,7 @@ end;
 (======== memory - get/free memory ====================================)
 (======================================================================}
 
-function lse_mem_alloc(count: integer): pointer;cdecl;
+function lse_mem_alloc(count: integer): pointer;
 begin
   Result := nil;
   if count > 0 then
@@ -2452,7 +2532,7 @@ begin
     FillChar(Result^, count, 0);
 end;
 
-procedure lse_mem_free(const memory: pointer; count: integer);cdecl;
+procedure lse_mem_free(const memory: pointer; count: integer);
 begin
   if memory <> nil then
     if count > 0 then
@@ -2471,24 +2551,29 @@ var
   handle: THandle;
   knfile: string;
 begin
-  if (lse_entries = nil) and FileExists(KernelFile) then
+  if lse_entries = nil then
   begin
-    knfile := ExpandFileName(KernelFile);
-    handle := 0;
-    if lse_load_library(knfile, handle) then
-    try
-      lse_prepare(TLseQueryEntry(lse_get_proc(handle, 'QueryEntry')));
-      if lse_entries = nil then
-        lse_error(FLLK, [KernelFile]);
-      lse_startup;
-      lse_set_kernel_file(knfile);
-    except
-      lse_free_library(handle);
-      raise;
-    end
-    else lse_error(FLLK, [KernelFile]);
-  end;
-  lse_startup;
+    knfile := lse_expand_fname(KernelFile);
+    if FileExists(knfile) then
+    begin
+      handle := 0;
+      if lse_load_library(knfile, handle) then
+      try
+        lse_prepare(TLseQueryEntry(lse_get_proc(handle, 'QueryEntry')));
+        if lse_entries <> nil then
+        begin
+          lse_startup;
+          lse_set_kernel_file(knfile);
+        end
+        else lse_error(FLLK, [knfile]);
+      except
+        lse_free_library(handle);
+        raise;
+      end
+      else lse_error(FLLK, [knfile]);
+    end;
+  end
+  else lse_startup;
 end;
 
 procedure lse_load_config(const ConfigFile: string);
@@ -2527,16 +2612,6 @@ end;
 procedure lse_set_program_file(const ProgramFile: string);
 begin
   lse_entries^.cik_set_program_file(pchar(ProgramFile));
-end;
-
-function lse_kernel_alloc(count: integer): pointer;
-begin
-  Result := lse_entries^.cik_malloc(count);
-end;
-
-procedure lse_kernel_free(memory: pointer; count: integer);
-begin
-  lse_entries^.cik_free(memory, count);
 end;
 
 function lse_kernel_production(IncludeVC: boolean): string;
@@ -3490,28 +3565,174 @@ begin
   Result := V;
 end;
 
+procedure lse_clear_value_VOID(V: PLseValue);
+begin
+  V^.value_class := nil;
+  V^.VObject := nil;
+end;
+
+procedure lse_clear_value_STRING(V: PLseValue);
+begin
+  lse_strec_declife(V^.VString);
+  V^.value_class := nil;
+  V^.VObject := nil;
+end;
+
+procedure lse_clear_value_OBJECT(V: PLseValue);
+begin
+  V^.value_class^.decRefcount(V^.VObject);
+  V^.value_class := nil;
+  V^.VObject := nil;
+end;
+
 function lse_clear_value(V: PLseValue): PLseValue;
-var
-  T: integer;
+const
+  PROCS: array[TLseValue] of procedure(V: PLseValue) = (
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_STRING,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_VOID,
+    {$IFDEF FPC}@{$ENDIF}lse_clear_value_OBJECT
+  );
 begin
   Result := V;
-  if V^.value_class <> nil then
-  begin
-    T := V^.value_class^.vtype;
-    if T = LSV_STRING then
-      lse_strec_declife(V^.VString) else
-    if T = LSV_OBJECT then
-      V^.value_class^.decRefcount(V^.VObject);
-    V^.value_class := nil;
-    V^.VObject := nil;
-  end;
+  PROCS[lse_vtype(V)](V);
+end;
+
+procedure lse_do_nothing(V: PLseValue);
+begin
+  { do nothing }
+end;
+
+procedure lse_inclife_STRING(V: PLseValue);
+begin
+  lse_strec_inclife(V^.VString);
+end;
+
+procedure lse_inclife_OBJECT(V: PLseValue);
+begin
+  V^.value_class^.incRefcount(V^.VObject);
+end;
+
+function lse_inclife(V: PLseValue): PLseValue;
+const
+  PROCS: array[TLseValue] of procedure(V: PLseValue) = (
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_inclife_STRING,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_inclife_OBJECT
+  );
+begin
+  Result := V;
+  PROCS[lse_vtype(V)](V);
+end;
+
+procedure lse_declife_STRING(V: PLseValue);
+begin
+  lse_strec_declife(V^.VString);
+end;
+
+procedure lse_declife_OBJECT(V: PLseValue);
+begin
+  V^.value_class^.decRefcount(V^.VObject);
+end;
+
+function lse_declife(V: PLseValue): PLseValue;
+const
+  PROCS: array[TLseValue] of procedure(V: PLseValue) = (
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_declife_STRING,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_declife_OBJECT
+  );
+begin
+  Result := V;
+  PROCS[lse_vtype(V)](V);
+end;
+
+procedure lse_set_nil_STRING(V: PLseValue);
+begin
+  lse_strec_declife(V^.VString);
+  V^.VString := nil;
+end;
+
+procedure lse_set_nil_INT(V: PLseValue);
+begin
+  V^.VInteger := 0;
+end;
+
+procedure lse_set_nil_FLOAT(V: PLseValue);
+begin
+  V^.VFloat := 0;
+end;
+
+procedure lse_set_nil_MONEY(V: PLseValue);
+begin
+  V^.VMoney := 0;
+end;
+
+procedure lse_set_nil_TIME(V: PLseValue);
+begin
+  V^.VTime := 0;
+end;
+
+procedure lse_set_nil_BOOL(V: PLseValue);
+begin
+  V^.VBool := false;
+end;
+
+procedure lse_set_nil_CHAR(V: PLseValue);
+begin
+  V^.VChar := #0;
+end;
+
+procedure lse_set_nil_OBJECT(V: PLseValue);
+begin
+  V^.value_class^.decRefcount(V^.VObject);
+  V^.VObject := nil;
+end;
+
+function lse_set_nil(V: PLseValue): PLseValue;
+const
+  PROCS: array[TLseValue] of procedure(V: PLseValue) = (
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_STRING,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_INT,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_FLOAT,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_MONEY,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_TIME,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_BOOL,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_CHAR,
+    {$IFDEF FPC}@{$ENDIF}lse_do_nothing,
+    {$IFDEF FPC}@{$ENDIF}lse_set_nil_OBJECT
+  );
+begin
+  Result := V;
+  PROCS[lse_vtype(V)](V);
 end;
 
 function lse_is_defv(V: PLseValue): boolean;
 var
   crec: PLseClassRec;
 begin
-  crec := lse_class_rec(V);
+  crec := lse_class(V);
   case crec^.vtype of
     LSV_VOID   : Result := true;
     LSV_STRING : Result := (V^.VString = nil);
@@ -3548,142 +3769,141 @@ begin
     Result := LSV_VOID;
 end;
 
-function lse_class_rec(V: TLseKernelClass): PLseClassRec;
+function lse_class(V: TLseKernelClass): PLseClassRec;
 begin
   Result := lse_entries^.cik_classes^[V];
 end;
 
-function lse_class_rec(V: TLseValue): PLseClassRec;
+function lse_class(V: TLseValue): PLseClassRec;
 begin
   if V <> LSV_OBJECT then
     Result := lse_entries^.cik_classes^[TLseKernelClass(Ord(V))] else
     Result := nil;
 end;
 
-function lse_class_rec(V: PLseValue): PLseClassRec;
+function lse_class(V: PLseValue): PLseClassRec;
 begin
   Result := V^.value_class;
   if Result = nil then
     Result := lse_entries^.cik_classes^[kcVoid];
 end;
 
-function lse_class(V: TLseKernelClass): pointer;
+function lse_set_void(V: PLseValue): PLseValue;
 begin
-  Result := lse_class_rec(V)^.lysee_class;
-end;
-
-function lse_class(V: TLseValue): pointer;
-begin
-  if V <> LSV_OBJECT then
-    Result := lse_class_rec(V)^.lysee_class else
-    Result := nil;
-end;
-
-function lse_class(V: PLseValue): pointer;
-begin
-  Result := lse_class_rec(V)^.lysee_class;
+  Result := lse_clear_value(V);
 end;
 
 function lse_set_int64(V: PLseValue; Value: int64): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_INT);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_INT);
   V^.VInteger := Value;
 end;
 
 function lse_set_integer(V: PLseValue; Value: integer): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_INT);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_INT);
   V^.VInteger := Value;
 end;
 
 function lse_set_float(V: PLseValue; Value: double): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_FLOAT);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_FLOAT);
   V^.VFloat := Value;
 end;
 
 function lse_set_money(V: PLseValue; Value: currency): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_MONEY);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_MONEY);
   V^.VMoney := Value;
 end;
 
 function lse_set_time(V: PLseValue; Value: TDateTime): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_TIME);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_TIME);
   V^.VTime := Value;
 end;
 
 function lse_set_bool(V: PLseValue; Value: boolean): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_BOOL);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_BOOL);
   V^.VBool := Value;
 end;
 
 function lse_set_char(V: PLseValue; Value: char): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_CHAR);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_CHAR);
   V^.VChar := Value;
 end;
 
 function lse_set_string(V: PLseValue; Value: PLseString): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_STRING);
+  lse_strec_inclife(Value);
+  Result := lse_declife(V);
+  V^.value_class := lse_class(LSV_STRING);
   V^.VString := Value;
-  lse_strec_inclife(V^.VString);
 end;
 
 function lse_set_string(V: PLseValue; const Value: string): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_STRING);
-  V^.VString := lse_strec_alloc(Value);
-  lse_strec_inclife(V^.VString);
+  Result := lse_set_string(V, lse_strec_alloc(Value));
 end;
 
 function lse_set_string(V: PLseValue; const Value: pchar): PLseValue;
 begin
-  Result := lse_set_nil(V);
-  V^.value_class := lse_class_rec(LSV_STRING);
-  V^.VString := lse_strec_alloc(Value, StrLen(Value));
-  lse_strec_inclife(V^.VString);
+  Result := lse_set_string(V, lse_strec_alloc(Value, StrLen(Value)));
 end;
 
-function lse_set_object(V: PLseValue; Clss: PLseClassRec; Obj: pointer): PLseValue;
+function lse_set_string(V: PLseValue; const Value: pchar; Length: integer): PLseValue;overload;
 begin
-  Clss^.incRefcount(Obj);
-  Result := lse_set_nil(V);
-  V^.value_class := Clss;
-  V^.VObject := Obj;
+  Result := lse_set_string(V, lse_strec_alloc(Value, Length));
 end;
 
-function lse_set_nil(V: PLseValue): PLseValue;
+function lse_set_object(V: PLseValue; Klass: PLseClassRec; Value: pointer): PLseValue;
 begin
-  case lse_vtype(V) of
-    LSV_STRING: lse_strec_declife(V^.VString);
-    LSV_OBJECT: V^.value_class^.decRefcount(V^.VObject);
-  end;
-  V^.VObject := nil;
-  Result := V;
+  Klass^.incRefcount(Value);
+  Result := lse_declife(V);
+  V^.value_class := Klass;
+  V^.VObject := Value;
+end;
+
+function lse_set_class(V: PLseValue; Value: PLseClassRec): PLseValue;
+begin
+  Result := lse_set_object(V, lse_class(kcClass), Value^.lysee_class);
+end;
+
+function lse_set_db(V: PLseValue; Value: PLseDB): PLseValue;
+begin
+  Result := lse_set_object(V, lse_class(kcDB), Value);
+end;
+
+function lse_set_ds(V: PLseValue; Value: PLseDS): PLseValue;
+begin
+  Result := lse_set_object(V, lse_class(kcDS), Value);
+end;
+
+function lse_set_stream(V: PLseValue; Value: PLseStream): PLseValue;
+begin
+  Result := lse_set_object(V, lse_class(kcStream), Value);
+end;
+
+function lse_set_vargen(V: PLseValue; Value: PLseVargen): PLseValue;
+begin
+  Result := lse_set_object(V, lse_class(kcVargen), Value);
 end;
 
 function lse_set_value(V: PLseValue; Value: PLseValue): PLseValue;
 begin
   if V <> Value then
   begin
-    case lse_vtype(Value) of
-      LSV_STRING: lse_strec_inclife(Value^.VString);
-      LSV_OBJECT: Value^.value_class^.incRefcount(Value^.VObject);
-    end;
-    lse_set_nil(V);
+    lse_inclife(Value);
+    lse_declife(V);
     V^ := Value^;
   end;
   Result := V;
@@ -3831,12 +4051,12 @@ end;
 
 procedure TLseEngine.Clear;
 begin
-  FEngineRec.krnl_clear(FEngineRec.krnl_engine);
+  lse_entries^.cik_clear(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.CompileCode(const Code: string; IsLspCode: boolean): boolean;
 begin
-  Result := (FEngineRec.krnl_compile(FEngineRec.krnl_engine, pchar(Code), Ord(IsLspCode)) <> 0);
+  Result := (lse_entries^.cik_compile(FEngineRec.kernel_engine, pchar(Code), Ord(IsLspCode)) <> 0);
 end;
 
 constructor TLseEngine.Create;
@@ -3886,12 +4106,12 @@ begin
   FEngineRec.lseu_stdin := @FStdin;
   FEngineRec.lseu_stdout := @FStdout;
   FEngineRec.lseu_stderr := @FStderr;
-  lse_entries^.cik_create_engine(@FEngineRec);
+  lse_entries^.cik_create(@FEngineRec);
 end;
 
 destructor TLseEngine.Destroy;
 begin
-  FEngineRec.krnl_destroy(FEngineRec.krnl_engine);
+  lse_entries^.cik_destroy(FEngineRec.kernel_engine);
   inherited;
 end;
 
@@ -3933,8 +4153,8 @@ end;
 
 function TLseEngine.ExecuteCode(const Code: string; IsLspCode: boolean): boolean;
 begin
-  Result := (FEngineRec.krnl_execute(
-    FEngineRec.krnl_engine,
+  Result := (lse_entries^.cik_execute(
+    FEngineRec.kernel_engine,
     pchar(Code), Ord(IsLspCode)) <> 0);
 end;
 
@@ -3942,19 +4162,19 @@ function TLseEngine.GetArgs: string;
 var
   sr: PLseString;
 begin
-  sr := FEngineRec.krnl_get_args(FEngineRec.krnl_engine);
+  sr := lse_entries^.cik_get_args(FEngineRec.kernel_engine);
   Result := lse_strec_string(sr);
   lse_strec_declife(sr);
 end;
 
 function TLseEngine.GetMainFile: string;
 begin
-  Result := FEngineRec.krnl_get_main_file(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_get_main_file(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.GetSearchPath: string;
 begin
-  Result := FEngineRec.krnl_get_search_path(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_get_search_path(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.GetEngineData: pointer;
@@ -3974,17 +4194,17 @@ end;
 
 function TLseEngine.Errno: integer;
 begin
-  Result := FEngineRec.krnl_errno(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_errno(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.ErrorCol: integer;
 begin
-  Result := FEngineRec.krnl_error_col(FEngineRec.krnl_engine) + 1;
+  Result := lse_entries^.cik_error_col(FEngineRec.kernel_engine) + 1;
 end;
 
 function TLseEngine.ErrorIncludedFile: string;
 begin
-  Result := FEngineRec.krnl_error_ifile(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_error_file(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.ErrorList: string;
@@ -4016,52 +4236,50 @@ end;
 
 function TLseEngine.ErrorMsg: string;
 begin
-  Result := FEngineRec.krnl_error_msg(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_error_msg(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.ErrorName: string;
 begin
-  Result := FEngineRec.krnl_error_name(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_error_name(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.ErrorModule: string;
 begin
-  Result := FEngineRec.krnl_error_module(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_error_module(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.ErrorRow: integer;
 begin
-  Result := FEngineRec.krnl_error_row(FEngineRec.krnl_engine) + 1;
+  Result := lse_entries^.cik_error_row(FEngineRec.kernel_engine) + 1;
 end;
 
 function TLseEngine.Error: string;
-const
-  E = '[%s]: (module=%s%s row=%d col=%d errno=%d) %s';
 begin
   if Errno <> 0  then
   begin
     Result := ErrorIncludedFile;
     if Result <> '' then
       Result := ' file=' + Result;
-    Result := Format(E, [ErrorName, ErrorModule, Result,
-      ErrorRow, ErrorCol, Errno, ErrorMsg]);
+    Result := Format('[%s]: (module=%s%s row=%d col=%d errno=%d) %s',
+      [ErrorName, ErrorModule, Result, ErrorRow, ErrorCol, Errno, ErrorMsg]);
   end
   else Result := '';
 end;
 
 function TLseEngine.Ready: boolean;
 begin
-  Result := (FEngineRec.krnl_ready(FEngineRec.krnl_engine) <> 0);
+  Result := (lse_entries^.cik_ready(FEngineRec.kernel_engine) <> 0);
 end;
 
 function TLseEngine.Running: boolean;
 begin
-  Result := (FEngineRec.krnl_running(FEngineRec.krnl_engine) <> 0);
+  Result := (lse_entries^.cik_running(FEngineRec.kernel_engine) <> 0);
 end;
 
 procedure TLseEngine.SetArgs(const Value: string);
 begin
-  FEngineRec.krnl_set_args(FEngineRec.krnl_engine, pchar(Value));
+  lse_entries^.cik_set_args(FEngineRec.kernel_engine, pchar(Value));
 end;
 
 procedure TLseEngine.SetEngineData(const Value: pointer);
@@ -4071,12 +4289,12 @@ end;
 
 procedure TLseEngine.SetMainFile(const Value: string);
 begin
-  FEngineRec.krnl_set_main_file(FEngineRec.krnl_engine, pchar(Value));
+  lse_entries^.cik_set_main_file(FEngineRec.kernel_engine, pchar(Value));
 end;
 
 procedure TLseEngine.SetSearchPath(const Value: string);
 begin
-  FEngineRec.krnl_set_search_path(FEngineRec.krnl_engine, pchar(Value));
+  lse_entries^.cik_set_search_path(FEngineRec.kernel_engine, pchar(Value));
 end;
 
 function TLseEngine.SetupArgs(const MainFile: string; StartIndex: integer): string;
@@ -4093,7 +4311,7 @@ end;
 
 procedure TLseEngine.Terminate;
 begin
-  FEngineRec.krnl_terminate(FEngineRec.krnl_engine);
+  lse_entries^.cik_terminate(FEngineRec.kernel_engine);
 end;
 
 procedure TLseEngine.WriteData(Data: pointer; Count: integer);
@@ -4148,8 +4366,8 @@ var
 begin
   SetMainFile(FileName);
   fname := GetMainFile;
-  Result := (FEngineRec.krnl_compile_file(
-    FEngineRec.krnl_engine,
+  Result := (lse_entries^.cik_fcompile(
+    FEngineRec.kernel_engine,
     pchar(fname), Ord(IsLspFile)) <> 0);
 end;
 
@@ -4159,29 +4377,29 @@ var
 begin
   SetMainFile(FileName);
   fname := GetMainFile;
-  Result := (FEngineRec.krnl_execute_file(
-    FEngineRec.krnl_engine,
+  Result := (lse_entries^.cik_fexecute(
+    FEngineRec.kernel_engine,
     pchar(fname), Ord(IsLspFile)) <> 0);
 end;
 
 function TLseEngine.Exited: boolean;
 begin
-  Result := (FEngineRec.krnl_exited(FEngineRec.krnl_engine) <> 0);
+  Result := (lse_entries^.cik_exited(FEngineRec.kernel_engine) <> 0);
 end;
 
 function TLseEngine.ResultType: string;
 begin
-  Result := FEngineRec.krnl_result_type(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_result_type(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.ResultText: string;
 begin
-  Result := FEngineRec.krnl_result_text(FEngineRec.krnl_engine);
+  Result := lse_entries^.cik_result_text(FEngineRec.kernel_engine);
 end;
 
 function TLseEngine.Terminated: boolean;
 begin
-  Result := (FEngineRec.krnl_terminated(FEngineRec.krnl_engine) <> 0);
+  Result := (lse_entries^.cik_terminated(FEngineRec.kernel_engine) <> 0);
 end;
 
 function TLseEngine.Terminating: boolean;
@@ -4195,14 +4413,14 @@ function TLseInvoke.FormatStr(const Str: string): string;
 var
   sr: PLseString;
 begin
-  sr := lse_entries^.cik_format(FParam, pchar(Str));
+  sr := lse_entries^.cik_param_format(FParam, pchar(Str));
   Result := lse_strec_string(sr);
   lse_strec_declife(sr);
 end;
 
 function TLseInvoke.EngineRec: PLseEngine;
 begin
-  Result := lse_entries^.cik_get_engine(FParam);
+  Result := lse_entries^.cik_param_engine(FParam);
 end;
 
 procedure TLseInvoke.ReturnBool(const Value: boolean);
@@ -4217,24 +4435,19 @@ end;
 
 procedure TLseInvoke.ReturnError(const ID: string; Errno: integer; const Msg: string);
 begin
-  lse_entries^.cik_set_error(FParam, pchar(ID), Errno, pchar(Msg));
+  lse_entries^.cik_param_error(FParam, pchar(ID), Errno, pchar(Msg));
 end;
 
 function TLseInvoke.Read(const Buf: pchar; Count: integer): integer;
-var
-  E: PLseEngine;
 begin
-  E := EngineRec;
-  Result := E^.krnl_read(E^.krnl_engine, Buf, Count);
+  Result := lse_entries^.cik_read(KernelEngine, Buf, Count);
 end;
 
 function TLseInvoke.Readln: string;
 var
-  E: PLseEngine;
   S: PLseString;
 begin
-  E := EngineRec;
-  S := E^.krnl_readln(E^.krnl_engine);
+  S := lse_entries^.cik_readln(KernelEngine);
   if S <> nil then
   begin
     lse_strec_inclife(S);
@@ -4259,14 +4472,14 @@ begin
   lse_set_money(FParam^.result, Value);
 end;
 
-procedure TLseInvoke.ReturnObject(AClass, AObject: pointer);
+procedure TLseInvoke.ReturnObj(Klass: PLseClassRec; Value: pointer);
 begin
-  lse_entries^.cik_set_object(FParam^.result, AObject, AClass);
+  lse_set_object(FParam^.result, Klass, Value);
 end;
 
-procedure TLseInvoke.ReturnObj(AClass: PLseClassRec; AObject: pointer);
+procedure TLseInvoke.ReturnObject(KernelClass, Value: pointer);
 begin
-  lse_set_object(FParam^.result, AClass, AObject);
+  lse_set_object(FParam^.result, lse_class_rec(KernelClass), Value);
 end;
 
 procedure TLseInvoke.ReturnStr(const Value: string);
@@ -4276,12 +4489,12 @@ end;
 
 procedure TLseInvoke.ReturnStream(Value: TStream);
 begin
-  returnStream(lse_wrap_stream(Value, true));
+  lse_set_stream(FParam^.result, lse_wrap_stream(Value, true));
 end;
 
 procedure TLseInvoke.ReturnStream(Value: PLseStream);
 begin
-  lse_entries^.cik_set_stream(FParam^.result, Value);
+  lse_set_stream(FParam^.result, Value);
 end;
 
 procedure TLseInvoke.ReturnTime(const Value: TDateTime);
@@ -4312,7 +4525,7 @@ end;
 
 function TLseInvoke.KernelEngine: pointer;
 begin
-  Result := lse_entries^.cik_get_engine(FParam)^.krnl_engine;
+  Result := lse_entries^.cik_param_engine(FParam)^.kernel_engine;
 end;
 
 function TLseInvoke.ParamBool(Index: integer): boolean;
@@ -4325,14 +4538,9 @@ begin
   Result := FParam^.param[Index]^.VChar;
 end;
 
-function TLseInvoke.ParamClass(Index: integer): pointer;
+function TLseInvoke.ParamClass(Index: integer): PLseClassRec;
 begin
   Result:= lse_class(FParam^.param[Index]);
-end;
-
-function TLseInvoke.ParamClassRec(Index: integer): PLseClassRec;
-begin
-  Result:= lse_class_rec(FParam^.param[Index]);
 end;
 
 function TLseInvoke.ParamCount: integer;
@@ -4400,11 +4608,8 @@ begin
 end;
 
 procedure TLseInvoke.Print(const Str: string);
-var
-  E: PLseEngine;
 begin
-  E := EngineRec;
-  E^.krnl_write(E^.krnl_engine, pchar(Str), Length(Str));
+  lse_entries^.cik_write(KernelEngine, pchar(Str), Length(Str));
 end;
 
 end.

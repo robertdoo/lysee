@@ -16,7 +16,7 @@
       <AutoIncrementBuild Value="True"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="395"/>
+      <CurrentBuildNr Value="396"/>
       <ProjectVersion Value="1.1.1.306"/>
       <FileDescription Value="Lysee Script Kernel (FPC)"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 Li Yun Jie"/>
@@ -39,8 +39,8 @@
         <Filename Value="lysee_kernel.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_kernel"/>
-        <CursorPos X="14" Y="56"/>
-        <TopLine Value="37"/>
+        <CursorPos X="9" Y="64"/>
+        <TopLine Value="42"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>

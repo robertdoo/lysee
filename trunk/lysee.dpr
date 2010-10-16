@@ -57,6 +57,11 @@ uses
 
 {$R *.res}
 
+function QueryEntry(const ID: pchar): pointer;cdecl;
+begin
+  Result := qe_query(ID);
+end;
+
 exports QueryEntry;
 
 var

@@ -2,7 +2,7 @@
 {        UNIT: lse_export                                                      }
 { DESCRIPTION: binary interface between lseu and lse_kernel                    }
 {     CREATED: 2004/04/12                                                      }
-{    MODIFIED: 2010/10/04                                                      }
+{    MODIFIED: 2010/10/11                                                      }
 {==============================================================================}
 { Copyright (c) 2004-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -53,24 +53,63 @@ uses
   SysUtils, Classes, lseu, lse_kernel, lse_funcs;
 
 function  qe_engine_create(const EngineRec: PLseEngine): pointer;cdecl;
+procedure qe_engine_destroy(const Engine: pointer);cdecl;
+function  qe_engine_compile(const Engine: pointer; const code: pchar; IsLsp: integer): integer;cdecl;
+function  qe_engine_compile_file(const Engine: pointer; const fname: pchar; IsLsp: integer): integer;cdecl;
+function  qe_engine_execute(const Engine: pointer; const code: pchar; IsLsp: integer): integer;cdecl;
+function  qe_engine_execute_file(const Engine: pointer; const fname: pchar; IsLsp: integer): integer;cdecl;
+procedure qe_engine_terminate(const Engine: pointer);cdecl;
+procedure qe_engine_clear(const Engine: pointer);cdecl;
+function  qe_engine_get_args(const Engine: pointer): PLseString;cdecl;
+procedure qe_engine_set_args(const Engine: pointer; const Args: pchar);cdecl;
+function  qe_engine_errno(const Engine: pointer): integer;cdecl;
+function  qe_engine_error_row(const Engine: pointer): integer;cdecl;
+function  qe_engine_error_col(const Engine: pointer): integer;cdecl;
+function  qe_engine_error_name(const Engine: pointer): pchar;cdecl;
+function  qe_engine_error_msg(const Engine: pointer): pchar;cdecl;
+function  qe_engine_error_module(const Engine: pointer): pchar;cdecl;
+function  qe_engine_error_file(const Engine: pointer): pchar;cdecl;
+function  qe_engine_result_type(const Engine: pointer): pchar;cdecl;
+function  qe_engine_result_text(const Engine: pointer): pchar;cdecl;
+function  qe_engine_get_search_path(const Engine: pointer): pchar;cdecl;
+procedure qe_engine_set_search_path(const Engine: pointer; const Path: pchar);cdecl;
+function  qe_engine_get_main_file(const Engine: pointer): pchar;cdecl;
+procedure qe_engine_set_main_file(const Engine: pointer; const fname: pchar);cdecl;
+function  qe_engine_ready(const Engine: pointer): integer;cdecl;
+function  qe_engine_running(const Engine: pointer): integer;cdecl;
+function  qe_engine_terminated(const Engine: pointer): integer;cdecl;
+function  qe_engine_exited(const Engine: pointer): integer;cdecl;
+procedure qe_engine_write(const Engine: pointer; const Text: pchar; Count: integer);cdecl;
+function  qe_engine_read(const Engine: pointer; const Buf: pchar; Count: integer): integer;cdecl;
+function  qe_engine_readln(const Engine: pointer): PLseString;cdecl;
+procedure qe_begin_cgi(const Engine: pointer);cdecl;
+procedure qe_end_cgi(const Engine: pointer);cdecl;
 function  qe_module_count: integer;cdecl;
-function  qe_get_module(Index: integer): pointer;cdecl;
-function  qe_setup_module(const Name: pchar; const initrec: PLseModuleRec): pointer;cdecl;
-function  qe_find_module(const Name: pchar): pointer;cdecl;
+function  qe_module(Index: integer): pointer;cdecl;
+function  qe_module_setup(const Name: pchar; const initrec: PLseModuleRec): pointer;cdecl;
+function  qe_module_find(const Name: pchar): pointer;cdecl;
 function  qe_module_class(const Module: pointer): PLseClassRec;cdecl;
-function  qe_setup_class(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
-function  qe_find_class(const Name: pchar): PLseClassRec;cdecl;
+function  qe_class_count(const Module: pointer): integer;cdecl;
+function  qe_class(const Module: pointer; Index: integer): PLseClassRec;cdecl;
+function  qe_class_setup(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
+function  qe_class_find(const Name: pchar): PLseClassRec;cdecl;
 function  qe_class_module(const ClassRec: PLseClassRec): pointer;cdecl;
-function  qe_setup_method(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
+function  qe_class_rec(const KernelClass: pointer): PLseClassRec;cdecl;
+function  qe_method_count(const ClassRec: PLseClassRec): integer;cdecl;
+function  qe_method_get(const ClassRec: PLseClassRec; Index: integer): pointer;cdecl;
+function  qe_method_setup(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
 function  qe_find_method(const ClassRec: PLseClassRec; const Name: pchar): pointer;cdecl;
 function  qe_method_name(const Method: pointer): pchar;cdecl;
+function  qe_method_type(const Method: pointer): PLseClassRec;cdecl;
+function  qe_method_class(const Method: pointer): PLseClassRec;cdecl;
+function  qe_method_param_count(const Method: pointer): integer;cdecl;
+function  qe_method_param_name(const Method: pointer; Index: integer): pchar;cdecl;
+function  qe_method_param_type(const Method: pointer; Index: integer): PLseClassRec;cdecl;
 function  qe_param_engine(const Param: PLseParam): PLseEngine;cdecl;
 function  qe_param_format(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
 procedure qe_param_error(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
-function  qe_push(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
-function  qe_goon(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
-procedure qe_value_set_object(const Data, obj, obj_class: pointer);cdecl;
-procedure qe_value_set_stream(const Data: pointer; Value: PLseStream);cdecl;
+function  qe_param_push(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
+function  qe_param_goon(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
 function  qe_dbv_provide(const Vendor: pchar): PLseDB;cdecl;
 function  qe_dbv_register(const dbv: PLseDBVendor): integer;cdecl;
 function  qe_database_encode_TUPSP(const Target, User, Password, Source, Params: pchar): PLseString;cdecl;
@@ -78,7 +117,7 @@ procedure qe_database_decode_TUPSP(const ConnectionStr: pchar; const TUPSP: PLse
 function  qe_simple_test(const Script: pchar): integer;cdecl;
 function  qe_startup: integer;cdecl;
 procedure qe_cleanup;cdecl;
-function  qe_reserved_words: pchar;cdecl;
+function  qe_keywords: pchar;cdecl;
 function  qe_get_kernel_file: pchar;cdecl;
 procedure qe_set_kernel_file(const KernelFile: pchar);cdecl;
 function  qe_get_program_file: pchar;cdecl;
@@ -88,58 +127,96 @@ function  qe_production: pchar;cdecl;
 function  qe_version: pchar;cdecl;
 function  qe_copyright: pchar;cdecl;
 function  qe_tmpath: pchar;cdecl;
-function  qe_expand_fname(const fname, buf: pchar; buf_size: integer):integer;cdecl;
-function  qe_complete_fname(const fname, buf: pchar; buf_size: integer):integer;cdecl;
 procedure qe_log(const Msg: pchar; Count: integer);cdecl;
-function  QueryEntry(const ID: pchar): pointer;cdecl;
+function  qe_query(const ID: pchar): pointer;cdecl;
 
 var
   qe_entries: RLseEntryRec = (
-    cik_classes         : @sys_class_list;
-    cik_create_engine   : {$IFDEF FPC}@{$ENDIF}qe_engine_create;
-    cik_module_count    : {$IFDEF FPC}@{$ENDIF}qe_module_count;
-    cik_get_module      : {$IFDEF FPC}@{$ENDIF}qe_get_module; 
-    cik_setup_module    : {$IFDEF FPC}@{$ENDIF}qe_setup_module;
-    cik_find_module     : {$IFDEF FPC}@{$ENDIF}qe_find_module;
-    cik_module_class    : {$IFDEF FPC}@{$ENDIF}qe_module_class;
-    cik_setup_class     : {$IFDEF FPC}@{$ENDIF}qe_setup_class;
-    cik_find_class      : {$IFDEF FPC}@{$ENDIF}qe_find_class;
-    cik_class_module    : {$IFDEF FPC}@{$ENDIF}qe_class_module;
-    cik_setup_method    : {$IFDEF FPC}@{$ENDIF}qe_setup_method;
-    cik_find_method     : {$IFDEF FPC}@{$ENDIF}qe_find_method;
-    cik_method_name     : {$IFDEF FPC}@{$ENDIF}qe_method_name; 
-    cik_get_engine      : {$IFDEF FPC}@{$ENDIF}qe_param_engine;
-    cik_format          : {$IFDEF FPC}@{$ENDIF}qe_param_format;
-    cik_set_error       : {$IFDEF FPC}@{$ENDIF}qe_param_error;
-    cik_push            : {$IFDEF FPC}@{$ENDIF}qe_push;
-    cik_goon            : {$IFDEF FPC}@{$ENDIF}qe_goon;
-    cik_set_object      : {$IFDEF FPC}@{$ENDIF}qe_value_set_object;
-    cik_set_stream      : {$IFDEF FPC}@{$ENDIF}qe_value_set_stream;
+    cik_classes           : @sys_class_list;
+    { engine }
+    cik_create            : {$IFDEF FPC}@{$ENDIF}qe_engine_create;
+    cik_destroy           : {$IFDEF FPC}@{$ENDIF}qe_engine_destroy;
+    cik_compile           : {$IFDEF FPC}@{$ENDIF}qe_engine_compile;
+    cik_fcompile          : {$IFDEF FPC}@{$ENDIF}qe_engine_compile_file;
+    cik_execute           : {$IFDEF FPC}@{$ENDIF}qe_engine_execute;
+    cik_fexecute          : {$IFDEF FPC}@{$ENDIF}qe_engine_execute_file;
+    cik_terminate         : {$IFDEF FPC}@{$ENDIF}qe_engine_terminate;
+    cik_clear             : {$IFDEF FPC}@{$ENDIF}qe_engine_clear;
+    cik_get_args          : {$IFDEF FPC}@{$ENDIF}qe_engine_get_args;
+    cik_set_args          : {$IFDEF FPC}@{$ENDIF}qe_engine_set_args;
+    cik_errno             : {$IFDEF FPC}@{$ENDIF}qe_engine_errno;
+    cik_error_row         : {$IFDEF FPC}@{$ENDIF}qe_engine_error_row;
+    cik_error_col         : {$IFDEF FPC}@{$ENDIF}qe_engine_error_col;
+    cik_error_name        : {$IFDEF FPC}@{$ENDIF}qe_engine_error_name;
+    cik_error_msg         : {$IFDEF FPC}@{$ENDIF}qe_engine_error_msg;
+    cik_error_module      : {$IFDEF FPC}@{$ENDIF}qe_engine_error_module;
+    cik_error_file        : {$IFDEF FPC}@{$ENDIF}qe_engine_error_file;
+    cik_result_type       : {$IFDEF FPC}@{$ENDIF}qe_engine_result_type;
+    cik_result_text       : {$IFDEF FPC}@{$ENDIF}qe_engine_result_text;
+    cik_get_search_path   : {$IFDEF FPC}@{$ENDIF}qe_engine_get_search_path;
+    cik_set_search_path   : {$IFDEF FPC}@{$ENDIF}qe_engine_set_search_path;
+    cik_get_main_file     : {$IFDEF FPC}@{$ENDIF}qe_engine_get_main_file;
+    cik_set_main_file     : {$IFDEF FPC}@{$ENDIF}qe_engine_set_main_file;
+    cik_ready             : {$IFDEF FPC}@{$ENDIF}qe_engine_ready;
+    cik_running           : {$IFDEF FPC}@{$ENDIF}qe_engine_running;
+    cik_terminated        : {$IFDEF FPC}@{$ENDIF}qe_engine_terminated;
+    cik_exited            : {$IFDEF FPC}@{$ENDIF}qe_engine_exited;
+    cik_write             : {$IFDEF FPC}@{$ENDIF}qe_engine_write;
+    cik_read              : {$IFDEF FPC}@{$ENDIF}qe_engine_read;
+    cik_readln            : {$IFDEF FPC}@{$ENDIF}qe_engine_readln;
+    cik_begin_cgi         : {$IFDEF FPC}@{$ENDIF}qe_begin_cgi;
+    cik_end_cgi           : {$IFDEF FPC}@{$ENDIF}qe_end_cgi;
+    { module }
+    cik_module_count      : {$IFDEF FPC}@{$ENDIF}qe_module_count;
+    cik_module            : {$IFDEF FPC}@{$ENDIF}qe_module; 
+    cik_module_setup      : {$IFDEF FPC}@{$ENDIF}qe_module_setup;
+    cik_module_find       : {$IFDEF FPC}@{$ENDIF}qe_module_find;
+    cik_module_class      : {$IFDEF FPC}@{$ENDIF}qe_module_class;
+    { class }
+    cik_class_count       : {$IFDEF FPC}@{$ENDIF}qe_class_count;
+    cik_class             : {$IFDEF FPC}@{$ENDIF}qe_class; 
+    cik_class_setup       : {$IFDEF FPC}@{$ENDIF}qe_class_setup;
+    cik_class_find        : {$IFDEF FPC}@{$ENDIF}qe_class_find;
+    cik_class_module      : {$IFDEF FPC}@{$ENDIF}qe_class_module;
+    cik_class_rec         : {$IFDEF FPC}@{$ENDIF}qe_class_rec;
+    { method }
+    cik_method_count      : {$IFDEF FPC}@{$ENDIF}qe_method_count;
+    cik_method            : {$IFDEF FPC}@{$ENDIF}qe_method_get;
+    cik_method_setup      : {$IFDEF FPC}@{$ENDIF}qe_method_setup;
+    cik_method_find       : {$IFDEF FPC}@{$ENDIF}qe_find_method;
+    cik_method_name       : {$IFDEF FPC}@{$ENDIF}qe_method_name;
+    cik_method_type       : {$IFDEF FPC}@{$ENDIF}qe_method_type;
+    cik_method_class      : {$IFDEF FPC}@{$ENDIF}qe_method_class;
+    cik_method_param_count: {$IFDEF FPC}@{$ENDIF}qe_method_param_count;
+    cik_method_param_name : {$IFDEF FPC}@{$ENDIF}qe_method_param_name;
+    cik_method_param_type : {$IFDEF FPC}@{$ENDIF}qe_method_param_type;
+    { param }
+    cik_param_engine      : {$IFDEF FPC}@{$ENDIF}qe_param_engine;
+    cik_param_format      : {$IFDEF FPC}@{$ENDIF}qe_param_format;
+    cik_param_error       : {$IFDEF FPC}@{$ENDIF}qe_param_error;
+    cik_param_push        : {$IFDEF FPC}@{$ENDIF}qe_param_push;
+    cik_param_goon        : {$IFDEF FPC}@{$ENDIF}qe_param_goon;
     { database }
-    cik_dbv_provide     : {$IFDEF FPC}@{$ENDIF}qe_dbv_provide;
-    cik_dbv_register    : {$IFDEF FPC}@{$ENDIF}qe_dbv_register;
-    cik_encode_TUPSP    : {$IFDEF FPC}@{$ENDIF}qe_database_encode_TUPSP;
-    cik_decode_TUPSP    : {$IFDEF FPC}@{$ENDIF}qe_database_decode_TUPSP;
+    cik_dbv_provide       : {$IFDEF FPC}@{$ENDIF}qe_dbv_provide;
+    cik_dbv_register      : {$IFDEF FPC}@{$ENDIF}qe_dbv_register;
+    cik_encode_TUPSP      : {$IFDEF FPC}@{$ENDIF}qe_database_encode_TUPSP;
+    cik_decode_TUPSP      : {$IFDEF FPC}@{$ENDIF}qe_database_decode_TUPSP;
     { others }
-    cik_production      : {$IFDEF FPC}@{$ENDIF}qe_production;
-    cik_version         : {$IFDEF FPC}@{$ENDIF}qe_version;
-    cik_copyright       : {$IFDEF FPC}@{$ENDIF}qe_copyright;
-    cik_tmpath          : {$IFDEF FPC}@{$ENDIF}qe_tmpath;
-    cik_query           : {$IFDEF FPC}@{$ENDIF}QueryEntry;
-    cik_malloc          : {$IFDEF FPC}@{$ENDIF}lse_mem_alloc;
-    cik_free            : {$IFDEF FPC}@{$ENDIF}lse_mem_free;
-    cik_simple_test     : {$IFDEF FPC}@{$ENDIF}qe_simple_test;
-    cik_startup         : {$IFDEF FPC}@{$ENDIF}qe_startup;
-    cik_cleanup         : {$IFDEF FPC}@{$ENDIF}qe_cleanup;
-    cik_reserved_words  : {$IFDEF FPC}@{$ENDIF}qe_reserved_words;
-    cik_get_kernel_file : {$IFDEF FPC}@{$ENDIF}qe_get_kernel_file;
-    cik_set_kernel_file : {$IFDEF FPC}@{$ENDIF}qe_set_kernel_file;
-    cik_get_program_file: {$IFDEF FPC}@{$ENDIF}qe_get_program_file;
-    cik_set_program_file: {$IFDEF FPC}@{$ENDIF}qe_set_program_file;
-    cik_load_config     : {$IFDEF FPC}@{$ENDIF}qe_load_config;
-    cik_expand_fname    : {$IFDEF FPC}@{$ENDIF}qe_expand_fname;
-    cik_complete_fname  : {$IFDEF FPC}@{$ENDIF}qe_complete_fname;
-    cik_log             : {$IFDEF FPC}@{$ENDIF}qe_log;
+    cik_production        : {$IFDEF FPC}@{$ENDIF}qe_production;
+    cik_version           : {$IFDEF FPC}@{$ENDIF}qe_version;
+    cik_copyright         : {$IFDEF FPC}@{$ENDIF}qe_copyright;
+    cik_tmpath            : {$IFDEF FPC}@{$ENDIF}qe_tmpath;
+    cik_query             : {$IFDEF FPC}@{$ENDIF}qe_query;
+    cik_simple_test       : {$IFDEF FPC}@{$ENDIF}qe_simple_test;
+    cik_startup           : {$IFDEF FPC}@{$ENDIF}qe_startup;
+    cik_cleanup           : {$IFDEF FPC}@{$ENDIF}qe_cleanup;
+    cik_keywords          : {$IFDEF FPC}@{$ENDIF}qe_keywords;
+    cik_get_kernel_file   : {$IFDEF FPC}@{$ENDIF}qe_get_kernel_file;
+    cik_set_kernel_file   : {$IFDEF FPC}@{$ENDIF}qe_set_kernel_file;
+    cik_get_program_file  : {$IFDEF FPC}@{$ENDIF}qe_get_program_file;
+    cik_set_program_file  : {$IFDEF FPC}@{$ENDIF}qe_set_program_file;
+    cik_load_config       : {$IFDEF FPC}@{$ENDIF}qe_load_config;
+    cik_log               : {$IFDEF FPC}@{$ENDIF}qe_log;
   );
 
 implementation
@@ -372,13 +449,13 @@ begin
   end;
 end;
 
-function qe_engine_error_ifile(const Engine: pointer): pchar;cdecl;
+function qe_engine_error_file(const Engine: pointer): pchar;cdecl;
 begin
   try
     Result := KLiEngine(Engine).Error.ErrorRec^.ifname;
   except
     Result := nil;
-    __log('qe_engine_error_ifile()', lse_exception_str);
+    __log('qe_engine_error_file()', lse_exception_str);
   end;
 end;
 
@@ -512,37 +589,6 @@ end;
 function qe_engine_create(const EngineRec: PLseEngine): pointer;cdecl;
 begin
   try
-    EngineRec^.krnl_destroy := @qe_engine_destroy;
-    EngineRec^.krnl_compile := @qe_engine_compile;
-    EngineRec^.krnl_compile_file := @qe_engine_compile_file;
-    EngineRec^.krnl_execute := @qe_engine_execute;
-    EngineRec^.krnl_execute_file := @qe_engine_execute_file;
-    EngineRec^.krnl_terminate := @qe_engine_terminate;
-    EngineRec^.krnl_clear := @qe_engine_clear;
-    EngineRec^.krnl_get_args := @qe_engine_get_args;
-    EngineRec^.krnl_set_args := @qe_engine_set_args;
-    EngineRec^.krnl_result_type := @qe_engine_result_type;
-    EngineRec^.krnl_result_text := @qe_engine_result_text;
-    EngineRec^.krnl_errno := @qe_engine_errno;
-    EngineRec^.krnl_error_row := @qe_engine_error_row;
-    EngineRec^.krnl_error_col := @qe_engine_error_col;
-    EngineRec^.krnl_error_name := @qe_engine_error_name;
-    EngineRec^.krnl_error_msg := @qe_engine_error_msg;
-    EngineRec^.krnl_error_module := @qe_engine_error_module;
-    EngineRec^.krnl_error_ifile := @qe_engine_error_ifile;
-    EngineRec^.krnl_get_search_path := @qe_engine_get_search_path;
-    EngineRec^.krnl_set_search_path := @qe_engine_set_search_path;
-    EngineRec^.krnl_get_main_file := @qe_engine_get_main_file;
-    EngineRec^.krnl_set_main_file := @qe_engine_set_main_file;
-    EngineRec^.krnl_ready := @qe_engine_ready;
-    EngineRec^.krnl_running := @qe_engine_running;
-    EngineRec^.krnl_terminated := @qe_engine_terminated;
-    EngineRec^.krnl_exited := @qe_engine_exited;
-    EngineRec^.krnl_write := @qe_engine_write;
-    EngineRec^.krnl_read := @qe_engine_read;
-    EngineRec^.krnl_readln := @qe_engine_readln;
-    EngineRec^.krnl_begin_cgi := @qe_begin_cgi;
-    EngineRec^.krnl_end_cgi := @qe_end_cgi;
     Result := KLiEngine.Create(EngineRec);
   except
     Result := nil;
@@ -562,24 +608,6 @@ begin
   end;
 end;
 
-procedure qe_value_set_Object(const Data, obj, obj_class: pointer);cdecl;
-begin
-  try
-    __SetObject(Data, KLiClass(obj_class), obj);
-  except
-    __log('qe_value_set_Object()', lse_exception_str);
-  end;
-end;
-
-procedure qe_value_set_stream(const Data: pointer; Value: PLseStream);cdecl;
-begin
-  try
-    __SetStream(Data, Value);
-  except
-    __log('qe_value_set_stream()', lse_exception_str);
-  end;
-end;
-
 procedure qe_param_error(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
 begin
   try
@@ -589,7 +617,7 @@ begin
   end;
 end;
 
-function qe_push(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
+function qe_param_push(const Param: PLseParam; const Value: PLseValue): integer;cdecl;
 var
   rnnr: KLiRunner;
 begin
@@ -598,12 +626,12 @@ begin
     Result := rnnr.Stack.Count;
     rnnr.Stack.Push(Value);
   except
-    __log('qe_push()', lse_exception_str);
+    __log('qe_param_push()', lse_exception_str);
     Result := -1;
   end;
 end;
 
-function qe_goon(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
+function qe_param_goon(const Param: PLseParam; Func: pointer; Params: integer; const ResValue: PLseValue): integer;cdecl;
 var
   rnnr: KLiRunner;
 begin
@@ -611,7 +639,7 @@ begin
     rnnr := __AsRunner(Param);
     Result := Ord(rnnr.Goon(KLiFunc(Func), Params, ResValue));
   except
-    __log('qe_goon()', lse_exception_str);
+    __log('qe_param_goon()', lse_exception_str);
     Result := 0;
   end;
 end;
@@ -628,7 +656,7 @@ begin
   end;
 end;
 
-function qe_get_module(Index: integer): pointer;cdecl;
+function qe_module(Index: integer): pointer;cdecl;
 begin
   try
     if sys_libraries <> nil then
@@ -636,21 +664,21 @@ begin
       Result := nil;
   except
     Result := nil;
-    __log('qe_get_module()', lse_exception_str);
+    __log('qe_module()', lse_exception_str);
   end;
 end;
 
-function qe_setup_module(const Name: pchar; const initrec: PLseModuleRec): pointer;cdecl;
+function qe_module_setup(const Name: pchar; const initrec: PLseModuleRec): pointer;cdecl;
 begin
   try
     Result := __SetupModule(Name, initrec);
   except
     Result := nil;
-    __log('qe_setup_module()', lse_exception_str);
+    __log('qe_module_setup()', lse_exception_str);
   end;
 end;
 
-function qe_find_module(const Name: pchar): pointer;cdecl;
+function qe_module_find(const Name: pchar): pointer;cdecl;
 var
   m_name: string;
 begin
@@ -661,7 +689,7 @@ begin
       Result := nil;
   except
     Result := nil;
-    __log('qe_find_module()', lse_exception_str);
+    __log('qe_module_find()', lse_exception_str);
   end;
 end;
 
@@ -677,7 +705,31 @@ begin
   end;
 end;
 
-function qe_setup_class(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
+function qe_class_count(const Module: pointer): integer;cdecl;
+begin
+  try
+    if Module <> nil then
+      Result := KLiModule(Module).ClassCount else
+      Result := 0;
+  except
+    Result := 0;
+    __log('qe_class_count()', lse_exception_str);
+  end;
+end;
+
+function qe_class(const Module: pointer; Index: integer): PLseClassRec;cdecl;
+begin
+  try
+    if Module <> nil then
+      Result := KLiModule(Module).GetClass(Index).ClassRec else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_class()', lse_exception_str);
+  end;
+end;
+
+function qe_class_setup(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
 begin
   try
     Result := nil;
@@ -689,11 +741,11 @@ begin
     end;
   except
     Result := nil;
-    __log('qe_setup_class()', lse_exception_str);
+    __log('qe_class_setup()', lse_exception_str);
   end;
 end;
 
-function qe_find_class(const Name: pchar): PLseClassRec;cdecl;
+function qe_class_find(const Name: pchar): PLseClassRec;cdecl;
 var
   m_name, c_name: string;
   module: KLiModule;
@@ -714,7 +766,7 @@ begin
     end;
   except
     Result := nil;
-    __log('qe_find_class()', lse_exception_str);
+    __log('qe_class_find()', lse_exception_str);
   end;
 end;
 
@@ -730,7 +782,57 @@ begin
   end;
 end;
 
-function qe_setup_method(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
+function qe_class_rec(const KernelClass: pointer): PLseClassRec;cdecl;
+begin
+  try
+    if KernelClass <> nil then
+      Result := KLiClass(KernelClass).ClassRec else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_class_rec()', lse_exception_str);
+  end;
+end;
+
+function qe_method_count(const ClassRec: PLseClassRec): integer;cdecl;
+var
+  clss: KLiClass;
+begin
+  try
+    Result := 0;
+    if ClassRec <> nil then
+    begin
+      clss := KLiClass(ClassRec^.lysee_class);
+      if clss.IsModuleClass then
+        Result := clss.Module.FuncCount else
+        Result := clss.MethodList.Count; 
+    end;
+  except
+    Result := 0;
+    __log('qe_method_count()', lse_exception_str);
+  end;
+end;
+
+function qe_method_get(const ClassRec: PLseClassRec; Index: integer): pointer;cdecl;
+var
+  clss: KLiClass;
+begin
+  try
+    Result := nil;
+    if ClassRec <> nil then
+    begin
+      clss := KLiClass(ClassRec^.lysee_class);
+      if clss.IsModuleClass then
+        Result := clss.Module.GetFunc(Index) else
+        Result := clss.MethodList.Objects[Index]; 
+    end;
+  except
+    Result := nil;
+    __log('qe_method_get()', lse_exception_str);
+  end;
+end;
+
+function qe_method_setup(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
 var
   clss: KLiClass;
 begin
@@ -743,7 +845,7 @@ begin
     end;
   except
     Result := nil;
-    __log('qe_setup_method()', lse_exception_str);
+    __log('qe_method_setup()', lse_exception_str);
   end;
 end;
 
@@ -775,6 +877,66 @@ begin
   except
     Result := nil;
     __log('qe_method_name()', lse_exception_str);
+  end;
+end;
+
+function qe_method_type(const Method: pointer): PLseClassRec;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := KLiFunc(Method).ResultType.ClassRec else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_type()', lse_exception_str);
+  end;
+end;
+
+function qe_method_class(const Method: pointer): PLseClassRec;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := KLiFunc(Method).OwnerClass.ClassRec else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_class()', lse_exception_str);
+  end;
+end;
+
+function qe_method_param_count(const Method: pointer): integer;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := KLiFunc(Method).ParamCount else
+      Result := 0;
+  except
+    Result := 0;
+    __log('qe_method_param_count()', lse_exception_str);
+  end;
+end;
+
+function qe_method_param_name(const Method: pointer; Index: integer): pchar;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := pchar(KLiFunc(Method).Params[Index].Name) else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_param_name()', lse_exception_str);
+  end;
+end;
+
+function qe_method_param_type(const Method: pointer; Index: integer): PLseClassRec;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := KLiFunc(Method).Params[Index].ValueType.ClassRec else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_param_type()', lse_exception_str);
   end;
 end;
 
@@ -857,14 +1019,14 @@ begin
   end;
 end;
 
-function qe_reserved_words: pchar;cdecl;
+function qe_keywords: pchar;cdecl;
 begin
   try
     ReservedWords;
     Result := pchar(reserved_words);
   except
     Result := nil;
-    __log('qe_reserved_words()', lse_exception_str);
+    __log('qe_keywords()', lse_exception_str);
   end;
 end;
 
@@ -956,46 +1118,6 @@ begin
   end;
 end;
 
-function qe_expand_fname(const fname, buf: pchar; buf_size: integer):integer;cdecl;
-var
-  S: string;
-begin
-  try
-    Result := 0;
-    if (buf <> nil) and (buf_size > 0) then
-    begin
-      S := lse_expand_fname(fname);
-      Result := Max(0, Min(Length(S), buf_size - 1));
-      if Result > 0 then
-        StrPLCopy(buf, S, Result) else
-        buf[0] := #0;
-    end;
-  except
-    Result := 0;
-    __log('qe_expand_fname()', lse_exception_str);
-  end;
-end;
-
-function qe_complete_fname(const fname, buf: pchar; buf_size: integer):integer;cdecl;
-var
-  S: string;
-begin
-  try
-    Result := 0;
-    if (buf <> nil) and (buf_size > 0) then
-    begin
-      S := lse_complete_fname(fname);
-      Result := Max(0, Min(Length(S), buf_size - 1));
-      if Result > 0 then
-        StrPLCopy(buf, S, Result) else
-        buf[0] := #0;
-    end;
-  except
-    Result := 0;
-    __log('qe_complete_fname()', lse_exception_str);
-  end;
-end;
-
 procedure qe_log(const Msg: pchar; Count: integer);cdecl;
 begin
   try
@@ -1005,7 +1127,7 @@ begin
   end;
 end;
 
-function QueryEntry(const ID: pchar): pointer;cdecl;
+function qe_query(const ID: pchar): pointer;cdecl;
 var
   name: string;
 begin
@@ -1015,7 +1137,7 @@ begin
     if name = 'qe_entries'  then Result := @qe_entries;
   except
     Result := nil;
-    __log('QueryEntry()', lse_exception_str);
+    __log('qe_query()', lse_exception_str);
   end;
 end;
 

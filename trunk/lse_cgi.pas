@@ -2,7 +2,7 @@
 {        UNIT: lse_cgi                                                         }
 { DESCRIPTION: CGI utilities in lysee kernel                                   }
 {     CREATED: 2009/01/03                                                      }
-{    MODIFIED: 2010/09/07                                                      }
+{    MODIFIED: 2010/10/11                                                      }
 {==============================================================================}
 { Copyright (c) 2009-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -1107,7 +1107,7 @@ begin
   if __getRSP(Param, RSP) then
   begin
     cookie := RSP.FCookies.Find(__AsString(Param^.param[0]));
-    __PutBool(Param^.result, cookie <> nil);
+    lse_set_bool(Param^.result, cookie <> nil);
   end;
 end;
 
@@ -1120,7 +1120,7 @@ begin
   begin
     cookie := RSP.FCookies.Find(__AsString(Param^.param[0]));
     if cookie <> nil then
-      __PutString(Param^.result, cookie.FValue);
+      lse_set_string(Param^.result, cookie.FValue);
   end;
 end;
 
@@ -1133,7 +1133,7 @@ begin
   begin
     cookie := RSP.FCookies.Find(__AsString(Param^.param[0]));
     if cookie <> nil then
-      __PutString(Param^.result, cookie.HeaderValue);  
+      lse_set_string(Param^.result, cookie.HeaderValue);
   end;
 end;
 

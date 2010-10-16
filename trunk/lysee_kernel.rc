@@ -1,5 +1,5 @@
 1 VERSIONINFO
-FILEVERSION 0,2,1,395
+FILEVERSION 0,2,1,396
 PRODUCTVERSION 1,1,1,306
 {
  BLOCK "StringFileInfo"
@@ -9,7 +9,7 @@ PRODUCTVERSION 1,1,1,306
    VALUE "Comments", "\000"
    VALUE "CompanyName", "\000"
    VALUE "FileDescription", "Lysee Script Kernel (FPC)\000"
-   VALUE "FileVersion", "0.2.1.395\000"
+   VALUE "FileVersion", "0.2.1.396\000"
    VALUE "InternalName", "\000"
    VALUE "LegalCopyright", "Copyright (C) 2003-2010 Li Yun Jie\000"
    VALUE "LegalTrademarks", "\000"
