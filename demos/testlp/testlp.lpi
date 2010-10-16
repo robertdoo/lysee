@@ -56,8 +56,8 @@
         <ComponentName Value="TestlpForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmTestlp"/>
-        <CursorPos X="43" Y="9"/>
-        <TopLine Value="1"/>
+        <CursorPos X="59" Y="152"/>
+        <TopLine Value="140"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
@@ -368,7 +368,7 @@
         <SyntaxHighlighter Value="LFM"/>
       </Unit44>
     </Units>
-    <JumpHistory Count="7" HistoryIndex="6">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="frmtestlp.pas"/>
         <Caret Line="122" Column="38" TopLine="119"/>
@@ -397,6 +397,10 @@
         <Filename Value="frmtestlp.pas"/>
         <Caret Line="9" Column="43" TopLine="1"/>
       </Position7>
+      <Position8>
+        <Filename Value="frmtestlp.pas"/>
+        <Caret Line="41" Column="49" TopLine="34"/>
+      </Position8>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

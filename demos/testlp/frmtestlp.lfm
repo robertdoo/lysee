@@ -77,7 +77,6 @@ object TestlpForm: TTestlpForm
         ParentColor = False
         ParentFont = False
         TabOrder = 1
-        BookMarkOptions.OnChange = nil
         Gutter.Visible = False
         Gutter.Width = 0
         Gutter.MouseActions = <        

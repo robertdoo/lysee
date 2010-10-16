@@ -2,7 +2,7 @@
 {        UNIT: lse_spawn                                                       }
 { DESCRIPTION: symbolization of lysee script parser                            }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/09/12                                                      }
+{    MODIFIED: 2010/10/15                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -83,7 +83,8 @@ type
     syGotoTP,      // 2008-01-27: goto label when true
     syGotoFP,      // 2008-01-28: goto label when false
     syEndInc,      // 2008-03-03: end include file
-    syStatement,   // 2008-03-25: begin statement
+    syBeginSTMT,   // 2008-03-25: begin statement
+    syEndSTMT,     // 2008-03-25: begin statement
     syVarGen,      // 2008-09-07: cast to vargen object
     syPushVarb,    // 2008-09-07: push variable
     syHashed,      // 2009-02-28: create hashed object  
@@ -110,6 +111,7 @@ type
     syConst,       // 2010-07-20: define constant values
     syEOF,         // 2010-07-24: end of file
     syElseIf,      // 2010-08-01: else if
+    syElif,        // 2010-08-01: else if
     syClass,       // 2010-08-01: define class
     syOption,      // 2010-08-18: kernel engine option
     syAddAll       // 2010-09-04: add all item from vargen
@@ -211,7 +213,8 @@ const
     (SY:syGotoTP;     ID:'<GOTOTP>';     SM:'goto label when true'),
     (SY:syGotoFP;     ID:'<GOTOFP>';     SM:'goto label when false'),
     (SY:syEndInc;     ID:'<ENDINC>';     SM:'end include file'),
-    (SY:syStatement;  ID:'<STATEMENT>';  SM:'begin statement'),
+    (SY:syBeginSTMT;  ID:'<BEGINSTMT>';  SM:'begin statement'),
+    (SY:syEndSTMT;    ID:'<ENDSTMT>';    SM:'end statement'),
     (SY:syVarGen;     ID:'<VARGEN>';     SM:'cast to vargen object'),
     (SY:syPushVarb;   ID:'<PUSHVARB>';   SM:'push variable'),
     (SY:syHashed;     ID:'<HASHED>';     SM:'create hashed object'),  
@@ -238,6 +241,7 @@ const
     (sy:syConst;      ID:'const';        SM:'define constant values'),
     (sy:syEOF;        ID:'<EOF>';        SM:'end of file'),
     (sy:syElseIf;     ID:'elseif';       SM:'else if'),
+    (sy:syElif;       ID:'elif';         SM:'else if'),
     (sy:syClass;      ID:'class';        SM:'define class'),
     (sy:syOption;     ID:'<OPTION>';     SM:'kernel engine option'),
     (sy:syAddAll;     ID:'+<';           SM:'add all item from vargen')

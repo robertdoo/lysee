@@ -43,11 +43,11 @@ type
     procedure btnRunClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure hello_helloExecute(Lobj: THelloObject; Invoker: KLiInvoke);
-    procedure hello_sayExecute(Lobj: THelloObject; Invoker: KLiInvoke);
-    procedure hello_xxxExecute(Lobj: THelloObject; Invoker: KLiInvoke);
-    procedure hii_alertExecute(Invoker: KLiInvoke);
-    procedure hii_inputExecute(Invoker: KLiInvoke);
+    procedure hello_helloExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+    procedure hello_sayExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+    procedure hello_xxxExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+    procedure hii_alertExecute(Invoker: TLseInvoke);
+    procedure hii_inputExecute(Invoker: TLseInvoke);
     procedure helloCreateObject(Sender: TObject; var Lobj: THelloObject);
     procedure LyseeRead(Sender: TObject; const Buf: pchar; var Count: integer);
     procedure LyseeReadln(Sender: TObject; var S: string);
@@ -128,28 +128,28 @@ begin
   CloseLysee;
 end;
 
-procedure TTestlpForm.hello_helloExecute(Lobj: THelloObject; Invoker: KLiInvoke);
+procedure TTestlpForm.hello_helloExecute(Lobj: THelloObject; Invoker: TLseInvoke);
 begin
   Lobj.Text := Invoker.paramStr(1);
 end;
 
-procedure TTestlpForm.hello_sayExecute(Lobj: THelloObject; Invoker: KLiInvoke);
+procedure TTestlpForm.hello_sayExecute(Lobj: THelloObject; Invoker: TLseInvoke);
 begin
   ShowMessage(Lobj.Text);
 end;
 
-procedure TTestlpForm.hello_xxxExecute(Lobj: THelloObject; Invoker: KLiInvoke);
+procedure TTestlpForm.hello_xxxExecute(Lobj: THelloObject; Invoker: TLseInvoke);
 begin
   Lobj.Text := Lobj.Text + Invoker.paramStr(1);
   ShowMessage(Lobj.Text);
 end;
 
-procedure TTestlpForm.hii_alertExecute(Invoker: KLiInvoke);
+procedure TTestlpForm.hii_alertExecute(Invoker: TLseInvoke);
 begin
   ShowMessage(Invoker.ParamStr(0));
 end;
 
-procedure TTestlpForm.hii_inputExecute(Invoker: KLiInvoke);
+procedure TTestlpForm.hii_inputExecute(Invoker: TLseInvoke);
 var
   S: string;
 begin

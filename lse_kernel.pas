@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/10/04                                                      }
+{    MODIFIED: 2010/10/16                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -73,7 +73,6 @@ type
   KLiRunner       = class;
   KLiSatisfy      = class;
   KLiHashed       = class;
-  KLiInvoke       = class;
 
   KLiObjRecState  = (orsInChain, orsMarked);
   KLiObjRecStates = set of KLiObjRecState;
@@ -359,7 +358,8 @@ type
     procedure LoadToken(token: PLiToken);
     procedure LoadExpr(List: TList; Start: integer = 0);
     procedure DumpCode(List: TStrings; const Margin: string);
-    function BeginStatement(Pos: KLiSymPos): PLiExprRec;
+    procedure BeginStatement;
+    procedure EndStatement;
     function IsEmpty: boolean;
     { locals }
     function AddLocal(const Name: string; varType: KLiClass): KLiVarb;
@@ -718,7 +718,7 @@ type
     FStdinStream: PLseStream;
     FStdoutStream: PLseStream;
     FStderrStream: PLseStream;
-    FInvoker: KLiInvoke;
+    FInvoker: TLseInvoke;
     function GetResultText: string;
     function GetResultType: KLiClass;
     procedure SetMainFile(const AValue: string);
@@ -731,6 +731,7 @@ type
     procedure SetStdoutStream(const Value: PLseStream);
     function GetStderrStream: PLseStream;
     procedure SetStderrStream(const Value: PLseStream);
+    function GetInvoker: TLseInvoke;
   public
     constructor Create(const AEngineRec: PLseEngine);
     destructor Destroy;override;
@@ -798,7 +799,7 @@ type
     property Ready: boolean read FReady;
     property Exited: boolean read FExited write FExited;
     property CGI: TLseObject read FCGI write FCGI;
-    property Invoker: KLiInvoke read FInvoker write FInvoker;
+    property Invoker: TLseInvoke read GetInvoker;
     property OnReadBuf: KLiReadBuf read FOnReadBuf write FOnReadBuf;
     property OrChain: PLiObjRec read FOrChain write FOrChain;
     property StdinStream: PLseStream read GetStdinStream write SetStdinStream;
@@ -965,7 +966,6 @@ type
     procedure ErrorRT(const ErrorStr: string);
     procedure Terminate;
     procedure Eval(const Code: string; Output: PLseValue; IsLsp: boolean);
-    procedure Return(HasResult: boolean);
     function Goon(func: KLiFunc; ParamCount: integer; Output: PLseValue): boolean;
     function GoonConst(Param: PLseParam): boolean;
     function ToString(const ID: string): string;
@@ -1074,54 +1074,6 @@ type
     procedure EndPage;
   public
     procedure Execute(const FileName: string);
-  end;
-
-  { KLiInvoke }
-
-  KLiInvoke = class(TLseObject)
-  private
-    FEngine: KLiEngine;
-    FParam: PLseParam;
-    procedure SetNil(Value: PLseValue);
-  public
-    constructor Create(const AEngine: KLiEngine);
-    procedure ReturnInt(const Value: integer);
-    procedure ReturnInt64(const Value: int64);
-    procedure ReturnFloat(const Value: double);
-    procedure ReturnMoney(const Value: currency);
-    procedure ReturnTime(const Value: TDateTime);
-    procedure ReturnStr(const Value: string);
-    procedure ReturnChar(const Value: char);
-    procedure ReturnBool(const Value: boolean);
-    procedure ReturnObject(const Value: pointer; AClass: KLiClass);
-    procedure ReturnObj(const Value: pointer; AClass: PLseClassRec);
-    procedure ReturnStream(const Value: TStream);overload;
-    procedure ReturnStream(const Value: PLseStream);overload;
-    procedure ReturnStrlist(const Value: KLiStrList);overload;
-    procedure ReturnError(const ID: string; Errno: integer; const Msg: string);
-    procedure Print(const Str: string);
-    function Read(const Buf: pchar; Count: integer): integer;
-    function Readln: string;
-    function FormatStr(const Str: string): string;
-    function GetThis(var This): boolean;
-    function ParamCount: integer;
-    function ParamInt(Index: integer): integer;
-    function ParamInt64(Index: integer): int64;
-    function ParamFloat(Index: integer): double;
-    function ParamMoney(Index: integer): currency;
-    function ParamStr(Index: integer): string;
-    function ParamCStr(Index: integer; var Size: integer): pchar;
-    function ParamStrec(Index: integer): PLseString;
-    function ParamFmt(Index: integer): string;
-    function ParamChar(Index: integer): char;
-    function ParamBool(Index: integer): boolean;
-    function ParamObject(Index: integer): pointer;
-    function ParamClass(Index: integer): KLiClass;
-    function ParamClassRec(Index: integer): PLseClassRec;
-    function ParamTime(Index: integer): TDateTime;
-    function ParamStream(Index: integer): PLseStream;
-    property Param: PLseParam read FParam write FParam;
-    property Engine: KLiEngine read FEngine;
   end;
 
   TInitProc = procedure;
@@ -1235,33 +1187,12 @@ procedure __ExecParam(Param: PLseParam; Func: KLiFunc);
 {----------------------------------------------------------------------}
 { set value                                                            }
 {----------------------------------------------------------------------}
-function __PutInt64(V: PLseValue; Value: int64): PLseValue;
-function __PutFloat(V: PLseValue; Value: double): PLseValue;
-function __PutMoney(V: PLseValue; Value: currency): PLseValue;
-function __PutTime(V: PLseValue; Value: TDateTime): PLseValue;
-function __PutBool(V: PLseValue; Value: boolean): PLseValue;
-function __PutChar(V: PLseValue; Value: char): PLseValue;
-function __PutString(V: PLseValue; Value: PLseString): PLseValue;overload;
-function __PutString(V: PLseValue; const Value: string): PLseValue;overload;
-function __PutString(V: PLseValue; const Value: pchar): PLseValue;overload;
-function __PutString(V: PLseValue; const Value: pchar; Count: integer): PLseValue;overload;
-function __PutObject(V: PLseValue; Clss: PLseClassRec; Obj: pointer): PLseValue;
-function __PutDB(V: PLseValue; ADB: PLseDB): PLseValue;
-function __PutDS(V: PLseValue; ADS: PLseDS): PLseValue;
-function __PutClass(V: PLseValue; Clss: PLseClassRec): PLseValue;overload;
-function __PutClass(V: PLseValue; Clss: KLiClass): PLseValue;overload;
-function __PutValue(V, Value: PLseValue): PLseValue;
-
 function __SetStrlist(V: PLseValue; Value: KLiStrlist): PLseValue;
 function __SetVarlist(V: PLseValue; Value: KLiVarList): PLseValue;
 function __SetHashed(V: PLseValue; Value: KLiHashed): PLseValue;
-function __SetStream(V: PLseValue; Value: PLseStream): PLseValue;
 function __SetFunc(V: PLseValue; Value: KLiFunc): PLseValue;
 function __SetVarb(V: PLseValue; Value: KLiVarb): PLseValue;
 function __SetModule(V: PLseValue; Value: KLiModule): PLseValue;
-function __SetVarGen(V: PLseValue; Value: PLseVargen): PLseValue;
-function __SetObject(V: PLseValue; AClass: KLiClass; AInstance: pointer): PLseValue;
-function __SetClass(V: PLseValue; Value: KLiClass): PLseValue;
 
 {----------------------------------------------------------------------}
 { read value                                                           }
@@ -1635,7 +1566,8 @@ procedure __runner_puts(Sender: KLiRunner);
 procedure __runner_module(Sender: KLiRunner);
 procedure __runner_is(Sender: KLiRunner);
 procedure __runner_as(Sender: KLiRunner);
-procedure __runner_statement(Sender: KLiRunner);
+procedure __runner_begin_statement(Sender: KLiRunner);
+procedure __runner_end_statement(Sender: KLiRunner);
 procedure __runner_vargen(Sender: KLiRunner);
 procedure __runner_pushvarb(Sender: KLiRunner);
 procedure __runner_ask(Sender: KLiRunner);
@@ -2061,133 +1993,6 @@ begin
   TLseFuncCall(Func.FProc)(Param);
 end;
 
-function __PutInt64(V: PLseValue; Value: int64): PLseValue;
-begin
-  V^.value_class := KR_INT;
-  V^.VInteger := Value;
-  Result := V;
-end;
-
-function __PutFloat(V: PLseValue; Value: double): PLseValue;
-begin
-  V^.value_class := KR_FLOAT;
-  V^.VFloat := Value;
-  Result := V;
-end;
-
-function __PutMoney(V: PLseValue; Value: currency): PLseValue;
-begin
-  V^.value_class := KR_MONEY;
-  V^.VMoney := Value;
-  Result := V;
-end;
-
-function __PutTime(V: PLseValue; Value: TDateTime): PLseValue;
-begin
-  V^.value_class := KR_TIME;
-  V^.VTime := Value;
-  Result := V;
-end;
-
-function __PutBool(V: PLseValue; Value: boolean): PLseValue;
-begin
-  V^.value_class := KR_BOOL;
-  V^.VBool := Value;
-  Result := V;
-end;
-
-function __PutChar(V: PLseValue; Value: char): PLseValue;
-begin
-  V^.value_class := KR_CHAR;
-  V^.VChar := Value;
-  Result := V;
-end;
-
-function __PutString(V: PLseValue; Value: PLseString): PLseValue;
-begin
-  lse_strec_inclife(Value);
-  V^.value_class := KR_STRING;
-  V^.VString := Value;
-  Result := V;
-end;
-
-function __PutString(V: PLseValue; const Value: string): PLseValue;
-var
-  sr: PLseString;
-begin
-  sr := lse_strec_alloc(Value); 
-  lse_strec_inclife(sr);
-  V^.value_class := KR_STRING;
-  V^.VString := sr;
-  Result := V;
-end;
-
-function __PutString(V: PLseValue; const Value: pchar): PLseValue;
-var
-  sr: PLseString;
-begin
-  sr := lse_strec_alloc(Value, StrLen(Value));
-  lse_strec_inclife(sr);
-  V^.value_class := KR_STRING;
-  V^.VString := sr;
-  Result := V;
-end;
-
-function __PutString(V: PLseValue; const Value: pchar; Count: integer): PLseValue;overload;
-var
-  sr: PLseString;
-begin
-  sr := lse_strec_alloc(Value, Count);
-  lse_strec_inclife(sr);
-  V^.value_class := KR_STRING;
-  V^.VString := sr;
-  Result := V;
-end;
-
-function __PutObject(V: PLseValue; Clss: PLseClassRec; Obj: pointer): PLseValue;
-begin
-  Clss^.incRefcount(Obj);
-  V^.value_class := Clss;
-  V^.VObject := Obj;
-  Result := V;
-end;
-
-function __PutDB(V: PLseValue; ADB: PLseDB): PLseValue;
-begin
-  Result := __PutObject(V, KR_DB, ADB);
-end;
-
-function __PutDS(V: PLseValue; ADS: PLseDS): PLseValue;
-begin
-  Result := __PutObject(V, KR_DS, ADS);
-end;
-
-function __PutClass(V: PLseValue; Clss: PLseClassRec): PLseValue;
-begin
-  Result := __PutObject(V, KR_CLASS, Clss^.lysee_class);
-end;
-
-function __PutClass(V: PLseValue; Clss: KLiClass): PLseValue;overload;
-begin
-  Result := __PutObject(V, KR_CLASS, Clss);
-end;
-
-function __PutValue(V, Value: PLseValue): PLseValue;
-var
-  crec: PLseClassRec;
-begin
-  if V <> Value then
-  begin
-    crec := lse_class_rec(Value);
-    case crec^.vtype of
-      LSV_STRING: lse_strec_inclife(Value^.VString);
-      LSV_OBJECT: crec^.incRefcount(Value^.VObject);
-    end;
-    V^ := Value^;
-  end;
-  Result := V;
-end;
-
 function __SetStrlist(V: PLseValue; Value: KLiStrlist): PLseValue;
 begin
   Result := lse_set_object(V, KR_STRLIST, Value);
@@ -2203,11 +2008,6 @@ begin
   Result := lse_set_object(V, KR_HASHED, Value);
 end;
 
-function __SetStream(V: PLseValue; Value: PLseStream): PLseValue;
-begin
-  Result := lse_set_object(V, KR_STREAM, Value);
-end;
-
 function __SetFunc(V: PLseValue; Value: KLiFunc): PLseValue;
 begin
   Result := lse_set_object(V, KR_FUNC, Value);
@@ -2221,21 +2021,6 @@ end;
 function __SetModule(V: PLseValue; Value: KLiModule): PLseValue;
 begin
   Result := lse_set_object(V, KR_MODULE, Value);
-end;
-
-function __SetVarGen(V: PLseValue; Value: PLseVargen): PLseValue;
-begin
-  Result := lse_set_object(V, KR_VARGEN, Value);
-end;
-
-function __SetObject(V: PLseValue; AClass: KLiClass; AInstance: pointer): PLseValue;
-begin
-  Result := lse_set_object(V, @AClass.FClassRec, AInstance);
-end;
-
-function __SetClass(V: PLseValue; Value: KLiClass): PLseValue;
-begin
-  Result := lse_set_object(V, KR_CLASS, Value);
 end;
 
 function __int64_void(V: PLseValue): int64;
@@ -2697,7 +2482,7 @@ function __AsObject(V: PLseValue; T: KLiClass): pointer;
 var
   R: PLseClassRec;
 begin
-  R := lse_class_rec(V);
+  R := lse_class(V);
   if (R^.vtype = LSV_OBJECT) and (KLiClass(R^.lysee_class) = T) then
     Result := V^.VObject else
     Result := nil;
@@ -2736,7 +2521,7 @@ var
   list: pointer;
 begin
   varg := nil;
-  crec := lse_class_rec(data);
+  crec := lse_class(data);
   clss := KLiClass(crec^.lysee_class);
   if clss = KT_VARGEN then
     varg := PLseVargen(data^.VObject) else
@@ -2763,7 +2548,7 @@ end;
 
 function __AsClass(V: PLseValue): KLiClass;
 begin
-  Result := KLiClass(lse_class(V));
+  Result := KLiClass(lse_class(V)^.lysee_class);
 end;
 
 function __NewVarlist(Engine: KLiEngine): KLiVarList;
@@ -2841,10 +2626,10 @@ var
 begin
   clss := __AsClass(Param^.param[0]);
   hash := KLiHashed.Create(__AsEngine(Param), 1);
-  __SetObject(Param^.result, clss, hash);
+  lse_set_object(Param^.result, clss.ClassRec, hash);
   if clss.FInitFunc <> nil then
   begin
-    __SetObject(Param^.param[0], clss, hash);
+    lse_set_object(Param^.param[0], clss.ClassRec, hash);
     __AsRunner(Param).Goon(clss.FInitFunc, clss.FInitFunc.ParamCount, nil);
   end;
 end;
@@ -2861,7 +2646,7 @@ begin
     data := this.FindValue(name);
     if data = nil then
       __SetError(Param, 'property "%s" not found', [name]) else
-      __PutValue(Param^.result, data);
+      lse_set_value(Param^.result, data);
   end;
 end;
 
@@ -2883,7 +2668,7 @@ var
   rnnr: KLiRunner;
   L, R: PLseValue;
 begin
-  L := __PutValue(Param^.result, Param^.param[0]);
+  L := lse_set_value(Param^.result, Param^.param[0]);
   R := Param^.param[1];
   rnnr := KLiRunner(Param^.runner);
   func := KLiFunc_operator(Param^.func);
@@ -2930,7 +2715,7 @@ begin
   
   if AClass = KT_VARGEN then
   begin
-    __SetVargen(V, lse_vargen_ensure(__AsVargen(E, V)));
+    lse_set_vargen(V, lse_vargen_ensure(__AsVargen(E, V)));
     Exit;
   end;
 
@@ -2939,7 +2724,7 @@ begin
   if AClass = KT_CLASS then
   begin
     if vtype <> KT_CLASS then
-      __SetClass(V, vtype);
+      lse_set_class(V, vtype.ClassRec);
     Exit;
   end;
 
@@ -2962,10 +2747,10 @@ begin
   if AClass = KT_BOOL   then lse_set_bool(V, __AsBool(V)) else
   if AClass = KT_CHAR   then lse_set_char(V, __AsChar(V)) else
   if vtype = KT_STRING then
-    __SetObject(V, AClass, AClass.StrecToObject(V^.VString, E)) else
+    lse_set_object(V, AClass.ClassRec, AClass.StrecToObject(V^.VString, E)) else
   if (AClass = KT_HASHED) and vtype.IsHashed then
     V^.value_class := KR_HASHED else
-    __SetObject(V, AClass, nil);
+    lse_set_object(V, AClass.ClassRec, nil);
 end;
 
 function __SetDefaultValue(V: PLseValue; AClass: KLiClass): PLseValue;
@@ -2980,7 +2765,7 @@ begin
     LSV_BOOL   : lse_set_bool(V, false);
     LSV_CHAR   : lse_set_char(V, #0);
     LSV_VARIANT: lse_clear_value(V);
-    LSV_OBJECT : __SetObject(V, AClass, nil);
+    LSV_OBJECT : lse_set_object(V, AClass.ClassRec, nil);
   end;
   Result := V;
 end;
@@ -4217,7 +4002,7 @@ var
   K: PLseClassRec;
   G: PLseVargen;
 begin
-  K := lse_class_rec(V1);
+  K := lse_class(V1);
   if Assigned(K^.addItem) and (V1^.VObject <> nil) then
   begin
     G := __AsVargen(R.FEngine, V2);
@@ -4952,7 +4737,7 @@ var
   end;
 
 begin
-  T1 := lse_class_rec(V1);
+  T1 := lse_class(V1);
   R1 := T1^.vtype;
   
   if R1 = LSV_VOID then
@@ -4963,7 +4748,7 @@ begin
     Exit;
   end;
   
-  T2 := lse_class_rec(V2);
+  T2 := lse_class(V2);
   R2 := T2^.vtype;
   
   if R2 = LSV_VOID then
@@ -5022,7 +4807,7 @@ end;
 function __contains(Host: KLiStrlist; Value: PLseValue): boolean;
 begin
   Result := false;
-  case lse_class_rec(Value)^.vtype of
+  case lse_class(Value)^.vtype of
     LSV_STRING: Result := (Host.IndexOf(lse_strec_string(Value^.VString)) >= 0);
     LSV_CHAR  : Result := (Host.IndexOf(Value^.VChar) >= 0);
   end;
@@ -5097,7 +4882,7 @@ begin
   begin
     base := lse_strec_data(Host);
     slen := lse_strec_length(Host);
-    case lse_class_rec(Value)^.vtype of
+    case lse_class(Value)^.vtype of
       LSV_CHAR  : Result := hasc(Value^.VChar);
       LSV_STRING: Result := hass(Value^.VString);
       LSV_INT   : Result := (Value^.VInteger in [0..255]) and
@@ -5110,7 +4895,7 @@ function __contains(Host: int64; Value: PLseValue): boolean;
 begin
   Result := false;
   if Host > 0 then
-    case lse_class_rec(Value)^.vtype of
+    case lse_class(Value)^.vtype of
       LSV_INT : Result := (Host > Value^.VInteger) and (Value^.VInteger >= 0);
       LSV_CHAR: Result := (Host > Ord(Value^.VChar));
       LSV_BOOL: Result := (Host > Ord(Value^.VBool));
@@ -5209,7 +4994,7 @@ begin
     // 4. initialize the library
 
     __zero(@initrec, sizeof(RLseModuleRec));
-    initex(@initrec, @QueryEntry);
+    initex(@initrec, @qe_query);
 
     // 5. setup classes list
 
@@ -5900,7 +5685,7 @@ begin
     X := N - FExprrec^.ParamCount;
     while X < N do
     begin
-      __PutValue(L.AddNamed(__AsString(FStack[X])), FStack[X + 1]);
+      lse_set_value(L.AddNamed(__AsString(FStack[X])), FStack[X + 1]);
       Inc(X, 2);
     end;
     FStack.Press(FExprrec^.ParamCount);
@@ -5975,7 +5760,7 @@ begin
     last := FStack.Last;
     func := FExprrec^.VFunc;
     curry := curry_one(func, last, CurrentFunc.Module);
-    __SetObject(last, KT_FUNC, curry);
+    lse_set_object(last, KR_FUNC, curry);
     if curry <> func then
       curry.DecRefcount; // adjust refcount
   end;
@@ -6016,10 +5801,28 @@ begin
   runner_seek_next(Sender);
 end;
 
-procedure __runner_statement(Sender: KLiRunner);
+procedure __runner_begin_statement(Sender: KLiRunner);
 begin
-  with Sender do
-    FStack.ClearTo(FCurrent^.base);
+  Sender.FStack.ClearTo(Sender.FCurrent^.base);
+  runner_seek_next(Sender);
+end;
+
+procedure __runner_end_statement(Sender: KLiRunner);
+var
+  stack: KLiVarList;
+  index: integer;
+begin
+  with Sender.FCurrent^ do
+  begin
+    stack := Sender.FStack;
+    index := stack.Count - 1;
+    if index >= base then
+    begin
+      lse_set_value(output, stack[index]);
+      stack.ClearTo(base);
+    end
+    else lse_clear_value(output);
+  end;
   runner_seek_next(Sender);
 end;
 
@@ -6032,13 +5835,13 @@ begin
     if FExprrec^.ParamCount = 1 then
     begin
       last := FStack.Last;
-      __SetVarGen(last, __AsVargen(FEngine, last));
+      lse_set_vargen(last, __AsVargen(FEngine, last));
     end
     else
     begin
       varg := cvgr_combine(FStack, FExprrec^.ParamCount);
       FStack.Press(FExprrec^.ParamCount - 1);
-      __SetVarGen(FStack.Last, varg);
+      lse_set_vargen(FStack.Last, varg);
     end;
   runner_seek_next(Sender);
 end;
@@ -6125,7 +5928,15 @@ end;
 
 procedure __runner_return(Sender: KLiRunner);
 begin
-  Sender.Return(Sender.FExprrec^.ParamCount > 0);
+  with Sender do
+  begin
+    if FExprrec^.ParamCount > 0 then
+      lse_set_value(FCurrent^.output, FStack.Last) else
+      lse_clear_value(FCurrent^.output);
+    FStack.ClearTo(FCurrent^.base);
+    FCurrent^.next := LSE_MAX_CODES;
+    FCurrent := nil; {<--returned}
+  end;
 end;
 
 procedure __runner_jump(Sender: KLiRunner);
@@ -6640,13 +6451,16 @@ begin
 end;
 
 procedure KLiParser.ParseStatement;
+var
+  sym: KLiSymbol;
 begin
   try
-    if FLast^.Sym = syDot2 then SymGotoNext;
-    if not (FLast^.Sym in [syDotComma, syEOF]) then
+//  if FLast^.Sym = syDot2 then SymGotoNext;
+    CurCodes.BeginStatement;
+    sym := FLast^.Sym;
+    if not (sym in [syDotComma, syEOF]) then
     begin
-      CurCodes.BeginStatement(FLast^.Pos);
-      case FLast^.Sym of
+      case sym of
         syIf      : ParseIf;
         syWhile   : ParseWhile;
         sySwitch  : ParseSwitch;
@@ -6656,14 +6470,19 @@ begin
         syTry     : ParseTry;
         syRepeat  : ParseRepeatUntil;
         syFor     : ParseFor;
-        syAdd1    : ParseAddOne;
-        syDec1    : ParseAddOne;
+        syAdd1, syDec1: begin
+          ParseAddOne;
+          CurCodes.EndStatement;
+        end;
         syBecome  : ParseBecome;
         syPuts    : CurCodes.LoadToken(FLast);
         syImport  : ParseImport;
         syOption  : ParseOption;
         syInclude : ParseInclude;
-        else        ParseAny;
+        else begin
+          ParseAny;
+          CurCodes.EndStatement;
+        end;
       end;
     end;
   finally
@@ -6699,8 +6518,11 @@ begin
     CurCodes.AddGoto(FBreakLabel, FLast^.Pos)^.Sym := syGotoFP;
     SymGotoNext;
     if FLast^.Sym = syDot2 then
-      ParseStatement else
-      ParseBlock([syEnd], true);
+    begin
+      SymGotoNext;
+      ParseStatement;
+    end
+    else ParseBlock([syEnd], true);
     CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
     CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
   finally
@@ -6730,11 +6552,12 @@ begin
       if FLast^.Sym = syDot2 then
       begin
         on_dot2 := true;
+        SymGotoNext;
         ParseStatement;
       end
-      else ParseBlock([syEnd, syElse, syElseIf], true);
+      else ParseBlock([syEnd, syElse, syElseIf, syElif], true);
     end
-    else ParseBlock([syEnd, syElse, syElseIf], false);
+    else ParseBlock([syEnd, syElse, syElseIf, syElif], false);
     CurCodes.AddGoto(end_if, FLast^.Pos);
     CurCodes.AddLabel(or_else, FLast^.Pos);
     if on_dot2 then Break else
@@ -7042,7 +6865,7 @@ begin
     expr^.Sym := syRINR;
 
     // 4. change next expression into temp vargen
-    CurCodes.BeginStatement(in_rec^.Pos);
+    CurCodes.BeginStatement;
     if in_rec^.Sym in [syIf, syDo] then
     begin
       for index := 0 to Length(list) - 1 do
@@ -7104,8 +6927,11 @@ begin
     // 8. parse body
     SymGotoNext;
     if FLast^.Sym = syDot2 then
-      ParseStatement else
-      ParseBlock([syEnd], true);
+    begin
+      SymGotoNext;
+      ParseStatement;
+    end
+    else ParseBlock([syEnd], true);
 
     // 9. continue
     CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
@@ -8086,7 +7912,6 @@ begin
 // --------------------------------------------
   end_switch := FModule.NewLabelName;
   CurCodes.AddGoto(end_switch, FLast^.Pos)^.Sym := syRINR;
-  CurCodes.BeginStatement(FLast^.Pos);
   FExpr.Clear;
   ParseExpr(FExpr, [syCase], false);
   CurCodes.LoadExpr(FExpr);
@@ -8800,19 +8625,11 @@ begin
   Result^.Sym := syTry;
 end;
 
-function KLiExprList.BeginStatement(Pos: KLiSymPos): PLiExprRec;
+procedure KLiExprList.BeginStatement;
 begin
   if GetCount > 0 then
-  begin
-    Result := GetLast;
-    if Result^.Sym in [syPress] then
-    begin
-      Result^.Sym := syStatement;
-      Exit;
-    end;
-    if Result^.Sym = syStatement then Exit;
-  end;
-  Result := AddNew(syStatement, @Pos);
+    if GetLast^.Sym in [syBeginSTMT, syEndSTMT] then Exit;
+  AddNew(syBeginSTMT, nil);
 end;
 
 procedure KLiExprList.Clear(Sender: TObject);
@@ -8977,7 +8794,8 @@ begin
         syModule    : H := Format('PUSH MODULE: %s', [R^.VType.Module.Name]);
         syIs        : H := 'CALC IS';
         syAs        : H := 'CALC AS';
-        syStatement : H := 'STMT';
+        syBeginSTMT : H := 'STMT';
+        syEndSTMT   : H := 'ENDS';
         syVarGen    : H := Format('VGEN [%d]', [R^.ParamCount]);
         syPushVarb  : H := Format('PUSH VARB %s', [R^.VVarb.Name]);
         syHashed    : H := Format('HASH [%d]', [R^.ParamCount]);
@@ -9007,6 +8825,23 @@ begin
   finally
     L.Free;
   end;
+end;
+
+procedure KLiExprList.EndStatement;
+var
+  expr: PLiExprRec;
+begin
+  if GetCount > 0 then
+  begin
+    expr := GetLast;
+    if expr^.Sym in [syPress, syIdle] then
+    begin
+      expr^.Sym := syEndSTMT;
+      Exit;
+    end;
+    if expr^.Sym in [syBeginSTMT, syEndSTMT] then Exit;
+  end;
+  AddNew(syEndSTMT, nil);
 end;
 
 function KLiExprList.FindLabel(const Name: string): PLiExprRec;
@@ -9770,7 +9605,7 @@ begin
           syRINR     : exec_goto;
           syLabel    : exec_label;
           syAsk      : exec_ask;
-          syStatement: stack.Clear;
+          syEndSTMT: stack.Clear;
           syGETV     : exec_push(KT_VARIANT);
           sySETV     : stack.Press;
           syClen     : exec_push(KT_INT);
@@ -10567,12 +10402,12 @@ end;
 
 function KLiVarList.PushBoolean(Value: boolean): PLseValue;
 begin
-  Result := __PutBool(Add, Value);
+  Result := lse_set_bool(Add, Value);
 end;
 
 function KLiVarList.PushChar(Value: char): PLseValue;
 begin
-  Result := __PutChar(Add, Value);
+  Result := lse_set_char(Add, Value);
 end;
 
 function KLiVarList.PushDefaultValue(AClass: KLiClass): PLseValue;
@@ -10582,22 +10417,22 @@ end;
 
 function KLiVarList.PushFloat(Value: double): PLseValue;
 begin
-  Result := __PutFloat(Add, Value);
+  Result := lse_set_float(Add, Value);
 end;
 
 function KLiVarList.PushInt64(Value: int64): PLseValue;
 begin
-  Result := __PutInt64(Add, Value);
+  Result := lse_set_int64(Add, Value);
 end;
 
 function KLiVarList.PushMoney(Value: currency): PLseValue;
 begin
-  Result := __PutMoney(Add, Value);
+  Result := lse_set_money(Add, Value);
 end;
 
 function KLiVarList.PushObject(Value: pointer; AClass: KLiClass): PLseValue;
 begin
-  Result := __PutObject(Add, @AClass.FClassRec, Value);
+  Result := lse_set_object(Add, @AClass.FClassRec, Value);
 end;
 
 function KLiVarList.AddNamed(const Name: string): PLseValue;
@@ -10623,12 +10458,12 @@ end;
 
 function KLiVarList.PushString(const Value: string): PLseValue;
 begin
-  Result := __PutString(Add, Value);
+  Result := lse_set_string(Add, Value);
 end;
 
 function KLiVarList.PushTime(Value: TDateTime): PLseValue;
 begin
-  Result := __PutTime(Add, Value);
+  Result := lse_set_time(Add, Value);
 end;
 
 function KLiVarList.PushValues(List: KLiVarList; ItemCount: integer): integer;
@@ -10743,7 +10578,7 @@ begin
       while ItemCount > 0 do
       begin
         V := GetData(Index);
-        Result.SaveName(ValueName(V), __PutValue(Result.Add, V));
+        Result.SaveName(ValueName(V), lse_set_value(Result.Add, V));
         Inc(Index);
         Dec(ItemCount);
       end;
@@ -11865,7 +11700,7 @@ constructor KLiEngine.Create(const AEngineRec: PLseEngine);
 begin
   FEngineRec := AEngineRec;
   if FEngineRec <> nil then
-    FEngineRec^.krnl_engine := Self;
+    FEngineRec^.kernel_engine := Self;
 
   IncRefcount;
 
@@ -11898,8 +11733,6 @@ begin
 
   FTempValues := __NewVarlist(Self);
   FTempValues.IncRefcount;
-
-  FInvoker := KLiInvoke.Create(Self);
 end;
 
 destructor KLiEngine.Destroy;
@@ -12039,6 +11872,13 @@ begin
   if (FileID > 0) and (FileID <= FIncludedFiles.Count) then
     Result := FIncludedFiles[FileID - 1] else
     Result := '';
+end;
+
+function KLiEngine.GetInvoker: TLseInvoke;
+begin
+  if FInvoker = nil then
+    FInvoker := TLseInvoke.Create(nil);
+  Result := FInvoker;
 end;
 
 procedure KLiEngine.SetResultTypeText(const RType, RText: string);
@@ -12819,7 +12659,7 @@ begin
       count := curry.CurryCount;
       FStack.ExpandAt(base, count);
       for index := 0 to count - 1 do
-        __PutValue(FStack[base + index], curry.CurryData[index]);
+        lse_set_value(FStack[base + index], curry.CurryData[index]);
       Inc(ParamCount, count);
       func := curry.FCurryFunc;
     end
@@ -12904,8 +12744,8 @@ begin
             { nothing }
           end;
           Result := not FExcepted;
-          if Result and (FCurrent <> nil) then
-            Return(false);
+          if Result then
+            __setClassValue(FEngine, snap.output, snap.outype);
         finally
           FCallStack.Pop;
         end;
@@ -12935,7 +12775,7 @@ begin
     snap.base := base;
     snap.next := 0;
     snap.values := KLiVarSnap.Create(func);
-    snap.output := Param^.result;
+    snap.output := lse_clear_value(Param^.result);
     snap.outype := func.FResultType;
     snap.prior := FCurrent;
     snap.exprec := FExprrec;
@@ -12949,8 +12789,8 @@ begin
           { nothing }
         end;
         Result := not FExcepted;
-        if Result and (FCurrent <> nil) then
-          Return(false);
+        if Result then
+          __setClassValue(FEngine, snap.output, snap.outype);
       finally
         FCallStack.Pop;
       end;
@@ -12989,19 +12829,6 @@ end;
 function KLiRunner.MatchPatten: PLiMatchPatten;
 begin
   Result := @FMatchPatten;
-end;
-
-procedure KLiRunner.Return(HasResult: boolean);
-begin
-  with FCurrent^ do
-  begin
-    if HasResult then
-      __SetClassValue(FEngine, lse_set_value(output, FStack.Last), outype) else
-      __SetDefaultValue(output, outype);
-    FStack.ClearTo(base);
-    next := LSE_MAX_CODES;
-  end;
-  FCurrent := nil; {<--returned}
 end;
 
 function KLiRunner.FormatFor(const Fmt: string; Values: KLiVarList): string;
@@ -13415,7 +13242,7 @@ begin
         item := KLiHashed.Create(FEngine);
         data := __NewValue;
         hash.DoPut(curr, data);
-        __SetObject(data, KT_HASHED, item);
+        lse_set_object(data, KR_HASHED, item);
         hash := item;
       end
       else
@@ -13425,14 +13252,14 @@ begin
         if item = nil then
         begin
           item := KLiHashed.Create(FEngine);
-          __SetObject(data, KT_HASHED, item);
+          lse_set_object(data, KR_HASHED, item);
         end;
         hash := item;
       end
       else
       begin
         item := KLiHashed.Create(FEngine);
-        __SetObject(data, KT_HASHED, item);
+        lse_set_object(data, KR_HASHED, item);
         hash := item;
       end;
       Inc(next);
@@ -13476,7 +13303,7 @@ function KLiHashed.SetStrByChain(const Key, Value: string): PLseValue;
 begin
   Result := ForceValueByChain(Key);
   if Result <> nil then
-    __PutString(Result, Value);
+    lse_set_string(Result, Value);
 end;
 
 function KLiHashed.SetValue(const Key: string; Value: PLseValue): PLseValue;
@@ -13677,230 +13504,6 @@ begin
   Inc(FModuleCount);
 end;
 
-{ KLiInvoke }
-
-function KLiInvoke.FormatStr(const Str: string): string;
-begin
-  Result := __AsRunner(Param).FormatFor(Str, nil);
-end;
-
-procedure KLiInvoke.ReturnBool(const Value: boolean);
-begin
-  SetNil(FParam^.result);
-  __PutBool(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnChar(const Value: char);
-begin
-  SetNil(FParam^.result);
-  __PutChar(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnError(const ID: string; Errno: integer; const Msg: string);
-begin
-  __SetError(FParam, ID, Errno, Msg);
-end;
-
-function KLiInvoke.Read(const Buf: pchar; Count: integer): integer;
-begin
-  Result := lse_stream_read(FEngine.StdinStream, Buf, Count);
-end;
-
-function KLiInvoke.Readln: string;
-var
-  sr: PLseString;
-begin
-  sr := lse_stream_readln(FEngine.StdinStream);
-  lse_strec_inclife(sr);
-  Result := lse_strec_string(sr);
-  lse_strec_declife(sr);
-end;
-
-procedure KLiInvoke.ReturnFloat(const Value: double);
-begin
-  SetNil(FParam^.result);
-  __PutFloat(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnInt64(const Value: int64);
-begin
-  SetNil(FParam^.result);
-  __PutInt64(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnMoney(const Value: currency);
-begin
-  SetNil(FParam^.result);
-  __PutMoney(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnObject(const Value: pointer; AClass: KLiClass);
-begin
-  SetNil(FParam^.result);
-  __PutObject(FParam^.result, AClass.ClassRec, Value);
-end;
-
-procedure KLiInvoke.ReturnObj(const Value: pointer; AClass: PLseClassRec);
-begin
-  SetNil(FParam^.result);
-  __PutObject(FParam^.result, AClass, Value);
-end;
-
-procedure KLiInvoke.ReturnStr(const Value: string);
-begin
-  SetNil(FParam^.result);
-  __PutString(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnStream(const Value: TStream);
-begin
-  SetNil(FParam^.result);
-  ReturnStream(lse_wrap_stream(Value, true));
-end;
-
-procedure KLiInvoke.ReturnStream(const Value: PLseStream);
-begin
-  SetNil(FParam^.result);
-  __PutObject(Param^.result, KR_STREAM, Value);
-end;
-
-procedure KLiInvoke.ReturnStrlist(const Value: KLiStrList);
-begin
-  SetNil(FParam^.result);
-  __PutObject(Param^.result, KR_STRLIST, Value);
-end;
-
-procedure KLiInvoke.ReturnTime(const Value: TDateTime);
-begin
-  SetNil(FParam^.result);
-  __PutTime(FParam^.result, Value);
-end;
-
-procedure KLiInvoke.ReturnInt(const Value: integer);
-begin
-  SetNil(FParam^.result);
-  __PutInt64(FParam^.result, Value);
-end;
-
-function KLiInvoke.GetThis(var This): boolean;
-var
-  lobj: pointer;
-begin
-  lobj := ParamObject(0);
-  Result := (lobj <> nil);
-  if Result then
-    pointer(This) := lobj else
-    __SetError(FParam, 'this was not supplied');
-end;
-
-procedure KLiInvoke.SetNil(Value: PLseValue);
-var
-  cr: PLseClassRec;
-begin
-  cr := Value^.value_class;
-  if cr <> nil then
-    if cr^.vtype = LSV_STRING then
-      lse_strec_declife(Value^.VString) else
-    if cr^.vtype = LSV_OBJECT then
-      cr^.decRefcount(Value^.VObject);
-end;
-
-constructor KLiInvoke.Create(const AEngine: KLiEngine);
-begin
-  FEngine := AEngine;
-  FParam := nil;
-end;
-
-function KLiInvoke.ParamBool(Index: integer): boolean;
-begin
-  Result := FParam^.param[Index]^.VBool;
-end;
-
-function KLiInvoke.ParamChar(Index: integer): char;
-begin
-  Result := FParam^.param[Index]^.VChar;
-end;
-
-function KLiInvoke.ParamClass(Index: integer): KLiClass;
-begin
-  Result:= KLiClass(ParamClassRec(Index)^.lysee_class);
-end;
-
-function KLiInvoke.ParamClassRec(Index: integer): PLseClassRec;
-begin
-  Result:= FParam^.param[Index]^.value_class;
-  if Result = nil then Result := KR_VOID;
-end;
-
-function KLiInvoke.ParamCount: integer;
-begin
-  Result := FParam^.count;
-end;
-
-function KLiInvoke.ParamFloat(Index: integer): double;
-begin
-  Result := FParam^.param[Index]^.VFloat;
-end;
-
-function KLiInvoke.ParamFmt(Index: integer): string;
-begin
-  Result := FormatStr(ParamStr(Index));
-end;
-
-function KLiInvoke.ParamInt(Index: integer): integer;
-begin
-  Result := FParam^.param[Index]^.VInteger;
-end;
-
-function KLiInvoke.ParamInt64(Index: integer): int64;
-begin
-  Result := FParam^.param[Index]^.VInteger;
-end;
-
-function KLiInvoke.ParamMoney(Index: integer): currency;
-begin
-  Result := FParam^.param[Index]^.VMoney;
-end;
-
-function KLiInvoke.ParamObject(Index: integer): pointer;
-begin
-  Result := FParam^.param[Index]^.VObject;
-end;
-
-function KLiInvoke.ParamStr(Index: integer): string;
-begin
-  Result := lse_strec_string(FParam^.param[Index]^.VString);
-end;
-
-function KLiInvoke.ParamCStr(Index: integer; var Size: integer): pchar;
-var
-  sr: PLseString;
-begin
-  sr := FParam^.param[Index]^.VString;
-  Result := lse_strec_data(sr);
-  Size := lse_strec_length(sr);
-end;
-
-function KLiInvoke.ParamStrec(Index: integer): PLseString;
-begin
-  Result := FParam^.param[Index]^.VString;
-end;
-
-function KLiInvoke.ParamStream(Index: integer): PLseStream;
-begin
-  Result := PLseStream(FParam^.param[Index]^.VObject);
-end;
-
-function KLiInvoke.ParamTime(Index: integer): TDateTime;
-begin
-  Result := FParam^.param[Index]^.VTime;
-end;
-
-procedure KLiInvoke.Print(const Str: string);
-begin
-  lse_stream_write(FEngine.StdoutStream, Str);
-end;
-
 ////////////////////////////////////////////////////////////////////////////////
 
 var
@@ -13980,7 +13583,8 @@ begin
       sys_runner_procs[syModule]   := @__runner_module;
       sys_runner_procs[syIs]       := @__runner_is;
       sys_runner_procs[syAs]       := @__runner_as;
-      sys_runner_procs[syStatement]:= @__runner_statement;
+      sys_runner_procs[syBeginSTMT]:= @__runner_begin_statement;
+      sys_runner_procs[syEndSTMT]  := @__runner_end_statement;
       sys_runner_procs[syVarGen]   := @__runner_vargen;
       sys_runner_procs[syPushVarb] := @__runner_pushvarb;
       sys_runner_procs[syAsk]      := @__runner_ask;
