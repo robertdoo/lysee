@@ -2,7 +2,7 @@
 {        UNIT: lse_module_editor                                               }
 { DESCRIPTION: lysee module editor for lazarus                                 }
 {     CREATED: 2010/09/23                                                      }
-{    MODIFIED: 2010/10/02                                                      }
+{    MODIFIED: 2010/10/17                                                      }
 {==============================================================================}
 { Copyright (c) 2010, Li Yun Jie                                               }
 { All rights reserved.                                                         }
@@ -48,14 +48,14 @@ interface
 uses
   Classes, SysUtils, LResources, LCLProc, Forms, Controls, Dialogs,
   ExtCtrls, Buttons, ComponentEditors, PropEdits, LCLIntf,
-  LCLType, Graphics, ComCtrls, ButtonPanel, lse_components;
+  LCLType, Graphics, ComCtrls, ButtonPanel, lseu;
 
 type
-  TLyseeModuleComponentEditor = class;
+  TLseModuleComponentEditor = class;
   
-  { TLyseeModuleEditor }
+  { TLseModuleEditor }
 
-  TLyseeModuleEditor = class(TForm)
+  TLseModuleEditor = class(TForm)
     ImageList1: TImageList;
     pnForm: TPanel;
     barStatus: TStatusBar;
@@ -74,9 +74,9 @@ type
     procedure trModuleChange(Sender: TObject; Node: TTreeNode);
     procedure trModuleDblClick(Sender: TObject);
   private
-    FLyseeModule: TLyseeModule;
+    FModule: TLseModule;
     FDesigner: TComponentEditorDesigner;
-    FComponentEditor: TLyseeModuleComponentEditor;
+    FComponentEditor: TLseModuleComponentEditor;
     FRemoving: integer;
   protected
     procedure OnComponentRenamed(AComponent: TComponent);
@@ -86,24 +86,24 @@ type
     procedure SetButtons;
     function MakeLabel(AComponent: TComponent): string;
     function SelectedNode: TTreeNode;
-    function SelectedComponent: TLyseeComponent;
+    function SelectedComponent: TLseComponent;
     function FindNode(APersistent: TPersistent): TTreeNode;
-    function SetupClassNode(AClass: TLyseeClass): TTreeNode;
-    procedure SetLyseeModule(ALyseeModule: TLyseeModule);
+    function SetupClassNode(AClass: TLseClass): TTreeNode;
+    procedure SetLyseeModule(ALyseeModule: TLseModule);
     procedure SetDesigner(ADesigner: TComponentEditorDesigner);
-    procedure SetComponentEditor(AComponentEditor: TLyseeModuleComponentEditor);
+    procedure SetComponentEditor(AComponentEditor: TLseModuleComponentEditor);
     procedure SetupTree;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
 
-  { TLyseeModuleComponentEditor }
+  { TLseModuleComponentEditor }
 
-  TLyseeModuleComponentEditor = class(TComponentEditor)
+  TLseModuleComponentEditor = class(TComponentEditor)
   private
     FDesigner: TComponentEditorDesigner;
-    FEditor: TLyseeModuleEditor;
+    FEditor: TLseModuleEditor;
   public
     constructor Create(AComponent: TComponent;
       ADesigner: TComponentEditorDesigner);override;
@@ -116,13 +116,13 @@ type
 
 implementation
 
-{ TLyseeModuleEditor }
+{ TLseModuleEditor }
 
-procedure TLyseeModuleEditor.OnComponentRenamed(AComponent: TComponent);
+procedure TLseModuleEditor.OnComponentRenamed(AComponent: TComponent);
 var
   node: TTreeNode;
 begin
-  if AComponent is TLyseeComponent then
+  if AComponent is TLseComponent then
   begin
     node := FindNode(AComponent);
     if node <> nil then
@@ -130,7 +130,7 @@ begin
   end;
 end;
 
-procedure TLyseeModuleEditor.OnComponentSelection(const OnSetSelection: TPersistentSelectionList);
+procedure TLseModuleEditor.OnComponentSelection(const OnSetSelection: TPersistentSelectionList);
 begin
   if (OnSetSelection <> nil) and (OnSetSelection.Count > 0) then
   begin
@@ -139,11 +139,11 @@ begin
   end;
 end;
 
-procedure TLyseeModuleEditor.OnPersistentDeleting(APersistent: TPersistent);
+procedure TLseModuleEditor.OnPersistentDeleting(APersistent: TPersistent);
 var
   node: TTreeNode;
 begin
-  if (FRemoving = 0) and (APersistent is TLyseeComponent) then
+  if (FRemoving = 0) and (APersistent is TLseComponent) then
   begin
     node := FindNode(APersistent);
     if node <> nil then
@@ -159,9 +159,9 @@ begin
   end;
 end;
 
-procedure TLyseeModuleEditor.SetButtons;
+procedure TLseModuleEditor.SetButtons;
 var
-  curr: TLyseeComponent;
+  curr: TLseComponent;
 begin
   curr := SelectedComponent;
   if curr = nil then
@@ -173,12 +173,12 @@ begin
   begin
     if curr.ComponentType = lsoFunction then
       barStatus.Panels[0].Text := 'function' else
-      barStatus.Panels[0].Text := LowerCase(Copy(curr.ClassName, 7, 100));
+      barStatus.Panels[0].Text := LowerCase(Copy(curr.ClassName, 5, 100));
     case curr.ComponentType of
-      lsoModule  : barStatus.Panels[1].Text := TLyseeModule(curr).Name;
-      lsoFunction: barStatus.Panels[1].Text := TLyseeFunc(curr).Prototype;
-      lsoClass   : barStatus.Panels[1].Text := TLyseeClass(curr).Name;
-      lsoMethod  : barStatus.Panels[1].Text := TLyseeMethod(curr).Prototype;
+      lsoModule  : barStatus.Panels[1].Text := TLseModule(curr).Name;
+      lsoFunction: barStatus.Panels[1].Text := TLseFunc(curr).Prototype;
+      lsoClass   : barStatus.Panels[1].Text := TLseClass(curr).Name;
+      lsoMethod  : barStatus.Panels[1].Text := TLseMethod(curr).Prototype;
       else         barStatus.Panels[1].Text := '';
     end;
     if curr.ComponentType in [lsoModule, lsoFunction] then
@@ -187,34 +187,34 @@ begin
   end;
   btnAddClass.Enabled := true;
   btnAddProc.Enabled := (curr <> nil);
-  btnRemove.Enabled := (curr <> nil) and not (curr is TLyseeModule);
+  btnRemove.Enabled := (curr <> nil) and not (curr is TLseModule);
 end;
 
-function TLyseeModuleEditor.MakeLabel(AComponent: TComponent): string;
+function TLseModuleEditor.MakeLabel(AComponent: TComponent): string;
 begin
   Result := AComponent.Name;
 end;
 
-function TLyseeModuleEditor.SelectedNode: TTreeNode;
+function TLseModuleEditor.SelectedNode: TTreeNode;
 begin
   Result := trModule.Selected;
 end;
 
-function TLyseeModuleEditor.SelectedComponent: TLyseeComponent;
+function TLseModuleEditor.SelectedComponent: TLseComponent;
 var
   node: TTreeNode;
 begin
   node := SelectedNode;
   if node <> nil then
   begin
-    Result := TLyseeComponent(node.Data);
-    if (Result = FLyseeModule) or FLyseeModule.Exists(Result) then Exit;
+    Result := TLseComponent(node.Data);
+    if (Result = FModule) or FModule.Exists(Result) then Exit;
     SetupTree;
   end;
   Result := nil;
 end;
 
-function TLyseeModuleEditor.FindNode(APersistent: TPersistent): TTreeNode;
+function TLseModuleEditor.FindNode(APersistent: TPersistent): TTreeNode;
 var
   index: integer;
 begin
@@ -226,39 +226,39 @@ begin
   Result := nil;
 end;
 
-function TLyseeModuleEditor.SetupClassNode(AClass: TLyseeClass): TTreeNode;
+function TLseModuleEditor.SetupClassNode(AClass: TLseClass): TTreeNode;
 begin
   Result := trModule.Items.AddObject(nil, MakeLabel(AClass), AClass);
   Result.ImageIndex := 1;
   Result.SelectedIndex := 1;
 end;
 
-procedure TLyseeModuleEditor.SelectOnly(AComponent: TComponent);
+procedure TLseModuleEditor.SelectOnly(AComponent: TComponent);
 begin
   if AComponent <> nil then
     FDesigner.SelectOnlyThisComponent(AComponent);
 end;
 
-procedure TLyseeModuleEditor.btnAddProcClick(Sender: TObject);
+procedure TLseModuleEditor.btnAddProcClick(Sender: TObject);
 var
-  curr: TLyseeComponent;
+  curr: TLseComponent;
   node: TTreeNode;
-  func: TLyseeFunc;
-  clss: TLyseeClass;
-  meth: TLyseeMethod;
+  func: TLseFunc;
+  clss: TLseClass;
+  meth: TLseMethod;
 begin
   node := SelectedNode;
   if node <> nil then
   begin
     if node.Level > 0 then node := node.Parent;
-    curr := TLyseeComponent(node.Data);
+    curr := TLseComponent(node.Data);
     trModule.OnChange := nil;
     try
-      if curr = FLyseeModule then
+      if curr = FModule then
       begin
-        func := TLyseeFunc.Create(FLyseeModule.Owner);
+        func := TLseFunc.Create(FModule.Owner);
         func.Name := FDesigner.CreateUniqueComponentName(func.ClassName);
-        func.Module := FLyseeModule;
+        func.Module := FModule;
         FDesigner.PropertyEditorHook.PersistentAdded(func, true);
         FDesigner.Modified;
         node := trModule.Items.AddChildObject(node, MakeLabel(func), func);
@@ -269,8 +269,8 @@ begin
       else
       if curr.ComponentType = lsoClass then
       begin
-        clss := TLyseeClass(curr);
-        meth := TLyseeMethod.Create(FLyseeModule.Owner);
+        clss := TLseClass(curr);
+        meth := TLseMethod.Create(FModule.Owner);
         meth.Name := FDesigner.CreateUniqueComponentName(meth.ClassName);
         meth.LyseeClass := clss;
         FDesigner.PropertyEditorHook.PersistentAdded(meth, true);
@@ -287,13 +287,13 @@ begin
   end;
 end;
 
-procedure TLyseeModuleEditor.btnAddClassClick(Sender: TObject);
+procedure TLseModuleEditor.btnAddClassClick(Sender: TObject);
 var
-  clss: TLyseeClass;
+  clss: TLseClass;
 begin
-  clss := TLyseeClass.Create(FLyseeModule.Owner);
+  clss := TLseClass.Create(FModule.Owner);
   clss.Name := FDesigner.CreateUniqueComponentName(clss.ClassName);
-  clss.Module := FLyseeModule;
+  clss.Module := FModule;
   FDesigner.PropertyEditorHook.PersistentAdded(clss, true);
   FDesigner.Modified;
   trModule.OnChange := nil;
@@ -304,16 +304,16 @@ begin
   end;
 end;
 
-procedure TLyseeModuleEditor.btnRemoveClick(Sender: TObject);
+procedure TLseModuleEditor.btnRemoveClick(Sender: TObject);
 var
-  curr: TLyseeComponent;
+  curr: TLseComponent;
   node: TTreeNode;
 begin
   node := SelectedNode;
   if node <> nil then
   begin
-    curr := TLyseeComponent(node.Data);
-    if curr <> FLyseeModule then
+    curr := TLseComponent(node.Data);
+    if curr <> FModule then
     begin
       Inc(FRemoving);
       trModule.OnChange := nil;
@@ -338,29 +338,29 @@ begin
   end;
 end;
 
-procedure TLyseeModuleEditor.FormKeyPress(Sender: TObject; var Key: char);
+procedure TLseModuleEditor.FormKeyPress(Sender: TObject; var Key: char);
 begin
   if Ord(Key) = VK_ESCAPE then Self.Close;
 end;
 
-procedure TLyseeModuleEditor.LyseeClassEditorClose(Sender: TObject;
+procedure TLseModuleEditor.LyseeClassEditorClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
   CloseAction := caFree;
   FComponentEditor.FEditor := nil;
 end;
 
-procedure TLyseeModuleEditor.trModuleChange(Sender: TObject; Node: TTreeNode);
+procedure TLseModuleEditor.trModuleChange(Sender: TObject; Node: TTreeNode);
 begin
   SelectOnly(SelectedComponent);
   SetButtons;
 end;
 
-procedure TLyseeModuleEditor.trModuleDblClick(Sender: TObject);
+procedure TLseModuleEditor.trModuleDblClick(Sender: TObject);
 var
   P: TPoint;
   H: THitTests;
-  curr: TLyseeComponent;
+  curr: TLseComponent;
 begin
   P := trModule.ScreenToClient(Mouse.CursorPos);
   H := trModule.GetHitTestInfoAt(P.x, P.y);
@@ -372,7 +372,7 @@ begin
   end;
 end;
 
-constructor TLyseeModuleEditor.Create(AOwner: TComponent);
+constructor TLseModuleEditor.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   if Assigned(GlobalDesignHook) then
@@ -381,62 +381,62 @@ begin
     GlobalDesignHook.AddHandlerSetSelection(@OnComponentSelection);
     GlobalDesignHook.AddHandlerPersistentDeleting(@OnPersistentDeleting);
   end;
-  FLyseeModule := nil;
+  FModule := nil;
   SetButtons;
 end;
 
-destructor TLyseeModuleEditor.Destroy;
+destructor TLseModuleEditor.Destroy;
 begin
   if Assigned(GlobalDesignHook) then
     GlobalDesignHook.RemoveAllHandlersForObject(Self);
   inherited Destroy;
 end;
 
-procedure TLyseeModuleEditor.SetLyseeModule(ALyseeModule: TLyseeModule);
+procedure TLseModuleEditor.SetLyseeModule(ALyseeModule: TLseModule);
 begin
-  FLyseeModule := ALyseeModule;
+  FModule := ALyseeModule;
   SetupTree;
   SetButtons;
-  trModule.Selected := FindNode(FLyseeModule);
+  trModule.Selected := FindNode(FModule);
 end;
 
-procedure TLyseeModuleEditor.SetDesigner(ADesigner: TComponentEditorDesigner);
+procedure TLseModuleEditor.SetDesigner(ADesigner: TComponentEditorDesigner);
 begin
   FDesigner := ADesigner;
 end;
 
-procedure TLyseeModuleEditor.SetComponentEditor(AComponentEditor: TLyseeModuleComponentEditor);
+procedure TLseModuleEditor.SetComponentEditor(AComponentEditor: TLseModuleComponentEditor);
 begin
   FComponentEditor := AComponentEditor;
 end;
 
-procedure TLyseeModuleEditor.SetupTree;
+procedure TLseModuleEditor.SetupTree;
 var
   root, node: TTreeNode;
-  func: TLyseeFunc;
-  clss: TLyseeClass;
-  meth: TLyseeMethod;
+  func: TLseFunc;
+  clss: TLseClass;
+  meth: TLseMethod;
   X, I: integer;
 begin
   trModule.OnChange := nil;
   trModule.Items.BeginUpdate;
   try
     trModule.Items.Clear;
-    root := trModule.Items.AddObject(nil, MakeLabel(FLyseeModule), FLyseeModule);
+    root := trModule.Items.AddObject(nil, MakeLabel(FModule), FModule);
     root.ImageIndex := 0;
     root.SelectedIndex := 0;
 
-    for X := 0 to FLyseeModule.FuncCount - 1 do
+    for X := 0 to FModule.FuncCount - 1 do
     begin
-      func := FLyseeModule.Funcs[X];
+      func := FModule.Funcs[X];
       node := trModule.Items.AddChildObject(root, MakeLabel(func), func);
       node.ImageIndex := 2;
       node.SelectedIndex := 2;
     end;
 
-    for I := 0 to FLyseeModule.ClassCount - 1 do
+    for I := 0 to FModule.ClassCount - 1 do
     begin
-      clss := FLyseeModule.Classes[I];
+      clss := FModule.Classes[I];
       root := SetupClassNode(clss);
       for X := 0 to clss.MethodCount - 1 do
       begin
@@ -452,9 +452,9 @@ begin
   end;
 end;
 
-{ TLyseeModuleComponentEditor }
+{ TLseModuleComponentEditor }
 
-constructor TLyseeModuleComponentEditor.Create(AComponent: TComponent;
+constructor TLseModuleComponentEditor.Create(AComponent: TComponent;
   ADesigner: TComponentEditorDesigner);
 begin
   inherited Create(AComponent, ADesigner);
@@ -462,40 +462,40 @@ begin
   FEditor := nil;
 end;
 
-destructor TLyseeModuleComponentEditor.Destroy;
+destructor TLseModuleComponentEditor.Destroy;
 begin
   FreeThenNil(FEditor);
   inherited Destroy;
 end;
 
-procedure TLyseeModuleComponentEditor.Edit;
+procedure TLseModuleComponentEditor.Edit;
 var
-  LyseeModule: TLyseeModule;
+  Module: TLseModule;
 begin
-  LyseeModule := GetComponent as TLyseeModule;
-  if LyseeModule = nil then
-    raise Exception.Create('TLyseeModuleComponentEditor.Edit LyseeModule = nil');
+  Module := GetComponent as TLseModule;
+  if Module = nil then
+    raise Exception.Create('TLseModuleComponentEditor.Edit Module = nil');
   if FEditor = nil then
-    FEditor := TLyseeModuleEditor.Create(Application) else
+    FEditor := TLseModuleEditor.Create(Application) else
   if FEditor.trModule.Items.Count > 0 then
     FEditor.trModule.Selected := nil;
   FEditor.SetComponentEditor(Self);
   FEditor.SetDesigner(FDesigner);
-  FEditor.SetLyseeModule(LyseeModule);
+  FEditor.SetLyseeModule(Module);
   FEditor.ShowOnTop;
 end;
 
-function TLyseeModuleComponentEditor.GetVerbCount: Integer;
+function TLseModuleComponentEditor.GetVerbCount: Integer;
 begin
   Result := 1;
 end;
 
-function TLyseeModuleComponentEditor.GetVerb(Index: Integer): string;
+function TLseModuleComponentEditor.GetVerb(Index: Integer): string;
 begin
   Result := 'Edit module ...';
 end;
 
-procedure TLyseeModuleComponentEditor.ExecuteVerb(Index: Integer);
+procedure TLseModuleComponentEditor.ExecuteVerb(Index: Integer);
 begin
   Edit;
 end;
@@ -503,7 +503,7 @@ end;
 
 initialization
   {$I lse_module_editor.lrs}
-  RegisterComponentEditor(TLyseeModule, TLyseeModuleComponentEditor);
+  RegisterComponentEditor(TLseModule, TLseModuleComponentEditor);
 
 end.
 

@@ -11,74 +11,35 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
+        <CustomOptions Value="-dLYSEE_LAZ"/>
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
     <Description Value="lysee components for lazarus"/>
     <License Value="under modified BSD license"/>
     <Version Minor="2" Release="1"/>
-    <Files Count="15">
+    <Files Count="5">
       <Item1>
-        <Filename Value="lse_api.pas"/>
-        <UnitName Value="lse_api"/>
+        <Filename Value="lseu.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="lseu"/>
       </Item1>
       <Item2>
-        <Filename Value="lse_cgi.pas"/>
-        <UnitName Value="lse_cgi"/>
-      </Item2>
-      <Item3>
-        <Filename Value="lseu.pas"/>
-        <UnitName Value="lseu"/>
-      </Item3>
-      <Item4>
-        <Filename Value="lse_syncobj.pas"/>
-        <UnitName Value="lse_syncobj"/>
-      </Item4>
-      <Item5>
-        <Filename Value="lse_symbol.pas"/>
-        <UnitName Value="lse_symbol"/>
-      </Item5>
-      <Item6>
-        <Filename Value="lse_components.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="lse_components"/>
-      </Item6>
-      <Item7>
-        <Filename Value="lse_components.lrs"/>
-        <Type Value="LRS"/>
-      </Item7>
-      <Item8>
-        <Filename Value="lse_export.pas"/>
-        <UnitName Value="lse_export"/>
-      </Item8>
-      <Item9>
-        <Filename Value="lse_funcs.pas"/>
-        <UnitName Value="lse_funcs"/>
-      </Item9>
-      <Item10>
-        <Filename Value="lse_kernel.pas"/>
-        <UnitName Value="lse_kernel"/>
-      </Item10>
-      <Item11>
         <Filename Value="lse_module_editor.pas"/>
         <UnitName Value="lse_module_editor"/>
-      </Item11>
-      <Item12>
+      </Item2>
+      <Item3>
         <Filename Value="lse_module_editor.lfm"/>
         <Type Value="LFM"/>
-      </Item12>
-      <Item13>
+      </Item3>
+      <Item4>
         <Filename Value="lse_module_editor.lrs"/>
         <Type Value="LRS"/>
-      </Item13>
-      <Item14>
-        <Filename Value="lse_patten.pas"/>
-        <UnitName Value="lse_patten"/>
-      </Item14>
-      <Item15>
-        <Filename Value="lse_spawn.pas"/>
-        <UnitName Value="lse_spawn"/>
-      </Item15>
+      </Item4>
+      <Item5>
+        <Filename Value="lseu.lrs"/>
+        <Type Value="LRS"/>
+      </Item5>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">

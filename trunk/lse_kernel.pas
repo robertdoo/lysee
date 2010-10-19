@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/10/16                                                      }
+{    MODIFIED: 2010/10/19                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -202,7 +202,7 @@ type
     { tail if }
     procedure BeginTailIf(var end_if_label: string; EndSym: KLiSymbol);
     procedure EndTailIf(const end_if_label: string);
-    procedure TailIf(ExprList: TList);
+    procedure TailIf(ExprList: TList; SaveResult: boolean);
   public
     constructor Create(AModule: KLiModule);
     destructor Destroy;override;
@@ -284,6 +284,7 @@ type
     FCodes: KLiExprList;   {<--instruction buffer}
     FProc: pointer;        {<--call back function}
     FComponent: TComponent;{<--lazarus or delphi component}
+    FBindData: pointer;    {<--binding data}
     function HasState(Index: KLiFuncState): boolean;
     procedure SetState(Index: KLiFuncState; Value: boolean);
   public
@@ -325,6 +326,7 @@ type
     property Proc: pointer read FProc write FProc;
     property OwnerClass: KLiClass read FOwnerClass;
     property Codes: KLiExprList read FCodes;
+    property BindData: pointer read FBindData write FBindData;
     property Component: TComponent read FComponent write FComponent;
   end;
 
@@ -359,7 +361,7 @@ type
     procedure LoadExpr(List: TList; Start: integer = 0);
     procedure DumpCode(List: TStrings; const Margin: string);
     procedure BeginStatement;
-    procedure EndStatement;
+    procedure SaveResult;
     function IsEmpty: boolean;
     { locals }
     function AddLocal(const Name: string; varType: KLiClass): KLiVarb;
@@ -756,7 +758,8 @@ type
 
     { events }
 
-    procedure EventNotify(ID: integer);virtual;
+    procedure BeginExecute;virtual;
+    procedure EndExecute;virtual;
 
     { tryings }
 
@@ -1566,8 +1569,8 @@ procedure __runner_puts(Sender: KLiRunner);
 procedure __runner_module(Sender: KLiRunner);
 procedure __runner_is(Sender: KLiRunner);
 procedure __runner_as(Sender: KLiRunner);
-procedure __runner_begin_statement(Sender: KLiRunner);
-procedure __runner_end_statement(Sender: KLiRunner);
+procedure __runner_statement(Sender: KLiRunner);
+procedure __runner_save_result(Sender: KLiRunner);
 procedure __runner_vargen(Sender: KLiRunner);
 procedure __runner_pushvarb(Sender: KLiRunner);
 procedure __runner_ask(Sender: KLiRunner);
@@ -5125,10 +5128,10 @@ begin
     sys_module := KLiModule.Create('sys', nil, moyKernel);
     cgi_module := KLiModule.Create('cgi', nil, moyKernel);
 
-    lse_fill_class(@class_rec, LSV_VOID);
+    lse_class_fill(@class_rec, LSV_VOID);
     KT_VOID := classup(sys_module, kcVoid, KR_VOID);
 
-    lse_fill_class(@class_rec, LSV_STRING);
+    lse_class_fill(@class_rec, LSV_STRING);
     class_rec.incRefcount := @lse_strec_addref;
     class_rec.decRefcount := @lse_strec_release;
     class_rec.toVargen := @cvgr_string;
@@ -5136,34 +5139,34 @@ begin
     class_rec.funcs.entry :=@string_func_array;
     KT_STRING := classup(sys_module, kcString, KR_STRING);
 
-    lse_fill_class(@class_rec, LSV_INT);
+    lse_class_fill(@class_rec, LSV_INT);
     class_rec.funcs.count := int_func_count;
     class_rec.funcs.entry :=@int_func_array;
     KT_INT := classup(sys_module, kcInteger, KR_INT);
 
-    lse_fill_class(@class_rec, LSV_FLOAT);
+    lse_class_fill(@class_rec, LSV_FLOAT);
     KT_FLOAT := classup(sys_module, kcFloat, KR_FLOAT);
 
-    lse_fill_class(@class_rec, LSV_MONEY);
+    lse_class_fill(@class_rec, LSV_MONEY);
     KT_MONEY := classup(sys_module, kcMoney, KR_MONEY);
 
-    lse_fill_class(@class_rec, LSV_TIME);
+    lse_class_fill(@class_rec, LSV_TIME);
     class_rec.funcs.count := time_func_count;
     class_rec.funcs.entry :=@time_func_array;
     KT_TIME := classup(sys_module, kcTime, KR_TIME);
 
-    lse_fill_class(@class_rec, LSV_BOOL);
+    lse_class_fill(@class_rec, LSV_BOOL);
     KT_BOOL := classup(sys_module, kcBool, KR_BOOL);
 
-    lse_fill_class(@class_rec, LSV_CHAR);
+    lse_class_fill(@class_rec, LSV_CHAR);
     class_rec.funcs.count := char_func_count;
     class_rec.funcs.entry :=@char_func_array;
     KT_CHAR := classup(sys_module, kcChar, KR_CHAR);
 
-    lse_fill_class(@class_rec, LSV_VARIANT);
+    lse_class_fill(@class_rec, LSV_VARIANT);
     KT_VARIANT := classup(sys_module, kcVariant, KR_VARIANT);
 
-    lse_fill_class(@class_rec, KTN_VARLIST, KTD_VARLIST, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_VARLIST, KTD_VARLIST, LSV_OBJECT);
     class_rec.toString := @otos_varlist;
     class_rec.stringTo := @stoo_varlist;
     class_rec.toVargen := @cvgr_varlist;
@@ -5172,7 +5175,7 @@ begin
     class_rec.funcs.entry :=@varlist_func_array;
     KT_VARLIST := classup(sys_module, kcVarlist, KR_VARLIST);
 
-    lse_fill_class(@class_rec, KTN_STRLIST, KTD_STRLIST, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_STRLIST, KTD_STRLIST, LSV_OBJECT);
     class_rec.incRefcount := @LsIncRefcount;
     class_rec.decRefcount := @LsDecRefcount;
     class_rec.toString := @otos_strlist;
@@ -5184,21 +5187,21 @@ begin
     class_rec.funcs.entry :=@strlist_func_array;
     KT_STRLIST := classup(sys_module, kcStrlist, KR_STRLIST);
 
-    lse_fill_class(@class_rec, KTN_TYPE, KTD_TYPE, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_TYPE, KTD_TYPE, LSV_OBJECT);
     class_rec.toString := @otos_type;
     class_rec.stringTo := @stoo_type;
     class_rec.funcs.count := type_func_count;
     class_rec.funcs.entry :=@type_func_array;
     KT_CLASS := classup(sys_module, kcClass, KR_CLASS);
 
-    lse_fill_class(@class_rec, KTN_MODULE, KTD_MODULE, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_MODULE, KTD_MODULE, LSV_OBJECT);
     class_rec.toString := @otos_module;
     class_rec.stringTo := @stoo_module;
     class_rec.funcs.count := module_func_count;
     class_rec.funcs.entry :=@module_func_array;
     KT_MODULE := classup(sys_module, kcModule, KR_MODULE);
 
-    lse_fill_class(@class_rec, KTN_FUNC, KTD_FUNC, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_FUNC, KTD_FUNC, LSV_OBJECT);
     class_rec.toString := @otos_function;
     class_rec.toVargen := @cvgr_func;
     class_rec.addItem := @addi_function;
@@ -5206,20 +5209,20 @@ begin
     class_rec.funcs.entry :=@func_func_array;
     KT_FUNC := classup(sys_module, kcFunc, KR_FUNC);
 
-    lse_fill_class(@class_rec, KTN_VARIABLE, KTD_VARIABLE, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_VARIABLE, KTD_VARIABLE, LSV_OBJECT);
     class_rec.toString := @otos_variable;
     class_rec.stringTo := @stoo_variable;
     class_rec.funcs.count := varb_func_count;
     class_rec.funcs.entry :=@varb_func_array;
     KT_VARIABLE := classup(sys_module, kcVariable, KR_VARIABLE);
 
-    lse_fill_class(@class_rec, KTN_ERROR, KTD_ERROR, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_ERROR, KTD_ERROR, LSV_OBJECT);
     class_rec.toString := @otos_error;
     class_rec.funcs.count := error_func_count;
     class_rec.funcs.entry :=@error_func_array;
     KT_ERROR := classup(sys_module, kcError, KR_ERROR);
 
-    lse_fill_class(@class_rec, KTN_STREAM, KTD_STREAM, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_STREAM, KTD_STREAM, LSV_OBJECT);
     class_rec.incRefcount := @lse_stream_addref;
     class_rec.decRefcount := @lse_stream_release;
     class_rec.toVargen := @cvgr_stream;
@@ -5229,14 +5232,14 @@ begin
     class_rec.funcs.entry :=@stream_func_array;
     KT_STREAM := classup(sys_module, kcStream, KR_STREAM);
 
-    lse_fill_class(@class_rec, KTN_DB, KTD_DB, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_DB, KTD_DB, LSV_OBJECT);
     class_rec.funcs.count := db_execute_count;
     class_rec.funcs.entry :=@db_execute_array;
     class_rec.incRefcount :=@lse_db_addref;
     class_rec.decRefcount :=@lse_db_release;
     KT_DB := classup(sys_module, kcDB, KR_DB);
 
-    lse_fill_class(@class_rec, KTN_DS, KTD_DS, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_DS, KTD_DS, LSV_OBJECT);
     class_rec.funcs.count := ds_execute_count;
     class_rec.funcs.entry :=@ds_execute_array;
     class_rec.toString := @otos_dataset;
@@ -5245,13 +5248,13 @@ begin
     class_rec.decRefcount :=@lse_ds_release;
     KT_DS := classup(sys_module, kcDS, KR_DS);
 
-    lse_fill_class(@class_rec, KTN_HASHED, KTD_HASHED, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_HASHED, KTD_HASHED, LSV_OBJECT);
     class_rec.funcs.count := hashed_func_count;
     class_rec.funcs.entry :=@hashed_func_array;
     KT_HASHED := classup(sys_module, kcHashed, KR_HASHED);
     KT_HASHED.SetState(clsHashed, true);
 
-    lse_fill_class(@class_rec, KTN_VARGEN, KTD_VARGEN, LSV_OBJECT);
+    lse_class_fill(@class_rec, KTN_VARGEN, KTD_VARGEN, LSV_OBJECT);
     class_rec.incRefcount := @lse_vargen_addref;
     class_rec.decRefcount := @lse_vargen_release;
     class_rec.funcs.count := vargen_func_count;
@@ -5801,13 +5804,13 @@ begin
   runner_seek_next(Sender);
 end;
 
-procedure __runner_begin_statement(Sender: KLiRunner);
+procedure __runner_statement(Sender: KLiRunner);
 begin
   Sender.FStack.ClearTo(Sender.FCurrent^.base);
   runner_seek_next(Sender);
 end;
 
-procedure __runner_end_statement(Sender: KLiRunner);
+procedure __runner_save_result(Sender: KLiRunner);
 var
   stack: KLiVarList;
   index: integer;
@@ -6470,19 +6473,14 @@ begin
         syTry     : ParseTry;
         syRepeat  : ParseRepeatUntil;
         syFor     : ParseFor;
-        syAdd1, syDec1: begin
-          ParseAddOne;
-          CurCodes.EndStatement;
-        end;
+        syAdd1    : ParseAddOne;
+        syDec1    : ParseAddOne;
         syBecome  : ParseBecome;
         syPuts    : CurCodes.LoadToken(FLast);
         syImport  : ParseImport;
         syOption  : ParseOption;
         syInclude : ParseInclude;
-        else begin
-          ParseAny;
-          CurCodes.EndStatement;
-        end;
+        else        ParseAny;
       end;
     end;
   finally
@@ -7184,7 +7182,7 @@ begin
   SymTestLastPureID;
 end;
 
-procedure KLiParser.TailIf(ExprList: TList);
+procedure KLiParser.TailIf(ExprList: TList; SaveResult: boolean);
 var
   F: string;
 begin
@@ -7192,9 +7190,16 @@ begin
   begin
     BeginTailIf(F, syDotComma);
     CurCodes.LoadExpr(ExprList);
+    if SaveResult then
+      CurCodes.SaveResult;
     EndTailIf(F);
   end
-  else CurCodes.LoadExpr(ExprList);
+  else
+  begin
+    CurCodes.LoadExpr(ExprList);
+    if SaveResult then
+      CurCodes.SaveResult;
+  end;
 end;
 
 procedure KLiParser.SymGotoNext;
@@ -7366,7 +7371,7 @@ begin
       R^.Val := '___siv:' + Copy(R^.Val, 8, MaxInt);
   end;
 
-  TailIf(FExpr);
+  TailIf(FExpr, true);
 end;
 
 function KLiParser.ParseAndFree(const Code: string; IsLsp: boolean): KLiFunc;
@@ -7473,7 +7478,7 @@ begin
     end;
   end;
 
-  TailIf(FExpr);
+  TailIf(FExpr, true);
 end;
 
 procedure KLiParser.ParseArguments(Func: KLiFunc; EndSym: KLiSymbols; OnHead: boolean);
@@ -7845,7 +7850,7 @@ begin
   until FLast^.Sym in [syIf, syDotComma];
   FExpr.Add(L);
   L^.Sym := syOut;
-  TailIf(FExpr);
+  TailIf(FExpr, false);
 end;
 
 procedure KLiParser.EndTailIf(const end_if_label: string);
@@ -8628,8 +8633,8 @@ end;
 procedure KLiExprList.BeginStatement;
 begin
   if GetCount > 0 then
-    if GetLast^.Sym in [syBeginSTMT, syEndSTMT] then Exit;
-  AddNew(syBeginSTMT, nil);
+    if GetLast^.Sym in [syStatement, sySaveRV, syLabel] then Exit;
+  AddNew(syStatement, nil);
 end;
 
 procedure KLiExprList.Clear(Sender: TObject);
@@ -8794,8 +8799,8 @@ begin
         syModule    : H := Format('PUSH MODULE: %s', [R^.VType.Module.Name]);
         syIs        : H := 'CALC IS';
         syAs        : H := 'CALC AS';
-        syBeginSTMT : H := 'STMT';
-        syEndSTMT   : H := 'ENDS';
+        syStatement : H := 'STMT';
+        sySaveRV    : H := 'SVRV';
         syVarGen    : H := Format('VGEN [%d]', [R^.ParamCount]);
         syPushVarb  : H := Format('PUSH VARB %s', [R^.VVarb.Name]);
         syHashed    : H := Format('HASH [%d]', [R^.ParamCount]);
@@ -8827,7 +8832,7 @@ begin
   end;
 end;
 
-procedure KLiExprList.EndStatement;
+procedure KLiExprList.SaveResult;
 var
   expr: PLiExprRec;
 begin
@@ -8836,12 +8841,12 @@ begin
     expr := GetLast;
     if expr^.Sym in [syPress, syIdle] then
     begin
-      expr^.Sym := syEndSTMT;
+      expr^.Sym := sySaveRV;
       Exit;
     end;
-    if expr^.Sym in [syBeginSTMT, syEndSTMT] then Exit;
+    if expr^.Sym in [syStatement, sySaveRV, syLabel] then Exit;
   end;
-  AddNew(syEndSTMT, nil);
+  AddNew(sySaveRV, nil);
 end;
 
 function KLiExprList.FindLabel(const Name: string): PLiExprRec;
@@ -9605,7 +9610,8 @@ begin
           syRINR     : exec_goto;
           syLabel    : exec_label;
           syAsk      : exec_ask;
-          syEndSTMT: stack.Clear;
+          syStatement: stack.Clear;
+          sySaveRV   : stack.Clear;
           syGETV     : exec_push(KT_VARIANT);
           sySETV     : stack.Press;
           syClen     : exec_push(KT_INT);
@@ -11107,7 +11113,7 @@ begin
     FModuleClass := KLiClass.Create(Self, FName, LSV_OBJECT);
     FModuleClass.SetState(clsModule, true);
     FModuleClass.SetState(clsBuiltin, IsBuiltin);
-    lse_fill_class(Addr(FModuleClass.FClassRec),
+    lse_class_fill(Addr(FModuleClass.FClassRec),
                    PChar(FModuleClass.FName),
                    PChar(FDescription),
                    LSV_OBJECT);
@@ -11677,6 +11683,12 @@ begin
   Inc(Result);
 end;
 
+procedure KLiEngine.BeginExecute;
+begin
+  SetResultTypeText('', '');
+  FEngineRec^.lseu_begin_execute(FEngineRec);
+end;
+
 function KLiEngine.Compile(const Code: string; IsLsp: boolean): KLiFunc;
 var
   old_fname, new_fname: string;
@@ -11815,12 +11827,10 @@ begin
   end;
 end;
 
-procedure KLiEngine.EventNotify(ID: integer);
+procedure KLiEngine.EndExecute;
 begin
-  if ID = KEE_EXECUTED then
-    SetResultTypeText(GetResultType.FullName, GetResultText) else
-    SetResultTypeText('', '');
-  FEngineRec^.lseu_engine_event(FEngineRec, ID, FEngineRec^.lseu_data);
+  SetResultTypeText(GetResultType.FullName, GetResultText);
+  FEngineRec^.lseu_end_execute(FEngineRec);
 end;
 
 function KLiEngine.TryCompileCode(const code: string; IsLsp: boolean): boolean;
@@ -12038,7 +12048,7 @@ begin
     Reset(false);
     FError.Clear;
     FExited := false;
-    EventNotify(KEE_EXECUTING);
+    BeginExecute;
     try
       FMainRunner := KLiRunner.Create(Self);
       try
@@ -12052,7 +12062,7 @@ begin
     finally
       lock_engine(Self);
       try
-        EventNotify(KEE_EXECUTED);
+        EndExecute;
         FMainFunc.FCodes.Clear;
         Reset(false);
       finally
@@ -13583,8 +13593,8 @@ begin
       sys_runner_procs[syModule]   := @__runner_module;
       sys_runner_procs[syIs]       := @__runner_is;
       sys_runner_procs[syAs]       := @__runner_as;
-      sys_runner_procs[syBeginSTMT]:= @__runner_begin_statement;
-      sys_runner_procs[syEndSTMT]  := @__runner_end_statement;
+      sys_runner_procs[syStatement]:= @__runner_statement;
+      sys_runner_procs[sySaveRV]   := @__runner_save_result;
       sys_runner_procs[syVarGen]   := @__runner_vargen;
       sys_runner_procs[syPushVarb] := @__runner_pushvarb;
       sys_runner_procs[syAsk]      := @__runner_ask;

@@ -7,15 +7,13 @@ unit lysee_laz;
 interface
 
 uses
-    lse_api, lse_cgi, lseu, lse_syncobj, lse_symbol, lse_components, 
-  lse_export, lse_funcs, lse_kernel, lse_module_editor, lse_patten, lse_spawn, 
-  LazarusPackageIntf;
+  lseu, lse_module_editor, LazarusPackageIntf;
 
 implementation
 
 procedure Register; 
 begin
-  RegisterUnit('lse_components', @lse_components.Register); 
+  RegisterUnit('lseu', @lseu.Register); 
 end; 
 
 initialization
