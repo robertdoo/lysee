@@ -2,7 +2,7 @@
 {        UNIT: lse_spawn                                                       }
 { DESCRIPTION: symbolization of lysee script parser                            }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/10/15                                                      }
+{    MODIFIED: 2010/10/16                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -83,8 +83,8 @@ type
     syGotoTP,      // 2008-01-27: goto label when true
     syGotoFP,      // 2008-01-28: goto label when false
     syEndInc,      // 2008-03-03: end include file
-    syBeginSTMT,   // 2008-03-25: begin statement
-    syEndSTMT,     // 2008-03-25: begin statement
+    syStatement,   // 2008-03-25: begin statement
+    sySaveRV,      // 2008-03-25: save result value
     syVarGen,      // 2008-09-07: cast to vargen object
     syPushVarb,    // 2008-09-07: push variable
     syHashed,      // 2009-02-28: create hashed object  
@@ -213,8 +213,8 @@ const
     (SY:syGotoTP;     ID:'<GOTOTP>';     SM:'goto label when true'),
     (SY:syGotoFP;     ID:'<GOTOFP>';     SM:'goto label when false'),
     (SY:syEndInc;     ID:'<ENDINC>';     SM:'end include file'),
-    (SY:syBeginSTMT;  ID:'<BEGINSTMT>';  SM:'begin statement'),
-    (SY:syEndSTMT;    ID:'<ENDSTMT>';    SM:'end statement'),
+    (SY:syStatement;  ID:'<STATEMENT>';  SM:'begin statement'),
+    (SY:sySaveRV;     ID:'<SAVERV>';     SM:'save result value'),
     (SY:syVarGen;     ID:'<VARGEN>';     SM:'cast to vargen object'),
     (SY:syPushVarb;   ID:'<PUSHVARB>';   SM:'push variable'),
     (SY:syHashed;     ID:'<HASHED>';     SM:'create hashed object'),  
@@ -1504,6 +1504,11 @@ var
     if begin_sym in [syDefine] then
       try_close_pair([syDefine]);
 
+    if begin_sym = syIf then
+      if not (prev in [syDotComma, syEnd, syDot2, syDo, syThen,
+        syRepeat, syTry, syExcept, syFinally, syElse]) then
+          Exit;
+        
     if begin_sym = syDo then  // const V = do ... end
       if prev = syBecome then
         begin_sym := syDefine else

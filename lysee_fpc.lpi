@@ -17,7 +17,7 @@
       <AutoIncrementBuild Value="True"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="652"/>
+      <CurrentBuildNr Value="653"/>
       <ProjectVersion Value="1.1.1.314"/>
       <FileDescription Value="lysee script interpretor (FPC)"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>

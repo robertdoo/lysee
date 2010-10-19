@@ -226,7 +226,7 @@ begin
   begin
     lse_set_program_file(Application.ExeName);
     Keywords := lse_keywords;
-    FEngine := TLseEngine.Create;
+    FEngine := TLseEngine.Create(nil);
   end
   else
   begin

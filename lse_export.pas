@@ -2,7 +2,7 @@
 {        UNIT: lse_export                                                      }
 { DESCRIPTION: binary interface between lseu and lse_kernel                    }
 {     CREATED: 2004/04/12                                                      }
-{    MODIFIED: 2010/10/11                                                      }
+{    MODIFIED: 2010/10/18                                                      }
 {==============================================================================}
 { Copyright (c) 2004-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -93,18 +93,23 @@ function  qe_class_count(const Module: pointer): integer;cdecl;
 function  qe_class(const Module: pointer; Index: integer): PLseClassRec;cdecl;
 function  qe_class_setup(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
 function  qe_class_find(const Name: pchar): PLseClassRec;cdecl;
-function  qe_class_module(const ClassRec: PLseClassRec): pointer;cdecl;
+function  qe_class_module(const CR: PLseClassRec): pointer;cdecl;
 function  qe_class_rec(const KernelClass: pointer): PLseClassRec;cdecl;
-function  qe_method_count(const ClassRec: PLseClassRec): integer;cdecl;
-function  qe_method_get(const ClassRec: PLseClassRec; Index: integer): pointer;cdecl;
-function  qe_method_setup(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
-function  qe_find_method(const ClassRec: PLseClassRec; const Name: pchar): pointer;cdecl;
+function  qe_method_count(const CR: PLseClassRec): integer;cdecl;
+function  qe_method_get(const CR: PLseClassRec; Index: integer): pointer;cdecl;
+function  qe_method_setup(const CR: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
+function  qe_find_method(const CR: PLseClassRec; const Name: pchar): pointer;cdecl;
 function  qe_method_name(const Method: pointer): pchar;cdecl;
 function  qe_method_type(const Method: pointer): PLseClassRec;cdecl;
 function  qe_method_class(const Method: pointer): PLseClassRec;cdecl;
 function  qe_method_param_count(const Method: pointer): integer;cdecl;
 function  qe_method_param_name(const Method: pointer; Index: integer): pchar;cdecl;
 function  qe_method_param_type(const Method: pointer; Index: integer): PLseClassRec;cdecl;
+function  qe_method_bind(const Method: pointer; Data: pointer): pointer;cdecl;
+function  qe_method_get_bind(const Method: pointer): pointer;cdecl;
+function  qe_method_is_creator(const Method: pointer): integer;cdecl;
+function  qe_method_get_proc(const Method: pointer): pointer;cdecl;
+function  qe_method_set_proc(const Method, NewProc: pointer): pointer;cdecl;
 function  qe_param_engine(const Param: PLseParam): PLseEngine;cdecl;
 function  qe_param_format(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
 procedure qe_param_error(const Param: PLseParam; const ID: pchar; Errno: integer; const Msg: pchar);cdecl;
@@ -190,6 +195,11 @@ var
     cik_method_param_count: {$IFDEF FPC}@{$ENDIF}qe_method_param_count;
     cik_method_param_name : {$IFDEF FPC}@{$ENDIF}qe_method_param_name;
     cik_method_param_type : {$IFDEF FPC}@{$ENDIF}qe_method_param_type;
+    cik_method_bind       : {$IFDEF FPC}@{$ENDIF}qe_method_bind;
+    cik_method_get_bind   : {$IFDEF FPC}@{$ENDIF}qe_method_get_bind;
+    cik_method_is_creator : {$IFDEF FPC}@{$ENDIF}qe_method_is_creator;
+    cik_method_get_proc   : {$IFDEF FPC}@{$ENDIF}qe_method_get_proc;
+    cik_method_set_proc   : {$IFDEF FPC}@{$ENDIF}qe_method_set_proc; 
     { param }
     cik_param_engine      : {$IFDEF FPC}@{$ENDIF}qe_param_engine;
     cik_param_format      : {$IFDEF FPC}@{$ENDIF}qe_param_format;
@@ -770,11 +780,11 @@ begin
   end;
 end;
 
-function qe_class_module(const ClassRec: PLseClassRec): pointer;cdecl;
+function qe_class_module(const CR: PLseClassRec): pointer;cdecl;
 begin
   try
-    if ClassRec <> nil then
-      Result := KLiClass(ClassRec^.lysee_class).Module else
+    if CR <> nil then
+      Result := KLiClass(CR^.lysee_class).Module else
       Result := nil;
   except
     Result := nil;
@@ -794,15 +804,15 @@ begin
   end;
 end;
 
-function qe_method_count(const ClassRec: PLseClassRec): integer;cdecl;
+function qe_method_count(const CR: PLseClassRec): integer;cdecl;
 var
   clss: KLiClass;
 begin
   try
     Result := 0;
-    if ClassRec <> nil then
+    if CR <> nil then
     begin
-      clss := KLiClass(ClassRec^.lysee_class);
+      clss := KLiClass(CR^.lysee_class);
       if clss.IsModuleClass then
         Result := clss.Module.FuncCount else
         Result := clss.MethodList.Count; 
@@ -813,15 +823,15 @@ begin
   end;
 end;
 
-function qe_method_get(const ClassRec: PLseClassRec; Index: integer): pointer;cdecl;
+function qe_method_get(const CR: PLseClassRec; Index: integer): pointer;cdecl;
 var
   clss: KLiClass;
 begin
   try
     Result := nil;
-    if ClassRec <> nil then
+    if CR <> nil then
     begin
-      clss := KLiClass(ClassRec^.lysee_class);
+      clss := KLiClass(CR^.lysee_class);
       if clss.IsModuleClass then
         Result := clss.Module.GetFunc(Index) else
         Result := clss.MethodList.Objects[Index]; 
@@ -832,15 +842,15 @@ begin
   end;
 end;
 
-function qe_method_setup(const ClassRec: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
+function qe_method_setup(const CR: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
 var
   clss: KLiClass;
 begin
   try
     Result := nil;
-    if ClassRec <> nil then
+    if CR <> nil then
     begin
-      clss := KLiClass(ClassRec^.lysee_class); 
+      clss := KLiClass(CR^.lysee_class); 
       Result := clss.SetupMethod(FR);
     end;
   except
@@ -849,15 +859,15 @@ begin
   end;
 end;
 
-function qe_find_method(const ClassRec: PLseClassRec; const Name: pchar): pointer;cdecl;
+function qe_find_method(const CR: PLseClassRec; const Name: pchar): pointer;cdecl;
 var
   clss: KLiClass;
 begin
   try
     Result := nil;
-    if ClassRec <> nil then
+    if CR <> nil then
     begin
-      clss := KLiClass(ClassRec^.lysee_class);
+      clss := KLiClass(CR^.lysee_class);
       if clss.IsModuleClass then
         Result := clss.Module.FindFunc(Trim(Name)) else
         Result := clss.FindMethod(cmMethod, Trim(Name));
@@ -937,6 +947,78 @@ begin
   except
     Result := nil;
     __log('qe_method_param_type()', lse_exception_str);
+  end;
+end;
+
+function qe_method_bind(const Method: pointer; Data: pointer): pointer;cdecl;
+var
+  func: KLiFunc;
+begin
+  try
+    if Method <> nil then
+    begin
+      func := KLiFunc(Method);
+      Result := func.BindData;
+      func.BindData := Data;
+    end
+    else Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_bind()', lse_exception_str);
+  end;
+end;
+
+function qe_method_get_bind(const Method: pointer): pointer;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := KLiFunc(Method).BindData else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_get_bind()', lse_exception_str);
+  end;
+end;
+
+function qe_method_is_creator(const Method: pointer): integer;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := Ord(KLiFunc(Method).IsConstructor) else
+      Result := 0;
+  except
+    Result := 0;
+    __log('qe_method_is_creator()', lse_exception_str);
+  end;
+end;
+
+function qe_method_get_proc(const Method: pointer): pointer;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := KLiFunc(Method).Proc else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_get_proc()', lse_exception_str);
+  end;
+end;
+
+function qe_method_set_proc(const Method, NewProc: pointer): pointer;cdecl;
+var
+  func: KLiFunc;
+begin
+  try
+    func := KLiFunc(Method);
+    if (func <> nil) and not func.IsScript then
+    begin
+      Result := func.Proc;
+      func.Proc := NewProc;
+    end
+    else Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_set_proc()', lse_exception_str);
   end;
 end;
 

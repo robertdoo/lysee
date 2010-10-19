@@ -6,11 +6,11 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ActnList, lse_components, lse_kernel, SynEdit, lseu;
+  StdCtrls, ExtCtrls, ActnList, lse_kernel, SynEdit, lseu;
 
 type
 
-  THelloObject = class(TLyseeObject)
+  THelloObject = class(TLseObject)
   private
     Text: string;
   end;
@@ -19,18 +19,14 @@ type
 
   TTestlpForm = class(TForm)
     btnRun: TButton;
-    Lysee: TLyseeEngine;
-    hii: TLyseeModule;
-    hello: TLyseeClass;
-    hello_say: TLyseeMethod;
-    hello_xxx: TLyseeMethod;
-    hello_hello: TLyseeMethod;
-    hii_alert: TLyseeFunc;
-    hii_input: TLyseeFunc;
-    god: TLyseeClass;
-    LyseeFunc1: TLyseeFunc;
-    LyseeMethod1: TLyseeMethod;
-    LyseeMethod2: TLyseeMethod;
+    hii: TLseModule;
+    hii_alert: TLseFunc;
+    hii_input: TLseFunc;
+    hello: TLseClass;
+    hello_hello: TLseMethod;
+    hello_say: TLseMethod;
+    hello_xxx: TLseMethod;
+    Lysee: TLseEngine;
     Outputs: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -43,12 +39,12 @@ type
     procedure btnRunClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure hello_helloExecute(Lobj: THelloObject; Invoker: TLseInvoke);
-    procedure hello_sayExecute(Lobj: THelloObject; Invoker: TLseInvoke);
-    procedure hello_xxxExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+    procedure helloGetObject(Sender: TObject; var Lobj: TLseObject);
+    procedure hello_helloExecute(Lobj: TLseObject; Invoker: TLseInvoke);
+    procedure hello_sayExecute(Lobj: TLseObject; Invoker: TLseInvoke);
+    procedure hello_xxxExecute(Lobj: TLseObject; Invoker: TLseInvoke);
     procedure hii_alertExecute(Invoker: TLseInvoke);
     procedure hii_inputExecute(Invoker: TLseInvoke);
-    procedure helloCreateObject(Sender: TObject; var Lobj: THelloObject);
     procedure LyseeRead(Sender: TObject; const Buf: pchar; var Count: integer);
     procedure LyseeReadln(Sender: TObject; var S: string);
     procedure LyseeWrite(Sender: TObject; const Buf: pchar; var Count: integer);
@@ -109,39 +105,54 @@ begin
 end;
 
 procedure TTestlpForm.btnRunClick(Sender: TObject);
+var
+  S: string;
+  L: integer;
 begin
   Outputs.Lines.Clear;
-  Lysee.Codes.Assign(Inputs.Lines);
-  if not Lysee.Execute then
-    Outputs.Lines.Text := Lysee.Engine.Error;
+  if Lysee.ExecuteCode(Inputs.Lines.Text) then
+  begin
+    S := Lysee.ResultText;
+    L := Length(S);
+    LyseeWrite(Self, pchar(S), L);
+  end
+  else Outputs.Lines.Text := Lysee.Error;
 end;
 
 procedure TTestlpForm.FormCreate(Sender: TObject);
 begin
-  StartLysee;
-  hii.AddFunc('clear||', @hii_clear);
+  if lse_startup then
+  begin
+    lse_setup_components([hii, Lysee]);
+    hii.AddFunc('clear||', @hii_clear);
+  end;
   Caption := ParamStr(0);
 end;
 
 procedure TTestlpForm.FormDestroy(Sender: TObject);
 begin
-  CloseLysee;
+  lse_cleanup;
 end;
 
-procedure TTestlpForm.hello_helloExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+procedure TTestlpForm.helloGetObject(Sender: TObject; var Lobj: TLseObject);
 begin
-  Lobj.Text := Invoker.paramStr(1);
+  Lobj := THelloObject.Create;
 end;
 
-procedure TTestlpForm.hello_sayExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+procedure TTestlpForm.hello_helloExecute(Lobj: TLseObject; Invoker: TLseInvoke);
 begin
-  ShowMessage(Lobj.Text);
+  THelloObject(Lobj).Text := Invoker.paramStr(1);
 end;
 
-procedure TTestlpForm.hello_xxxExecute(Lobj: THelloObject; Invoker: TLseInvoke);
+procedure TTestlpForm.hello_sayExecute(Lobj: TLseObject; Invoker: TLseInvoke);
 begin
-  Lobj.Text := Lobj.Text + Invoker.paramStr(1);
-  ShowMessage(Lobj.Text);
+  ShowMessage(THelloObject(Lobj).Text);
+end;
+
+procedure TTestlpForm.hello_xxxExecute(Lobj: TLseObject; Invoker: TLseInvoke);
+begin
+  THelloObject(Lobj).Text := THelloObject(Lobj).Text + Invoker.paramStr(1);
+  ShowMessage(THelloObject(Lobj).Text);
 end;
 
 procedure TTestlpForm.hii_alertExecute(Invoker: TLseInvoke);
@@ -155,11 +166,6 @@ var
 begin
   S := InputBox('Input', Invoker.paramStr(0), '');
   Invoker.returnStr(S);
-end;
-
-procedure TTestlpForm.helloCreateObject(Sender: TObject; var Lobj: THelloObject);
-begin
-  Lobj := THelloObject.Create(hello);
 end;
 
 initialization

@@ -1,4 +1,4 @@
-object LyseeModuleEditor: TLyseeModuleEditor
+object LseModuleEditor: TLseModuleEditor
   Left = 310
   Height = 324
   Top = 196
