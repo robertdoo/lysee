@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ActnList, lse_kernel, SynEdit, lseu;
+  StdCtrls, ExtCtrls, ActnList, lse_kernel, SynEdit, lseu, lse_synedit;
 
 type
 
@@ -27,6 +27,7 @@ type
     hello_say: TLseMethod;
     hello_xxx: TLseMethod;
     Lysee: TLseEngine;
+    LyseeSyn1: TLyseeSyn;
     Outputs: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;

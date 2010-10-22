@@ -103,6 +103,7 @@ object TestlpForm: TTestlpForm
             Option = 0
             Priority = 0
           end>
+        Highlighter = LyseeSyn1
         Keystrokes = <        
           item
             Command = ecUp
@@ -853,6 +854,11 @@ object TestlpForm: TTestlpForm
     OnRead = LyseeRead
     OnWrite = LyseeWrite
     left = 296
+    top = 80
+  end
+  object LyseeSyn1: TLyseeSyn
+    Enabled = False
+    left = 392
     top = 80
   end
 end

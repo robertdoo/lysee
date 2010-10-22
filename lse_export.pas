@@ -2,7 +2,7 @@
 {        UNIT: lse_export                                                      }
 { DESCRIPTION: binary interface between lseu and lse_kernel                    }
 {     CREATED: 2004/04/12                                                      }
-{    MODIFIED: 2010/10/18                                                      }
+{    MODIFIED: 2010/10/22                                                      }
 {==============================================================================}
 { Copyright (c) 2004-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -89,6 +89,7 @@ function  qe_module(Index: integer): pointer;cdecl;
 function  qe_module_setup(const Name: pchar; const initrec: PLseModuleRec): pointer;cdecl;
 function  qe_module_find(const Name: pchar): pointer;cdecl;
 function  qe_module_class(const Module: pointer): PLseClassRec;cdecl;
+function  qe_module_desc(const Module: pointer): pchar;cdecl;
 function  qe_class_count(const Module: pointer): integer;cdecl;
 function  qe_class(const Module: pointer; Index: integer): PLseClassRec;cdecl;
 function  qe_class_setup(const Module: pointer; const CR: PLseClassRec): PLseClassRec;cdecl;
@@ -100,6 +101,7 @@ function  qe_method_get(const CR: PLseClassRec; Index: integer): pointer;cdecl;
 function  qe_method_setup(const CR: PLseClassRec; const FR: PLseFuncRec): pointer;cdecl;
 function  qe_find_method(const CR: PLseClassRec; const Name: pchar): pointer;cdecl;
 function  qe_method_name(const Method: pointer): pchar;cdecl;
+function  qe_method_desc(const Method: pointer): pchar;cdecl;
 function  qe_method_type(const Method: pointer): PLseClassRec;cdecl;
 function  qe_method_class(const Method: pointer): PLseClassRec;cdecl;
 function  qe_method_param_count(const Method: pointer): integer;cdecl;
@@ -177,6 +179,7 @@ var
     cik_module_setup      : {$IFDEF FPC}@{$ENDIF}qe_module_setup;
     cik_module_find       : {$IFDEF FPC}@{$ENDIF}qe_module_find;
     cik_module_class      : {$IFDEF FPC}@{$ENDIF}qe_module_class;
+    cik_module_desc       : {$IFDEF FPC}@{$ENDIF}qe_module_desc;
     { class }
     cik_class_count       : {$IFDEF FPC}@{$ENDIF}qe_class_count;
     cik_class             : {$IFDEF FPC}@{$ENDIF}qe_class; 
@@ -190,6 +193,7 @@ var
     cik_method_setup      : {$IFDEF FPC}@{$ENDIF}qe_method_setup;
     cik_method_find       : {$IFDEF FPC}@{$ENDIF}qe_find_method;
     cik_method_name       : {$IFDEF FPC}@{$ENDIF}qe_method_name;
+    cik_method_desc       : {$IFDEF FPC}@{$ENDIF}qe_method_desc;
     cik_method_type       : {$IFDEF FPC}@{$ENDIF}qe_method_type;
     cik_method_class      : {$IFDEF FPC}@{$ENDIF}qe_method_class;
     cik_method_param_count: {$IFDEF FPC}@{$ENDIF}qe_method_param_count;
@@ -715,6 +719,18 @@ begin
   end;
 end;
 
+function qe_module_desc(const Module: pointer): pchar;cdecl;
+begin
+  try
+    if Module <> nil then
+      Result := pchar(KLiModule(Module).Description) else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_module_desc()', lse_exception_str);
+  end;
+end;
+
 function qe_class_count(const Module: pointer): integer;cdecl;
 begin
   try
@@ -890,6 +906,18 @@ begin
   end;
 end;
 
+function qe_method_desc(const Method: pointer): pchar;cdecl;
+begin
+  try
+    if Method <> nil then
+      Result := pchar(KLiFunc(Method).Description) else
+      Result := nil;
+  except
+    Result := nil;
+    __log('qe_method_desc()', lse_exception_str);
+  end;
+end;
+
 function qe_method_type(const Method: pointer): PLseClassRec;cdecl;
 begin
   try
@@ -906,7 +934,7 @@ function qe_method_class(const Method: pointer): PLseClassRec;cdecl;
 begin
   try
     if Method <> nil then
-      Result := KLiFunc(Method).OwnerClass.ClassRec else
+      Result := KLiFunc(Method).Parent.ClassRec else
       Result := nil;
   except
     Result := nil;

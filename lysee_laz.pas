@@ -7,13 +7,14 @@ unit lysee_laz;
 interface
 
 uses
-  lseu, lse_module_editor, LazarusPackageIntf;
+  lseu, lse_module_editor, lse_synedit, LazarusPackageIntf;
 
 implementation
 
 procedure Register; 
 begin
   RegisterUnit('lseu', @lseu.Register); 
+  RegisterUnit('lse_synedit', @lse_synedit.Register); 
 end; 
 
 initialization

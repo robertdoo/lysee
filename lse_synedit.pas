@@ -2,7 +2,7 @@
 {        UNIT: lse_synedit                                                     }
 { DESCRIPTION: syntax highlighter of lysee script                              }
 {     CREATED: 2008/04/05                                                      }
-{    MODIFIED: 2010/08/31                                                      }
+{    MODIFIED: 2010/10/21                                                      }
 {==============================================================================}
 { Copyright (c) 2008-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -51,11 +51,12 @@ interface
 
 uses
   SysUtils, Classes, Controls, Graphics,
-  SynEditTypes, SynEditHighlighter, SynEdit, SynMemo;
+  {$IFDEF LYSEE_LAZ}LResources,{$ENDIF}
+  SynEditTypes, SynEditHighlighter;
 
 const
   SYNS_FILTERLANGUAGE = 'Lysee (*.ls,*.lsp)|*.ls;*.lsp';
-  SYNS_LANGUAGE = 'Lysee Script';
+  SYNS_LYSEELANGUAGE = 'Lysee';
 
 type
   TtkTokenKind = (tkComment, tkIdentifier, tkKey, tkNull, tkSpace, tkString,
@@ -64,28 +65,28 @@ type
   TRangeState = (rsUnKnown, rsComment, rsString, rsRawStr, rsTriple,
                  rsHTML, rsOption);
 
-  { TSynLysee }
+  { TLyseeSyn }
 
-  TSynLysee = class(TSynCustomHighlighter)
+  TLyseeSyn = class(TSynCustomHighlighter)
   private
-    FLine: PChar;
-    FLineNumber: Integer;
+    FLineString: string;
+    FLine: pchar;
+    FLineNumber: integer;
     FRange: TRangeState;
-    FRun: LongInt;
-    FTokenPos: Integer;
+    FRun: longint;
+    FTokenPos: integer;
     FTokenID: TtkTokenKind;
     FIsLsp: boolean;
-    FIgnoreTagCase: boolean;
-    FCommentAttri: TSynHighlighterAttributes;
-    FIdentifierAttri: TSynHighlighterAttributes;
-    FKeyAttri: TSynHighlighterAttributes;
-    FSpaceAttri: TSynHighlighterAttributes;
-    FStringAttri: TSynHighlighterAttributes;
-    FOptionAttri: TSynHighlighterAttributes;
-    FNumberAttri: TSynHighlighterAttributes;
-    FCharAttri: TSynHighlighterAttributes;
-    FUnknownAttri: TSynHighlighterAttributes;
-    FOutTagAttri: TSynHighlighterAttributes;
+    FAttrComment: TSynHighlighterAttributes;
+    FAttrID: TSynHighlighterAttributes;
+    FAttrKeyword: TSynHighlighterAttributes;
+    FAttrSpace: TSynHighlighterAttributes;
+    FAttrString: TSynHighlighterAttributes;
+    FAttrOption: TSynHighlighterAttributes;
+    FAttrNumber: TSynHighlighterAttributes;
+    FAttrChar: TSynHighlighterAttributes;
+    FAttrHTML: TSynHighlighterAttributes;
+    FAttrUnknown: TSynHighlighterAttributes;
     FOptionCount: integer;
     procedure ParseCommentStart;
     procedure ParseComment;
@@ -109,9 +110,7 @@ type
     function OnTag(const TagStr: string): boolean;
   public
     constructor Create(AOwner: TComponent); override;
-    {$IFNDEF SYN_CPPB_1}
-    class
-    {$ENDIF}
+    {$IFNDEF SYN_CPPB_1}class{$ENDIF}
     function GetLanguageName: string; override;
     function GetRange: Pointer; override;
     procedure ResetRange; override;
@@ -120,79 +119,83 @@ type
     function GetEol: boolean; override;
     function GetKeyWords: string;
     function GetTokenID: TtkTokenKind;
-    procedure SetLine({$IFDEF FPC}const {$ENDIF}NewValue: String; LineNumber: Integer); override;
-    function GetToken: String; override;
-   {$IFDEF SYN_LAZARUS}
-    procedure GetTokenEx(out TokenStart: PChar;
-                         out TokenLength: integer); override;
-    {$ENDIF}
+    procedure SetLine({$IFDEF FPC}const {$ENDIF}NewValue: string; LineNumber: integer); override;
+    function GetToken: string; override;
+    procedure GetTokenEx(out TokenStart: pchar; out TokenLength: integer); override;
     function GetTokenAttribute: TSynHighlighterAttributes; override;
     function GetTokenKind: integer; override;
-    function GetTokenPos: Integer; override;
+    function GetTokenPos: integer; override;
     procedure Next; override;
   published
-    property CommentAttri: TSynHighlighterAttributes read FCommentAttri write FCommentAttri;
-    property IdentifierAttri: TSynHighlighterAttributes read FIdentifierAttri write FIdentifierAttri;
-    property KeyAttri: TSynHighlighterAttributes read FKeyAttri write FKeyAttri;
-    property SpaceAttri: TSynHighlighterAttributes read FSpaceAttri write FSpaceAttri;
-    property StringAttri: TSynHighlighterAttributes read FStringAttri write FStringAttri;
-    property OptionAttri: TSynHighlighterAttributes read FOptionAttri write FOptionAttri;
-    property CharAttri: TSynHighlighterAttributes read FCharAttri write FCharAttri;
-    property NumberAttri: TSynHighlighterAttributes read FNumberAttri write FNumberAttri;
-    property UnknownAttri: TSynHighlighterAttributes read FUnknownAttri write FUnknownAttri;
-    property IsLsp: boolean read FIsLsp write SetIsLsp;
-    property IgnoreTagCase: boolean read FIgnoreTagCase write FIgnoreTagCase;
+    property AttrComment: TSynHighlighterAttributes read FAttrComment write FAttrComment;
+    property AttrID: TSynHighlighterAttributes read FAttrID write FAttrID;
+    property AttrKeyword: TSynHighlighterAttributes read FAttrKeyword write FAttrKeyword;
+    property AttrSpace: TSynHighlighterAttributes read FAttrSpace write FAttrSpace;
+    property AttrString: TSynHighlighterAttributes read FAttrString write FAttrString;
+    property AttrOption: TSynHighlighterAttributes read FAttrOption write FAttrOption;
+    property AttrChar: TSynHighlighterAttributes read FAttrChar write FAttrChar;
+    property AttrNumber: TSynHighlighterAttributes read FAttrNumber write FAttrNumber;
+    property AttrHTML: TSynHighlighterAttributes read FAttrHTML write FAttrHTML;
+    property AttrUnknown: TSynHighlighterAttributes read FAttrUnknown write FAttrUnknown;
+    property IsLsp: boolean read FIsLsp write SetIsLsp default false;
   end;
 
-  TSynLyseeMemo = class(TSynMemo)
-  private
-    FSynLyseeHilighter: TSynLysee;
-    function GetIsLsp: boolean;
-    procedure SetIsLsp(const Value: boolean);
-  protected
-    procedure ResetHighlighter;
-  public
-    constructor Create(AOwner: TComponent);override;
-    property Highlighter;
-  published
-    property IsLsp: boolean read GetIsLsp write SetIsLsp;
-  end;
-
-var
-  Keywords: string =
-    '__clen__,and,as,bool,break,case,char,class,const,continue,def,do,else,' +
-    'elseif,end,except,false,finally,float,for,if,import,in,include,' +
-    'int,is,like,main,nil,not,object,or,recall,repeat,return,string,' +
-    'super,switch,sys,then,this,time,true,try,type,until,variant,void,while';
-
+function GetLyseeKeywords: string;
+function SetLyseeKeywords(const Keywords: string): string;
 function DealAsKeyword(const S: string): boolean;
+
+procedure Register;
 
 implementation
 
 uses
   Clipbrd, SynEditStrConst, lse_funcs;
 
+procedure Register;
+begin
+  RegisterComponents('Lysee', [TLyseeSyn]);
+end;
+
+var
+  LyseeKeywords: string =
+    'and,as,bool,break,case,char,class,const,continue,def,do,' +
+    'elif,else,elseif,end,except,false,finally,float,for,if,' +
+    'import,in,include,int,is,like,main,nil,not,object,or,' +
+    'recall,repeat,return,string,super,switch,sys,then,this,' +
+    'time,true,try,type,until,variant,void,while';
+
+function GetLyseeKeywords: string;
+begin
+  Result := Copy(LyseeKeywords, 2, Length(LyseeKeywords) - 2);
+end;
+
+function SetLyseeKeywords(const Keywords: string): string;
+begin
+  Result := GetLyseeKeywords;
+  LyseeKeywords := ',' + Trim(Keywords) + ',';
+end;
+
 function DealAsKeyword(const S: string): boolean;
 begin
   Result := (Copy(S, 1, 2) = '__') or
-            (Pos(',' + S + ',', ',' + Keywords + ',') > 0);
+            (Pos(',' + S + ',', LyseeKeywords) > 0);
 end;
 
-{ TSynLysee}
+{ TLyseeSyn}
 
-procedure TSynLysee.ParseSpace;
+procedure TLyseeSyn.ParseSpace;
 begin
   FTokenID := tkSpace;
   repeat inc(FRun);
   until not (FLine[FRun] in [#1..#32]);
 end;
 
-procedure TSynLysee.ParseNull;
+procedure TLyseeSyn.ParseNull;
 begin
   FTokenID := tkNull;
 end;
 
-procedure TSynLysee.ParseEnter;
+procedure TLyseeSyn.ParseEnter;
 begin
   FTokenID := tkSpace;
   inc(FRun);
@@ -200,13 +203,13 @@ begin
     inc(FRun);
 end;
 
-procedure TSynLysee.ParseLineFeed;
+procedure TLyseeSyn.ParseLineFeed;
 begin
   FTokenID := tkSpace;
   inc(FRun);
 end;
 
-procedure TSynLysee.ParseCommentStart;
+procedure TLyseeSyn.ParseCommentStart;
 
   procedure skip_line_comment;
   begin
@@ -234,7 +237,7 @@ begin
     ParseUnknown;
 end;
 
-procedure TSynLysee.ParseComment;
+procedure TLyseeSyn.ParseComment;
 begin
   FTokenID := tkComment;
   case FLine[FRun] of
@@ -254,7 +257,7 @@ begin
   end;
 end;
 
-procedure TSynLysee.ParseStringStart(IsRawStr: boolean);
+procedure TLyseeSyn.ParseStringStart(IsRawStr: boolean);
 var
   times: integer;
 begin
@@ -274,7 +277,7 @@ begin
       FRange := rsString;
 end;
 
-procedure TSynLysee.ParseString;
+procedure TLyseeSyn.ParseString;
 var
   count, quotes, thick: integer;
 begin
@@ -312,59 +315,58 @@ begin
   end;
 end;
 
-constructor TSynLysee.Create(AOwner: TComponent);
+constructor TLyseeSyn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
-  FCommentAttri := TSynHighLighterAttributes.Create(SYNS_AttrComment);
-  FCommentAttri.Foreground := clOlive;
-  AddAttribute(FCommentAttri);
+  FAttrComment := TSynHighLighterAttributes.Create(SYNS_AttrComment);
+  FAttrComment.Foreground := clOlive;
+  AddAttribute(FAttrComment);
 
-  FIdentifierAttri := TSynHighLighterAttributes.Create(SYNS_AttrIdentifier);
-  AddAttribute(FIdentifierAttri);
+  FAttrID := TSynHighLighterAttributes.Create(SYNS_AttrIdentifier);
+  AddAttribute(FAttrID);
 
-  FKeyAttri := TSynHighLighterAttributes.Create(SYNS_AttrReservedWord);
-  FKeyAttri.Style := [fsBold];
-  AddAttribute(FKeyAttri);
+  FAttrKeyword := TSynHighLighterAttributes.Create(SYNS_AttrReservedWord);
+  FAttrKeyword.Style := [fsBold];
+  AddAttribute(FAttrKeyword);
 
-  FSpaceAttri := TSynHighLighterAttributes.Create(SYNS_AttrSpace);
-  AddAttribute(FSpaceAttri);
+  FAttrSpace := TSynHighLighterAttributes.Create(SYNS_AttrSpace);
+  AddAttribute(FAttrSpace);
 
-  FStringAttri := TSynHighLighterAttributes.Create(SYNS_AttrString);
-  FStringAttri.Foreground := clNavy;
-  AddAttribute(FStringAttri);
+  FAttrString := TSynHighLighterAttributes.Create(SYNS_AttrString);
+  FAttrString.Foreground := clNavy;
+  AddAttribute(FAttrString);
 
-  FOptionAttri := FCommentAttri;
-  FOptionAttri := TSynHighLighterAttributes.Create(SYNS_AttrDirective);
-  FOptionAttri.Foreground := clGreen;
-  AddAttribute(FOptionAttri);
+  FAttrOption := FAttrComment;
+  FAttrOption := TSynHighLighterAttributes.Create(SYNS_AttrDirective);
+  FAttrOption.Foreground := clGreen;
+  AddAttribute(FAttrOption);
 
-  FNumberAttri := TSynHighLighterAttributes.Create(SYNS_AttrNumber);
-  FNumberAttri.Foreground := $004080FF;
-  AddAttribute(FNumberAttri);
+  FAttrNumber := TSynHighLighterAttributes.Create(SYNS_AttrNumber);
+  FAttrNumber.Foreground := $004080FF;
+  AddAttribute(FAttrNumber);
 
-  FCharAttri := TSynHighLighterAttributes.Create(SYNS_AttrCharacter);
-  FCharAttri.Foreground := clNavy;
-  AddAttribute(FCharAttri);
+  FAttrChar := TSynHighLighterAttributes.Create(SYNS_AttrCharacter);
+  FAttrChar.Foreground := clNavy;
+  AddAttribute(FAttrChar);
 
-  FUnknownAttri := TSynHighLighterAttributes.Create(SYNS_AttrUnknownWord);
-  AddAttribute(FUnknownAttri);
+  FAttrUnknown := TSynHighLighterAttributes.Create(SYNS_AttrUnknownWord);
+  AddAttribute(FAttrUnknown);
 
-  FOutTagAttri := TSynHighLighterAttributes.Create(SYNS_AttrText);
-  FOutTagAttri.Foreground := clGray;
-  AddAttribute(FOutTagAttri);
+  FAttrHTML := TSynHighLighterAttributes.Create(SYNS_AttrText);
+  FAttrHTML.Foreground := clGray;
+  AddAttribute(FAttrHTML);
 
   SetAttributesOnChange({$IFDEF FPC}@{$ENDIF}DefHighlightChange);
   fDefaultFilter := SYNS_FILTERLANGUAGE;
   FRange := rsUnknown;
-
   FIsLsp := false;
-  FIgnoreTagCase := true;
 end;
 
-procedure TSynLysee.SetLine({$IFDEF FPC}const {$ENDIF}NewValue: String; LineNumber: Integer);
+procedure TLyseeSyn.SetLine({$IFDEF FPC}const {$ENDIF}NewValue: string; LineNumber: integer);
 begin
-  FLine := PChar(NewValue);
+  FLineString := NewValue;
+  FLine := pchar(FLineString);
   FRun := 0;
   FLineNumber := LineNumber;
   if FLineNumber = 0 then
@@ -381,7 +383,7 @@ begin
   Next;
 end;
 
-procedure TSynLysee.ParseIdentity;
+procedure TLyseeSyn.ParseIdentity;
 var
   base: integer;
   temp: string;
@@ -402,7 +404,7 @@ begin
   end;
 end;
 
-procedure TSynLysee.ParseUnknown;
+procedure TLyseeSyn.ParseUnknown;
 begin
   if (FLine[FRun] = '{') and (FLine[FRun + 1] = '$') then
   begin
@@ -419,7 +421,7 @@ begin
   end;
 end;
 
-procedure TSynLysee.Next;
+procedure TLyseeSyn.Next;
 begin
   FTokenPos := FRun;
   if FRange = rsHTML then ParseHTML else
@@ -450,110 +452,105 @@ begin
   end;
 end;
 
-function TSynLysee.GetDefaultAttribute(Index: integer): TSynHighLighterAttributes;
+function TLyseeSyn.GetDefaultAttribute(Index: integer): TSynHighLighterAttributes;
 begin
   case Index of
-    SYN_ATTR_COMMENT    : Result := FCommentAttri;
-    SYN_ATTR_IDENTIFIER : Result := FIdentifierAttri;
-    SYN_ATTR_KEYWORD    : Result := FKeyAttri;
-    SYN_ATTR_STRING     : Result := FStringAttri;
-    SYN_ATTR_WHITESPACE : Result := FSpaceAttri;
-  else
-    Result := nil;
+    SYN_ATTR_COMMENT    : Result := FAttrComment;
+    SYN_ATTR_IDENTIFIER : Result := FAttrID;
+    SYN_ATTR_KEYWORD    : Result := FAttrKeyword;
+    SYN_ATTR_STRING     : Result := FAttrString;
+    SYN_ATTR_WHITESPACE : Result := FAttrSpace;
+    else                  Result := FAttrSpace;
   end;
 end;
 
-function TSynLysee.GetEol: boolean;
+function TLyseeSyn.GetEol: boolean;
 begin
-  Result := (FTokenID = tkNull);
+  Result := (FTokenID = tkNull)
 end;
 
-function TSynLysee.GetKeyWords: string;
+function TLyseeSyn.GetKeyWords: string;
 begin
-  Result := Keywords;
+  Result := GetLyseeKeywords;
 end;
 
-function TSynLysee.GetToken: String;
-var
-  Len: LongInt;
+function TLyseeSyn.GetToken: string;
 begin
-  Len := FRun - FTokenPos;
-  SetString(Result, (FLine + FTokenPos), Len);
+  SetString(Result, (FLine + FTokenPos), FRun - FTokenPos);
 end;
 
-{$IFDEF SYN_LAZARUS}
-procedure TSynLysee.GetTokenEx(out TokenStart: PChar; out TokenLength: integer);
+procedure TLyseeSyn.GetTokenEx(out TokenStart: pchar; out TokenLength: integer);
 begin
   TokenLength := FRun - FTokenPos;
-  TokenStart := FLine + FTokenPos;
+  if TokenLength > 0 then
+    TokenStart := FLine + FTokenPos else
+    TokenStart := nil;
 end;
-{$ENDIF}
 
-function TSynLysee.GetTokenID: TtkTokenKind;
+function TLyseeSyn.GetTokenID: TtkTokenKind;
 begin
   Result := FTokenID;
 end;
 
-function TSynLysee.GetTokenAttribute: TSynHighLighterAttributes;
+function TLyseeSyn.GetTokenAttribute: TSynHighLighterAttributes;
 begin
   case GetTokenID of
-    tkComment: Result := FCommentAttri;
-    tkIdentifier: Result := FIdentifierAttri;
-    tkKey: Result := FKeyAttri;
-    tkSpace: Result := FSpaceAttri;
-    tkString: Result := FStringAttri;
-    tkOption: Result := FOptionAttri;
-    tkChar: Result := FCharAttri;
-    tkNumber: Result := FNumberAttri;
-    tkHTML: Result := FOutTagAttri;
-    tkUnknown: Result := FUnknownAttri;
-  else
-    Result := nil;
+    tkComment: Result := FAttrComment;
+    tkIdentifier: Result := FAttrID;
+    tkKey: Result := FAttrKeyword;
+    tkSpace: Result := FAttrSpace;
+    tkString: Result := FAttrString;
+    tkOption: Result := FAttrOption;
+    tkChar: Result := FAttrChar;
+    tkNumber: Result := FAttrNumber;
+    tkHTML: Result := FAttrHTML;
+    tkUnknown: Result := FAttrUnknown;
+    else Result := FAttrUnknown;
   end;
 end;
 
-function TSynLysee.GetTokenKind: integer;
+function TLyseeSyn.GetTokenKind: integer;
 begin
   Result := Ord(FTokenID);
 end;
 
-function TSynLysee.GetTokenPos: Integer;
+function TLyseeSyn.GetTokenPos: integer;
 begin
   Result := FTokenPos;
 end;
 
-function TSynLysee.GetIdentChars: TSynIdentChars;
+function TLyseeSyn.GetIdentChars: TSynIdentChars;
 begin
   Result := ['_', 'a'..'z', 'A'..'Z', '0'..'9'];
 end;
 
-function TSynLysee.IsFilterStored: Boolean;
+function TLyseeSyn.IsFilterStored: Boolean;
 begin
   Result := fDefaultFilter <> SYNS_FILTERLANGUAGE;
 end;
 
 {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynLysee.GetLanguageName: string;
+function TLyseeSyn.GetLanguageName: string;
 begin
-  Result := SYNS_LANGUAGE;
+  Result := SYNS_LYSEELANGUAGE;
 end;
 
-procedure TSynLysee.ResetRange;
+procedure TLyseeSyn.ResetRange;
 begin
   FRange := rsUnknown;
 end;
 
-procedure TSynLysee.SetRange(Value: Pointer);
+procedure TLyseeSyn.SetRange(Value: Pointer);
 begin
   FRange := TRangeState(Value);
 end;
 
-function TSynLysee.GetRange: Pointer;
+function TLyseeSyn.GetRange: Pointer;
 begin
   Result := Pointer(FRange);
 end;
 
-procedure TSynLysee.ParseChar;
+procedure TLyseeSyn.ParseChar;
 begin
   FTokenID := tkChar;
   Inc(FRun);
@@ -580,7 +577,7 @@ begin
   FRange := rsUnKnown;
 end;
 
-procedure TSynLysee.ParseNumber;
+procedure TLyseeSyn.ParseNumber;
 var
   cset: set of char;
   h: char;
@@ -598,7 +595,7 @@ begin
   FRange := rsUnKnown;
 end;
 
-procedure TSynLysee.ParseOption;
+procedure TLyseeSyn.ParseOption;
 begin
   FTokenID := tkOption;
   case FLine[FRun] of
@@ -623,7 +620,7 @@ begin
   end;
 end;
 
-procedure TSynLysee.ParseOptionStart;
+procedure TLyseeSyn.ParseOptionStart;
 begin
   Inc(FRun);
   FTokenID := tkOption;
@@ -631,7 +628,7 @@ begin
   FOptionCount := 1;
 end;
 
-procedure TSynLysee.ParseHTML;
+procedure TLyseeSyn.ParseHTML;
 begin
   FTokenID := tkHTML;
   case FLine[FRun] of
@@ -651,28 +648,19 @@ begin
   end;
 end;
 
-function TSynLysee.OnTag(const TagStr: string): boolean;
+function TLyseeSyn.OnTag(const TagStr: string): boolean;
 var
   index, range: integer;
-
-  function SameChar(c1, c2: char): boolean;
-  begin
-    if FIgnoreTagCase then
-      Result := (__LoCase(c1) = __LoCase(c2)) else
-      Result := (c1 = c2);
-  end;
-
 begin
+  Result := false;
   range := Length(TagStr) - 1;
   for index := 0 to range do
-  begin
-    Result := SameChar(FLine[FRun + index], TagStr[1 + index]);
-    if not Result then Exit;
-  end;
+    if FLine[FRun + index] <> TagStr[1 + index] then
+      Exit;
   Result := true;
 end;
 
-procedure TSynLysee.SetIsLsp(const Value: boolean);
+procedure TLyseeSyn.SetIsLsp(const Value: boolean);
 begin
   FIsLsp := Value;
   if FIsLsp then
@@ -689,36 +677,9 @@ begin
   end;
 end;
 
-{ TSynLyseeMemo }
-
-constructor TSynLyseeMemo.Create(AOwner: TComponent);
-begin
-  inherited;
-  FSynLyseeHilighter := TSynLysee.Create(Self);
-  Highlighter := FSynLyseeHilighter;  
-end;
-
-function TSynLyseeMemo.GetIsLsp: boolean;
-begin
-  Result := FSynLyseeHilighter.IsLsp;
-end;
-
-procedure TSynLyseeMemo.ResetHighlighter;
-var
-  current: TSynCustomHighlighter;
-begin
-  current := Highlighter;
-  Highlighter := nil;
-  Highlighter := current;
-end;
-
-procedure TSynLyseeMemo.SetIsLsp(const Value: boolean);
-begin
-  if Value <> IsLsp then
-  begin
-    FSynLyseeHilighter.IsLsp := Value;
-    ResetHighlighter;
-  end;
-end;
+initialization
+{$IFDEF LYSEE_LAZ}
+{$I lse_synedit.lrs}
+{$ENDIF}
 
 end.
