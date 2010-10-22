@@ -1,5 +1,5 @@
 1 VERSIONINFO
-FILEVERSION 0,2,1,370
+FILEVERSION 1,2,1,371
 PRODUCTVERSION 0,1,1,315
 {
  BLOCK "StringFileInfo"
@@ -9,7 +9,7 @@ PRODUCTVERSION 0,1,1,315
    VALUE "Comments", "\000"
    VALUE "CompanyName", "\000"
    VALUE "FileDescription", "year-month module\000"
-   VALUE "FileVersion", "0.2.1.370\000"
+   VALUE "FileVersion", "1.2.1.371\000"
    VALUE "InternalName", "\000"
    VALUE "LegalCopyright", "Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>\000"
    VALUE "LegalTrademarks", "\000"

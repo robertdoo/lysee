@@ -2,7 +2,7 @@
 {        UNIT: lse_cgi                                                         }
 { DESCRIPTION: CGI utilities in lysee kernel                                   }
 {     CREATED: 2009/01/03                                                      }
-{    MODIFIED: 2010/10/11                                                      }
+{    MODIFIED: 2010/10/20                                                      }
 {==============================================================================}
 { Copyright (c) 2009-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -215,151 +215,151 @@ procedure cgi_noContent(const Param: PLseParam);cdecl;
 const
   cgi_execute_count = 37;
   cgi_execute_array: array[0..cgi_execute_count - 1] of RLseFuncRec = (
-    (fr_prot:'string requestMode';
+    (fr_prot:'requestMode:string ||';
      fr_addr:@cgi_mode;
      fr_desc:'request mode'
     ),
-    (fr_prot:'string encode(string text, bool keepmbc)';
+    (fr_prot:'encode:string |text:string, keepmbc:bool|';
      fr_addr:@cgi_encode;
      fr_desc:'encode text to CGI request'
     ),
-    (fr_prot:'string decode(string request)';
+    (fr_prot:'decode:string |request:string|';
      fr_addr:@cgi_decode;
      fr_desc:'decode CGI request to original text'
     ),
-    (fr_prot:'strlist parse(string queryString)';
+    (fr_prot:'parse:strlist |queryString:string|';
      fr_addr:@cgi_parse;
      fr_desc:'parse CGI request to string list'
     ),
-    (fr_prot:'string arrstr(string str, int count)';
+    (fr_prot:'arrstr:string |str:string, count:int|';
      fr_addr:@cgi_arrstr;
      fr_desc:'arrange string to required length'
     ),
-    (fr_prot:'string notags(string HTML)';
+    (fr_prot:'notags:string |HTML:string|';
      fr_addr:@cgi_notags;
      fr_desc:'clear HTML tags'
     ),
-    (fr_prot:'string encodeHTML(string S)';
+    (fr_prot:'encodeHTML:string |S:string|';
      fr_addr:@cgi_encodeHTML;
      fr_desc:'encode string to HTML'
     ),
-    (fr_prot:'string decodeHTML(string HTML)';
+    (fr_prot:'decodeHTML:string |HTML:string|';
      fr_addr:@cgi_decodeHTML;
      fr_desc:'decode HTML to string'
     ),
-    (fr_prot:'void pack(bool immediately)';
+    (fr_prot:'pack:void |immediately:bool|';
      fr_addr:@cgi_pack;
      fr_desc:'pack HTML content'
     ),
-    (fr_prot:'strlist mimeList';
+    (fr_prot:'mimeList:strlist ||';
      fr_addr:@cgi_mimes;
      fr_desc:'get MIME list'
     ),
-    (fr_prot:'string mimeFile(string fileName)';
+    (fr_prot:'mimeFile:string |fileName:string|';
      fr_addr:@cgi_mime;
      fr_desc:'get MIME type of specified file'
     ),
-    (fr_prot:'int get_statusCode()';
+    (fr_prot:'get_statusCode:int ||';
      fr_addr:@cgi_get_status;
      fr_desc:'get response status code'
     ),
-    (fr_prot:'void set_satusCode(int statusCode)';
+    (fr_prot:'set_satusCode:void |statusCode:int|';
      fr_addr:@cgi_set_status;
      fr_desc:'set response status code'
     ),
-    (fr_prot:'string get_statusReason()';
+    (fr_prot:'get_statusReason:string ||';
      fr_addr:@cgi_get_reason;
      fr_desc:'get response status reason phrase'
     ),
-    (fr_prot:'void set_statusReason(string reason)';
+    (fr_prot:'set_statusReason:void |reason:string|';
      fr_addr:@cgi_set_reason;
      fr_desc:'set response status reason phrase'
     ),
-    (fr_prot:'string get_contentType()';
+    (fr_prot:'get_contentType:string ||';
      fr_addr:@cgi_get_ContentType;
      fr_desc:'get response content type'
     ),
-    (fr_prot:'void set_contentType(string contentType)';
+    (fr_prot:'set_contentType:void |contentType:string|';
      fr_addr:@cgi_set_ContentType;
      fr_desc:'set response content type'
     ),
-    (fr_prot:'int get_contentLength()';
+    (fr_prot:'get_contentLength:int ||';
      fr_addr:@cgi_get_ContentLength;
      fr_desc:'get response content Length'
     ),
-    (fr_prot:'string get_contentString()';
+    (fr_prot:'get_contentString:string ||';
      fr_addr:@cgi_get_content;
      fr_desc:'get response content'
     ),
-    (fr_prot:'void set_contentString(string content)';
+    (fr_prot:'set_contentString:void |content:string|';
      fr_addr:@cgi_set_content;
      fr_desc:'set response content'
     ),
-    (fr_prot:'string serveFile(string fileName)';
+    (fr_prot:'serveFile:string |fileName:string|';
      fr_addr:@cgi_serveFile;
      fr_desc:'set reponse file'
     ),
-    (fr_prot:'string getHV(string name)';
+    (fr_prot:'getHV:string |name:string|';
      fr_addr:@cgi_gethv;
      fr_desc:'get customed response header value'
     ),
-    (fr_prot:'void setHV(string name, string value)';
+    (fr_prot:'setHV:void |name:string, value:string|';
      fr_addr:@cgi_sethv;
      fr_desc:'set customed response header value'
     ),
-    (fr_prot:'string get_headerString()';
+    (fr_prot:'get_headerString:string ||';
      fr_addr:@cgi_headstr;
      fr_desc:'get response header string'
     ),
-    (fr_prot:'bool cookieExists(string name)';
+    (fr_prot:'cookieExists:bool |name:string|';
      fr_addr:@cgi_cookieExists;
      fr_desc:'check if the named cookie exists'
     ),
-    (fr_prot:'string getCookie(string name)';
+    (fr_prot:'getCookie:string |name:string|';
      fr_addr:@cgi_getCookie;
      fr_desc:'get cookie value'
     ),
-    (fr_prot:'string getCookieStr(string name)';
+    (fr_prot:'getCookieStr:string |name:string|';
      fr_addr:@cgi_getCookieStr;
      fr_desc:'get cookie head value string'
     ),
-    (fr_prot:'void setCookie(string name, string value)';
+    (fr_prot:'setCookie:void |name:string, value:string|';
      fr_addr:@cgi_setCookie;
      fr_desc:'set cookie value'
     ),
-    (fr_prot:'void setCookieDomain(string name, string domain)';
+    (fr_prot:'setCookieDomain:void |name:string, domain:string|';
      fr_addr:@cgi_setCookieDomain;
      fr_desc:'set cookie domain'
     ),
-    (fr_prot:'void setCookiePath(string name, string path)';
+    (fr_prot:'setCookiePath:void |name:string, path:string|';
      fr_addr:@cgi_setCookiePath;
      fr_desc:'set cookie path'
     ),
-    (fr_prot:'void setCookieExpires(string name, time expires)';
+    (fr_prot:'setCookieExpires:void |name:string, expires:time|';
      fr_addr:@cgi_setCookieExpires;
      fr_desc:'set cookie expires'
     ),
-    (fr_prot:'void setCookieSecure(string name, time secure)';
+    (fr_prot:'setCookieSecure:void |name:string, secure:time|';
      fr_addr:@cgi_setCookieSecure;
      fr_desc:'set cookie secure attribute'
     ),
-    (fr_prot:'void deleteCookie(string name)';
+    (fr_prot:'deleteCookie:void |name:string|';
      fr_addr:@cgi_deleteCookie;
      fr_desc:'remove cookie by name'
     ),
-    (fr_prot:'void clearCookies()';
+    (fr_prot:'clearCookies:void ||';
      fr_addr:@cgi_clearCookies;
      fr_desc:'clear cookie list'
     ),
-    (fr_prot:'void reset()';
+    (fr_prot:'reset:void ||';
      fr_addr:@cgi_reset;
      fr_desc:'reset response'
     ),
-    (fr_prot:'void redirect(string URI)';
+    (fr_prot:'redirect:void |URI:string|';
      fr_addr:@cgi_redirect;
      fr_desc:'document moved and redirect'
     ),
-    (fr_prot:'void noContent()';
+    (fr_prot:'noContent:void ||';
      fr_addr:@cgi_noContent;
      fr_desc:'set status code to 204: No Content'
     )
@@ -386,7 +386,7 @@ implementation
 
 uses
   math;
-  
+
 function __parseQuery(const QS: string; fields: TStrings): integer;
 var
   next, base: pchar;
@@ -430,7 +430,7 @@ var
       else Inc(next);
     if next <> #0 then Inc(next);
   end;
-  
+
   procedure skip_tag;
   var
     base: pchar;
@@ -1158,7 +1158,7 @@ begin
   begin
     cookie := RSP.FCookies.Find(__AsString(Param^.param[0]));
     if cookie <> nil then
-      cookie.Domain := Trim(__AsString(Param^.param[1])); 
+      cookie.Domain := Trim(__AsString(Param^.param[1]));
   end;
 end;
 
@@ -1343,12 +1343,12 @@ begin
   mlen := (blen + CRLEN) * 2 + 8;
   size := __parseInt(pchar(lse_getenv('CONTENT_LENGTH')));
   if size <= mlen then Exit;
-  
+
   cache := TMemoryStream.Create;
   try
     cache.Size := size;
     if size = ReadBuffer(cache.Memory, size) then
-    begin 
+    begin
       base := cache.Memory;
       while (size > mlen) and (base <> nil) do
       begin
@@ -1366,7 +1366,7 @@ begin
             end;
             if get_value(line, 'filename', fname) then
             begin
-              fname := ExtractFileName(lse_veryPD(fname)); 
+              fname := ExtractFileName(lse_veryPD(fname));
               if fname <> '' then
               begin
                 file_size := next - base - CRLEN;
@@ -1483,7 +1483,7 @@ begin
     begin
       S := FResponse.HeaderString;
       WriteText(S);
-      __log(sLineBreak + S); 
+      __log(sLineBreak + S);
     end;
     if not FResponse.IsNoContent then
       if FResponse.FContentFile = '' then
@@ -1826,7 +1826,7 @@ var
       end;
     Result := false;
   end;
-  
+
   procedure put_value(const ID: string);
   var
     S: string;
@@ -1835,7 +1835,7 @@ var
     if S <> '' then
       headers := headers + Format('%s: %s'#13#10, [ID, S]);
   end;
-  
+
   procedure set_value(const Item, FormatStr: string);
   begin
     if Item <> '' then

@@ -2,7 +2,7 @@
 {        UNIT: lse_api                                                         }
 { DESCRIPTION: APIs builtin in lysee kernel                                    }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/10/12                                                      }
+{    MODIFIED: 2010/10/22                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -69,6 +69,7 @@ procedure pp_system_printf(const Param: PLseParam);cdecl;
 procedure pp_system_println(const Param: PLseParam);cdecl;
 procedure pp_system_readln(const Param: PLseParam);cdecl;
 procedure pp_system_modules(const Param: PLseParam);cdecl;
+procedure pp_system_libs(const Param: PLseParam);cdecl;
 procedure pp_system_exit(const Param: PLseParam);cdecl;
 procedure pp_system_random(const Param: PLseParam);cdecl;
 procedure pp_system_sleep(const Param: PLseParam);cdecl;
@@ -90,7 +91,6 @@ procedure pp_system_min(const Param: PLseParam);cdecl;
 procedure pp_system_leap(const Param: PLseParam);cdecl;
 procedure pp_system_which(const Param: PLseParam);cdecl;
 procedure pp_system_current_dbvs(const Param: PLseParam);cdecl;
-procedure pp_system_exportApi(const Param: PLseParam);cdecl;
 procedure pp_system_curry(const Param: PLseParam);cdecl;
 procedure pp_system_curryone(const Param: PLseParam);cdecl;
 procedure pp_system_gc(const Param: PLseParam);cdecl;
@@ -135,12 +135,6 @@ procedure pp_system_maxint(const Param: PLseParam);cdecl;
 procedure pp_system_minint(const Param: PLseParam);cdecl;
 procedure pp_system_gget(const Param: PLseParam);cdecl;
 procedure pp_system_gput(const Param: PLseParam);cdecl;
-procedure pp_system_get_stdin(const Param: PLseParam);cdecl;
-procedure pp_system_set_stdin(const Param: PLseParam);cdecl;
-procedure pp_system_get_stdout(const Param: PLseParam);cdecl;
-procedure pp_system_set_stdout(const Param: PLseParam);cdecl;
-procedure pp_system_get_stderr(const Param: PLseParam);cdecl;
-procedure pp_system_set_stderr(const Param: PLseParam);cdecl;
 procedure pp_system_log(const Param: PLseParam);cdecl;
 procedure pp_system_abs(const Param: PLseParam);cdecl;
 procedure pp_system_find(const Param: PLseParam);cdecl;
@@ -151,381 +145,357 @@ procedure pp_system_throw(const Param: PLseParam);cdecl;
 procedure pp_system_writeTo(const Param: PLseParam);cdecl;
 
 const
-  sys_func_count = 94;
+  sys_func_count = 88;
   sys_func_array: array[0..sys_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string dir()';
+    (fr_prot:'dir:string ||';
      fr_addr:@pp_system_dir;
      fr_desc:'get current directory';
     ),
-    (fr_prot:'bool cd(string newDirectory)';
+    (fr_prot:'cd:bool |newDirectory:string|';
      fr_addr:@pp_system_cd;
      fr_desc:'change current directory';
     ),
-    (fr_prot:'bool mkdir(string dir)';
+    (fr_prot:'mkdir:bool |dir:string|';
      fr_addr:@pp_system_mkdir;
      fr_desc:'create new directory';
     ),
-    (fr_prot:'bool rmdir(string dir)';
+    (fr_prot:'rmdir:bool |dir:string|';
      fr_addr:@pp_system_rmdir;
      fr_desc:'remove specified directory';
     ),
-    (fr_prot:'bool cp(string source, string desti)';
+    (fr_prot:'cp:bool |source:string, desti:string|';
      fr_addr:@pp_system_cp;
      fr_desc:'copy source file to desti file';
     ),
-    (fr_prot:'bool rm(string fileName)';
+    (fr_prot:'rm:bool |fileName:string|';
      fr_addr:@pp_system_rm;
      fr_desc:'remove specified file';
     ),
-    (fr_prot:'bool mv(string source, string desti)';
+    (fr_prot:'mv:bool |source:string, desti:string|';
      fr_addr:@pp_system_mv;
      fr_desc:'rename source file to desti file';
     ),
-    (fr_prot:'bool isdir(string directory)';
+    (fr_prot:'isdir:bool |directory:string|';
      fr_addr:@pp_system_isdir;
      fr_desc:'test if directory exists';
     ),
-    (fr_prot:'bool isfile(string fileName)';
+    (fr_prot:'isfile:bool |fileName:string|';
      fr_addr:@pp_system_isfile;
      fr_desc:'test if file exists';
     ),
-    (fr_prot:'varlist modules()';
+    (fr_prot:'modules:varlist ||';
      fr_addr:@pp_system_modules;
      fr_desc:'return imported module list';
     ),
-    (fr_prot:'void print(string text)';
+    (fr_prot:'libs:varlist ||';
+     fr_addr:@pp_system_libs;
+     fr_desc:'return loaded libraries';
+    ),
+    (fr_prot:'print:void |text:string|';
      fr_addr:@pp_system_print;
      fr_desc:'print text into STDOUT';
     ),
-    (fr_prot:'void println(string text)';
+    (fr_prot:'println:void |text:string|';
      fr_addr:@pp_system_println;
      fr_desc:'print text and a line break into STDOUT';
     ),
-    (fr_prot:'void printf(string fileName)';
+    (fr_prot:'printf:void |fileName:string|';
      fr_addr:@pp_system_printf;
      fr_desc:'print file content into STDOUT';
     ),
-    (fr_prot:'string readln()';
+    (fr_prot:'readln:string ||';
      fr_addr:@pp_system_readln;
      fr_desc:'read a line from STDIN';
     ),
-    (fr_prot:'void exportAPI(string fileName)';
-     fr_addr:@pp_system_exportApi;
-     fr_desc:'export builtin APIs into HTML file';
-    ),
-    (fr_prot:'void exit(int status)';
+    (fr_prot:'exit:void |status:int|';
      fr_addr:@pp_system_exit;
      fr_desc:'exit with status code';
     ),
-    (fr_prot:'int random(int low, int high)';
+    (fr_prot:'random:int |low:int, high:int|';
      fr_addr:@pp_system_random;
      fr_desc:'generate random number';
     ),
-    (fr_prot:'void sleep(int milliSeconds)';
+    (fr_prot:'sleep:void |milliSeconds:int|';
      fr_addr:@pp_system_sleep;
      fr_desc:'sleep a number of milliseconds';
     ),
-    (fr_prot:'string getenv(string name)';
+    (fr_prot:'getenv:string |name:string|';
      fr_addr:@pp_system_getenv;
      fr_desc:'get environment value';
     ),
-    (fr_prot:'string dumpc(variant any)';
+    (fr_prot:'dumpc:string |any|';
      fr_addr:@pp_system_dumpc;
      fr_desc:'dump object p-codes';
     ),
-    (fr_prot:'int length(variant any)';
+    (fr_prot:'length:int |any|';
      fr_addr:@pp_system_length;
      fr_desc:'get string length or item count';
     ),
-    (fr_prot:'variant getiv(variant obj, int index)';
+    (fr_prot:'getiv |obj, index:int|';
      fr_addr:@pp_system_getiv;
      fr_desc:'get item value by index';
     ),
-    (fr_prot:'void setiv(variant obj, int index, variant value)';
+    (fr_prot:'setiv:void |obj, index:int, value|';
      fr_addr:@pp_system_setiv;
      fr_desc:'set item value by index';
     ),
-    (fr_prot:'variant getpv(variant obj, string name)';
+    (fr_prot:'getpv |obj, name:string|';
      fr_addr:@pp_system_getpv;
      fr_desc:'get property by name';
     ),
-    (fr_prot:'void setpv(variant obj, string name, variant value)';
+    (fr_prot:'setpv:void |obj, name:string, value|';
      fr_addr:@pp_system_setpv;
      fr_desc:'set property by name';
     ),
-    (fr_prot:'string genid()';
+    (fr_prot:'genid:string ||';
      fr_addr:@pp_system_genid;
      fr_desc:'generate a global unique string';
     ),
-    (fr_prot:'module load(string fileName)';
+    (fr_prot:'load:module |fileName:string|';
      fr_addr:@pp_system_load;
      fr_desc:'load module';
     ),
-    (fr_prot:'function parse(string script, bool isLSP)';
+    (fr_prot:'parse:function |script:string, isLSP:bool|';
      fr_addr:@pp_system_parse;
      fr_desc:'parse and compile script';
     ),
-    (fr_prot:'variant eval(string script, bool isLSP)';
+    (fr_prot:'eval |script:string, isLSP:bool|';
      fr_addr:@pp_system_eval;
      fr_desc:'evaluate a block of lysee script';
     ),
-    (fr_prot:'string format(string fmt, varlist args)';
+    (fr_prot:'format:string |fmt:string, args:varlist|';
      fr_addr:@pp_system_format;
      fr_desc:'format string';
     ),
-    (fr_prot:'time now()';
+    (fr_prot:'now:time ||';
      fr_addr:@pp_system_now;
      fr_desc:'get current time';
     ),
-    (fr_prot:'variant max(variant v1, variant v2)';
+    (fr_prot:'max |v1, v2|';
      fr_addr:@pp_system_max;
      fr_desc:'get max value';
     ),
-    (fr_prot:'variant min(variant v1, variant v2)';
+    (fr_prot:'min |v1, v2|';
      fr_addr:@pp_system_min;
      fr_desc:'get min value';
     ),
-    (fr_prot:'bool leap(int year)';
+    (fr_prot:'leap:bool |year:int|';
      fr_addr:@pp_system_leap;
-     fr_desc:'test if is a leap year';
+     fr_desc:'test leap year';
     ),
-    (fr_prot:'variant which(string name)';
+    (fr_prot:'which |name:string|';
      fr_addr:@pp_system_which;
      fr_desc:'find variable, function, module or anything else by name';
     ),
-    (fr_prot:'function curry(function func, varlist paramList)';
+    (fr_prot:'curry:function |func:function, paramList:varlist|';
      fr_addr:@pp_system_curry;
      fr_desc:'curry function with parametre list';
     ),
-    (fr_prot:'function curryOne(function func, variant value)';
+    (fr_prot:'curryOne:function |func:function, value|';
      fr_addr:@pp_system_curryone;
      fr_desc:'curry function with one parametre';
     ),
-    (fr_prot:'int gc()';
+    (fr_prot:'gc:int ||';
      fr_addr:@pp_system_gc;
      fr_desc:'execute garbage collection immediately';
     ),
-    (fr_prot:'variant apply(function func, varlist params)';
+    (fr_prot:'apply |func:function, params:varlist|';
      fr_addr:@pp_system_apply;
      fr_desc:'call function with supplied parametres';
     ),
-    (fr_prot:'bool isValidDate(int year, int month, int day)';
+    (fr_prot:'isValidDate:bool |year:int, month:int, day:int|';
      fr_addr:@pp_system_isValidDate;
      fr_desc:'test if is valid date';
     ),
-    (fr_prot:'time encodeDateTime(int year, int month, int day, int hour, int minute, int second, int milliSecond)';
+    (fr_prot:'encodeDateTime:time |year:int, month:int, day:int, hour:int, minute:int, second:int, milliSecond:int|';
      fr_addr:@pp_system_encodeDateTime;
      fr_desc:'encode date time';
     ),
-    (fr_prot:'string tempFileName(string fileExt)';
+    (fr_prot:'tempFileName:string |fileExt:string|';
      fr_addr:@pp_system_tmpfname;
      fr_desc:'generate temp file name at temp path';
     ),
-    (fr_prot:'string encodeGMT(time date)';
+    (fr_prot:'encodeGMT:string |date:time|';
      fr_addr:@pp_system_encodeGMT;
      fr_desc:'encode date to GMT string';
     ),
-    (fr_prot:'time decodeGMT(string GMT)';
+    (fr_prot:'decodeGMT:time |GMT:string|';
      fr_addr:@pp_system_decodeGMT;
      fr_desc:'decode GMT string to date';
     ),
-    (fr_prot:'string encodeUTF8(string ANSI)';
+    (fr_prot:'encodeUTF8:string |ANSI:string|';
      fr_addr:@pp_system_encodeUTF8;
      fr_desc:'encode ANSI string to UTF8 format';
     ),
-    (fr_prot:'string decodeUTF8(string UTF8)';
+    (fr_prot:'decodeUTF8:string |UTF8:string|';
      fr_addr:@pp_system_decodeUTF8;
      fr_desc:'decode UTF8 string to ANSI format';
     ),
-    (fr_prot:'string encodeS(string S, bool includeLocalBytes)';
+    (fr_prot:'encodeS:string |S:string, includeLocalBytes:bool|';
      fr_addr:@pp_system_encodeS;
      fr_desc:'encode string value';
     ),
-    (fr_prot:'string decodeS(string S)';
+    (fr_prot:'decodeS:string |S:string|';
      fr_addr:@pp_system_decodeS;
      fr_desc:'decode string value';
     ),
-    (fr_prot:'stream openfs(string fileName, string mode)';
+    (fr_prot:'openfs:stream |fileName:string, mode:string|';
      fr_addr:@pp_system_openfs;
      fr_desc:'open file stream by specified mode: CRWE (default R)';
     ),
-    (fr_prot:'stream memory(int size)';
+    (fr_prot:'memory:stream |size:int|';
      fr_addr:@pp_system_memory;
      fr_desc:'create memory stream';
     ),
-    (fr_prot:'string incPD(string dir)';
+    (fr_prot:'incPD:string |dir:string|';
      fr_addr:@pp_system_incPD;
      fr_desc:'include trailing path delimiter';
     ),
-    (fr_prot:'string excPD(string path)';
+    (fr_prot:'excPD:string |path:string|';
      fr_addr:@pp_system_excPD;
      fr_desc:'exclude trailing path delimiter';
     ),
-    (fr_prot:'string veryPD(string path)';
+    (fr_prot:'veryPD:string |path:string|';
      fr_addr:@pp_system_veryPD;
      fr_desc:'correct path delimiter';
     ),
-    (fr_prot:'string veryUD(string RUL)';
+    (fr_prot:'veryUD:string |RUL:string|';
      fr_addr:@pp_system_veryUD;
      fr_desc:'correct URL delimiter';
     ),
-    (fr_prot:'string system(string commandline, string dir)';
+    (fr_prot:'system:string |commandline:string, dir:string|';
      fr_addr:@pp_system_system;
      fr_desc:'execute command line and get its output';
     ),
-    (fr_prot:'bool shexec(string commandline, string dir, bool wait)';
+    (fr_prot:'shexec:bool |commandline:string, dir:string, wait:bool|';
      fr_addr:@pp_system_shexec;
      fr_desc:'execute command line';
     ),
-    (fr_prot:'int msecs(function func, varlist params)';
+    (fr_prot:'msecs:int |func:function, params:varlist|';
      fr_addr:@pp_system_msecs;
      fr_desc:'count milliseconds used to call a function';
     ),
-    (fr_prot:'strlist __dbvs__()';
+    (fr_prot:'__dbvs__:strlist ||';
      fr_addr:@pp_system_current_dbvs;
      fr_desc:'database vendor list';
     ),
-    (fr_prot:'module __module__()';
+    (fr_prot:'__module__:module ||';
      fr_addr:@pp_system_current_module;
      fr_desc:'get current module';
     ),
-    (fr_prot:'function __func__()';
+    (fr_prot:'__func__:function ||';
      fr_addr:@pp_system_current_func;
      fr_desc:'get current function';
     ),
-    (fr_prot:'error __error__()';
+    (fr_prot:'__error__:error ||';
      fr_addr:@pp_system_current_error;
      fr_desc:'get current error';
     ),
-    (fr_prot:'strlist __args__()';
+    (fr_prot:'__args__:strlist ||';
      fr_addr:@pp_system_current_args;
      fr_desc:'get argument list';
     ),
-    (fr_prot:'int __prmc__()';
+    (fr_prot:'__prmc__:int ||';
      fr_addr:@pp_system_current_prmc;
      fr_desc:'get actual parametre count';
     ),
-    (fr_prot:'varlist __prms__()';
+    (fr_prot:'__prms__:varlist ||';
      fr_addr:@pp_system_current_prms;
      fr_desc:'get parametre value list';
     ),
-    (fr_prot:'int __xcode__()';
+    (fr_prot:'__xcode__:int ||';
      fr_addr:@pp_system_current_xcode;
      fr_desc:'get last shell exit code';
     ),
-    (fr_prot:'int __line__()';
+    (fr_prot:'__line__:int ||';
      fr_addr:@pp_system_current_line;
      fr_desc:'get current line number';
     ),
-    (fr_prot:'strlist __envs__()';
+    (fr_prot:'__envs__:strlist ||';
      fr_addr:@pp_system_current_envs;
      fr_desc:'get environment value list';
     ),
-    (fr_prot:'string __file__()';
+    (fr_prot:'__file__:string ||';
      fr_addr:@pp_system_current_file;
      fr_desc:'get current file';
     ),
-    (fr_prot:'string __ifile__()';
+    (fr_prot:'__ifile__:string ||';
      fr_addr:@pp_system_current_ifile;
      fr_desc:'get current included file';
     ),
-    (fr_prot:'string __pd__()';
+    (fr_prot:'__pd__:string ||';
      fr_addr:@pp_system_current_pd;
      fr_desc:'get system path delimiter';
     ),
-    (fr_prot:'string eol()';
+    (fr_prot:'eol:string ||';
      fr_addr:@pp_system_eol;
      fr_desc:'get eol(line break)';
     ),
-    (fr_prot:'void each(vargen any, function proc)';
+    (fr_prot:'each:void |any:vargen, proc:function|';
      fr_addr:@pp_system_each;
      fr_desc:'process each item: |item| ... end';
     ),
-    (fr_prot:'varlist map(vargen any, function proc)';
+    (fr_prot:'map:varlist |any:vargen, proc:function|';
      fr_addr:@pp_system_map;
      fr_desc:'map each item: |item| ... end';
     ),
-    (fr_prot:'variant reduce(vargen any, variant initValue, function proc)';
+    (fr_prot:'reduce |any:vargen, initValue, proc:function|';
      fr_addr:@pp_system_reduce;
      fr_desc:'reduce each item: |result, item| ... end';
     ),
-    (fr_prot:'varlist filter(vargen any, function proc)';
+    (fr_prot:'filter:varlist |any:vargen, proc:function|';
      fr_addr:@pp_system_filter;
      fr_desc:'filter item: |item| ... end';
     ),
-    (fr_prot:'variant sum(vargen any, function proc, variant initValue)';
+    (fr_prot:'sum |any:vargen, proc:function, initValue|';
      fr_addr:@pp_system_sum;
      fr_desc:'sum all: |result, item| ... end';
     ),
-    (fr_prot:'int __maxint__()';
+    (fr_prot:'__maxint__:int ||';
      fr_addr:@pp_system_maxint;
      fr_desc:'get max integer value';
     ),
-    (fr_prot:'int __minint__()';
+    (fr_prot:'__minint__:int ||';
      fr_addr:@pp_system_minint;
      fr_desc:'get min integer value';
     ),
-    (fr_prot:'variant gget(string name)';
+    (fr_prot:'gget |name:string|';
      fr_addr:@pp_system_gget;
      fr_desc:'get global value';
     ),
-    (fr_prot:'void gput(string name, variant value)';
+    (fr_prot:'gput:void |name:string, value|';
      fr_addr:@pp_system_gput;
      fr_desc:'set global value';
     ),
-    (fr_prot:'stream get_cin()';
-     fr_addr:@pp_system_get_stdin;
-     fr_desc:'get stdin stream';
-    ),
-    (fr_prot:'void set_cin(stream stdin)';
-     fr_addr:@pp_system_set_stdin;
-     fr_desc:'set stdin stream';
-    ),
-    (fr_prot:'stream cout';
-     fr_addr:@pp_system_get_stdout;
-     fr_desc:'get stdout stream';
-    ),
-    (fr_prot:'void set_cout(stream stdout)';
-     fr_addr:@pp_system_set_stdout;
-     fr_desc:'set stdout stream';
-    ),
-    (fr_prot:'stream get_cerr()';
-     fr_addr:@pp_system_get_stderr;
-     fr_desc:'get stderr stream';
-    ),
-    (fr_prot:'void set_cerr(stream stderr)';
-     fr_addr:@pp_system_set_stderr;
-     fr_desc:'set stderr stream';
-    ),
-    (fr_prot:'void log(string message)';
+    (fr_prot:'log:void |message:string|';
      fr_addr:@pp_system_log;
      fr_desc:'save message to log file';
     ),
-    (fr_prot:'variant abs(variant value)';
+    (fr_prot:'abs |value|';
      fr_addr:@pp_system_abs;
      fr_desc:'get absolute value';
     ),
-    (fr_prot:'varlist find(string S, string patten, bool findAll)';
+    (fr_prot:'find:varlist |S:string, patten:string, findAll:bool|';
      fr_addr:@pp_system_find;
      fr_desc:'find patten matches';
     ),
-    (fr_prot:'string gsub(string S, string patten, string newStr, int count)';
+    (fr_prot:'gsub:string |S:string, patten:string, newStr:string, count:int|';
      fr_addr:@pp_system_gsub;
      fr_desc:'replace patten with new string';
     ),
-    (fr_prot:'strlist split(string S, string patten)';
+    (fr_prot:'split:strlist |S:string, patten:string|';
      fr_addr:@pp_system_split;
      fr_desc:'split string to strlist';
     ),
-    (fr_prot:'varlist getcs(int index)';
+    (fr_prot:'getcs:varlist |index:int|';
      fr_addr:@pp_system_getcs;
      fr_desc:'get call stack item';
     ),
-    (fr_prot:'void throw(string exceptionMsg, string exceptionID)';
+    (fr_prot:'throw:void |exceptionMsg:string, exceptionID:string|';
      fr_addr:@pp_system_throw;
      fr_desc:'throw exception';
     ),
-    (fr_prot:'int writeTo(stream stream, variant someThing)';
+    (fr_prot:'writeTo:int |stream:stream, someThing|';
      fr_addr:@pp_system_writeTo;
      fr_desc:'write something to stream';
     )
@@ -552,31 +522,31 @@ const
 
   error_func_count = 7;
   error_func_array: array[0..error_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string get_text()';
+    (fr_prot:'get_text:string ||';
      fr_addr:@pp_error_text;
      fr_desc:'error text';
     ),
-    (fr_prot:'string get_module()';
+    (fr_prot:'get_module:string ||';
      fr_addr:@pp_error_module;
      fr_desc:'error module';
     ),
-    (fr_prot:'string get_name()';
+    (fr_prot:'get_name:string ||';
      fr_addr:@pp_error_name;
      fr_desc:'error name';
     ),
-    (fr_prot:'string get_message()';
+    (fr_prot:'get_message:string ||';
      fr_addr:@pp_error_message;
      fr_desc:'error message';
     ),
-    (fr_prot:'int get_row()';
+    (fr_prot:'get_row:int ||';
      fr_addr:@pp_error_row;
      fr_desc:'error row';
     ),
-    (fr_prot:'int get_col()';
+    (fr_prot:'get_col:int ||';
      fr_addr:@pp_error_col;
      fr_desc:'error column';
     ),
-    (fr_prot:'int get_errno()';
+    (fr_prot:'get_errno:int ||';
      fr_addr:@pp_error_errno;
      fr_desc:'error code';
     )
@@ -590,6 +560,7 @@ const
 { function }
 
 procedure pp_func_name(const Param: PLseParam);cdecl;
+procedure pp_func_desc(const Param: PLseParam);cdecl;
 procedure pp_func_type(const Param: PLseParam);cdecl;
 procedure pp_func_prototype(const Param: PLseParam);cdecl;
 procedure pp_func_module(const Param: PLseParam);cdecl;
@@ -601,33 +572,37 @@ const
   KTN_FUNC = 'function';
   KTD_FUNC = 'function';
 
-  func_func_count = 7;
+  func_func_count = 8;
   func_func_array: array[0..func_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string get_name()';
+    (fr_prot:'get_name:string ||';
      fr_addr:@pp_func_name;
      fr_desc:'function name';
     ),
-    (fr_prot:'string get_type()';
+    (fr_prot:'get_description:string ||';
+     fr_addr:@pp_func_desc;
+     fr_desc:'function description';
+    ),
+    (fr_prot:'get_type:string ||';
      fr_addr:@pp_func_type;
      fr_desc:'get function result type';
     ),
-    (fr_prot:'string get_prototype()';
+    (fr_prot:'get_prototype:string ||';
      fr_addr:@pp_func_prototype;
      fr_desc:'function prototype';
     ),
-    (fr_prot:'module get_module()';
+    (fr_prot:'get_module:module ||';
      fr_addr:@pp_func_module;
      fr_desc:'function module';
     ),
-    (fr_prot:'type get_parent()';
+    (fr_prot:'get_parent:type ||';
      fr_addr:@pp_func_parent;
      fr_desc:'get parent class';
     ),
-    (fr_prot:'varlist get_params()';
+    (fr_prot:'get_params:varlist ||';
      fr_addr:@pp_func_params;
      fr_desc:'get parametre list';
     ),
-    (fr_prot:'varlist get_locals()';
+    (fr_prot:'get_locals:varlist ||';
      fr_addr:@pp_func_locals;
      fr_desc:'get local varible list';
     )
@@ -657,79 +632,79 @@ const
 
   hashed_func_count = 19;
   hashed_func_array: array[0..hashed_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'hashed hashed(int buckets)';
+    (fr_prot:'hashed:hashed |buckets:int|';
      fr_addr:@pp_hashed_create;
      fr_desc:'create a hashed key-value list';
     ),
-    (fr_prot:'variant getpv(string key)';
+    (fr_prot:'getpv |key:string|';
      fr_addr:@pp_hashed_getpv;
      fr_desc:'get value by key name';
     ),
-    (fr_prot:'void setpv(string key, variant value)';
+    (fr_prot:'setpv:void |key:string, value|';
      fr_addr:@pp_hashed_setpv;
      fr_desc:'set value by key name';
     ),
-    (fr_prot:'int get_length()';
+    (fr_prot:'get_length:int ||';
      fr_addr:@pp_hashed_length;
      fr_desc:'get item count';
     ),
-    (fr_prot:'variant getiv(int index)';
+    (fr_prot:'getiv |index:int|';
      fr_addr:@pp_hashed_getpv;
      fr_desc:'get value by index';
     ),
-    (fr_prot:'void setiv(int index, variant value)';
+    (fr_prot:'setiv:void |index:int, value|';
      fr_addr:@pp_hashed_setpv;
      fr_desc:'set value by index';
     ),
-    (fr_prot:'void exchange(int index1, int index2)';
+    (fr_prot:'exchange:void |index1:int, index2:int|';
      fr_addr:@pp_hashed_exchange;
      fr_desc:'exchange two item valuea';
     ),
-    (fr_prot:'variant gget(string key)';
+    (fr_prot:'gget |key:string|';
      fr_addr:@pp_hashed_gget;
      fr_desc:'get value by chain';
     ),
-    (fr_prot:'void gput(string key, variant value)';
+    (fr_prot:'gput:void |key:string, value|';
      fr_addr:@pp_hashed_gput;
      fr_desc:'set value by chain';
     ),
-    (fr_prot:'variant read(string key, variant defaultValue)';
+    (fr_prot:'read |key:string, defaultValue|';
      fr_addr:@pp_hashed_read;
      fr_desc:'read key value';
     ),
-    (fr_prot:'void write(string key, variant value)';
+    (fr_prot:'write:void |key:string, value|';
      fr_addr:@pp_hashed_setpv;
      fr_desc:'set key value';
     ),
-    (fr_prot:'strlist get_keys()';
+    (fr_prot:'get_keys:strlist ||';
      fr_addr:@pp_hashed_keys;
      fr_desc:'get hashed key list';
     ),
-    (fr_prot:'varlist listKV()';
+    (fr_prot:'listKV:varlist ||';
      fr_addr:@pp_hashed_listKV;
      fr_desc:'list keys and values';
     ),
-    (fr_prot:'varlist get_values()';
+    (fr_prot:'get_values:varlist ||';
      fr_addr:@pp_hashed_values;
      fr_desc:'get hashed value list';
     ),
-    (fr_prot:'void remove(string key)';
+    (fr_prot:'remove:void |key:string|';
      fr_addr:@pp_hashed_remove;
      fr_desc:'remove specifed key value';
     ),
-    (fr_prot:'void delete(int index)';
+    (fr_prot:'delete:void |index:int|';
      fr_addr:@pp_hashed_remove;
      fr_desc:'delete by index';
     ),
-    (fr_prot:'void clear()';
+    (fr_prot:'clear:void ||';
      fr_addr:@pp_hashed_clear;
      fr_desc:'clear list item';
     ),
-    (fr_prot:'bool isset(string key)';
+    (fr_prot:'isset:bool |key:string|';
      fr_addr:@pp_hashed_isset;
      fr_desc:'check if the key exists';
     ),
-    (fr_prot:'function curry(string name, function func)';
+    (fr_prot:'curry:function |name:string, func:function|';
      fr_addr:@pp_hashed_curry;
      fr_desc:'curry self and save the result function';
     )
@@ -748,19 +723,19 @@ const
 
   int_func_count = 4;
   int_func_array: array[0..int_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string hex(int size)';
+    (fr_prot:'hex:string |size:int|';
      fr_addr:@pp_int_hex;
      fr_desc:'convert to hex string';
     ),
-    (fr_prot:'string bitlist(int size)';
+    (fr_prot:'bitlist:string |size:int|';
      fr_addr:@pp_int_bitlist;
      fr_desc:'convert to bit list string';
     ),
-    (fr_prot:'vargen upto(int value, int step)';
+    (fr_prot:'upto:vargen |value:int, step:int|';
      fr_addr:@pp_int_upto;
      fr_desc:'create a upto range';
     ),
-    (fr_prot:'vargen downto(int value, int step)';
+    (fr_prot:'downto:vargen |value:int, step:int|';
      fr_addr:@pp_int_downto;
      fr_desc:'create a downto range';
     )
@@ -769,12 +744,14 @@ const
 { module }
 
 procedure pp_module_name(const Param: PLseParam);cdecl;
+procedure pp_module_desc(const Param: PLseParam);cdecl;
 procedure pp_module_file(const Param: PLseParam);cdecl;
 procedure pp_module_modules(const Param: PLseParam);cdecl;
 procedure pp_module_funcs(const Param: PLseParam);cdecl;
 procedure pp_module_types(const Param: PLseParam);cdecl;
 procedure pp_module_version(const Param: PLseParam);cdecl;
 procedure pp_module_getpv(const Param: PLseParam);cdecl;
+procedure pp_module_setpv(const Param: PLseParam);cdecl;
 procedure pp_module_main(const Param: PLseParam);cdecl;
 procedure pp_module_imports(const Param: PLseParam);cdecl;
 
@@ -782,41 +759,49 @@ const
   KTN_MODULE = 'module';
   KTD_MODULE = 'module';
 
-  module_func_count = 9;
+  module_func_count = 11;
   module_func_array: array[0..module_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string get_name()';
+    (fr_prot:'get_name:string ||';
      fr_addr:@pp_module_name;
      fr_desc:'module name';
     ),
-    (fr_prot:'string get_file()';
+    (fr_prot:'get_description:string ||';
+     fr_addr:@pp_module_desc;
+     fr_desc:'module description';
+    ),
+    (fr_prot:'get_file:string ||';
      fr_addr:@pp_module_file;
      fr_desc:'module file';
     ),
-    (fr_prot:'varlist get_modules()';
+    (fr_prot:'get_modules:varlist ||';
      fr_addr:@pp_module_modules;
      fr_desc:'imported module list';
     ),
-    (fr_prot:'varlist get_funcs()';
+    (fr_prot:'get_funcs:varlist ||';
      fr_addr:@pp_module_funcs;
      fr_desc:'global function list';
     ),
-    (fr_prot:'varlist get_classes()';
+    (fr_prot:'get_classes:varlist ||';
      fr_addr:@pp_module_types;
      fr_desc:'get type list';
     ),
-    (fr_prot:'string get_version()';
+    (fr_prot:'get_version:string ||';
      fr_addr:@pp_module_version;
      fr_desc:'type version';
     ),
-    (fr_prot:'variant getpv(string name)';
+    (fr_prot:'getpv |name:string|';
      fr_addr:@pp_module_getpv;
      fr_desc:'find class, function or const value by name';
     ),
-    (fr_prot:'function get_main()';
+    (fr_prot:'setpv:void |name:string, value|';
+     fr_addr:@pp_module_setpv;
+     fr_desc:'set module property';
+    ),
+    (fr_prot:'get_main:function ||';
      fr_addr:@pp_module_main;
      fr_desc:'module main function';
     ),
-    (fr_prot:'module imports(string moduleName)';
+    (fr_prot:'imports:module |moduleName:string|';
      fr_addr:@pp_module_imports;
      fr_desc:'import module by name';
     )
@@ -849,75 +834,75 @@ const
 
   db_execute_count = 18;
   db_execute_array: array[0..db_execute_count - 1] of RLseFuncRec = (
-    (fr_prot:'database database(string vendor)';
+    (fr_prot:'database:database |vendor:string|';
      fr_addr:@pp_database_create;
      fr_desc:'create database object';
     ),
-    (fr_prot:'int execSQL(string SQL)';
+    (fr_prot:'execSQL:int |SQL:string|';
      fr_addr:@pp_database_execSQL;
      fr_desc:'execute SQL command';
     ),
-    (fr_prot:'dataset openSQL(string SQL)';
+    (fr_prot:'openSQL:dataset |SQL:string|';
      fr_addr:@pp_database_openSQL;
      fr_desc:'query dataset';
     ),
-    (fr_prot:'strlist get_tables()';
+    (fr_prot:'get_tables:strlist ||';
      fr_addr:@pp_database_tables;
      fr_desc:'get table name list';
     ),
-    (fr_prot:'strlist get_procedures()';
+    (fr_prot:'get_procedures:strlist ||';
      fr_addr:@pp_database_procedures;
      fr_desc:'get stored procedure name list';
     ),
-    (fr_prot:'void connecTo(string target, string user, string password, string source, string params)';
+    (fr_prot:'connecTo:void |target:string, user:string, password:string, source:string, params:string|';
      fr_addr:@pp_database_connecTo;
      fr_desc:'connect to target database: Access, Mssql, ODBC';
     ),
-    (fr_prot:'void disconnect()';
+    (fr_prot:'disconnect:void ||';
      fr_addr:@pp_database_disconnect;
      fr_desc:'close database connection';
     ),
-    (fr_prot:'void reconnect()';
+    (fr_prot:'reconnect:void ||';
      fr_addr:@pp_database_reconnect;
      fr_desc:'reopen database connection';
     ),
-    (fr_prot:'bool get_connected()';
+    (fr_prot:'get_connected:bool ||';
      fr_addr:@pp_database_connected;
      fr_desc:'test if database connection is active';
     ),
-    (fr_prot:'void transact()';
+    (fr_prot:'transact:void ||';
      fr_addr:@pp_database_transact;
      fr_desc:'begin transaction';
     ),
-    (fr_prot:'bool get_inTransaction()';
+    (fr_prot:'get_inTransaction:bool ||';
      fr_addr:@pp_database_inTransaction;
      fr_desc:'test if is in transaction';
     ),
-    (fr_prot:'void commit()';
+    (fr_prot:'commit:void ||';
      fr_addr:@pp_database_commit;
      fr_desc:'commit transaction';
     ),
-    (fr_prot:'void commitRetaining()';
+    (fr_prot:'commitRetaining:void ||';
      fr_addr:@pp_database_commitRetaining;
      fr_desc:'commit retaining transactions';
     ),
-    (fr_prot:'void commitAndTransact()';
+    (fr_prot:'commitAndTransact:void ||';
      fr_addr:@pp_database_commitAndTransact;
      fr_desc:'commit retaining and start a new transaction';
     ),
-    (fr_prot:'void rollback()';
+    (fr_prot:'rollback:void ||';
      fr_addr:@pp_database_rollback;
      fr_desc:'rollback transaction';
     ),
-    (fr_prot:'void rollbackRetaining()';
+    (fr_prot:'rollbackRetaining:void ||';
      fr_addr:@pp_database_rollbackRetaining;
      fr_desc:'rollback retaining transactions';
     ),
-    (fr_prot:'void rollbackAndTransact()';
+    (fr_prot:'rollbackAndTransact:void ||';
      fr_addr:@pp_database_rollbackAndTransact;
      fr_desc:'rollback retaining and start a new transaction';
     ),
-    (fr_prot:'string escape(string stringValue)';
+    (fr_prot:'escape:string |stringValue:string|';
      fr_addr:@pp_database_escape;
      fr_desc:'escape string value';
     )
@@ -952,83 +937,83 @@ const
 
   ds_execute_count = 20;
   ds_execute_array: array[0..ds_execute_count - 1] of RLseFuncRec = (
-    (fr_prot:'int get_length()';
+    (fr_prot:'get_length:int ||';
      fr_addr:@pp_dataset_length;
      fr_desc:'get field count';
     ),
-    (fr_prot:'variant getiv(int index)';
+    (fr_prot:'getiv |index:int|';
      fr_addr:@pp_dataset_getiv;
      fr_desc:'get field value by index';
     ),
-    (fr_prot:'variant getpv(string fieldName)';
+    (fr_prot:'getpv |fieldName:string|';
      fr_addr:@pp_dataset_getpv;
      fr_desc:'get field value by name';
     ),
-    (fr_prot:'int indexOf(string fieldName)';
+    (fr_prot:'indexOf:int |fieldName:string|';
      fr_addr:@pp_dataset_indexOf;
      fr_desc:'get field index by name';
     ),
-    (fr_prot:'void close()';
+    (fr_prot:'close:void ||';
      fr_addr:@pp_dataset_close;
      fr_desc:'close current dataset';
     ),
-    (fr_prot:'dataset open(string SQL)';
+    (fr_prot:'open:dataset |SQL:string|';
      fr_addr:@pp_dataset_open;
      fr_desc:'close current dataset and start a new query';
     ),
-    (fr_prot:'int get_count()';
+    (fr_prot:'get_count:int ||';
      fr_addr:@pp_dataset_count;
      fr_desc:'get record count';
     ),
-    (fr_prot:'void first()';
+    (fr_prot:'first:void ||';
      fr_addr:@pp_dataset_first;
      fr_desc:'seek to first record';
     ),
-    (fr_prot:'void last()';
+    (fr_prot:'last:void ||';
      fr_addr:@pp_dataset_last;
      fr_desc:'seek to last record';
     ),
-    (fr_prot:'void prior()';
+    (fr_prot:'prior:void ||';
      fr_addr:@pp_dataset_prior;
      fr_desc:'seek to prior record';
     ),
-    (fr_prot:'void next()';
+    (fr_prot:'next:void ||';
      fr_addr:@pp_dataset_next;
      fr_desc:'seek to next record';
     ),
-    (fr_prot:'bool get_eof()';
+    (fr_prot:'get_eof:bool ||';
      fr_addr:@pp_dataset_eof;
      fr_desc:'test if is at the end of the dataset';
     ),
-    (fr_prot:'bool get_bof()';
+    (fr_prot:'get_bof:bool ||';
      fr_addr:@pp_dataset_bof;
      fr_desc:'test if is at the head of the dataset';
     ),
-    (fr_prot:'string name(int index)';
+    (fr_prot:'name:string |index:int|';
      fr_addr:@pp_dataset_field_name;
      fr_desc:'get field name by index';
     ),
-    (fr_prot:'type type(variant fieldNameOrIndex)';
+    (fr_prot:'type:type |fieldNameOrIndex|';
      fr_addr:@pp_dataset_field_type;
      fr_desc:'get field type by name or index';
     ),
-    (fr_prot:'string string(variant fieldNameOrIndex)';
+    (fr_prot:'string:string |fieldNameOrIndex|';
      fr_addr:@pp_dataset_string;
      fr_desc:'get string field value by name or index';
     ),
-    (fr_prot:'int int(variant fieldNameOrIndex)';
+    (fr_prot:'int:int |fieldNameOrIndex|';
      fr_addr:@pp_dataset_int;
      fr_desc:'get integer field value by name or index';
     ),
-    (fr_prot:'bool bool(variant fieldNameOrIndex)';
+    (fr_prot:'bool:bool |fieldNameOrIndex|';
      fr_addr:@pp_dataset_bool;
      fr_desc:'get boolean field value by name or index';
     ),
-    (fr_prot:'float float(variant fieldNameOrIndex)';
+    (fr_prot:'float:float |fieldNameOrIndex|';
      fr_addr:@pp_dataset_float;
      fr_desc:'get float field value by name or index';
     ),
-    (fr_prot:'money money(variant fieldNameOrIndex)';
+    (fr_prot:'money:money |fieldNameOrIndex|';
      fr_addr:@pp_dataset_money;
      fr_desc:'get money field value by name or index';
     )
@@ -1048,39 +1033,39 @@ const
 
   vargen_func_count = 9;
   vargen_func_array: array[0..vargen_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'vargen vargen(variant any)';
+    (fr_prot:'vargen:vargen |any|';
      fr_addr:@pp_vargen_create;
      fr_desc:'create variant generator';
     ),
-    (fr_prot:'bool get_eof()';
+    (fr_prot:'get_eof:bool ||';
      fr_addr:@pp_vargen_eof;
      fr_desc:'test if finished';
     ),
-    (fr_prot:'variant next()';
+    (fr_prot:'next ||';
      fr_addr:@pp_vargen_next;
      fr_desc:'generate next value';
     ),
-    (fr_prot:'bool rewind()';
+    (fr_prot:'rewind:bool ||';
      fr_addr:@pp_vargen_rewind;
      fr_desc:'restart from first element';
     ),
-    (fr_prot:'bool send(variable varb)';
+    (fr_prot:'send:bool |varb:variable|';
      fr_addr:@pp_vargen_send;
      fr_desc:'try sending value into a variable';
     ),
-    (fr_prot:'void each(function proc)';
+    (fr_prot:'each:void |proc:function|';
      fr_addr:@pp_system_each;
      fr_desc:'process each item: |item| ... end';
     ),
-    (fr_prot:'varlist map(function proc)';
+    (fr_prot:'map:varlist |proc:function|';
      fr_addr:@pp_system_map;
      fr_desc:'map each item: |item| ... end';
     ),
-    (fr_prot:'variant reduce(variant initValue, function proc)';
+    (fr_prot:'reduce |initValue, proc:function|';
      fr_addr:@pp_system_reduce;
      fr_desc:'reduce each item: |result, item| ... end';
     ),
-    (fr_prot:'varlist filter(function proc)';
+    (fr_prot:'filter:varlist |proc:function|';
      fr_addr:@pp_system_filter;
      fr_desc:'filter item: |item| ... end';
     )
@@ -1108,55 +1093,55 @@ const
 
   stream_func_count = 13;
   stream_func_array: array[0..stream_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'void close()';
+    (fr_prot:'close:void ||';
      fr_addr:@pp_stream_close;
      fr_desc:'close stream';
     ),
-    (fr_prot:'int get_length()';
+    (fr_prot:'get_length:int ||';
      fr_addr:@pp_stream_get_length;
      fr_desc:'get stream size';
     ),
-    (fr_prot:'void set_length(int length)';
+    (fr_prot:'set_length:void |length:int|';
      fr_addr:@pp_stream_set_length;
      fr_desc:'set stream size';
     ),
-    (fr_prot:'bool get_eof()';
+    (fr_prot:'get_eof:bool ||';
      fr_addr:@pp_stream_eof;
      fr_desc:'test if is at end of the stream';
     ),
-    (fr_prot:'string get_position()';
+    (fr_prot:'get_position:string ||';
      fr_addr:@pp_stream_get_position;
      fr_desc:'get current position';
     ),
-    (fr_prot:'void set_position(int newPosition)';
+    (fr_prot:'set_position:void |newPosition:int|';
      fr_addr:@pp_stream_set_position;
      fr_desc:'set current position';
     ),
-    (fr_prot:'string read(int count)';
+    (fr_prot:'read:string |count:int|';
      fr_addr:@pp_stream_read;
      fr_desc:'read value';
     ),
-    (fr_prot:'string readln()';
+    (fr_prot:'readln:string ||';
      fr_addr:@pp_stream_readln;
      fr_desc:'read a line';
     ),
-    (fr_prot:'int write(string text)';
+    (fr_prot:'write:int |text:string|';
      fr_addr:@pp_stream_write;
      fr_desc:'write into stream';
     ),
-    (fr_prot:'int writeln(string text)';
+    (fr_prot:'writeln:int |text:string|';
      fr_addr:@pp_stream_writeln;
      fr_desc:'write text and a line break into stream';
     ),
-    (fr_prot:'int writeTo(stream stream, int count)';
+    (fr_prot:'writeTo:int |stream:stream, count:int|';
      fr_addr:@pp_stream_writeTo;
      fr_desc:'write part data into another stream';
     ),
-    (fr_prot:'void flush()';
+    (fr_prot:'flush:void ||';
      fr_addr:@pp_stream_flush;
      fr_desc:'flush stream';
     ),
-    (fr_prot:'vargen get_lines()';
+    (fr_prot:'get_lines:vargen ||';
      fr_addr:@pp_stream_lines;
      fr_desc:'wrap stram as a line generator';
     )
@@ -1170,11 +1155,11 @@ procedure pp_char_inMBCS(const Param: PLseParam);cdecl;
 const
   char_func_count = 2;
   char_func_array: array[0..char_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'int ord()';
+    (fr_prot:'ord:int ||';
      fr_addr:@pp_char_ord;
      fr_desc:'get ordinal value of the character';
     ),
-    (fr_prot:'bool inMBCS()';
+    (fr_prot:'inMBCS:bool ||';
      fr_addr:@pp_char_inMBCS;
      fr_desc:'test if it is in multibyte character sets';
     )
@@ -1236,191 +1221,191 @@ const
 
   string_func_count = 47;
   string_func_array: array[0..string_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'int get_length()';
+    (fr_prot:'get_length:int ||';
      fr_addr:@pp_string_length;
      fr_desc:'get string length';
     ),
-    (fr_prot:'char getiv(int index)';
+    (fr_prot:'getiv:char |index:int|';
      fr_addr:@pp_string_getiv;
      fr_desc:'get char by index';
     ),
-    (fr_prot:'string setAt(int index, char value)';
+    (fr_prot:'setAt:string |index:int, value:char|';
      fr_addr:@pp_string_setAt;
      fr_desc:'set char by index';
     ),
-    (fr_prot:'string get_name()';
+    (fr_prot:'get_name:string ||';
      fr_addr:@pp_string_name;
      fr_desc:'extract name';
     ),
-    (fr_prot:'string get_value()';
+    (fr_prot:'get_value:string ||';
      fr_addr:@pp_string_value;
      fr_desc:'extract value';
     ),
-    (fr_prot:'int compare(string S2, bool ignoreCase)';
+    (fr_prot:'compare:int |S2:string, ignoreCase:bool|';
      fr_addr:@pp_string_compare;
      fr_desc:'compare two string';
      ),
-    (fr_prot:'string replace(string patten, string newStr, bool ignoreCase, bool replaceFirstOnly)';
+    (fr_prot:'replace:string |patten:string, newStr:string, ignoreCase:bool, replaceFirstOnly:bool|';
      fr_addr:@pp_string_replace;
      fr_desc:'replace patten to new string';
     ),
-    (fr_prot:'int pos(string SubStr, bool IgnoreCase)';
+    (fr_prot:'pos:int |SubStr:string, IgnoreCase:bool|';
      fr_addr:@pp_string_pos;
      fr_desc:'get first sub-string position';
     ),
-    (fr_prot:'int lastPos(string SubStr, bool IgnoreCase)';
+    (fr_prot:'lastPos:int |SubStr:string, IgnoreCase:bool|';
      fr_addr:@pp_string_lastPos;
      fr_desc:'get last sub-string position';
     ),
-    (fr_prot:'string left(int count)';
+    (fr_prot:'left:string |count:int|';
      fr_addr:@pp_string_left;
      fr_desc:'copy left';
     ),
-    (fr_prot:'string right(int count)';
+    (fr_prot:'right:string |count:int|';
      fr_addr:@pp_string_right;
      fr_desc:'copy right';
     ),
-    (fr_prot:'string trim()';
+    (fr_prot:'trim:string ||';
      fr_addr:@pp_string_trim;
      fr_desc:'trim left and right';
     ),
-    (fr_prot:'string trimLeft()';
+    (fr_prot:'trimLeft:string ||';
      fr_addr:@pp_string_trimLeft;
      fr_desc:'trim left';
     ),
-    (fr_prot:'string trimRight()';
+    (fr_prot:'trimRight:string ||';
      fr_addr:@pp_string_trimRight;
      fr_desc:'trim right';
     ),
-    (fr_prot:'string trimAll()';
+    (fr_prot:'trimAll:string ||';
      fr_addr:@pp_string_trimAll;
      fr_desc:'trim all spaces';
     ),
-    (fr_prot:'string copy(int index, int count)';
+    (fr_prot:'copy:string |index:int, count:int|';
      fr_addr:@pp_string_copy;
      fr_desc:'copy sub-string';
     ),
-    (fr_prot:'string delete(int index, int count)';
+    (fr_prot:'delete:string |index:int, count:int|';
      fr_addr:@pp_string_delete;
      fr_desc:'delete by range';
     ),
-    (fr_prot:'string insert(string substr, int index)';
+    (fr_prot:'insert:string |substr:string, index:int|';
      fr_addr:@pp_string_insert;
      fr_desc:'insert sub-string';
     ),
-    (fr_prot:'string extractName(string separator)';
+    (fr_prot:'extractName:string |separator:string|';
      fr_addr:@pp_string_extractName;
      fr_desc:'extract name with specified separator';
     ),
-    (fr_prot:'string extractValue(string separator)';
+    (fr_prot:'extractValue:string |separator:string|';
      fr_addr:@pp_string_extractValue;
      fr_desc:'extract value with specified separator';
     ),
-    (fr_prot:'string lformat(int width, char filler)';
+    (fr_prot:'lformat:string |width:int, filler:char|';
      fr_addr:@pp_string_lformat;
      fr_desc:'format to left';
     ),
-    (fr_prot:'string rformat(int width, char filler)';
+    (fr_prot:'rformat:string |width:int, filler:char|';
      fr_addr:@pp_string_rformat;
      fr_desc:'format to right';
     ),
-    (fr_prot:'string center(int width, char filler)';
+    (fr_prot:'center:string |width:int, filler:char|';
      fr_addr:@pp_string_center;
      fr_desc:'format to center';
     ),
-    (fr_prot:'string html(bool translateMBC)';
+    (fr_prot:'html:string |translateMBC:bool|';
      fr_addr:@pp_string_html;
      fr_desc:'encode to HTML code';
     ),
-    (fr_prot:'string random()';
+    (fr_prot:'random:string ||';
      fr_addr:@pp_string_randomOrder;
      fr_desc:'randomize string charactors';
     ),
-    (fr_prot:'string lower()';
+    (fr_prot:'lower:string ||';
      fr_addr:@pp_string_lower;
      fr_desc:'convert to lower case string';
     ),
-    (fr_prot:'string upper()';
+    (fr_prot:'upper:string ||';
      fr_addr:@pp_string_upper;
      fr_desc:'convert to upper case string';
     ),
-    (fr_prot:'bool isAlpha()';
+    (fr_prot:'isAlpha:bool ||';
      fr_addr:@pp_string_isAlpha;
      fr_desc:'test if the string contains only alpha charactors';
     ),
-    (fr_prot:'bool isAlnum()';
+    (fr_prot:'isAlnum:bool ||';
      fr_addr:@pp_string_isAlnum;
      fr_desc:'test if the string contains only alpha and digit charactors';
     ),
-    (fr_prot:'bool isCntrl()';
+    (fr_prot:'isCntrl:bool ||';
      fr_addr:@pp_string_isCntrl;
      fr_desc:'test if the string contains only control charactors';
     ),
-    (fr_prot:'bool isSpace()';
+    (fr_prot:'isSpace:bool ||';
      fr_addr:@pp_string_isSpace;
      fr_desc:'test if the string contains only space charactors';
     ),
-    (fr_prot:'bool isDigit()';
+    (fr_prot:'isDigit:bool ||';
      fr_addr:@pp_string_isDigit;
      fr_desc:'test if the string contains only digit charactors';
     ),
-    (fr_prot:'bool isHex()';
+    (fr_prot:'isHex:bool ||';
      fr_addr:@pp_string_isHex;
      fr_desc:'test if the string contains only HEX charactors';
     ),
-    (fr_prot:'string fileText()';
+    (fr_prot:'fileText:string ||';
      fr_addr:@pp_string_fileText;
      fr_desc:'get file text';
     ),
-    (fr_prot:'void saveToFile(string fileName)';
+    (fr_prot:'saveToFile:void |fileName:string|';
      fr_addr:@pp_string_saveToFile;
      fr_desc:'save string to file';
     ),
-    (fr_prot:'string fullFileName()';
+    (fr_prot:'fullFileName:string ||';
      fr_addr:@pp_string_fullFileName;
      fr_desc:'expand to full file name';
     ),
-    (fr_prot:'string filePath()';
+    (fr_prot:'filePath:string ||';
      fr_addr:@pp_string_filePath;
      fr_desc:'extract file path';
     ),
-    (fr_prot:'string fileName()';
+    (fr_prot:'fileName:string ||';
      fr_addr:@pp_string_fileName;
      fr_desc:'extract file name';
     ),
-    (fr_prot:'string fileExt()';
+    (fr_prot:'fileExt:string ||';
      fr_addr:@pp_string_fileExt;
      fr_desc:'extract file extension';
     ),
-    (fr_prot:'string changeExt(string newFileExt)';
+    (fr_prot:'changeExt:string |newFileExt:string|';
      fr_addr:@pp_string_changeExt;
      fr_desc:'change file extension';
     ),
-    (fr_prot:'string md5sum(bool sumFile)';
+    (fr_prot:'md5sum:string |sumFile:bool|';
      fr_addr:@pp_string_md5sum;
      fr_desc:'calculate MD5 sum';
     ),
-    (fr_prot:'int hexToInt(int defaultValue)';
+    (fr_prot:'hexToInt:int |defaultValue:int|';
      fr_addr:@pp_string_hexToInt;
      fr_desc:'convert HEX string to integer value';
     ),
-    (fr_prot:'string reverse()';
+    (fr_prot:'reverse:string ||';
      fr_addr:@pp_string_reverse;
      fr_desc:'reverse string charactors';
     ),
-    (fr_prot:'bool isLower()';
+    (fr_prot:'isLower:bool ||';
      fr_addr:@pp_string_isLower;
      fr_desc:'test if is lower case string';
     ),
-    (fr_prot:'bool isUpper()';
+    (fr_prot:'isUpper:bool ||';
      fr_addr:@pp_string_isUpper;
      fr_desc:'test if is upper case string';
     ),
-    (fr_prot:'string translate(string OrdCharList, string newCharList)';
+    (fr_prot:'translate:string |OrdCharList:string, newCharList:string|';
      fr_addr:@pp_string_translate;
      fr_desc:'translate original char to new char';
     ),
-    (fr_prot:'int hash()';
+    (fr_prot:'hash:int ||';
      fr_addr:@pp_string_hash;
      fr_desc:'calculate hash value';
     )
@@ -1476,171 +1461,171 @@ const
 
   strlist_func_count = 42;
   strlist_func_array: array[0..strlist_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'strlist strlist(string source)';
+    (fr_prot:'strlist:strlist |source:string|';
      fr_addr:@pp_strlist_create;
      fr_desc:'create string list';
     ),
-    (fr_prot:'int get_length()';
+    (fr_prot:'get_length:int ||';
      fr_addr:@pp_strlist_length;
      fr_desc:'get strlist length';
     ),
-    (fr_prot:'string getiv(int index)';
+    (fr_prot:'getiv:string |index:int|';
      fr_addr:@pp_strlist_getiv;
      fr_desc:'get string item by index';
     ),
-    (fr_prot:'void setiv(int index, string value)';
+    (fr_prot:'setiv:void |index:int, value:string|';
      fr_addr:@pp_strlist_setiv;
      fr_desc:'set string item by index';
     ),
-    (fr_prot:'string getpv(string name)';
+    (fr_prot:'getpv:string |name:string|';
      fr_addr:@pp_strlist_getpv;
      fr_desc:'read value by name';
     ),
-    (fr_prot:'void setpv(string name, string value)';
+    (fr_prot:'setpv:void |name:string, value:string|';
      fr_addr:@pp_strlist_setpv;
      fr_desc:'write value by name';
     ),
-    (fr_prot:'string read(string name, string defaultValue)';
+    (fr_prot:'read:string |name:string, defaultValue:string|';
      fr_addr:@pp_strlist_read;
      fr_desc:'read value by name';
     ),
-    (fr_prot:'void write(string name, string value)';
+    (fr_prot:'write:void |name:string, value:string|';
      fr_addr:@pp_strlist_setpv;
      fr_desc:'write value by name';
     ),
-    (fr_prot:'strlist get_names()';
+    (fr_prot:'get_names:strlist ||';
      fr_addr:@pp_strlist_names;
      fr_desc:'get name list';
     ),
-    (fr_prot:'string get_text()';
+    (fr_prot:'get_text:string ||';
      fr_addr:@pp_strlist_getText;
      fr_desc:'convert to text';
     ),
-    (fr_prot:'void set_text(string newText)';
+    (fr_prot:'set_text:void |newText:string|';
      fr_addr:@pp_strlist_setText;
      fr_desc:'clear and reset its text';
     ),
-    (fr_prot:'string get_commaText()';
+    (fr_prot:'get_commaText:string ||';
      fr_addr:@pp_strlist_getCommaText;
      fr_desc:'convert to comma text';
     ),
-    (fr_prot:'void set_commaText(string newCommaText)';
+    (fr_prot:'set_commaText:void |newCommaText:string|';
      fr_addr:@pp_strlist_setCommaText;
      fr_desc:'clear and set comma text';
     ),
-    (fr_prot:'bool get_sorted()';
+    (fr_prot:'get_sorted:bool ||';
      fr_addr:@pp_strlist_getSorted;
      fr_desc:'is sorted automatically?';
     ),
-    (fr_prot:'void set_sorted(bool value)';
+    (fr_prot:'set_sorted:void |value:bool|';
      fr_addr:@pp_strlist_setSorted;
      fr_desc:'set sort mode';
     ),
-    (fr_prot:'bool get_caseSensitive()';
+    (fr_prot:'get_caseSensitive:bool ||';
      fr_addr:@pp_strlist_getCaseSensitive;
      fr_desc:'is case sensitive?';
     ),
-    (fr_prot:'void set_caseSensitive(bool value)';
+    (fr_prot:'set_caseSensitive:void |value:bool|';
      fr_addr:@pp_strlist_setCaseSensitive;
      fr_desc:'set case sensitive';
     ),
-    (fr_prot:'int add(string S, bool unique)';
+    (fr_prot:'add:int |S:string, unique:bool|';
      fr_addr:@pp_strlist_add;
      fr_desc:'add item string';
     ),
-    (fr_prot:'void addFrom(strlist strings)';
+    (fr_prot:'addFrom:void |strings:strlist|';
      fr_addr:@pp_strlist_addFrom;
      fr_desc:'add strings from';
     ),
-    (fr_prot:'void fill(vargen source, bool clearBeforeFill)';
+    (fr_prot:'fill:void |source:vargen, clearBeforeFill:bool|';
      fr_addr:@pp_strlist_fill;
      fr_desc:'add generated string';
     ),
-    (fr_prot:'void insert(int index, string S)';
+    (fr_prot:'insert:void |index:int, S:string|';
      fr_addr:@pp_strlist_insert;
      fr_desc:'insert item string';
     ),
-    (fr_prot:'void move(int curIndex, int newIndex)';
+    (fr_prot:'move:void |curIndex:int, newIndex:int|';
      fr_addr:@pp_strlist_move;
      fr_desc:'move item string to another position';
     ),
-    (fr_prot:'void exchange(int index1, int index2)';
+    (fr_prot:'exchange:void |index1:int, index2:int|';
      fr_addr:@pp_strlist_exchange;
      fr_desc:'exchange two item strings';
     ),
-    (fr_prot:'void delete(int index)';
+    (fr_prot:'delete:void |index:int|';
      fr_addr:@pp_strlist_delete;
      fr_desc:'delete by index';
     ),
-    (fr_prot:'void clear()';
+    (fr_prot:'clear:void ||';
      fr_addr:@pp_strlist_clear;
      fr_desc:'clear string list';
     ),
-    (fr_prot:'void loadFromFile(string fileName)';
+    (fr_prot:'loadFromFile:void |fileName:string|';
      fr_addr:@pp_strlist_loadFromFile;
      fr_desc:'load from file';
     ),
-    (fr_prot:'void saveToFile(string fileName)';
+    (fr_prot:'saveToFile:void |fileName:string|';
      fr_addr:@pp_strlist_saveToFile;
      fr_desc:'save to file';
     ),
-    (fr_prot:'int indexOf(string S)';
+    (fr_prot:'indexOf:int |S:string|';
      fr_addr:@pp_strlist_indexOf;
      fr_desc:'get item string index';
     ),
-    (fr_prot:'int indexOfName(string name)';
+    (fr_prot:'indexOfName:int |name:string|';
      fr_addr:@pp_strlist_indexOfName;
      fr_desc:'get item name index';
     ),
-    (fr_prot:'void setName(int index, string name)';
+    (fr_prot:'setName:void |index:int, name:string|';
      fr_addr:@pp_strlist_setName;
      fr_desc:'set item name by index';
     ),
-    (fr_prot:'void setValue(int index, string value)';
+    (fr_prot:'setValue:void |index:int, value:string|';
      fr_addr:@pp_strlist_setValue;
      fr_desc:'set item value by index';
     ),
-    (fr_prot:'strlist copy(int index, int count)';
+    (fr_prot:'copy:strlist |index:int, count:int|';
      fr_addr:@pp_strlist_copy;
      fr_desc:'copy sub string list';
     ),
-    (fr_prot:'void sort()';
+    (fr_prot:'sort:void ||';
      fr_addr:@pp_strlist_sort;
      fr_desc:'sort string list';
     ),
-    (fr_prot:'void reverse()';
+    (fr_prot:'reverse:void ||';
      fr_addr:@pp_strlist_reverse;
      fr_desc:'reverse item string';
     ),
-    (fr_prot:'void unique()';
+    (fr_prot:'unique:void ||';
      fr_addr:@pp_strlist_unique;
      fr_desc:'delete multiple strings';
     ),
-    (fr_prot:'strlist filter(function filterFunc)';
+    (fr_prot:'filter:strlist |filterFunc:function|';
      fr_addr:@pp_strlist_filter;
      fr_desc:'filter string list';
     ),
-    (fr_prot:'string get_min()';
+    (fr_prot:'get_min:string ||';
      fr_addr:@pp_strlist_min;
      fr_desc:'get min string item';
     ),
-    (fr_prot:'string get_max()';
+    (fr_prot:'get_max:string ||';
      fr_addr:@pp_strlist_max;
      fr_desc:'get max string item';
     ),
-    (fr_prot:'string get_first()';
+    (fr_prot:'get_first:string ||';
      fr_addr:@pp_strlist_first;
      fr_desc:'get first string item';
     ),
-    (fr_prot:'string get_last()';
+    (fr_prot:'get_last:string ||';
      fr_addr:@pp_strlist_last;
      fr_desc:'get last string item';
     ),
-    (fr_prot:'string shift()';
+    (fr_prot:'shift:string ||';
      fr_addr:@pp_strlist_shift;
      fr_desc:'get and delete first string';
     ),
-    (fr_prot:'string pop()';
+    (fr_prot:'pop:string ||';
      fr_addr:@pp_strlist_pop;
      fr_desc:'get and delete last string';
     )
@@ -1678,95 +1663,95 @@ const
 
   time_func_count = 23;
   time_func_array: array[0..time_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'int year()';
+    (fr_prot:'year:int ||';
      fr_addr:@pp_time_yearOf;
      fr_desc:'get year';
     ),
-    (fr_prot:'int yearsBetween(time then)';
+    (fr_prot:'yearsBetween:int |then:time|';
      fr_addr:@pp_time_yearsBetween;
      fr_desc:'get years between two time';
     ),
-    (fr_prot:'time incYear(int years)';
+    (fr_prot:'incYear:time |years:int|';
      fr_addr:@pp_time_incYear;
      fr_desc:'increase years';
     ),
-    (fr_prot:'int month()';
+    (fr_prot:'month:int ||';
      fr_addr:@pp_time_monthOf;
      fr_desc:'get month';
     ),
-    (fr_prot:'int monthsBetween(time then)';
+    (fr_prot:'monthsBetween:int |then:time|';
      fr_addr:@pp_time_monthsBetween;
      fr_desc:'get months between two time';
     ),
-    (fr_prot:'time incMonth(int months)';
+    (fr_prot:'incMonth:time |months:int|';
      fr_addr:@pp_time_incMonth;
      fr_desc:'increase months';
     ),
-    (fr_prot:'int day()';
+    (fr_prot:'day:int ||';
      fr_addr:@pp_time_dayOf;
      fr_desc:'get day';
     ),
-    (fr_prot:'int weekDay()';
+    (fr_prot:'weekDay:int ||';
      fr_addr:@pp_time_dayOfWeek;
      fr_desc:'get week day';
     ),
-    (fr_prot:'int dayOfYear()';
+    (fr_prot:'dayOfYear:int ||';
      fr_addr:@pp_time_dayOfYear;
      fr_desc:'get day of the year';
     ),
-    (fr_prot:'int daysBetween(time then)';
+    (fr_prot:'daysBetween:int |then:time|';
      fr_addr:@pp_time_daysBetween;
      fr_desc:'get days between two time';
     ),
-    (fr_prot:'time incDay(int days)';
+    (fr_prot:'incDay:time |days:int|';
      fr_addr:@pp_time_incDay;
      fr_desc:'increase days';
     ),
-    (fr_prot:'int week()';
+    (fr_prot:'week:int ||';
      fr_addr:@pp_time_weekOf;
      fr_desc:'get week';
     ),
-    (fr_prot:'int weekOfMonth()';
+    (fr_prot:'weekOfMonth:int ||';
      fr_addr:@pp_time_weekOfMonth;
      fr_desc:'get week of the month';
     ),
-    (fr_prot:'int weeksBetween(time then)';
+    (fr_prot:'weeksBetween:int |then:time|';
      fr_addr:@pp_time_weeksBetween;
      fr_desc:'get weeks between two time';
     ),
-    (fr_prot:'int hour()';
+    (fr_prot:'hour:int ||';
      fr_addr:@pp_time_hourOf;
      fr_desc:'get hour';
     ),
-    (fr_prot:'int hoursBetween(time then)';
+    (fr_prot:'hoursBetween:int |then:time|';
      fr_addr:@pp_time_hoursBetween;
      fr_desc:'get hours between two time';
     ),
-    (fr_prot:'int minute()';
+    (fr_prot:'minute:int ||';
      fr_addr:@pp_time_minuteOf;
      fr_desc:'get minute';
     ),
-    (fr_prot:'int minutesBetween(time then)';
+    (fr_prot:'minutesBetween:int |then:time|';
      fr_addr:@pp_time_minutesBetween;
      fr_desc:'get minutes between two time';
     ),
-    (fr_prot:'int second()';
+    (fr_prot:'second:int ||';
      fr_addr:@pp_time_secondOf;
      fr_desc:'get second';
     ),
-    (fr_prot:'int secondsBetween(time then)';
+    (fr_prot:'secondsBetween:int |then:time|';
      fr_addr:@pp_time_secondsBetween;
      fr_desc:'get seconds between two time';
     ),
-    (fr_prot:'int millisecond()';
+    (fr_prot:'millisecond:int ||';
      fr_addr:@pp_time_milliSecondOf;
      fr_desc:'get millisecond';
     ),
-    (fr_prot:'int millisecondsBetween(time then)';
+    (fr_prot:'millisecondsBetween:int |then:time|';
      fr_addr:@pp_time_milliSecondsBetween;
      fr_desc:'get milliseconds between two time';
     ),
-    (fr_prot:'string format(string fmt)';
+    (fr_prot:'format:string |fmt:string|';
      fr_addr:@pp_time_format;
      fr_desc:'format date time';
     )
@@ -1791,43 +1776,43 @@ const
 
   type_func_count = 10;
   type_func_array: array[0..type_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string get_name()';
+    (fr_prot:'get_name:string ||';
      fr_addr:@pp_type_name;
      fr_desc:'type name';
     ),
-    (fr_prot:'module get_module()';
+    (fr_prot:'get_module:module ||';
      fr_addr:@pp_type_module;
      fr_desc:'owner module';
     ),
-    (fr_prot:'varlist get_methods()';
+    (fr_prot:'get_methods:varlist ||';
      fr_addr:@pp_type_methods;
      fr_desc:'get method list';
     ),
-    (fr_prot:'string get_description()';
+    (fr_prot:'get_description:string ||';
      fr_addr:@pp_type_description;
      fr_desc:'type description';
     ),
-    (fr_prot:'bool get_simple()';
+    (fr_prot:'get_simple:bool ||';
      fr_addr:@pp_type_simple;
      fr_desc:'is simple type?';
     ),
-    (fr_prot:'bool get_builtin()';
+    (fr_prot:'get_builtin:bool ||';
      fr_addr:@pp_type_builtin;
      fr_desc:'is builtin type?';
     ),
-    (fr_prot:'string get_info()';
+    (fr_prot:'get_info:string ||';
      fr_addr:@pp_type_info;
      fr_desc:'type information';
     ),
-    (fr_prot:'function getpv(string methodName)';
+    (fr_prot:'getpv:function |methodName:string|';
      fr_addr:@pp_type_getpv;
      fr_desc:'get method function by name';
     ),
-    (fr_prot:'bool get_isUDC()';
+    (fr_prot:'get_isUDC:bool ||';
      fr_addr:@pp_type_isUDC;
      fr_desc:'is user defined class?';
     ),
-    (fr_prot:'string get_addr()';
+    (fr_prot:'get_addr:string ||';
      fr_addr:@pp_type_addr;
      fr_desc:'type address';
     )
@@ -1850,15 +1835,15 @@ const
 
   varb_func_count = 3;
   varb_func_array: array[0..varb_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string get_name()';
+    (fr_prot:'get_name:string ||';
      fr_addr:@pp_varb_name;
      fr_desc:'variable name';
     ),
-    (fr_prot:'type get_type()';
+    (fr_prot:'get_type:type ||';
      fr_addr:@pp_varb_type;
      fr_desc:'variable type';
     ),
-    (fr_prot:'function get_func()';
+    (fr_prot:'get_func:function ||';
      fr_addr:@pp_varb_func;
      fr_desc:'owner function';
     )
@@ -1903,127 +1888,127 @@ const
 
   varlist_func_count = 31;
   varlist_func_array: array[0..varlist_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'varlist varlist(int count)';
+    (fr_prot:'varlist:varlist |count:int|';
      fr_addr:@pp_varlist_create;
      fr_desc:'create variant list';
     ),
-    (fr_prot:'variant getpv(string name)';
+    (fr_prot:'getpv |name:string|';
      fr_addr:@pp_varlist_getpv;
      fr_desc:'get value by name';
     ),
-    (fr_prot:'void setpv(string name, variant value)';
+    (fr_prot:'setpv:void |name:string, value|';
      fr_addr:@pp_varlist_setpv;
      fr_desc:'set value by name';
     ),
-    (fr_prot:'bool isset(string name)';
+    (fr_prot:'isset:bool |name:string|';
      fr_addr:@pp_varlist_isset;
      fr_desc:'check if value exists';
     ),
-    (fr_prot:'variant read(string name)';
+    (fr_prot:'read |name:string|';
      fr_addr:@pp_varlist_read;
      fr_desc:'read value by name';
     ),
-    (fr_prot:'bool remove(string name)';
+    (fr_prot:'remove:bool |name:string|';
      fr_addr:@pp_varlist_remove;
      fr_desc:'remove value by name';
     ),
-    (fr_prot:'strlist keys(bool sorted)';
+    (fr_prot:'keys:strlist |sorted:bool|';
      fr_addr:@pp_varlist_keys;
      fr_desc:'get key name list';
     ),
-    (fr_prot:'string getName(int index)';
+    (fr_prot:'getName:string |index:int|';
      fr_addr:@pp_varlist_get_name;
      fr_desc:'get name by index';
     ),
-    (fr_prot:'void write(string name, variant value)';
+    (fr_prot:'write:void |name:string, value|';
      fr_addr:@pp_varlist_setpv;
      fr_desc:'write value by name';
     ),
-    (fr_prot:'int get_length()';
+    (fr_prot:'get_length:int ||';
      fr_addr:@pp_varlist_get_length;
      fr_desc:'get list size';
     ),
-    (fr_prot:'void set_length(int count)';
+    (fr_prot:'set_length:void |count:int|';
      fr_addr:@pp_varlist_set_length;
      fr_desc:'set list size';
     ),
-    (fr_prot:'variant getiv(int index)';
+    (fr_prot:'getiv |index:int|';
      fr_addr:@pp_varlist_getiv;
      fr_desc:'get value by index';
     ),
-    (fr_prot:'void setiv(int index, variant value)';
+    (fr_prot:'setiv:void |index:int, value|';
      fr_addr:@pp_varlist_setiv;
      fr_desc:'set value by index';
     ),
-    (fr_prot:'void exchange(int X1, int X2)';
+    (fr_prot:'exchange:void |X1:int, X2:int|';
      fr_addr:@pp_varlist_exchange;
      fr_desc:'exchange by index';
     ),
-    (fr_prot:'void move(int curIndex, int newIndex)';
+    (fr_prot:'move:void |curIndex:int, newIndex:int|';
      fr_addr:@pp_varlist_move;
      fr_desc:'move variant to new position';
     ),
-    (fr_prot:'int add(variant value)';
+    (fr_prot:'add:int |value|';
      fr_addr:@pp_varlist_add;
      fr_desc:'add variant';
     ),
-    (fr_prot:'int addFrom(varlist variants)';
+    (fr_prot:'addFrom:int |variants:varlist|';
      fr_addr:@pp_varlist_addFrom;
      fr_desc:'add variants from';
     ),
-    (fr_prot:'void fill(vargen source, bool clearBeforeFill)';
+    (fr_prot:'fill:void |source:vargen, clearBeforeFill:bool|';
      fr_addr:@pp_varlist_fill;
      fr_desc:'fill generated value';
     ),
-    (fr_prot:'void insert(int index, variant value)';
+    (fr_prot:'insert:void |index:int, value|';
      fr_addr:@pp_varlist_insert;
      fr_desc:'insert variant at specified position';
     ),
-    (fr_prot:'void delete(int index)';
+    (fr_prot:'delete:void |index:int|';
      fr_addr:@pp_varlist_delete;
      fr_desc:'delete variant by index';
     ),
-    (fr_prot:'void clear()';
+    (fr_prot:'clear:void ||';
      fr_addr:@pp_varlist_clear;
      fr_desc:'clear variant list';
     ),
-    (fr_prot:'varlist copy(int index, int count)';
+    (fr_prot:'copy:varlist |index:int, count:int|';
      fr_addr:@pp_varlist_copy;
      fr_desc:'copy to another variant list';
     ),
-    (fr_prot:'varlist left(int count)';
+    (fr_prot:'left:varlist |count:int|';
      fr_addr:@pp_varlist_left;
      fr_desc:'copy left';
     ),
-    (fr_prot:'varlist right(int count)';
+    (fr_prot:'right:varlist |count:int|';
      fr_addr:@pp_varlist_right;
      fr_desc:'copy right';
     ),
-    (fr_prot:'varlist filter(function filterFunc)';
+    (fr_prot:'filter:varlist |filterFunc:function|';
      fr_addr:@pp_varlist_filter;
      fr_desc:'filter variant list';
     ),
-    (fr_prot:'variant get_min()';
+    (fr_prot:'get_min ||';
      fr_addr:@pp_varlist_min;
      fr_desc:'get min variant item';
     ),
-    (fr_prot:'variant get_max()';
+    (fr_prot:'get_max ||';
      fr_addr:@pp_varlist_max;
      fr_desc:'get max variant item';
     ),
-    (fr_prot:'variant get_first()';
+    (fr_prot:'get_first ||';
      fr_addr:@pp_varlist_first;
      fr_desc:'get first variant item';
     ),
-    (fr_prot:'variant get_last()';
+    (fr_prot:'get_last ||';
      fr_addr:@pp_varlist_last;
      fr_desc:'get last variant item';
     ),
-    (fr_prot:'variant shift()';
+    (fr_prot:'shift ||';
      fr_addr:@pp_varlist_shift;
      fr_desc:'get and delete first item';
     ),
-    (fr_prot:'variant pop()';
+    (fr_prot:'pop ||';
      fr_addr:@pp_varlist_pop;
      fr_desc:'get and delete last item';
     )
@@ -3610,6 +3595,17 @@ begin
   __SetVarlist(Param^.result, eng.Modules.ToVarlist(eng));
 end;
 
+procedure pp_system_libs(const Param: PLseParam);cdecl;
+var
+  list: KLiVarList;
+  index: integer;
+begin
+  list := __NewVarlist(__AsEngine(Param));
+  __SetVarlist(Param^.result, list);
+  for index := 0 to sys_libraries.Count - 1 do
+    list.PushObject(sys_libraries.Objects[index], KT_MODULE);
+end;
+
 procedure pp_system_exit(const Param: PLseParam);cdecl;
 var
   eng: KLiEngine;
@@ -4165,11 +4161,6 @@ begin
   end;
 end;
 
-procedure pp_system_exportApi(const Param: PLseParam);cdecl;
-begin
-  __ExportAPI(__AsFileName(Param^.param[0]));
-end;
-
 procedure pp_system_curry(const Param: PLseParam);cdecl;
 var
   func, curry: KLiFunc;
@@ -4641,36 +4632,6 @@ begin
     __AsString(Param^.param[0]), Param^.param[1]);
 end;
 
-procedure pp_system_get_stdin(const Param: PLseParam);cdecl;
-begin
-  lse_set_stream(Param^.result, __AsEngine(Param).StdinStream);
-end;
-
-procedure pp_system_set_stdin(const Param: PLseParam);cdecl;
-begin
-  __AsEngine(Param).StdinStream := PLseStream(Param^.param[0]^.VObject);
-end;
-
-procedure pp_system_get_stdout(const Param: PLseParam);cdecl;
-begin
-  lse_set_stream(Param^.result, __AsEngine(Param).StdoutStream);
-end;
-
-procedure pp_system_set_stdout(const Param: PLseParam);cdecl;
-begin
-  __AsEngine(Param).StdoutStream := PLseStream(Param^.param[0]^.VObject);
-end;
-
-procedure pp_system_get_stderr(const Param: PLseParam);cdecl;
-begin
-  lse_set_stream(Param^.result, __AsEngine(Param).StderrStream);
-end;
-
-procedure pp_system_set_stderr(const Param: PLseParam);cdecl;
-begin
-  __AsEngine(Param).StderrStream := PLseStream(Param^.param[0]^.VObject);
-end;
-
 procedure pp_system_log(const Param: PLseParam);cdecl;
 var
   S: PLseString;
@@ -5021,6 +4982,14 @@ begin
     lse_set_string(Param^.result, this.Name);
 end;
 
+procedure pp_func_desc(const Param: PLseParam);cdecl;
+var
+  this: KLiFunc;
+begin
+  if __GetThis(Param, this) then
+    lse_set_string(Param^.result, this.Description);
+end;
+
 procedure pp_func_type(const Param: PLseParam);cdecl;
 var
   this: KLiFunc;
@@ -5050,7 +5019,7 @@ var
   this: KLiFunc;
 begin
   if __GetThis(Param, this) then
-    lse_set_class(Param^.result, this.OwnerClass.ClassRec);
+    lse_set_class(Param^.result, this.Parent.ClassRec);
 end;
 
 procedure pp_func_params(const Param: PLseParam);cdecl;
@@ -5399,6 +5368,14 @@ begin
     lse_set_string(Param^.result, this.Name);
 end;
 
+procedure pp_module_desc(const Param: PLseParam);cdecl;
+var
+  this: KLiModule;
+begin
+  if __GetThis(Param, this) then
+    lse_set_string(Param^.result, this.Description);
+end;
+
 procedure pp_module_file(const Param: PLseParam);cdecl;
 var
   this: KLiModule;
@@ -5464,11 +5441,25 @@ var
   name: string;
   func: KLiFunc;
   clss: KLiClass;
+  done: boolean;
 begin
   if __GetThis(Param, this) then
   begin
     name := __AsString(Param^.param[1]);
 
+    if this = sys_module then
+    begin
+      done := true;
+      if name = 'stdin' then
+        lse_set_stream(Param^.result, __AsEngine(Param).StdinStream) else
+      if name = 'stdout' then
+        lse_set_stream(Param^.result, __AsEngine(Param).StdoutStream) else
+      if name = 'stderr' then
+        lse_set_stream(Param^.result, __AsEngine(Param).StderrStream) else
+        done := false;
+      if done then Exit;
+    end;
+    
     clss := this.FindClass(name);
     if clss <> nil then
     begin
@@ -5487,7 +5478,42 @@ begin
       Exit;
     end;
 
-    __SetError(Param, '%s::%s does not exists.', [this.Name, name]);
+    __SetError(Param, '%s.%s not found', [this.Name, name]);
+  end;
+end;
+
+procedure pp_module_setpv(const Param: PLseParam);cdecl;
+var
+  this: KLiModule;
+  name: string;
+  done: boolean;
+
+  function NewStream: PLseStream;
+  var
+    data: PLseValue;
+  begin
+    data := Param^.param[2];
+    __setClassValue(__AsEngine(Param), data, KT_STREAM);
+    Result := PLseStream(data^.VObject)
+  end;
+  
+begin
+  if __GetThis(Param, this) then
+  begin
+    name := __AsString(Param^.param[1]);
+    if this = sys_module then
+    begin
+      done := true;
+      if name = 'stdin' then
+        __AsEngine(Param).StdinStream := NewStream else
+      if name = 'stdout' then
+        __AsEngine(Param).StdoutStream := NewStream else
+      if name = 'stderr' then
+        __AsEngine(Param).StderrStream := NewStream else
+        done := false;
+      if done then Exit;
+    end;
+    __SetError(Param, '%s.%s is readonly or not found', [this.Name, name]);
   end;
 end;
 
@@ -5822,7 +5848,7 @@ begin
     else
     if clss = KT_STRING then
     begin
-      name := lse_strec_data(Param^.param[1]^.VString); 
+      name := lse_strec_data(Param^.param[1]^.VString);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
       begin
@@ -5853,7 +5879,7 @@ begin
     else
     if clss = KT_STRING then
     begin
-      name := lse_strec_data(Param^.param[1]^.VString); 
+      name := lse_strec_data(Param^.param[1]^.VString);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
         lse_set_string(Param^.result, lse_ds_getfs(this, index)) else
@@ -5881,7 +5907,7 @@ begin
     else
     if clss = KT_STRING then
     begin
-      name := lse_strec_data(Param^.param[1]^.VString); 
+      name := lse_strec_data(Param^.param[1]^.VString);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
         lse_set_int64(Param^.result, lse_ds_getfi(this, index)) else
@@ -5909,7 +5935,7 @@ begin
     else
     if clss = KT_STRING then
     begin
-      name := lse_strec_data(Param^.param[1]^.VString); 
+      name := lse_strec_data(Param^.param[1]^.VString);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
         lse_set_bool(Param^.result, lse_ds_getfb(this, index)) else
@@ -5937,7 +5963,7 @@ begin
     else
     if clss = KT_STRING then
     begin
-      name := lse_strec_data(Param^.param[1]^.VString); 
+      name := lse_strec_data(Param^.param[1]^.VString);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
         lse_set_float(Param^.result, lse_ds_getfd(this, index)) else
@@ -5965,7 +5991,7 @@ begin
     else
     if clss = KT_STRING then
     begin
-      name := lse_strec_data(Param^.param[1]^.VString); 
+      name := lse_strec_data(Param^.param[1]^.VString);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
         lse_set_money(Param^.result, lse_ds_getfm(this, index)) else
@@ -6025,7 +6051,7 @@ procedure pp_vargen_create(const Param: PLseParam);cdecl;
 var
   this: PLseVargen;
 begin
-  this := __AsVargen(__AsEngine(Param), Param^.param[1]); 
+  this := __AsVargen(__AsEngine(Param), Param^.param[1]);
   lse_set_vargen(Param^.result, this);
 end;
 
@@ -7986,7 +8012,7 @@ var
 begin
   if __GetThis(Param, this) then
   begin
-    index := __AsInt64(Param^.param[1]); 
+    index := __AsInt64(Param^.param[1]);
     if this.IsSnap then
       name := (this as KLiVarSnap).Varbs[index].Name else
       name := this.Names[index];

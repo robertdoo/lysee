@@ -11,14 +11,14 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
-        <CustomOptions Value="-dLYSEE_LAZ"/>
+        <CustomOptions Value="-dLYSEE_LAZ -dSYN_LAZARUS"/>
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
     <Description Value="lysee components for lazarus"/>
     <License Value="under modified BSD license"/>
-    <Version Minor="2" Release="1"/>
-    <Files Count="5">
+    <Version Major="1" Minor="2" Release="1"/>
+    <Files Count="6">
       <Item1>
         <Filename Value="lseu.pas"/>
         <HasRegisterProc Value="True"/>
@@ -40,19 +40,27 @@
         <Filename Value="lseu.lrs"/>
         <Type Value="LRS"/>
       </Item5>
+      <Item6>
+        <Filename Value="lse_synedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="lse_synedit"/>
+      </Item6>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SynEdit"/>
       </Item1>
       <Item2>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="LCL"/>
       </Item2>
       <Item3>
+        <PackageName Value="IDEIntf"/>
+      </Item3>
+      <Item4>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Valid="True"/>
-      </Item3>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)\"/>

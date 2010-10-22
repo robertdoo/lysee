@@ -15,9 +15,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
+      <CurrentVersionNr Value="1"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="372"/>
+      <CurrentBuildNr Value="373"/>
       <ProjectVersion Value="0.1.1.315"/>
       <FileDescription Value="year-month-day module"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>

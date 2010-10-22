@@ -15,9 +15,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
+      <CurrentVersionNr Value="1"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="376"/>
+      <CurrentBuildNr Value="377"/>
       <ProjectVersion Value="1.1.1.306"/>
       <FileDescription Value="interbase database vendor"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>

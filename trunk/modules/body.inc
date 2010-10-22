@@ -717,7 +717,7 @@ begin
       FillChar(module, sizeof(module), 0);
       module.iw_version := LSE_VERSION;
       module.iw_desc    := DBV_DESC;
-      lse_setup_module(DBV_NAME, ExpandFileName(ParamStr(0)), @module);
+      lse_module_setup(DBV_NAME, ExpandFileName(ParamStr(0)), @module);
     end;
   except
     { safe & quiet }

@@ -15,9 +15,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
+      <CurrentVersionNr Value="1"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="374"/>
+      <CurrentBuildNr Value="375"/>
       <ProjectVersion Value="1.1.1.306"/>
       <FileDescription Value="ini file accessing module for lysee"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>

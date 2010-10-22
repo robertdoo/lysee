@@ -2,7 +2,7 @@
 {        UNIT: lse_kernel                                                      }
 { DESCRIPTION: kernel of lysee                                                 }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2010/10/19                                                      }
+{    MODIFIED: 2010/10/22                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -202,7 +202,7 @@ type
     { tail if }
     procedure BeginTailIf(var end_if_label: string; EndSym: KLiSymbol);
     procedure EndTailIf(const end_if_label: string);
-    procedure TailIf(ExprList: TList; SaveResult: boolean);
+    procedure TailIf(ExprList: TList);
   public
     constructor Create(AModule: KLiModule);
     destructor Destroy;override;
@@ -276,14 +276,13 @@ type
     FName: string;         {<--function name}
     FKind: KLiMethodType;  {<--function type}
     FModule: KLiModule;    {<--owner module}
-    FOwnerClass: KLiClass; {<--owner class type}
+    FParent: KLiClass;     {<--parent class}
     FParams: KLiVarbList;  {<--parametres list}
     FResultType: KLiClass; {<--function result type}
     FDescription: string;  {<--description}
     FState: KLiFuncStates; {<--function state}
     FCodes: KLiExprList;   {<--instruction buffer}
     FProc: pointer;        {<--call back function}
-    FComponent: TComponent;{<--lazarus or delphi component}
     FBindData: pointer;    {<--binding data}
     function HasState(Index: KLiFuncState): boolean;
     procedure SetState(Index: KLiFuncState; Value: boolean);
@@ -313,6 +312,7 @@ type
       var Varb: KLiVarb; var Data: PLseValue): boolean;virtual;
     property Name: string read FName;
     property Module: KLiModule read FModule;
+    property Parent: KLiClass read FParent;
     property Params: KLiVarbList read FParams;
     property ResultType: KLiClass read FResultType write FResultType;
     property IsMainFunc: boolean index fusIsMainFunc read HasState;
@@ -324,10 +324,8 @@ type
     property IsLambdaFunc: boolean index fusIsLambda read HasState write SetState;
     property Description: string read FDescription write FDescription;
     property Proc: pointer read FProc write FProc;
-    property OwnerClass: KLiClass read FOwnerClass;
     property Codes: KLiExprList read FCodes;
     property BindData: pointer read FBindData write FBindData;
-    property Component: TComponent read FComponent write FComponent;
   end;
 
   KLiExprList = class(KLiObject)
@@ -361,7 +359,6 @@ type
     procedure LoadExpr(List: TList; Start: integer = 0);
     procedure DumpCode(List: TStrings; const Margin: string);
     procedure BeginStatement;
-    procedure SaveResult;
     function IsEmpty: boolean;
     { locals }
     function AddLocal(const Name: string; varType: KLiClass): KLiVarb;
@@ -488,8 +485,8 @@ type
   end;
 
   KLiModuleType = (
-    moyKernel,        {<--K: builtin sys module}
-    moyRegistered,    {<--R: by lse_setup_module()}
+    moyKernel,        {<--K: builtin module}
+    moyRegistered,    {<--R: by lse_module_setup()}
     moyLibrary,       {<--L: extending library}
     moyScript         {<--S: Lysee script moudle}
   );
@@ -515,12 +512,10 @@ type
     FModules: KLiModuleList;    {<--***S: modules imported by this module}
     FImporters: TList;          {<--***S: modules importing this module}
     FMainFunc: KLiFunc;         {<--***S: modules entry function}
-    FState: KLiModuleStates;    {<--***S: module state}
+    FParsing: boolean;          {<--***S: parsing}
     function GetIsLibrary: boolean;
     function GetIsScript: boolean;
     function GetIsBuiltin: boolean;
-    function GetState(Index: KLiModuleState): boolean;
-    procedure SetState(Index: KLiModuleState; Value: boolean);
   public
     constructor Create(const Name: string; Engine: KLiEngine; ModuleType: KLiModuleType);
     destructor Destroy;override;
@@ -573,7 +568,7 @@ type
     property Version: string read FVersion write FVersion;
     property Description: string read FDescription write FDescription;
     property Engine: KLiEngine read FEngine;
-    property Parsing: boolean index mosParsing read GetState write SetState;
+    property Parsing: boolean read FParsing write FParsing;
     property MainFunc: KLiFunc read FMainFunc;
   end;
 
@@ -720,7 +715,6 @@ type
     FStdinStream: PLseStream;
     FStdoutStream: PLseStream;
     FStderrStream: PLseStream;
-    FInvoker: TLseInvoke;
     function GetResultText: string;
     function GetResultType: KLiClass;
     procedure SetMainFile(const AValue: string);
@@ -733,7 +727,6 @@ type
     procedure SetStdoutStream(const Value: PLseStream);
     function GetStderrStream: PLseStream;
     procedure SetStderrStream(const Value: PLseStream);
-    function GetInvoker: TLseInvoke;
   public
     constructor Create(const AEngineRec: PLseEngine);
     destructor Destroy;override;
@@ -802,7 +795,6 @@ type
     property Ready: boolean read FReady;
     property Exited: boolean read FExited write FExited;
     property CGI: TLseObject read FCGI write FCGI;
-    property Invoker: TLseInvoke read GetInvoker;
     property OnReadBuf: KLiReadBuf read FOnReadBuf write FOnReadBuf;
     property OrChain: PLiObjRec read FOrChain write FOrChain;
     property StdinStream: PLseStream read GetStdinStream write SetStdinStream;
@@ -1057,46 +1049,11 @@ type
     function ListKeyValue(List: KLiVarList): integer;
   end;
 
-  KLiExportAPI = class
-  private
-    FStream: TStream;
-    FModuleCount: integer;
-    FFuncCount: integer;
-    FClassCount: integer;
-    FMethodCount: integer;
-    procedure Writeln(const Text: string);
-    function GetDesc(const Desc: string): string;
-    function GetProt(func: KLiFunc): string;
-    function GetTotal: string;
-    procedure BeginPage;
-    procedure WriteMethod(func: KLiFunc);
-    procedure WriteConstructor(func: KLiFunc);
-    procedure WriteClass(cls: KLiClass);
-    procedure WriteFunc(func: KLiFunc);
-    procedure WriteModule(module: KLiModule);
-    procedure EndPage;
-  public
-    procedure Execute(const FileName: string);
-  end;
-
   TInitProc = procedure;
   TExitProc = TInitProc;
 
 procedure InitLyseeKernel;
 procedure ExitLyseeKernel;
-
-{-----------------------------------------------------------------------
-(  F_NAME: __ExportAPI
-(
-(  F_DESC: export API reference to HTML file
-(
-(  F_ARGS: const HTMLFileName: string - result file name
-(
-(  F_TYPE:
-(
-(  EXCEPT:
-(----------------------------------------------------------------------}
-procedure __ExportAPI(const HTMLFileName: string);
 
 {-----------------------------------------------------------------------
 ( F_NAME: __LoadConfig
@@ -1219,7 +1176,6 @@ function __AsStrlist(V: PLseValue): KLiStrList;
 function __AsVarlist(V: PLseValue): KLiVarList;
 function __AsVargen(Engine: KLiEngine; data: PLseValue): PLseVargen;
 function __AsClass(V: PLseValue): KLiClass;
-
 function __NewVarlist(Engine: KLiEngine): KLiVarList;
 function __GetThis(Param: PLseParam; var This): boolean;
 
@@ -1570,7 +1526,6 @@ procedure __runner_module(Sender: KLiRunner);
 procedure __runner_is(Sender: KLiRunner);
 procedure __runner_as(Sender: KLiRunner);
 procedure __runner_statement(Sender: KLiRunner);
-procedure __runner_save_result(Sender: KLiRunner);
 procedure __runner_vargen(Sender: KLiRunner);
 procedure __runner_pushvarb(Sender: KLiRunner);
 procedure __runner_ask(Sender: KLiRunner);
@@ -1792,18 +1747,6 @@ begin
 
 end;
 
-procedure __ExportAPI(const HTMLFileName: string);
-var
-  source: KLiExportAPI;
-begin
-  source := KLiExportAPI.Create;
-  try
-    source.Execute(HTMLFileName);
-  finally
-    source.Free;
-  end;
-end;
-
 procedure __LoadConfig(const ConfigFile: string);
 
   procedure Load(const FileName: string);
@@ -1987,8 +1930,7 @@ begin
   Param^.result := nil;
   Param^.func := Func;
   Param^.runner := Runner;
-  Param^.row := Runner.FExprrec^.Pos.row;
-  Param^.col := Runner.FExprrec^.Pos.col;
+  Param^.exprec := Runner.FExprrec;
 end;
 
 procedure __ExecParam(Param: PLseParam; Func: KLiFunc);
@@ -2803,7 +2745,7 @@ begin
     func := KLiFunc(Param^.func);
     errid := Trim(ErrorName);
     if not __IsIDStr(pchar(errid)) then
-      errid := func.FOwnerClass.FName + 'Error';
+      errid := func.FParent.FName + 'Error';
     if Errno = 0 then
       Errno := ERUNTIME;
     error := Trim(ErrorMsg);
@@ -2813,10 +2755,11 @@ begin
       error := func.Name + '() - ' + errid else
       error := func.Name + '() - ' + error;
     module := runner.CurrentFunc.Module;
-    runner.Engine.Error.write(errid, Errno, Param^.row, Param^.col,
+    runner.Engine.Error.write(errid, Errno,
+      PLiExprRec(Param^.exprec)^.Pos.row,
+      PLiExprRec(Param^.exprec)^.Pos.col,
       module.Name, error, runner.IncludedFile);
     runner.FExcepted := true;
-//  __PutString(Param^.result, runner.Engine.Error.ErrorText);
   end;
 end;
 
@@ -5810,25 +5753,6 @@ begin
   runner_seek_next(Sender);
 end;
 
-procedure __runner_save_result(Sender: KLiRunner);
-var
-  stack: KLiVarList;
-  index: integer;
-begin
-  with Sender.FCurrent^ do
-  begin
-    stack := Sender.FStack;
-    index := stack.Count - 1;
-    if index >= base then
-    begin
-      lse_set_value(output, stack[index]);
-      stack.ClearTo(base);
-    end
-    else lse_clear_value(output);
-  end;
-  runner_seek_next(Sender);
-end;
-
 procedure __runner_vargen(Sender: KLiRunner);
 var
   varg: PLseVargen;
@@ -7182,7 +7106,7 @@ begin
   SymTestLastPureID;
 end;
 
-procedure KLiParser.TailIf(ExprList: TList; SaveResult: boolean);
+procedure KLiParser.TailIf(ExprList: TList);
 var
   F: string;
 begin
@@ -7190,16 +7114,9 @@ begin
   begin
     BeginTailIf(F, syDotComma);
     CurCodes.LoadExpr(ExprList);
-    if SaveResult then
-      CurCodes.SaveResult;
     EndTailIf(F);
   end
-  else
-  begin
-    CurCodes.LoadExpr(ExprList);
-    if SaveResult then
-      CurCodes.SaveResult;
-  end;
+  else CurCodes.LoadExpr(ExprList);
 end;
 
 procedure KLiParser.SymGotoNext;
@@ -7371,7 +7288,7 @@ begin
       R^.Val := '___siv:' + Copy(R^.Val, 8, MaxInt);
   end;
 
-  TailIf(FExpr, true);
+  TailIf(FExpr);
 end;
 
 function KLiParser.ParseAndFree(const Code: string; IsLsp: boolean): KLiFunc;
@@ -7478,7 +7395,7 @@ begin
     end;
   end;
 
-  TailIf(FExpr, true);
+  TailIf(FExpr);
 end;
 
 procedure KLiParser.ParseArguments(Func: KLiFunc; EndSym: KLiSymbols; OnHead: boolean);
@@ -7850,7 +7767,7 @@ begin
   until FLast^.Sym in [syIf, syDotComma];
   FExpr.Add(L);
   L^.Sym := syOut;
-  TailIf(FExpr, false);
+  TailIf(FExpr);
 end;
 
 procedure KLiParser.EndTailIf(const end_if_label: string);
@@ -8270,22 +8187,22 @@ var
   A: integer;
 begin
   IncRefCount;
-  FOwnerClass := AOwnerClass;
-  FModule := FOwnerClass.Module;
+  FParent := AOwnerClass;
+  FModule := FParent.Module;
   FResultType := AResultType;
   FKind := Kind;
   if Name = '' then
     FName := FModule.NewFuncName else
     FName := Name;
   case FKind of
-    cmCreator: FOwnerClass.FCmCreator := Self;
-    cmCount  : FOwnerClass.FCmCount := Self;
-    cmGetAt  : FOwnerClass.FCmGetAt := Self;
-    cmSetAt  : FOwnerClass.FCmSetAt := Self;
-    cmGetPV  : FOwnerClass.FCmGetPV := Self;
-    cmSetPV  : FOwnerClass.FCmSetPV := Self;
+    cmCreator: FParent.FCmCreator := Self;
+    cmCount  : FParent.FCmCount := Self;
+    cmGetAt  : FParent.FCmGetAt := Self;
+    cmSetAt  : FParent.FCmSetAt := Self;
+    cmGetPV  : FParent.FCmGetPV := Self;
+    cmSetPV  : FParent.FCmSetPV := Self;
   end;
-  FOwnerClass.FCmFuncs.AddObject(FName, Self);
+  FParent.FCmFuncs.AddObject(FName, Self);
   FDescription := Desc;
   FParams := KLiVarbList.Create(Self);
   if Params <> nil then
@@ -8307,13 +8224,13 @@ end;
 
 destructor KLiFunc.Destroy;
 begin
-  __nilWhenSame(FOwnerClass.FCmCreator, Self);
-  __nilWhenSame(FOwnerClass.FCmCount,   Self);
-  __nilWhenSame(FOwnerClass.FCmGetAt,   Self);
-  __nilWhenSame(FOwnerClass.FCmSetAt,   Self);
-  __nilWhenSame(FOwnerClass.FCmGetPV,   Self);
-  __nilWhenSame(FOwnerClass.FCmSetPV,   Self);
-  __removeAllFrom(FOwnerClass.fCmFuncs, Self);
+  __nilWhenSame(FParent.FCmCreator, Self);
+  __nilWhenSame(FParent.FCmCount,   Self);
+  __nilWhenSame(FParent.FCmGetAt,   Self);
+  __nilWhenSame(FParent.FCmSetAt,   Self);
+  __nilWhenSame(FParent.FCmGetPV,   Self);
+  __nilWhenSame(FParent.FCmSetPV,   Self);
+  __removeAllFrom(FParent.fCmFuncs, Self);
 
   if IsMainFunc then
   begin
@@ -8388,8 +8305,8 @@ function KLiFunc.FullName: string;
 begin
   if FKind = cmNormal then Result := FName else
   if IsConstructor then
-    Result := FOwnerClass.FName + '.' + FOwnerClass.FName else
-    Result := FOwnerClass.FName + '.' + FName;
+    Result := FParent.FName + '.' + FParent.FName else
+    Result := FParent.FName + '.' + FName;
   Result := Module.Name + '::' + Result;
 end;
 
@@ -8417,14 +8334,14 @@ begin
   if ShowFullName then
   begin
     if IsConstructor then
-      Result := FOwnerClass.FullName else
+      Result := FParent.FullName else
     if FResultType = KT_VARIANT then
       Result := FullName else
       Result := FResultType.Prototype(FullName);
   end
   else
   if IsConstructor then
-    Result := FOwnerClass.Name else
+    Result := FParent.Name else
   if FResultType = KT_VARIANT then
     Result := FName else
     Result := FResultType.Prototype(FName);
@@ -8471,7 +8388,7 @@ end;
 
 function KLiFunc.IsConstructor: boolean;
 begin
-  Result := (FOwnerClass.FCmCreator = Self);
+  Result := (FParent.FCmCreator = Self);
 end;
 
 function KLiFunc.IsScript: boolean;
@@ -8633,7 +8550,7 @@ end;
 procedure KLiExprList.BeginStatement;
 begin
   if GetCount > 0 then
-    if GetLast^.Sym in [syStatement, sySaveRV, syLabel] then Exit;
+    if GetLast^.Sym in [syStatement, syLabel] then Exit;
   AddNew(syStatement, nil);
 end;
 
@@ -8800,7 +8717,6 @@ begin
         syIs        : H := 'CALC IS';
         syAs        : H := 'CALC AS';
         syStatement : H := 'STMT';
-        sySaveRV    : H := 'SVRV';
         syVarGen    : H := Format('VGEN [%d]', [R^.ParamCount]);
         syPushVarb  : H := Format('PUSH VARB %s', [R^.VVarb.Name]);
         syHashed    : H := Format('HASH [%d]', [R^.ParamCount]);
@@ -8830,23 +8746,6 @@ begin
   finally
     L.Free;
   end;
-end;
-
-procedure KLiExprList.SaveResult;
-var
-  expr: PLiExprRec;
-begin
-  if GetCount > 0 then
-  begin
-    expr := GetLast;
-    if expr^.Sym in [syPress, syIdle] then
-    begin
-      expr^.Sym := sySaveRV;
-      Exit;
-    end;
-    if expr^.Sym in [syStatement, sySaveRV, syLabel] then Exit;
-  end;
-  AddNew(sySaveRV, nil);
 end;
 
 function KLiExprList.FindLabel(const Name: string): PLiExprRec;
@@ -9611,7 +9510,6 @@ begin
           syLabel    : exec_label;
           syAsk      : exec_ask;
           syStatement: stack.Clear;
-          sySaveRV   : stack.Clear;
           syGETV     : exec_push(KT_VARIANT);
           sySETV     : stack.Press;
           syClen     : exec_push(KT_INT);
@@ -9728,7 +9626,7 @@ end;
 constructor KLiFunc_operator.Create(AOper: KLiSymbol);
 begin
   inherited Create(sys_module.FModuleClass, KT_VARIANT,
-    Symbols[AOper].ID, '', nil, @udc_oper, cmNormal);
+    Symbols[AOper].ID, Symbols[AOper].SM, nil, @udc_oper, cmNormal);
   AddParam('V1', KT_VARIANT);
   AddParam('V2', KT_VARIANT);
   FOper := AOper;
@@ -10205,7 +10103,7 @@ begin
   Result := (cate in (SingleMethods - [cmCreator])) and
             (func <> nil) and
             (SingleMethod(cate) = nil) and
-            (Self = func.FOwnerClass);
+            (Self = func.FParent);
   if Result then
   begin
     clss := func.ResultType;
@@ -10875,7 +10773,7 @@ begin
   begin
     FFileName    := sys_kernel;
     FVersion     := sys_version;
-    FDescription := 'builtin sys module';
+    FDescription := Format('builtin %s module', [Name]);
   end;
   FClassList := __newNamedList(true);
   if IsScript then
@@ -11217,18 +11115,6 @@ begin
   if FClassList <> nil then
     Result := FClassList.Count else
     Result := 0;
-end;
-
-function KLiModule.GetState(Index: KLiModuleState): boolean;
-begin
-  Result := Index in FState;
-end;
-
-procedure KLiModule.SetState(Index: KLiModuleState; Value: boolean);
-begin
-  if Value then
-    FState := FState + [Index] else
-    FState := FState - [Index];
 end;
 
 function KLiModule.ImportedBy(module: KLiModule): boolean;
@@ -11686,7 +11572,7 @@ end;
 procedure KLiEngine.BeginExecute;
 begin
   SetResultTypeText('', '');
-  FEngineRec^.lseu_begin_execute(FEngineRec);
+  FEngineRec^.er_executing(FEngineRec);
 end;
 
 function KLiEngine.Compile(const Code: string; IsLsp: boolean): KLiFunc;
@@ -11712,7 +11598,7 @@ constructor KLiEngine.Create(const AEngineRec: PLseEngine);
 begin
   FEngineRec := AEngineRec;
   if FEngineRec <> nil then
-    FEngineRec^.kernel_engine := Self;
+    FEngineRec^.lysee_engine := Self;
 
   IncRefcount;
 
@@ -11751,7 +11637,6 @@ destructor KLiEngine.Destroy;
 begin
   Clear;
 
-  __freeAndNil(FInvoker);
   __freeAndNil(FMainValues);
   __freeAndNil(FTempValues);
   __freeAndNil(FMainSnap);
@@ -11830,7 +11715,7 @@ end;
 procedure KLiEngine.EndExecute;
 begin
   SetResultTypeText(GetResultType.FullName, GetResultText);
-  FEngineRec^.lseu_end_execute(FEngineRec);
+  FEngineRec^.er_executed(FEngineRec);
 end;
 
 function KLiEngine.TryCompileCode(const code: string; IsLsp: boolean): boolean;
@@ -11884,13 +11769,6 @@ begin
     Result := '';
 end;
 
-function KLiEngine.GetInvoker: TLseInvoke;
-begin
-  if FInvoker = nil then
-    FInvoker := TLseInvoke.Create(nil);
-  Result := FInvoker;
-end;
-
 procedure KLiEngine.SetResultTypeText(const RType, RText: string);
 begin
   FExitResultType := RType;
@@ -11908,7 +11786,7 @@ begin
       FStderrStream := nil;
     end;
     if Value <> nil then
-      if Value <> FEngineRec^.lseu_stderr then
+      if Value <> FEngineRec^.er_stderr then
       begin
         Value^.addref(Value);
         FStderrStream := Value;
@@ -11927,7 +11805,7 @@ begin
       FStdinStream := nil;
     end;
     if Value <> nil then
-      if Value <> FEngineRec^.lseu_stdin then
+      if Value <> FEngineRec^.er_stdin then
       begin
         Value^.addref(Value);
         FStdinStream := Value;
@@ -11946,7 +11824,7 @@ begin
       FStdoutStream := nil;
     end;
     if Value <> nil then
-      if Value <> FEngineRec^.lseu_stdout then
+      if Value <> FEngineRec^.er_stdout then
       begin
         Value^.addref(Value);
         FStdoutStream := Value;
@@ -12009,21 +11887,21 @@ function KLiEngine.GetStderrStream: PLseStream;
 begin
   Result := FStderrStream;
   if Result = nil then
-    Result := FEngineRec^.lseu_stderr;
+    Result := FEngineRec^.er_stderr;
 end;
 
 function KLiEngine.GetStdinStream: PLseStream;
 begin
   Result := FStdinStream;
   if Result = nil then
-    Result := FEngineRec^.lseu_stdin;
+    Result := FEngineRec^.er_stdin;
 end;
 
 function KLiEngine.GetStdoutStream: PLseStream;
 begin
   Result := FStdoutStream;
   if Result = nil then
-    Result := FEngineRec^.lseu_stdout;
+    Result := FEngineRec^.er_stdout;
 end;
 
 procedure KLiEngine.GetValue(const Name: string; Value: PLseValue);
@@ -13328,192 +13206,6 @@ begin
     lse_set_value(Result, Value);
 end;
 
-
-{ KLiExportAPI }
-
-procedure KLiExportAPI.BeginPage;
-var
-  title: string;
-begin
-  title := Format('Class Reference Of Lysee %s', [sys_version]);
-  Writeln('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"');
-  Writeln('"http://www.w3.org/TR/html4/loose.dtd">');
-  Writeln('<html>');
-  Writeln('<head>');
-  Writeln('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">');
-  Writeln('<title>' + title + '</title>');
-  Writeln('<style type="text/css">');
-  Writeln('<!--');
-  Writeln('.white {');
-  Writeln('	color: #FFFFFF;');
-  Writeln('	font-family: "Courier New", Courier, mono;');
-  Writeln('	font-size: 10pt;');
-  Writeln('}');
-  Writeln('.black {');
-  Writeln('	color: #000000F;');
-  Writeln('	font-family: "Courier New", Courier, mono;');
-  Writeln('	font-size: 10pt;');
-  Writeln('}');
-  Writeln('-->');
-  Writeln('</style>');
-  Writeln('</head>');
-  Writeln('<body>');
-  Writeln('<h2 align="center">' + title + '</h2>');
-  Writeln('<table border="0" align="center" cellpadding="4" cellspacing="1" bgcolor="#CCCCCC">');
-  Writeln('<tr bgcolor="#999999" class="white">');
-  Writeln('<th>ITEM</th>');
-  Writeln('<th>NAME</th>');
-  Writeln('<th>DESCRIPTION</th>');
-  Writeln('</tr>');
-  Writeln('<!--BEGIN API LIST-->');
-end;
-
-procedure KLiExportAPI.EndPage;
-begin
-  Writeln('<tr>');
-  Writeln('<td colspan=3 bgcolor="#000000" class="white" align="right">');
-  Writeln(GetTotal);
-  Writeln('</td>');
-  Writeln('</tr>');
-  Writeln('<!--END API LIST-->');
-  Writeln('</table>');
-  Writeln('</body>');
-  Writeln('</html>');
-end;
-
-procedure KLiExportAPI.Execute(const FileName: string);
-var
-  module: KLiModule;
-  index: integer;
-begin
-  FStream := TFileStream.Create(FileName, fmCreate);
-  try
-    FModuleCount := 0;
-    FFuncCount := 0;
-    FClassCount := 0;
-    FMethodCount := 0;
-    BeginPage;
-    for index := 0 to sys_libraries.Count - 1 do
-    begin
-      module := KLiModule(sys_libraries.Objects[index]);
-      WriteModule(module);
-    end;
-    EndPage;
-  finally
-    FreeAndNil(FStream);
-  end;
-end;
-
-function KLiExportAPI.GetDesc(const Desc: string): string;
-begin
-  Result := Trim(Desc);
-  if Result = '' then Result := '&nbsp;';
-end;
-
-function KLiExportAPI.GetProt(func: KLiFunc): string;
-begin
-  Result := func.Prototype(false);
-  if Copy(Result, 1, 4) = 'def ' then
-    Result := Copy(Result, 5, MaxInt);
-end;
-
-function KLiExportAPI.GetTotal: string;
-begin
-  Result := Format('TOTAL: %d modules | %d functions | %d classes | %d methods',
-    [FModuleCount, FFuncCount, FClassCount, FMethodCount])
-end;
-
-procedure KLiExportAPI.WriteClass(cls: KLiClass);
-var
-  index: integer;
-  func: KLiFunc;
-  list: TStrings;
-begin
-  if (cls.Creator = nil) and (cls.MethodList.Count = 0) then Exit;
-  
-  Writeln('<tr>');
-  Writeln('<td align="center" bgcolor="#FFFFFF" class="black" nowrap>class</td>');
-  Writeln('<td bgcolor="#0000FF" class="white">' + cls.Name + '</td>');
-  Writeln('<td bgcolor="#0000FF" class="white">' +  GetDesc(cls.Description) + '</td>');
-  Writeln('</tr>');
-
-  func := cls.Creator;
-  if func <> nil then
-    WriteConstructor(func);
-
-  list := cls.MethodList;
-  for index := 0 to list.Count - 1 do
-  begin
-    func := KLiFunc(list.Objects[index]);
-    WriteMethod(func);
-  end;
-
-  Inc(FClassCount);
-end;
-
-procedure KLiExportAPI.WriteConstructor(func: KLiFunc);
-begin
-  Writeln('<tr class="black">');
-  Writeln('<td bgcolor="#FFFFFF"><div align="center" nowrap>constructor</div></td>');
-  Writeln('<td bgcolor="#97FFC0">&nbsp;&nbsp;' + func.OwnerClass.Name + '(' +
-    func.ParamList(false, true) + ')</td>');
-  Writeln('<td bgcolor="#97FFC0">' + GetDesc(func.Description) + '</td>');
-  Writeln('</tr>');
-  Inc(FMethodCount);
-end;
-
-procedure KLiExportAPI.WriteFunc(func: KLiFunc);
-begin
-  Writeln('<tr class="black">');
-  Writeln('<td align="center" bgcolor="#FFFFFF" nowrap>function</td>');
-  Writeln('<td bgcolor="#FFC6C6">&nbsp;&nbsp;' + GetProt(func) + '</td>');
-  Writeln('<td bgcolor="#FFC6C6">' + GetDesc(func.Description) + '</td>');
-  Writeln('</tr>');
-  Inc(FFuncCount);
-end;
-
-procedure KLiExportAPI.Writeln(const Text: string);
-begin
-  lse_stream_writeln(FStream, Text);
-end;
-
-procedure KLiExportAPI.WriteMethod(func: KLiFunc);
-begin
-  Writeln('<tr class="black">');
-  Writeln('<td bgcolor="#FFFFFF"><div align="center" nowrap>method</div></td>');
-  Writeln('<td bgcolor="#C6C6FF">&nbsp;&nbsp;' + GetProt(func) + '</td>');
-  Writeln('<td bgcolor="#C6C6FF">' + GetDesc(func.Description) + '</td>');
-  Writeln('</tr>');
-  Inc(FMethodCount);
-end;
-
-procedure KLiExportAPI.WriteModule(module: KLiModule);
-var
-  index: integer;
-  func: KLiFunc;
-  cls: KLiClass;
-begin
-  Writeln('<tr bgcolor="#FF0000" class="white">');
-  Writeln('<td nowrap>module</td>');
-  Writeln('<td>' + module.Name + '</td>');
-  Writeln('<td>' + GetDesc(module.Description) + '</td>');
-  Writeln('</tr>');
-
-  for index := 0 to module.FuncCount - 1 do
-  begin
-    func := module.GetFunc(index);
-    WriteFunc(func);
-  end;
-  
-  for index := 0 to module.ClassCount - 1 do
-  begin
-    cls := module.GetClass(index);
-    WriteClass(cls);
-  end;
-
-  Inc(FModuleCount);
-end;
-
 ////////////////////////////////////////////////////////////////////////////////
 
 var
@@ -13527,7 +13219,6 @@ begin
     if not init_lysee then
     begin
       init_lysee := true;
-
       lse_funcs.__coinit;
       sys_libraries := __newNamedList(false);
       sys_spinlock := TLseSpinLock.Create;
@@ -13537,9 +13228,9 @@ begin
 
       for X := Low(KLiSymbol) to High(KLiSymbol) do
       begin
+        sys_runner_procs[X] := @__runner_error;
         if X in OperIDSyms then
           KLiFunc_operator.Create(X);
-        sys_runner_procs[X] := @__runner_error;
       end;
       sys_oper_inc := sys_module.FindFunc('+');
 
@@ -13594,7 +13285,6 @@ begin
       sys_runner_procs[syIs]       := @__runner_is;
       sys_runner_procs[syAs]       := @__runner_as;
       sys_runner_procs[syStatement]:= @__runner_statement;
-      sys_runner_procs[sySaveRV]   := @__runner_save_result;
       sys_runner_procs[syVarGen]   := @__runner_vargen;
       sys_runner_procs[syPushVarb] := @__runner_pushvarb;
       sys_runner_procs[syAsk]      := @__runner_ask;

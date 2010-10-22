@@ -2,7 +2,7 @@
 {        UNIT: lse_spawn                                                       }
 { DESCRIPTION: symbolization of lysee script parser                            }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/10/16                                                      }
+{    MODIFIED: 2010/10/20                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -84,7 +84,6 @@ type
     syGotoFP,      // 2008-01-28: goto label when false
     syEndInc,      // 2008-03-03: end include file
     syStatement,   // 2008-03-25: begin statement
-    sySaveRV,      // 2008-03-25: save result value
     syVarGen,      // 2008-09-07: cast to vargen object
     syPushVarb,    // 2008-09-07: push variable
     syHashed,      // 2009-02-28: create hashed object  
@@ -214,7 +213,6 @@ const
     (SY:syGotoFP;     ID:'<GOTOFP>';     SM:'goto label when false'),
     (SY:syEndInc;     ID:'<ENDINC>';     SM:'end include file'),
     (SY:syStatement;  ID:'<STATEMENT>';  SM:'begin statement'),
-    (SY:sySaveRV;     ID:'<SAVERV>';     SM:'save result value'),
     (SY:syVarGen;     ID:'<VARGEN>';     SM:'cast to vargen object'),
     (SY:syPushVarb;   ID:'<PUSHVARB>';   SM:'push variable'),
     (SY:syHashed;     ID:'<HASHED>';     SM:'create hashed object'),  

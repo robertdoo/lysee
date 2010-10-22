@@ -2,7 +2,7 @@
 {        UNIT: lysee_pad_fpc                                                   }
 { DESCRIPTION: main form of lysee_pad_fpc (FPC)                                }
 {     CREATED: 2008/04/05                                                      }
-{    MODIFIED: 2010/08/31                                                      }
+{    MODIFIED: 2010/10/21                                                      }
 {==============================================================================}
 { Copyright (c) 2008-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -155,24 +155,22 @@ type
     procedure smLyseeStatusChange(Sender: TObject; Changes: TSynStatusChanges);
   private
     FFileName: string;
-    FSynLysee: TSynLysee;
+    FSynLysee: TLyseeSyn;
     FTempFile: string;
     FPath: string;
     FProgram: string;
     FProgramExist: boolean;
     FModified: boolean;
-    FHintText: string;
     FErrorRow: integer;
     FEngine: TLseEngine;
     FReplace: boolean;
     procedure ResetCaption;
     procedure SetPanelText(Index: integer; const AText: string);
-    procedure ShowHint(Sender: TObject);
     procedure ResetSyntaxHilighter;
+    procedure ClearError;
     procedure OpenNew(const fname: string);
     procedure ExecOpen(const ExeName, Options, FileName: string);
     function PromptSave: boolean;
-    function IsLspFile(const fname: string): boolean;
     function IsLspCode: boolean;
     function SameFile(const F1, F2: string): boolean;
   end;
@@ -183,8 +181,7 @@ var
 implementation
 
 uses
-  Process, Clipbrd, SynEditTypes, lse_msgbox,
-  lse_about_fpc, lse_pad_open_fpc;
+  Process, Clipbrd, SynEditTypes, lse_msgbox, lse_about_fpc, lse_pad_open_fpc;
 
 { TLspadForm }
 
@@ -193,7 +190,6 @@ var
   target: string;
 begin
   Application.Title := 'Lysee PAD';
-  Application.OnHint := @ShowHint;
 
   FPath := ExtractFilePath(Application.ExeName);
   FTempFile := FPath + IntToHex(Handle, 8) + '.ls';
@@ -221,18 +217,10 @@ begin
     Application.Terminate;
   end;
 
-  lse_load_kernel(FPath + LSE_KERNEL);
-  if lse_startup then
-  begin
-    lse_set_program_file(Application.ExeName);
-    Keywords := lse_keywords;
-    FEngine := TLseEngine.Create(nil);
-  end
-  else
-  begin
-    acRunCheck.Enabled := false;
-    smLysee.OnSpecialLineColors := nil;
-  end;
+  lse_startup;
+  lse_set_program_file(Application.ExeName);
+  SetLyseeKeywords(lse_keywords);
+  FEngine := TLseEngine.Create(nil);
 
   ResetCaption;
   ResetSyntaxHilighter;
@@ -252,11 +240,7 @@ end;
 procedure TLspadForm.smLyseeChange(Sender: TObject);
 begin
   FModified := true;
-  if FErrorRow <> 0 then
-  begin
-    FErrorRow := 0;
-    smLysee.Refresh;
-  end;
+  ClearError;
 end;
 
 procedure TLspadForm.smLyseeSpecialLineColors(Sender: TObject; Line: integer;
@@ -273,7 +257,7 @@ end;
 procedure TLspadForm.smLyseeStatusChange(Sender: TObject;
   Changes: TSynStatusChanges);
 begin
-  SetPanelText(1, Format('%5d,%3d ', [smLysee.CaretY, smLysee.CaretX]));
+  SetPanelText(0, Format('%d,%d ', [smLysee.CaretY, smLysee.CaretX]));
   acEditCut.Enabled := smLysee.SelText <> '';
   acEditCopy.Enabled := acEditCut.Enabled;
   acEditCopyHTML.Enabled := acEditCut.Enabled;
@@ -394,7 +378,6 @@ begin
       FFileName := F;
       smLyseeChange(nil);
       FModified := false;
-      FHintText := '';
       ResetCaption;
       ResetSyntaxHilighter;
     end
@@ -431,25 +414,25 @@ end;
 
 procedure TLspadForm.acRunCheckExecute(Sender: TObject);
 begin
-  SetPanelText(2, '');
-  FHintText := '';
+  ClearError;
   FEngine.Clear;
   try
-    FEngine.MainFile := FFileName;
+    if FFileName = '' then
+      FEngine.MainFile := ExpandFileName('Untitled.ls') else
+      FEngine.MainFile := FFileName;
     FEngine.CompileCode(smLysee.Lines.Text, IsLspCode);
     if FEngine.Errno <> 0 then
     begin
-      FHintText := FEngine.Error;
-      SetPanelText(2, ' ' + FHintText);
       if FEngine.ErrorModule = 'main' then
       begin
         FErrorRow := FEngine.ErrorRow;
         smLysee.CaretY := FErrorRow;
         smLysee.CaretX := FEngine.ErrorCol;
         smLysee.Refresh;
-      end;
-      if Canvas.TextWidth(FHintText) > StatusBar.Panels[2].Width then
-        MsgErr(FEngine.ErrorList);
+        SetPanelText(1, Format(' %s (%d, %d) - %s', [FEngine.ErrorName,
+          FEngine.ErrorRow, FEngine.ErrorCol, FEngine.ErrorMsg]));
+      end
+      else SetPanelText(1, ' ' + FEngine.Error);
     end;
   finally
     FEngine.Clear;
@@ -575,25 +558,25 @@ begin
   StatusBar.Panels[Index].Text := AText;
 end;
 
-procedure TLspadForm.ShowHint(Sender: TObject);
-var
-  S: string;
-begin
-  S := Application.Hint;
-  if S <> '' then
-    SetPanelText(2, ' ' + GetLongHint(S)) else
-    SetPanelText(2, ' ' + FHintText);
-end;
-
 procedure TLspadForm.ResetSyntaxHilighter;
 begin
   if FSynLysee = nil then
-    FSynLysee := TSynLysee.Create(Self) else
+    FSynLysee := TLyseeSyn.Create(Self) else
     smLysee.Highlighter := nil;
-  FSynLysee.IsLsp := (FFileName <> '') and IsLspFile(FFileName);
+  FSynLysee.IsLsp := IsLspCode;
   smLysee.Highlighter := FSynLysee;
   expHTML.Highlighter := FSynLysee;
   expHTML.ExportAsText := true;
+end;
+
+procedure TLspadForm.ClearError;
+begin
+  if FErrorRow <> 0 then
+  begin
+    FErrorRow := 0;
+    SetPanelText(1, '');
+    smLysee.Refresh;
+  end;
 end;
 
 procedure TLspadForm.OpenNew(const fname: string);
@@ -629,14 +612,9 @@ begin
   end;
 end;
 
-function TLspadForm.IsLspFile(const fname: string): boolean;
-begin
-  Result := lse_is_lsp_file(fname);
-end;
-
 function TLspadForm.IsLspCode: boolean;
 begin
-  Result := (FFileName <> '') and IsLspFile(FFileName);
+  Result := (FFileName <> '') and lse_is_lsp_file(FFileName);
 end;
 
 function TLspadForm.SameFile(const F1, F2: string): boolean;
