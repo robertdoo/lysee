@@ -46,9 +46,9 @@ unit lse_pad_fpc;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics,
-  Dialogs, Menus, ActnList, ComCtrls, SynEdit, SynMemo,
-  SynHighlighterJava, SynExportHTML, lseu, lse_synedit;
+  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
+  Menus, ActnList, ComCtrls, ExtCtrls, StdCtrls, Buttons, SynEdit, SynMemo,
+  SynHighlighterJava, SynEditTypes, SynExportHTML, lseu, lse_synedit, LCLType;
 
 type
 
@@ -75,11 +75,20 @@ type
     acFileAnsiToUTF8: TAction;
     acFileUTF8ToAnsi: TAction;
     ActionList: TActionList;
-    dlgFind: TFindDialog;
+    btnReplace: TSpeedButton;
+    btnReplaceAll: TSpeedButton;
+    chkWholeWord: TCheckBox;
+    chkCaseSensitive: TCheckBox;
+    edtFindText: TEdit;
+    edtReplaceText: TEdit;
     ImageList: TImageList;
+    lblFindText: TLabel;
+    lblReplaceText: TLabel;
     MainMenu: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
+    pnBench: TPanel;
+    pnFindReplace: TPanel;
     pmiReplace: TMenuItem;
     pmiFind: TMenuItem;
     pmiSelectAll: TMenuItem;
@@ -117,8 +126,9 @@ type
     miRun: TMenuItem;
     miHelp: TMenuItem;
     dlgSave: TSaveDialog;
-    dlgReplace: TReplaceDialog;
     popEdit: TPopupMenu;
+    btnFind: TSpeedButton;
+    btnClose: TSpeedButton;
     StatusBar: TStatusBar;
     smLysee: TSynMemo;
     expHTML: TSynExporterHTML;
@@ -141,14 +151,20 @@ type
     procedure acHelpAboutExecute(Sender: TObject);
     procedure acRunCheckExecute(Sender: TObject);
     procedure acRunRunExecute(Sender: TObject);
-    procedure dlgFindFind(Sender: TObject);
-    procedure dlgReplaceFind(Sender: TObject);
-    procedure dlgReplaceReplace(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure btnFindClick(Sender: TObject);
+    procedure btnReplaceClick(Sender: TObject);
+    procedure chkCaseSensitiveChange(Sender: TObject);
+    procedure chkWholeWordChange(Sender: TObject);
+    procedure edtFindTextChange(Sender: TObject);
+    procedure edtFindTextKeyPress(Sender: TObject; var Key: char);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure miRunClick(Sender: TObject);
+    procedure pnFindReplaceResize(Sender: TObject);
     procedure smLyseeChange(Sender: TObject);
     procedure smLyseeSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
@@ -164,6 +180,7 @@ type
     FErrorRow: integer;
     FEngine: TLseEngine;
     FReplace: boolean;
+    FOptions: TSynSearchOptions;
     procedure ResetCaption;
     procedure SetPanelText(Index: integer; const AText: string);
     procedure ResetSyntaxHilighter;
@@ -181,7 +198,7 @@ var
 implementation
 
 uses
-  Process, Clipbrd, SynEditTypes, lse_msgbox, lse_about_fpc, lse_pad_open_fpc;
+  Process, Clipbrd, lse_msgbox, lse_about_fpc, lse_pad_open_fpc;
 
 { TLspadForm }
 
@@ -223,6 +240,7 @@ begin
   FEngine := TLseEngine.Create(nil);
 
   ResetCaption;
+  FOptions := [];
   ResetSyntaxHilighter;
 end;
 
@@ -232,9 +250,21 @@ begin
   lse_cleanup;
 end;
 
+procedure TLspadForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_ESCAPE then
+    btnCloseClick(nil);
+end;
+
 procedure TLspadForm.miRunClick(Sender: TObject);
 begin
   acRunRun.Enabled := FProgramExist and not FModified and (FFileName <> '');
+end;
+
+procedure TLspadForm.pnFindReplaceResize(Sender: TObject);
+begin
+  btnClose.Left := pnFindReplace.Width - btnClose.Width;
 end;
 
 procedure TLspadForm.smLyseeChange(Sender: TObject);
@@ -293,8 +323,11 @@ end;
 
 procedure TLspadForm.acEditReplaceExecute(Sender: TObject);
 begin
-  dlgFind.CloseDialog;
-  dlgReplace.Execute;
+  pnFindReplace.Height := 56;
+  pnFindReplace.Visible := true;
+  if edtFindText.Text <> '' then
+    edtReplaceText.SetFocus else
+    edtFindText.SetFocus;
   FReplace := true;
 end;
 
@@ -312,15 +345,16 @@ procedure TLspadForm.acEditF3Execute(Sender: TObject);
 begin
   if FReplace then
     acEditReplaceExecute(nil) else
-  if dlgFind.FindText = '' then
+  if edtFindText.Text = '' then
     acEditFindExecute(nil) else
-    dlgFindFind(nil);
+    btnFindClick(nil);
 end;
 
 procedure TLspadForm.acEditFindExecute(Sender: TObject);
 begin
-  dlgReplace.CloseDialog;
-  dlgFind.Execute;
+  pnFindReplace.Height := 26;
+  pnFindReplace.Visible := true;
+  edtFindText.SetFocus;
   FReplace := false;
 end;
 
@@ -444,65 +478,58 @@ begin
   ExecOpen(FProgram, '--pause', FFileName);
 end;
 
-procedure TLspadForm.dlgFindFind(Sender: TObject);
-var
-  options: TSynSearchOptions;
+procedure TLspadForm.btnCloseClick(Sender: TObject);
 begin
-  options := [];
-
-  if frWholeWord in dlgFind.Options then
-    options := options + [ssoWholeWord];
-
-  if frMatchCase in dlgFind.Options then
-    options := options + [ssoMatchCase];
-
-  if smLysee.SearchReplace(dlgFind.FindText, '', options) < 1 then
-    MsgErr('No matches found!');
-
-  dlgReplace.FindText := dlgFind.FindText;
+  pnFindReplace.Visible := false;
 end;
 
-procedure TLspadForm.dlgReplaceFind(Sender: TObject);
-var
-  options: TSynSearchOptions;
+procedure TLspadForm.btnFindClick(Sender: TObject);
 begin
-  options := [];
-
-  if frWholeWord in dlgReplace.Options then
-    options := options + [ssoWholeWord];
-
-  if frMatchCase in dlgReplace.Options then
-    options := options + [ssoMatchCase];
-
-  if smLysee.SearchReplace(dlgReplace.FindText, '', options) < 1 then
+  if smLysee.SearchReplace(edtFindText.Text, '', FOptions) < 1 then
     MsgErr('No matches found!');
-
-  dlgFind.FindText := dlgReplace.FindText;
 end;
 
-procedure TLspadForm.dlgReplaceReplace(Sender: TObject);
-var
-  options: TSynSearchOptions;
+procedure TLspadForm.btnReplaceClick(Sender: TObject);
 begin
-  if frReplaceAll in dlgReplace.Options then
-  begin
-    options := [ssoReplaceAll];
-
-    if frWholeWord in dlgReplace.Options then
-      options := options + [ssoWholeWord];
-
-    if frMatchCase in dlgReplace.Options then
-      options := options + [ssoMatchCase];
-
-    smLysee.SearchReplace(dlgReplace.FindText, dlgReplace.ReplaceText, options);
-    dlgFind.FindText := dlgReplace.FindText;
-  end
-  else
+  if Sender = btnReplace then
   begin
     if smLysee.SelText <> '' then
-      smLysee.SelText := dlgReplace.ReplaceText;
-    dlgReplaceFind(nil);
-  end;
+      smLysee.SelText := edtReplaceText.Text;
+    btnFindClick(nil);
+  end
+  else smLysee.SearchReplace(edtFindText.Text, edtReplaceText.Text,
+    FOptions + [ssoReplaceAll]);
+end;
+
+procedure TLspadForm.chkCaseSensitiveChange(Sender: TObject);
+begin
+  if chkCaseSensitive.Checked then
+    FOptions := FOptions + [ssoMatchCase] else
+    FOptions := FOptions - [ssoMatchCase];
+end;
+
+procedure TLspadForm.chkWholeWordChange(Sender: TObject);
+begin
+  if chkWholeWord.Checked then
+    FOptions := FOptions + [ssoWholeWord] else
+    FOptions := FOptions - [ssoWholeWord];
+end;
+
+procedure TLspadForm.edtFindTextChange(Sender: TObject);
+var
+  S: string;
+begin
+  S := edtFindText.Text;
+  btnFind.Enabled := (S <> '');
+  btnReplace.Enabled := (S <> '');
+  btnReplaceAll.Enabled := (S <> '');
+end;
+
+procedure TLspadForm.edtFindTextKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key in [#10, #13] then
+    if edtFindText.Text <> '' then
+      btnFindClick(nil);
 end;
 
 procedure TLspadForm.FormActivate(Sender: TObject);

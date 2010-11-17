@@ -2,7 +2,7 @@
 {        UNIT: lse_spawn                                                       }
 { DESCRIPTION: symbolization of lysee script parser                            }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/10/20                                                      }
+{    MODIFIED: 2010/11/02                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -1507,8 +1507,10 @@ var
         syRepeat, syTry, syExcept, syFinally, syElse]) then
           Exit;
         
-    if begin_sym = syDo then  // const V = do ... end
-      if prev = syBecome then
+    if begin_sym = syDo then
+      if prev = syIf then       // for ... if ... do
+        close_pair([syIf]) else
+      if prev = syBecome then   // const V = do ... end
         begin_sym := syDefine else
         Exit;
 

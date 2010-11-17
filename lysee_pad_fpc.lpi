@@ -18,7 +18,7 @@
       <CurrentVersionNr Value="1"/>
       <CurrentMajorRevNr Value="2"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="478"/>
+      <CurrentBuildNr Value="520"/>
       <ProjectVersion Value="1.1.1.307"/>
       <FileDescription Value="lysee PAD (FPC)"/>
       <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
@@ -44,14 +44,14 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="65">
+    <Units Count="70">
       <Unit0>
         <Filename Value="lysee_pad_fpc.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_pad_fpc"/>
         <CursorPos X="11" Y="70"/>
         <TopLine Value="49"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="52"/>
       </Unit0>
       <Unit1>
         <Filename Value="lse_pad_fpc.pas"/>
@@ -59,10 +59,10 @@
         <ComponentName Value="LspadForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="lse_pad_fpc"/>
-        <CursorPos X="12" Y="614"/>
-        <TopLine Value="590"/>
+        <CursorPos X="29" Y="355"/>
+        <TopLine Value="353"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="52"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -113,7 +113,7 @@
         <UnitName Value="lse_funcs"/>
         <CursorPos X="10" Y="748"/>
         <TopLine Value="735"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\Develop\lazarus\fpc\2.2.2\source\rtl\objpas\classes\classesh.inc"/>
@@ -127,7 +127,7 @@
         <UnitName Value="lseu"/>
         <CursorPos X="3" Y="4410"/>
         <TopLine Value="4408"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="51"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\..\Develop\lazarus\lcl\forms.pp"/>
@@ -191,7 +191,7 @@
         <UnitName Value="lse_about_fpc"/>
         <CursorPos X="74" Y="98"/>
         <TopLine Value="81"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="44"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\..\Developments\lazarus\lcl\dialogs.pp"/>
@@ -327,7 +327,7 @@
         <UnitName Value="lse_synedit"/>
         <CursorPos X="10" Y="178"/>
         <TopLine Value="166"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="34"/>
       </Unit40>
       <Unit41>
         <Filename Value="lse_msgbox.pas"/>
@@ -335,7 +335,7 @@
         <UnitName Value="lse_msgbox"/>
         <CursorPos X="1" Y="4"/>
         <TopLine Value="1"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="33"/>
       </Unit41>
       <Unit42>
         <Filename Value="..\..\Developments\lazarus\components\synedit\synedithighlighter.pp"/>
@@ -352,7 +352,7 @@
         <UnitName Value="lse_pad_open_fpc"/>
         <CursorPos X="79" Y="3"/>
         <TopLine Value="1"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="30"/>
       </Unit43>
       <Unit44>
         <Filename Value="..\..\usr\share\fpcsrc\2.4.0\rtl\objpas\sysutils\filutilh.inc"/>
@@ -433,7 +433,7 @@
         <UnitName Value="lse_syncobj"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit55>
       <Unit56>
         <Filename Value="lse_api.pas"/>
@@ -441,7 +441,7 @@
         <UnitName Value="lse_api"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit56>
       <Unit57>
         <Filename Value="lse_cgi.pas"/>
@@ -449,7 +449,7 @@
         <UnitName Value="lse_cgi"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit57>
       <Unit58>
         <Filename Value="lse_export.pas"/>
@@ -457,7 +457,7 @@
         <UnitName Value="lse_export"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit58>
       <Unit59>
         <Filename Value="lse_kernel.pas"/>
@@ -465,7 +465,7 @@
         <UnitName Value="lse_kernel"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit59>
       <Unit60>
         <Filename Value="lse_patten.pas"/>
@@ -473,7 +473,7 @@
         <UnitName Value="lse_patten"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit60>
       <Unit61>
         <Filename Value="lse_spawn.pas"/>
@@ -481,7 +481,7 @@
         <UnitName Value="lse_spawn"/>
         <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit61>
       <Unit62>
         <Filename Value="lse_symbol.pas"/>
@@ -489,13 +489,13 @@
         <UnitName Value="lse_symbol"/>
         <CursorPos X="14" Y="142"/>
         <TopLine Value="130"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="25"/>
       </Unit62>
       <Unit63>
         <Filename Value="..\..\..\Developments\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
-        <CursorPos X="15" Y="1161"/>
-        <TopLine Value="1149"/>
+        <CursorPos X="22" Y="1626"/>
+        <TopLine Value="1614"/>
         <UsageCount Value="11"/>
       </Unit63>
       <Unit64>
@@ -504,80 +504,106 @@
         <TopLine Value="527"/>
         <UsageCount Value="11"/>
       </Unit64>
+      <Unit65>
+        <Filename Value="..\..\..\Developments\lazarus\components\synedit\synedit.pp"/>
+        <UnitName Value="SynEdit"/>
+        <CursorPos X="14" Y="832"/>
+        <TopLine Value="820"/>
+        <UsageCount Value="10"/>
+      </Unit65>
+      <Unit66>
+        <Filename Value="..\..\..\Developments\lazarus\lcl\lmessages.pp"/>
+        <UnitName Value="LMessages"/>
+        <CursorPos X="8" Y="34"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="10"/>
+      </Unit66>
+      <Unit67>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\win\messages.pp"/>
+        <UnitName Value="messages"/>
+        <CursorPos X="12" Y="11"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit67>
+      <Unit68>
+        <Filename Value="..\..\..\Developments\lazarus\fpc\2.2.4\source\rtl\win\wininc\messages.inc"/>
+        <CursorPos X="1" Y="1"/>
+        <TopLine Value="1"/>
+        <UsageCount Value="10"/>
+      </Unit68>
+      <Unit69>
+        <Filename Value="..\..\..\Developments\lazarus\lcl\lcltype.pp"/>
+        <UnitName Value="LCLType"/>
+        <CursorPos X="13" Y="37"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="10"/>
+      </Unit69>
     </Units>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="16" HistoryIndex="15">
       <Position1>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="174" Column="17" TopLine="162"/>
+        <Caret Line="314" Column="1" TopLine="300"/>
       </Position1>
       <Position2>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="424" Column="54" TopLine="412"/>
+        <Caret Line="312" Column="21" TopLine="300"/>
       </Position2>
       <Position3>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="174" Column="17" TopLine="162"/>
+        <Caret Line="332" Column="17" TopLine="318"/>
       </Position3>
       <Position4>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="424" Column="54" TopLine="412"/>
+        <Caret Line="339" Column="19" TopLine="327"/>
       </Position4>
       <Position5>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="618" Column="37" TopLine="604"/>
+        <Caret Line="340" Column="19" TopLine="327"/>
       </Position5>
       <Position6>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="342" Column="19" TopLine="327"/>
       </Position6>
       <Position7>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="566" Column="46" TopLine="555"/>
+        <Caret Line="469" Column="34" TopLine="466"/>
       </Position7>
       <Position8>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="618" Column="31" TopLine="606"/>
+        <Caret Line="525" Column="25" TopLine="514"/>
       </Position8>
       <Position9>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="156" Column="16" TopLine="146"/>
+        <Caret Line="256" Column="24" TopLine="252"/>
       </Position9>
       <Position10>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="565" Column="37" TopLine="553"/>
+        <Caret Line="255" Column="20" TopLine="243"/>
       </Position10>
       <Position11>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="156" Column="28" TopLine="145"/>
+        <Caret Line="51" Column="80" TopLine="37"/>
       </Position11>
       <Position12>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="149" Column="15" TopLine="137"/>
+        <Caret Line="255" Column="21" TopLine="243"/>
       </Position12>
       <Position13>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="51" Column="51" TopLine="37"/>
+        <Caret Line="57" Column="24" TopLine="37"/>
       </Position13>
       <Position14>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="51" Column="51" TopLine="37"/>
+        <Caret Line="51" Column="78" TopLine="37"/>
       </Position14>
       <Position15>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="53" Column="5" TopLine="36"/>
+        <Caret Line="494" Column="3" TopLine="486"/>
       </Position15>
       <Position16>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="174" Column="27" TopLine="169"/>
+        <Caret Line="272" Column="33" TopLine="265"/>
       </Position16>
-      <Position17>
-        <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="346" Column="10" TopLine="338"/>
-      </Position17>
-      <Position18>
-        <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="124" Column="6" TopLine="112"/>
-      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

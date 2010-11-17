@@ -2,7 +2,7 @@
 {        UNIT: lse_api                                                         }
 { DESCRIPTION: APIs builtin in lysee kernel                                    }
 {     CREATED: 2003/02/26                                                      }
-{    MODIFIED: 2010/10/22                                                      }
+{    MODIFIED: 2010/10/23                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -203,7 +203,7 @@ const
      fr_addr:@pp_system_printf;
      fr_desc:'print file content into STDOUT';
     ),
-    (fr_prot:'readln:string ||';
+    (fr_prot:'readln:string |password:bool|';
      fr_addr:@pp_system_readln;
      fr_desc:'read a line from STDIN';
     ),
@@ -3662,9 +3662,15 @@ begin
 end;
 
 procedure pp_system_readln(const Param: PLseParam);cdecl;
+var
+  E: KLiEngine;
+  S: PLseString;
 begin
-  lse_set_string(Param^.result,
-    lse_stream_readln(__AsEngine(Param).StdinStream));
+  E := __AsEngine(Param); 
+  if __AsBool(Param^.param[0]) then
+    S := E.EngineRec^.er_password(E.EngineRec) else
+    S := lse_stream_readln(E.StdinStream);
+  lse_set_string(Param^.result, S);
 end;
 
 var
