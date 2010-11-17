@@ -2,7 +2,7 @@
 {        UNIT: lseu                                                            }
 { DESCRIPTION: lysee script engine unit                                        }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/10/22                                                      }
+{    MODIFIED: 2010/11/02                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -68,7 +68,7 @@ const
   LSE_COPYRIGHT      = 'Copyright (C) 2003-2010 Li Yun Jie - http://www.lysee.net';
   LSE_VERSION        = '1.2.1';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20101020;
+  LSE_BUILDDAY       = 20101102;
   LSE_PATH_DELIMITER = {$IFDEF WINDOWS}'\'{$ELSE}'/'{$ENDIF};
   LSE_MAX_PARAMS     = 12;
   LSE_MAX_CODES      = MaxInt div 2;
@@ -468,11 +468,13 @@ type
   PLseEngine = ^RLseEngine;
 
   TLseEngineEvent = procedure(Engine: PLseEngine);cdecl;
+  TLsePassword = function(Engine: PLseEngine): PLseString;cdecl;
 
   RLseEngine = packed record
     er_engine   : TLseEngine;      {<--L: TLseEngine instance}
     er_executing: TLseEngineEvent; {<--L: OnExecuting}
     er_executed : TLseEngineEvent; {<--L: OnExecuted}
+    er_password : TLsePassword;    {<--L: OnPassword}
     er_stdin    : PLseStream;      {<--L: stdin stream}
     er_stdout   : PLseStream;      {<--L: stdout stream}
     er_stderr   : PLseStream;      {<--L: stderr stream}
@@ -492,6 +494,7 @@ type
     FStderr: RLseStream;
     FOnExecuting: TNotifyEvent;
     FOnExecuted: TNotifyEvent;
+    FOnPassword: TLseReadln;
     FOnReadln: TLseReadln;
     FOnRead: TLseRead;
     FOnWrite: TLseWrite;
@@ -548,6 +551,7 @@ type
   published
     property OnExecuting: TNotifyEvent read FOnExecuting write FOnExecuting;
     property OnExecuted: TNotifyEvent read FOnExecuted write FOnExecuted;
+    property OnPassword: TLseReadln read FOnPassword write FOnPassword;
     property OnReadln: TLseReadln read FOnReadln write FOnReadln;
     property OnRead: TLseRead read FOnRead write FOnRead;
     property OnWrite: TLseWrite read FOnWrite write FOnWrite;
@@ -1328,6 +1332,21 @@ end;
 procedure lse_executed(Engine: PLseEngine);cdecl;
 begin
   Engine^.er_engine.EventExecuted;
+end;
+
+function lse_password(Engine: PLseEngine): PLseString;cdecl;
+var
+  E: TLseEngine;
+  S: string;
+begin
+  E := Engine^.er_engine;
+  if Assigned(E.FOnPassword) then
+  begin
+    S := '';
+    E.FOnPassword(E, S);
+    Result := lse_strec_alloc(S);
+  end
+  else Result := lse_stream_readln(@E.FStdin);
 end;
 
 procedure lse_exec_function(const Param: PLseParam);cdecl;
@@ -4164,6 +4183,7 @@ begin
     FEngineRec.er_engine := Self;
     FEngineRec.er_executing := @lse_executing;
     FEngineRec.er_executed := @lse_executed;
+    FEngineRec.er_password := @lse_password;
     FEngineRec.er_stdin := @FStdin;
     FEngineRec.er_stdout := @FStdout;
     FEngineRec.er_stderr := @FStderr;

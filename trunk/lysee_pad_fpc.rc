@@ -1,5 +1,5 @@
 1 VERSIONINFO
-FILEVERSION 1,2,1,478
+FILEVERSION 1,2,1,520
 PRODUCTVERSION 1,1,1,307
 {
  BLOCK "StringFileInfo"
@@ -9,7 +9,7 @@ PRODUCTVERSION 1,1,1,307
    VALUE "Comments", "\000"
    VALUE "CompanyName", "\000"
    VALUE "FileDescription", "lysee PAD (FPC)\000"
-   VALUE "FileVersion", "1.2.1.478\000"
+   VALUE "FileVersion", "1.2.1.520\000"
    VALUE "InternalName", "\000"
    VALUE "LegalCopyright", "Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>\000"
    VALUE "LegalTrademarks", "\000"
