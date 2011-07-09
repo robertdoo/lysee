@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="388"/>
+      <BuildNr Value="390"/>
       <StringTable FileDescription="string processing objects" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -43,9 +43,9 @@
         <UnitName Value="lysee_strutils"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="46"/>
-        <CursorPos X="42" Y="58"/>
-        <UsageCount Value="25"/>
+        <TopLine Value="10"/>
+        <CursorPos X="1" Y="34"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -60,12 +60,11 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="878"/>
-        <CursorPos X="13" Y="897"/>
-        <UsageCount Value="25"/>
+        <TopLine Value="169"/>
+        <CursorPos X="1" Y="175"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
@@ -98,11 +97,12 @@
         <Filename Value="lysee_strutils_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_strutils_funcs"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="366"/>
-        <CursorPos X="38" Y="376"/>
-        <UsageCount Value="25"/>
+        <TopLine Value="313"/>
+        <CursorPos X="10" Y="325"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -111,7 +111,7 @@
         <UnitName Value="lse_funcs"/>
         <TopLine Value="473"/>
         <CursorPos X="21" Y="479"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="26"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\lse_kernel.pas"/>
@@ -126,124 +126,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="lysee_strutils.lpr"/>
-        <Caret Line="61" Column="23" TopLine="46"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="100" Column="1" TopLine="88"/>
       </Position1>
       <Position2>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="541" Column="15" TopLine="529"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="157" Column="26" TopLine="143"/>
       </Position2>
       <Position3>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="721" Column="18" TopLine="701"/>
+        <Caret Line="416" Column="1" TopLine="416"/>
       </Position3>
       <Position4>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="37" Column="1" TopLine="37"/>
+        <Caret Line="96" Column="1" TopLine="84"/>
       </Position4>
       <Position5>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="727" Column="24" TopLine="709"/>
+        <Caret Line="164" Column="24" TopLine="144"/>
       </Position5>
       <Position6>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="742" Column="38" TopLine="720"/>
+        <Caret Line="97" Column="14" TopLine="85"/>
       </Position6>
       <Position7>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="908" Column="11" TopLine="894"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="168" Column="24" TopLine="148"/>
       </Position7>
       <Position8>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="435" Column="1" TopLine="434"/>
       </Position8>
       <Position9>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="219" Column="46" TopLine="199"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="99" Column="1" TopLine="87"/>
       </Position9>
       <Position10>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="220" Column="46" TopLine="200"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="233" Column="24" TopLine="209"/>
       </Position10>
       <Position11>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="221" Column="46" TopLine="201"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="784" Column="1" TopLine="763"/>
       </Position11>
       <Position12>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="672" Column="33" TopLine="652"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="775" Column="1" TopLine="756"/>
       </Position12>
       <Position13>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="572" Column="15" TopLine="548"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="769" Column="25" TopLine="754"/>
       </Position13>
       <Position14>
-        <Filename Value="..\lse_kernel.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="760" Column="3" TopLine="757"/>
       </Position14>
       <Position15>
-        <Filename Value="..\lse_kernel.pas"/>
-        <Caret Line="1847" Column="33" TopLine="1829"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="769" Column="35" TopLine="757"/>
       </Position15>
       <Position16>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="241" Column="1" TopLine="241"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="74" Column="14" TopLine="62"/>
       </Position16>
       <Position17>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="85" Column="1" TopLine="85"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="806" Column="1" TopLine="782"/>
       </Position17>
       <Position18>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="764" Column="35" TopLine="744"/>
+        <Caret Line="804" Column="1" TopLine="780"/>
       </Position18>
       <Position19>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="29" Column="21" TopLine="17"/>
+        <Caret Line="810" Column="1" TopLine="792"/>
       </Position19>
       <Position20>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="40" Column="44" TopLine="20"/>
+        <Caret Line="373" Column="35" TopLine="362"/>
       </Position20>
       <Position21>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="786" Column="1" TopLine="786"/>
+        <Caret Line="383" Column="28" TopLine="363"/>
       </Position21>
       <Position22>
         <Filename Value="..\lseu.pas"/>
-        <Caret Line="612" Column="1" TopLine="600"/>
+        <Caret Line="44" Column="1" TopLine="37"/>
       </Position22>
       <Position23>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="384" Column="27" TopLine="361"/>
       </Position23>
       <Position24>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="384" Column="21" TopLine="360"/>
+        <Caret Line="381" Column="29" TopLine="372"/>
       </Position24>
       <Position25>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="400" Column="3" TopLine="388"/>
+        <Caret Line="828" Column="1" TopLine="815"/>
       </Position25>
       <Position26>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="1093" Column="28" TopLine="1081"/>
+        <Caret Line="824" Column="34" TopLine="815"/>
       </Position26>
       <Position27>
         <Filename Value="lysee_strutils_funcs.pas"/>
-        <Caret Line="368" Column="17" TopLine="365"/>
+        <Caret Line="245" Column="28" TopLine="229"/>
       </Position27>
       <Position28>
-        <Filename Value="lysee_strutils.lpr"/>
-        <Caret Line="2" Column="30" TopLine="1"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="121" Column="1" TopLine="108"/>
       </Position28>
       <Position29>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="227" Column="1" TopLine="205"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="268" Column="27" TopLine="254"/>
       </Position29>
       <Position30>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="121" Column="1" TopLine="121"/>
+        <Filename Value="lysee_strutils_funcs.pas"/>
+        <Caret Line="933" Column="32" TopLine="928"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

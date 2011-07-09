@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="371"/>
+      <BuildNr Value="372"/>
       <StringTable FileDescription="year-month module" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.1.1.315"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -44,8 +44,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="43"/>
-        <CursorPos X="35" Y="52"/>
+        <TopLine Value="90"/>
+        <CursorPos X="1" Y="114"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -109,14 +109,11 @@
       </Unit8>
       <Unit9>
         <Filename Value="lysee_ym_funcs.pas"/>
-        <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_ym_funcs"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="58"/>
-        <CursorPos X="19" Y="71"/>
+        <TopLine Value="41"/>
+        <CursorPos X="1" Y="56"/>
         <UsageCount Value="20"/>
-        <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\lse_api.pas"/>
@@ -144,12 +141,12 @@
         <Caret Line="45" Column="25" TopLine="33"/>
       </Position2>
       <Position3>
-        <Filename Value="lysee_ym_funcs.pas"/>
-        <Caret Line="30" Column="42" TopLine="13"/>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="52" Column="35" TopLine="43"/>
       </Position3>
       <Position4>
-        <Filename Value="lysee_ym_funcs.pas"/>
-        <Caret Line="50" Column="18" TopLine="46"/>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="85" Column="38" TopLine="72"/>
       </Position4>
     </JumpHistory>
   </ProjectOptions>

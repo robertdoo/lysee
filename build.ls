@@ -18,18 +18,18 @@ fpc_map:varlist = [
              ..\..\..\..\Developments\lazarus\lcl\units\i386-win32\win32\
              ..\..\..\..\Developments\lazarus\packager\units\i386-win32\"""
   },
-  {"lpr": """modules\lysee_ib.lpr""",
-   "out": """modules\lysee_ib.dll""",
-   "fup": """modules"""
-  },
+//  {"lpr": """modules\lysee_ib.lpr""",
+//   "out": """modules\lysee_ib.dll""",
+//   "fup": """modules"""
+//  },
   {"lpr": """modules\lysee_odbc.lpr""",
    "out": """modules\lysee_odbc.dll""",
    "fup": """modules"""
   },
-  {"lpr": """modules\lysee_postgres.lpr""",
-   "out": """modules\lysee_postgres.dll""",
-   "fup": """modules"""
-  },
+//  {"lpr": """modules\lysee_postgres.lpr""",
+//   "out": """modules\lysee_postgres.dll""",
+//   "fup": """modules"""
+//  },
   {"lpr": """modules\lysee_sh.lpr""",
    "out": """modules\lysee_sh.dll""",
    "fup": """modules"""

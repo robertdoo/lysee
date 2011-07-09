@@ -50,14 +50,13 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, lseu, lse_synedit, lse_msgbox, lse_pad_fpc, lse_about_fpc,
   lse_pad_open_fpc, lse_symbol, lse_spawn, lse_patten, lse_kernel, lse_funcs,
-  lse_export, lse_cgi, lse_api, lse_syncobj, LResources;
+  lse_export, lse_cgi, lse_api, lse_syncobj;
 
 {$IFDEF WINDOWS}
 {$R lysee_pad_fpc.rc}
 {$ENDIF}
 
 begin
-  {$I lysee_pad_fpc.lrs}
   Application.Initialize;
   Application.CreateForm(TLspadForm, LspadForm);
   Application.Run;

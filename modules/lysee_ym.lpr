@@ -1,41 +1,10 @@
 {==============================================================================}
 {        UNIT: lysee_ym                                                        }
 { DESCRIPTION: year-month interger functions (FPC)                             }
+{   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
+{     LICENSE: modified BSD license                                            }
 {     CREATED: 2007/07/12                                                      }
-{    MODIFIED: 2010/08/31                                                      }
-{==============================================================================}
-{ Copyright (c) 2007-2010, Li Yun Jie                                          }
-{ All rights reserved.                                                         }
-{                                                                              }
-{ Redistribution and use in source and binary forms, with or without           }
-{ modification, are permitted provided that the following conditions are met:  }
-{                                                                              }
-{ Redistributions of source code must retain the above copyright notice, this  }
-{ list of conditions and the following disclaimer.                             }
-{                                                                              }
-{ Redistributions in binary form must reproduce the above copyright notice,    }
-{ this list of conditions and the following disclaimer in the documentation    }
-{ and/or other materials provided with the distribution.                       }
-{                                                                              }
-{ Neither the name of Li Yun Jie nor the names of its contributors may         }
-{ be used to endorse or promote products derived from this software without    }
-{ specific prior written permission.                                           }
-{                                                                              }
-{ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  }
-{ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    }
-{ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   }
-{ ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR  }
-{ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL       }
-{ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR   }
-{ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER   }
-{ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT           }
-{ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    }
-{ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH  }
-{ DAMAGE.                                                                      }
-{==============================================================================}
-{ The Initial Developer of the Original Code is Li Yun Jie (CHINA).            }
-{ Portions created by Li Yun Jie are Copyright (C) 2007-2010.                  }
-{ All Rights Reserved.                                                         }
+{    MODIFIED: 2011/07/09                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -45,9 +14,84 @@ library lysee_ym;
 
 uses
   Classes,
+  SysUtils,
+  DateUtils,
   lseu in '../lseu.pas',
-  lse_funcs in '../lse_funcs.pas',
-  lysee_ym_funcs;
+  lse_funcs in '../lse_funcs.pas';
+
+procedure ym_now(const invoker: TLseInvoke);cdecl;
+var
+  y, m, d: word;
+begin
+  DecodeDate(Now, y, m, d);
+  invoker.returnInt((y * 100) + m);
+end;
+
+procedure ym_check(const invoker: TLseInvoke);cdecl;
+var
+  y, m: integer;
+begin
+  invoker.returnBool(__decodeYM(invoker.paramInt(0), y, m));
+end;
+
+procedure ym_next(const invoker: TLseInvoke);cdecl;
+var
+  n, ym: integer;
+begin
+  n := invoker.ParamCount;
+  if n = 0 then
+  begin
+    ym_now(invoker);
+    Exit;
+  end;
+
+  ym := invoker.paramInt(0);
+  if n = 1 then
+    ym := __nextYM(ym, 1) else
+    ym := __nextYM(ym, invoker.paramInt(1));
+
+  invoker.returnInt(ym);
+end;
+
+procedure ym_prev(const invoker: TLseInvoke);cdecl;
+var
+  n, ym: integer;
+begin
+  n := invoker.ParamCount;
+  if n = 0 then
+  begin
+    ym_now(invoker);
+    Exit;
+  end;
+
+  ym := invoker.paramInt(0);
+  if n = 1 then
+    ym := __prevYM(ym, 1) else
+    ym := __prevYM(ym, invoker.paramInt(1));
+
+  invoker.returnInt(ym);
+end;
+
+const
+  func_count = 4;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'now:int ||';
+     fr_addr:@ym_now;
+     fr_desc:'get current ym'
+    ),
+    (fr_prot:'check:int|ym:int|';
+     fr_addr:@ym_check;
+     fr_desc:'check ym'
+    ),
+    (fr_prot:'next:int |ym:int, months:int|';
+     fr_addr:@ym_next;
+     fr_desc:'get next ym'
+    ),
+    (fr_prot:'prev:int |ym:int, months:int|';
+     fr_addr:@ym_prev;
+     fr_desc:'get prev ym'
+    )
+  );
 
 procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin

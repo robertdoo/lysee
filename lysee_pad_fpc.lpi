@@ -14,10 +14,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="2"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="522"/>
+      <MajorVersionNr Value="2"/>
+      <BuildNr Value="523"/>
       <StringTable FileDescription="lysee PAD (FPC)" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.307"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -49,9 +47,13 @@
         <Filename Value="lysee_pad_fpc.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_pad_fpc"/>
-        <TopLine Value="49"/>
-        <CursorPos X="11" Y="70"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="40"/>
+        <CursorPos X="25" Y="60"/>
         <UsageCount Value="52"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="lse_pad_fpc.pas"/>
@@ -59,7 +61,6 @@
         <ComponentName Value="LspadForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="lse_pad_fpc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="632"/>
@@ -128,7 +129,7 @@
         <Filename Value="lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="61"/>
         <CursorPos X="1" Y="61"/>
@@ -324,8 +325,8 @@
         <Filename Value="lse_pad_fpc.lfm"/>
         <TopLine Value="25"/>
         <CursorPos X="25" Y="41"/>
-        <SyntaxHighlighter Value="LFM"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit39>
       <Unit40>
         <Filename Value="lse_synedit.pas"/>
@@ -545,7 +546,7 @@
         <UsageCount Value="10"/>
       </Unit69>
     </Units>
-    <JumpHistory Count="19" HistoryIndex="18">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="lse_pad_fpc.pas"/>
         <Caret Line="314" Column="1" TopLine="300"/>
@@ -622,6 +623,18 @@
         <Filename Value="lseu.pas"/>
         <Caret Line="3820" Column="3" TopLine="3784"/>
       </Position19>
+      <Position20>
+        <Filename Value="lysee_pad_fpc.lpr"/>
+        <Caret Line="66" Column="11" TopLine="42"/>
+      </Position20>
+      <Position21>
+        <Filename Value="lysee_pad_fpc.lpr"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position21>
+      <Position22>
+        <Filename Value="lysee_pad_fpc.lpr"/>
+        <Caret Line="59" Column="18" TopLine="42"/>
+      </Position22>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -657,6 +670,9 @@
         <ShowHints Value="False"/>
       </Verbosity>
       <WriteFPCLogo Value="False"/>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
       <CustomOptions Value="-dSYN_LAZARUS"/>
       <CompilerPath Value="$(CompPath)"/>
     </Other>

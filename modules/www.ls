@@ -1,3 +1,4 @@
-def wgets |URL| 
-  return `wget --quiet --output-document - %(URL)`;
-end
+{import sh}
+
+{def wgets:string |URL:string|
+  {return sh::system(@'wget --quiet --output-document - %(URL)')}}
