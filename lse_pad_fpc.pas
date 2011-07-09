@@ -454,7 +454,7 @@ begin
     if FFileName = '' then
       FEngine.MainFile := ExpandFileName('Untitled.ls') else
       FEngine.MainFile := FFileName;
-    FEngine.CompileCode(smLysee.Lines.Text, IsLspCode);
+    FEngine.CompileCode(smLysee.Lines.Text);
     if FEngine.Errno <> 0 then
     begin
       if FEngine.ErrorModule = 'main' then
@@ -641,7 +641,7 @@ end;
 
 function TLspadForm.IsLspCode: boolean;
 begin
-  Result := (FFileName <> '') and lse_is_lsp_file(FFileName);
+  Result := false;
 end;
 
 function TLspadForm.SameFile(const F1, F2: string): boolean;

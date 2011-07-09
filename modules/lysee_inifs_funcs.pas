@@ -85,69 +85,69 @@ procedure pp_inifile_deleteKey(const invoker: TLseInvoke);cdecl;
 
 const
 
-  inifile_func_count = 13;
-  inifile_func_array: array[0..inifile_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'inifile inifile(string fileName)';
+  func_count = 13;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'inifile_create:inifile |fileName:string|';
      fr_addr:@pp_inifile_create;
      fr_desc:'open ini file'
     ),
-    (fr_prot:'string get_fileName()';
+    (fr_prot:'inifile_get_fileName:string |inif:inifile|';
      fr_addr:@pp_inifile_fname;
      fr_desc:'get ini file name';
     ),
-    (fr_prot:'inifile open(string fileName)';
+    (fr_prot:'inifile_open:void |inif:inifile, fileName:string|';
      fr_addr:@pp_inifile_open;
      fr_desc:'open another ini file'
     ),
-    (fr_prot:'inifile close()';
+    (fr_prot:'inifile_close:void |inif:inifile|';
      fr_addr:@pp_inifile_close;
      fr_desc:'close current file'
     ),
-    (fr_prot:'string read(string section, string key, string defValue)';
+    (fr_prot:'inifile_read:string |inif:inifile, section:string, key:string, defValue:string|';
      fr_addr:@pp_inifile_read;
      fr_desc:'read value'
     ),
-    (fr_prot:'inifile write(string section, string key, string value)';
+    (fr_prot:'inifile_write:void |inif:inifile, section:string, key:string, value:string|';
      fr_addr:@pp_inifile_write;
      fr_desc:'write value'
     ),
-    (fr_prot:'strlist get_sections()';
+    (fr_prot:'inifile_get_sections:string |inif:inifile|';
      fr_addr:@pp_inifile_sections;
      fr_desc:'get section list'
     ),
-    (fr_prot:'strlist keys(string section)';
+    (fr_prot:'inifile_keys:string |inif:inifile, section:string|';
      fr_addr:@pp_inifile_keys;
      fr_desc:'get key list of specified section'
     ),
-    (fr_prot:'strlist values(string section)';
+    (fr_prot:'inifile_values:string |inif:inifile, section:string|';
      fr_addr:@pp_inifile_values;
      fr_desc:'get value list of specified section'
     ),
-    (fr_prot:'bool sectionExists(string section)';
+    (fr_prot:'inifile_sectionExists:int |inif:inifile, section:string|';
      fr_addr:@pp_inifile_sectionExists;
      fr_desc:'check if a named section eixsts'
     ),
-    (fr_prot:'inifile eraseSection(string section)';
+    (fr_prot:'inifile_eraseSection:void |inif:inifile, section:string|';
      fr_addr:@pp_inifile_eraseSection;
      fr_desc:'erase a section'
     ),
-    (fr_prot:'bool keyExists(string section, string key)';
+    (fr_prot:'inifile_keyExists:int |inif:inifile, section:string, key:string|';
      fr_addr:@pp_inifile_keyExists;
      fr_desc:'check if a key exists'
     ),
-    (fr_prot:'inifile deleteKey(string section, string key)';
+    (fr_prot:'inifile_deleteKey:void |inif:inifile, section:string, key:string|';
      fr_addr:@pp_inifile_deleteKey;
      fr_desc:'delete a key'
     )
   );
 
-  inifile_class: RLseClassRec = (
-    vtype      : LSV_OBJECT;
-    name       : 'inifile';
-    desc       : 'ini file read/write class';
-    incRefcount:@lse_incRefcount;
-    decRefcount:@lse_decRefcount;
-    funcs      : (count:inifile_func_count; entry:@inifile_func_array)
+var
+  inifile_class: RLseType = (
+    cr_type    : LSV_OBJECT;
+    cr_name    : 'inifile';
+    cr_desc    : 'ini file read/write class';
+    cr_addref  :@lse_addref_obj;
+    cr_release :@lse_release_obj
   );
 
 implementation
@@ -156,7 +156,7 @@ procedure pp_inifile_create(const invoker: TLseInvoke);cdecl;
 var
   this: TLiIniFile;
 begin
-  this := TLiIniFile.Create(invoker.paramStr(1));
+  this := TLiIniFile.Create(invoker.paramStr(0));
   invoker.returnObj(@inifile_class, this);
 end;
 

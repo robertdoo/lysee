@@ -48,27 +48,27 @@ interface
 uses
   Classes, SysUtils, lseu;
 
-procedure ym_now(invoker: TLseInvoke);cdecl;
-procedure ym_check(invoker: TLseInvoke);cdecl;
-procedure ym_next(invoker: TLseInvoke);cdecl;
-procedure ym_prev(invoker: TLseInvoke);cdecl;
+procedure ym_now(const invoker: TLseInvoke);cdecl;
+procedure ym_check(const invoker: TLseInvoke);cdecl;
+procedure ym_next(const invoker: TLseInvoke);cdecl;
+procedure ym_prev(const invoker: TLseInvoke);cdecl;
 
 const
-  ym_func_count = 4;
-  ym_func_array: array[0..ym_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'int now()';
+  func_count = 4;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'now:int ||';
      fr_addr:@ym_now;
      fr_desc:'get current ym'
     ),
-    (fr_prot:'bool check(int ym)';
+    (fr_prot:'check:int|ym:int|';
      fr_addr:@ym_check;
      fr_desc:'check ym'
     ),
-    (fr_prot:'int next(int ym, int months)';
+    (fr_prot:'next:int |ym:int, months:int|';
      fr_addr:@ym_next;
      fr_desc:'get next ym'
     ),
-    (fr_prot:'int prev(int ym, int months)';
+    (fr_prot:'prev:int |ym:int, months:int|';
      fr_addr:@ym_prev;
      fr_desc:'get prev ym'
     )
@@ -79,7 +79,7 @@ implementation
 uses
   DateUtils, lse_funcs;
 
-procedure ym_now(invoker: TLseInvoke);cdecl;
+procedure ym_now(const invoker: TLseInvoke);cdecl;
 var
   y, m, d: word;
 begin
@@ -87,14 +87,14 @@ begin
   invoker.returnInt((y * 100) + m);
 end;
 
-procedure ym_check(invoker: TLseInvoke);cdecl;
+procedure ym_check(const invoker: TLseInvoke);cdecl;
 var
   y, m: integer;
 begin
   invoker.returnBool(__decodeYM(invoker.paramInt(0), y, m));
 end;
 
-procedure ym_next(invoker: TLseInvoke);cdecl;
+procedure ym_next(const invoker: TLseInvoke);cdecl;
 var
   n, ym: integer;
 begin
@@ -113,7 +113,7 @@ begin
   invoker.returnInt(ym);
 end;
 
-procedure ym_prev(invoker: TLseInvoke);cdecl;
+procedure ym_prev(const invoker: TLseInvoke);cdecl;
 var
   n, ym: integer;
 begin

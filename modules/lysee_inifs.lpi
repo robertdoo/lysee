@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
-    <Version Value="7"/>
     <General>
       <Flags>
         <LRSInOutputDirectory Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=""/>
       <Title Value="lysee_inifs"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <CurrentVersionNr Value="1"/>
-      <CurrentMajorRevNr Value="2"/>
-      <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="375"/>
-      <ProjectVersion Value="1.1.1.306"/>
-      <FileDescription Value="ini file accessing module for lysee"/>
-      <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
+      <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="2"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="375"/>
+      <StringTable FileDescription="ini file accessing module for lysee" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
@@ -41,75 +41,94 @@
         <Filename Value="lysee_inifs.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_inifs"/>
-        <CursorPos X="1" Y="59"/>
-        <TopLine Value="42"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
-        <UsageCount Value="20"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="44"/>
+        <CursorPos X="1" Y="62"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\fpc\dbv\ib.pp"/>
         <UnitName Value="ib"/>
-        <CursorPos X="17" Y="79"/>
         <TopLine Value="51"/>
+        <CursorPos X="17" Y="79"/>
         <UsageCount Value="20"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <CursorPos X="5" Y="218"/>
         <TopLine Value="211"/>
-        <UsageCount Value="20"/>
+        <CursorPos X="5" Y="218"/>
+        <UsageCount Value="21"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\lse_dbu.pas"/>
         <UnitName Value="lse_dbu"/>
-        <CursorPos X="70" Y="129"/>
         <TopLine Value="130"/>
+        <CursorPos X="70" Y="129"/>
         <UsageCount Value="20"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\fpc\dbv\body.inc"/>
-        <CursorPos X="23" Y="94"/>
         <TopLine Value="80"/>
+        <CursorPos X="23" Y="94"/>
         <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\fpc\dbv\head.inc"/>
-        <CursorPos X="1" Y="13"/>
         <TopLine Value="6"/>
+        <CursorPos X="1" Y="13"/>
         <UsageCount Value="10"/>
       </Unit5>
       <Unit6>
         <Filename Value="lysee_syncobj_funcs.pas"/>
         <UnitName Value="lysee_syncobj_funcs"/>
-        <CursorPos X="25" Y="107"/>
         <TopLine Value="2"/>
+        <CursorPos X="25" Y="107"/>
         <UsageCount Value="20"/>
       </Unit6>
       <Unit7>
         <Filename Value="lysee_inifs_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_inifs_funcs"/>
-        <CursorPos X="28" Y="104"/>
-        <TopLine Value="92"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="124"/>
+        <CursorPos X="39" Y="147"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="1" HistoryIndex="0">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
         <Filename Value="lysee_inifs.lpr"/>
         <Caret Line="24" Column="35" TopLine="24"/>
       </Position1>
+      <Position2>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="88" Column="24" TopLine="82"/>
+      </Position2>
+      <Position3>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="89" Column="51" TopLine="77"/>
+      </Position3>
+      <Position4>
+        <Filename Value="lysee_inifs.lpr"/>
+        <Caret Line="60" Column="22" TopLine="42"/>
+      </Position4>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
     <Parsing>
       <SyntaxOptions>
         <CStyleOperator Value="False"/>
+        <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>

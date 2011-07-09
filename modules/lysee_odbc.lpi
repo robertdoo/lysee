@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
-    <Version Value="7"/>
     <General>
       <Flags>
         <LRSInOutputDirectory Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=""/>
       <Title Value="lysee_odbc"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <CurrentVersionNr Value="1"/>
-      <CurrentMajorRevNr Value="2"/>
-      <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="376"/>
-      <ProjectVersion Value="1.1.1.306"/>
-      <FileDescription Value="ODBC database vendor"/>
-      <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
+      <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="2"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="377"/>
+      <StringTable FileDescription="ODBC database vendor" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
@@ -36,24 +36,27 @@
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="6">
+    <Units Count="7">
       <Unit0>
         <Filename Value="lysee_odbc.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_odbc"/>
-        <CursorPos X="18" Y="56"/>
-        <TopLine Value="43"/>
         <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="29" Y="54"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <CursorPos X="1" Y="42"/>
-        <TopLine Value="25"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="2412"/>
+        <CursorPos X="37" Y="2427"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -61,9 +64,10 @@
         <Filename Value="..\lse_dbu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_dbu"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="564"/>
+        <CursorPos X="39" Y="351"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -71,101 +75,170 @@
         <Filename Value="lysee_odbc_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_odbc_funcs"/>
-        <CursorPos X="1" Y="42"/>
-        <TopLine Value="25"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="49"/>
+        <CursorPos X="8" Y="58"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\..\..\..\usr\share\fpcsrc\2.2.2\packages\fcl-db\src\sqldb\odbc\odbcconn.pas"/>
+        <Filename Value="D:\usr\share\fpcsrc\2.2.2\packages\fcl-db\src\sqldb\odbc\odbcconn.pas"/>
         <UnitName Value="odbcconn"/>
-        <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
         <Filename Value="body.inc"/>
-        <CursorPos X="25" Y="719"/>
-        <TopLine Value="706"/>
-        <EditorIndex Value="3"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="664"/>
+        <CursorPos X="10" Y="688"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="head.inc"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="46"/>
+        <CursorPos X="1" Y="69"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit6>
     </Units>
-    <JumpHistory Count="16" HistoryIndex="15">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="75" Column="39" TopLine="55"/>
+        <Filename Value="lysee_odbc.lpr"/>
+        <Caret Line="57" Column="22" TopLine="43"/>
       </Position1>
       <Position2>
-        <Filename Value="lysee_odbc.lpr"/>
-        <Caret Line="29" Column="1" TopLine="2"/>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="71" Column="10" TopLine="61"/>
       </Position2>
       <Position3>
-        <Filename Value="lysee_odbc.lpr"/>
-        <Caret Line="10" Column="32" TopLine="1"/>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="182" Column="1" TopLine="165"/>
       </Position3>
       <Position4>
-        <Filename Value="lysee_odbc.lpr"/>
-        <Caret Line="9" Column="40" TopLine="1"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="320" Column="1" TopLine="296"/>
       </Position4>
       <Position5>
-        <Filename Value="lysee_odbc_funcs.pas"/>
-        <Caret Line="35" Column="22" TopLine="15"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="527" Column="1" TopLine="515"/>
       </Position5>
       <Position6>
         <Filename Value="..\lseu.pas"/>
-        <Caret Line="15" Column="1" TopLine="15"/>
+        <Caret Line="116" Column="1" TopLine="97"/>
       </Position6>
       <Position7>
-        <Filename Value="lysee_odbc_funcs.pas"/>
-        <Caret Line="47" Column="1" TopLine="23"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="501" Column="1" TopLine="490"/>
       </Position7>
       <Position8>
-        <Filename Value="lysee_odbc_funcs.pas"/>
-        <Caret Line="37" Column="56" TopLine="25"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="660" Column="1" TopLine="655"/>
       </Position8>
       <Position9>
-        <Filename Value="lysee_odbc.lpr"/>
-        <Caret Line="7" Column="33" TopLine="1"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position9>
       <Position10>
-        <Filename Value="lysee_odbc.lpr"/>
-        <Caret Line="29" Column="1" TopLine="6"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="1278" Column="1" TopLine="1275"/>
       </Position10>
       <Position11>
-        <Filename Value="lysee_odbc_funcs.pas"/>
-        <Caret Line="42" Column="24" TopLine="25"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="647" Column="1" TopLine="637"/>
       </Position11>
       <Position12>
-        <Filename Value="..\lse_dbu.pas"/>
-        <Caret Line="11" Column="62" TopLine="1"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
-        <Filename Value="lysee_odbc_funcs.pas"/>
-        <Caret Line="9" Column="21" TopLine="1"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="1097" Column="1" TopLine="1079"/>
       </Position13>
       <Position14>
-        <Filename Value="lysee_odbc_funcs.pas"/>
-        <Caret Line="25" Column="1" TopLine="25"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="778" Column="18" TopLine="766"/>
       </Position14>
       <Position15>
-        <Filename Value="body.inc"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="670" Column="49" TopLine="658"/>
       </Position15>
       <Position16>
-        <Filename Value="lysee_odbc.lpr"/>
-        <Caret Line="3" Column="32" TopLine="1"/>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="778" Column="1" TopLine="766"/>
       </Position16>
+      <Position17>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="424" Column="1" TopLine="400"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="233" Column="48" TopLine="221"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="53" Column="12" TopLine="37"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="219" Column="11" TopLine="207"/>
+      </Position21>
+      <Position22>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="467" Column="1" TopLine="456"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="355" Column="28" TopLine="349"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="694" Column="26" TopLine="677"/>
+      </Position24>
+      <Position25>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="1320" Column="1" TopLine="1313"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="311" Column="1" TopLine="289"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\lse_dbu.pas"/>
+        <Caret Line="1438" Column="63" TopLine="1432"/>
+      </Position27>
+      <Position28>
+        <Filename Value="lysee_odbc_funcs.pas"/>
+        <Caret Line="42" Column="1" TopLine="25"/>
+      </Position28>
+      <Position29>
+        <Filename Value="lysee_odbc_funcs.pas"/>
+        <Caret Line="58" Column="8" TopLine="49"/>
+      </Position29>
+      <Position30>
+        <Filename Value="body.inc"/>
+        <Caret Line="675" Column="35" TopLine="667"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
     <Parsing>
       <SyntaxOptions>
         <CStyleOperator Value="False"/>
+        <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>

@@ -48,12 +48,12 @@ interface
 uses
   Classes, SysUtils, lseu;
 
-procedure hz_pinyin(invoker: TLseInvoke);cdecl;
+procedure hz_pinyin(const invoker: TLseInvoke);cdecl;
 
 const
-  hz_func_count = 1;
-  hz_func_array: array[0..hz_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'string pinyin(bool longFmt, bool separateLongFmt)';
+  func_count = 1;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'pinyin:string |chinese:string, longFmt:int, separateLongFmt:int|';
      fr_addr:@hz_pinyin;
      fr_desc:'translate chinese into pinyin'
     )
@@ -232,7 +232,7 @@ begin
   end;
 end;
 
-procedure hz_pinyin(invoker: TLseInvoke);cdecl;
+procedure hz_pinyin(const invoker: TLseInvoke);cdecl;
 var
   S: string;
 begin

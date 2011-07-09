@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
-    <Version Value="7"/>
     <General>
       <Flags>
         <LRSInOutputDirectory Value="False"/>
       </Flags>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=""/>
       <Title Value="lysee_ib"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <CurrentVersionNr Value="1"/>
-      <CurrentMajorRevNr Value="2"/>
-      <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="377"/>
-      <ProjectVersion Value="1.1.1.306"/>
-      <FileDescription Value="interbase database vendor"/>
-      <LegalCopyright Value="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>"/>
+      <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="2"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="378"/>
+      <StringTable FileDescription="interbase database vendor" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <DestinationDirectory Value="$(TestDir)\publishedproject\"/>
@@ -41,19 +41,23 @@
         <Filename Value="lysee_ib.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_ib"/>
-        <CursorPos X="18" Y="56"/>
-        <TopLine Value="43"/>
         <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="43"/>
+        <CursorPos X="27" Y="57"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="lysee_ib_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_ib_funcs"/>
-        <CursorPos X="1" Y="42"/>
-        <TopLine Value="25"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="46"/>
+        <CursorPos X="3" Y="52"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -61,9 +65,10 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <CursorPos X="26" Y="9"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="26" Y="9"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -71,162 +76,165 @@
         <Filename Value="..\lse_dbu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_dbu"/>
-        <CursorPos X="9" Y="53"/>
         <TopLine Value="26"/>
+        <CursorPos X="9" Y="53"/>
         <UsageCount Value="20"/>
       </Unit3>
       <Unit4>
         <Filename Value="body.inc"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="667"/>
+        <CursorPos X="31" Y="673"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\fpc\dbv\head.inc"/>
-        <CursorPos X="1" Y="13"/>
         <TopLine Value="6"/>
+        <CursorPos X="1" Y="13"/>
         <UsageCount Value="10"/>
       </Unit5>
       <Unit6>
         <Filename Value="head.inc"/>
-        <CursorPos X="1" Y="42"/>
-        <TopLine Value="25"/>
         <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="46"/>
+        <CursorPos X="11" Y="69"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit6>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\lseu.pas"/>
-        <Caret Line="84" Column="28" TopLine="64"/>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="20" Column="15" TopLine="3"/>
       </Position1>
       <Position2>
         <Filename Value="lysee_ib.lpr"/>
-        <Caret Line="9" Column="17" TopLine="1"/>
+        <Caret Line="9" Column="40" TopLine="3"/>
       </Position2>
       <Position3>
-        <Filename Value="lysee_ib.lpr"/>
-        <Caret Line="20" Column="15" TopLine="3"/>
+        <Filename Value="body.inc"/>
+        <Caret Line="91" Column="22" TopLine="77"/>
       </Position3>
       <Position4>
-        <Filename Value="lysee_ib.lpr"/>
-        <Caret Line="9" Column="40" TopLine="3"/>
+        <Filename Value="body.inc"/>
+        <Caret Line="462" Column="39" TopLine="450"/>
       </Position4>
       <Position5>
         <Filename Value="body.inc"/>
-        <Caret Line="91" Column="22" TopLine="77"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position5>
       <Position6>
         <Filename Value="body.inc"/>
-        <Caret Line="462" Column="39" TopLine="450"/>
+        <Caret Line="49" Column="1" TopLine="27"/>
       </Position6>
       <Position7>
         <Filename Value="body.inc"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="629" Column="41" TopLine="617"/>
       </Position7>
       <Position8>
         <Filename Value="body.inc"/>
-        <Caret Line="49" Column="1" TopLine="27"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
         <Filename Value="body.inc"/>
-        <Caret Line="629" Column="41" TopLine="617"/>
+        <Caret Line="54" Column="16" TopLine="42"/>
       </Position9>
       <Position10>
         <Filename Value="body.inc"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="373" Column="1" TopLine="353"/>
       </Position10>
       <Position11>
         <Filename Value="body.inc"/>
-        <Caret Line="54" Column="16" TopLine="42"/>
+        <Caret Line="664" Column="23" TopLine="652"/>
       </Position11>
       <Position12>
         <Filename Value="body.inc"/>
-        <Caret Line="373" Column="1" TopLine="353"/>
+        <Caret Line="659" Column="23" TopLine="652"/>
       </Position12>
       <Position13>
         <Filename Value="body.inc"/>
         <Caret Line="664" Column="23" TopLine="652"/>
       </Position13>
       <Position14>
-        <Filename Value="body.inc"/>
-        <Caret Line="659" Column="23" TopLine="652"/>
-      </Position14>
-      <Position15>
-        <Filename Value="body.inc"/>
-        <Caret Line="664" Column="23" TopLine="652"/>
-      </Position15>
-      <Position16>
         <Filename Value="head.inc"/>
         <Caret Line="1" Column="1" TopLine="1"/>
+      </Position14>
+      <Position15>
+        <Filename Value="lysee_ib_funcs.pas"/>
+        <Caret Line="46" Column="50" TopLine="34"/>
+      </Position15>
+      <Position16>
+        <Filename Value="lysee_ib_funcs.pas"/>
+        <Caret Line="44" Column="41" TopLine="23"/>
       </Position16>
       <Position17>
         <Filename Value="lysee_ib_funcs.pas"/>
-        <Caret Line="46" Column="50" TopLine="34"/>
+        <Caret Line="42" Column="1" TopLine="25"/>
       </Position17>
       <Position18>
-        <Filename Value="lysee_ib_funcs.pas"/>
-        <Caret Line="44" Column="41" TopLine="23"/>
-      </Position18>
-      <Position19>
-        <Filename Value="lysee_ib_funcs.pas"/>
-        <Caret Line="42" Column="1" TopLine="25"/>
-      </Position19>
-      <Position20>
         <Filename Value="lysee_ib.lpr"/>
         <Caret Line="13" Column="17" TopLine="1"/>
-      </Position20>
-      <Position21>
+      </Position18>
+      <Position19>
         <Filename Value="lysee_ib.lpr"/>
         <Caret Line="42" Column="1" TopLine="18"/>
-      </Position21>
-      <Position22>
+      </Position19>
+      <Position20>
         <Filename Value="body.inc"/>
         <Caret Line="664" Column="14" TopLine="652"/>
-      </Position22>
-      <Position23>
+      </Position20>
+      <Position21>
         <Filename Value="body.inc"/>
         <Caret Line="13" Column="1" TopLine="13"/>
+      </Position21>
+      <Position22>
+        <Filename Value="head.inc"/>
+        <Caret Line="27" Column="42" TopLine="6"/>
+      </Position22>
+      <Position23>
+        <Filename Value="head.inc"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position23>
       <Position24>
         <Filename Value="head.inc"/>
-        <Caret Line="27" Column="42" TopLine="6"/>
+        <Caret Line="43" Column="1" TopLine="22"/>
       </Position24>
       <Position25>
-        <Filename Value="head.inc"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="body.inc"/>
+        <Caret Line="730" Column="5" TopLine="706"/>
       </Position25>
       <Position26>
-        <Filename Value="head.inc"/>
-        <Caret Line="43" Column="1" TopLine="22"/>
+        <Filename Value="body.inc"/>
+        <Caret Line="42" Column="1" TopLine="19"/>
       </Position26>
       <Position27>
         <Filename Value="body.inc"/>
-        <Caret Line="730" Column="5" TopLine="706"/>
+        <Caret Line="63" Column="1" TopLine="61"/>
       </Position27>
       <Position28>
-        <Filename Value="body.inc"/>
-        <Caret Line="42" Column="1" TopLine="19"/>
-      </Position28>
-      <Position29>
-        <Filename Value="body.inc"/>
-        <Caret Line="63" Column="1" TopLine="61"/>
-      </Position29>
-      <Position30>
         <Filename Value="lysee_ib.lpr"/>
         <Caret Line="2" Column="80" TopLine="1"/>
+      </Position28>
+      <Position29>
+        <Filename Value="lysee_ib.lpr"/>
+        <Caret Line="57" Column="27" TopLine="43"/>
+      </Position29>
+      <Position30>
+        <Filename Value="body.inc"/>
+        <Caret Line="673" Column="31" TopLine="667"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
     <Parsing>
       <SyntaxOptions>
         <CStyleOperator Value="False"/>
+        <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>

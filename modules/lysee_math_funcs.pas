@@ -48,48 +48,48 @@ interface
 uses
   SysUtils, Classes, lseu;
   
-procedure pp_math_abs(Param: pointer);cdecl;
-procedure pp_math_ceil(Param: pointer);cdecl;
-procedure pp_math_floor(Param: pointer);cdecl;
-procedure pp_math_frac(Param: pointer);cdecl;
-procedure pp_math_int(Param: pointer);cdecl;
-procedure pp_math_roundto(Param: pointer);cdecl;
-procedure pp_math_round(Param: pointer);cdecl;
-procedure pp_math_trunc(Param: pointer);cdecl;
-procedure pp_math_pi(Param: pointer);cdecl;
-procedure pp_math_isZero(Param: pointer);cdecl;
-procedure pp_math_ln(Param: pointer);cdecl;
-procedure pp_math_lnxp1(Param: pointer);cdecl;
-procedure pp_math_exp(Param: pointer);cdecl;
-procedure pp_math_ldexp(Param: pointer);cdecl;
-procedure pp_math_power(Param: pointer);cdecl;
-procedure pp_math_sqrt(Param: pointer);cdecl;
-procedure pp_math_sqr(Param: pointer);cdecl;
-procedure pp_math_log10(Param: pointer);cdecl;
-procedure pp_math_log2(Param: pointer);cdecl;
-procedure pp_math_logn(Param: pointer);cdecl;
-procedure pp_math_arcCos(Param: pointer);cdecl;
-procedure pp_math_arcCosh(Param: pointer);cdecl;
-procedure pp_math_arcSin(Param: pointer);cdecl;
-procedure pp_math_arcSinh(Param: pointer);cdecl;
-procedure pp_math_cos(Param: pointer);cdecl;
-procedure pp_math_cosecant(Param: pointer);cdecl;
-procedure pp_math_cosh(Param: pointer);cdecl;
-procedure pp_math_cot(Param: pointer);cdecl;
-procedure pp_math_csc(Param: pointer);cdecl;
-procedure pp_math_sec(Param: pointer);cdecl;
-procedure pp_math_sin(Param: pointer);cdecl;
-procedure pp_math_sinh(Param: pointer);cdecl;
-procedure pp_math_tan(Param: pointer);cdecl;
-procedure pp_math_tanh(Param: pointer);cdecl;
-procedure pp_math_arctan(Param: pointer);cdecl;
+procedure pp_math_abs(const invoker: TLseInvoke);cdecl;
+procedure pp_math_ceil(const invoker: TLseInvoke);cdecl;
+procedure pp_math_floor(const invoker: TLseInvoke);cdecl;
+procedure pp_math_frac(const invoker: TLseInvoke);cdecl;
+procedure pp_math_int(const invoker: TLseInvoke);cdecl;
+procedure pp_math_roundto(const invoker: TLseInvoke);cdecl;
+procedure pp_math_round(const invoker: TLseInvoke);cdecl;
+procedure pp_math_trunc(const invoker: TLseInvoke);cdecl;
+procedure pp_math_pi(const invoker: TLseInvoke);cdecl;
+procedure pp_math_isZero(const invoker: TLseInvoke);cdecl;
+procedure pp_math_ln(const invoker: TLseInvoke);cdecl;
+procedure pp_math_lnxp1(const invoker: TLseInvoke);cdecl;
+procedure pp_math_exp(const invoker: TLseInvoke);cdecl;
+procedure pp_math_ldexp(const invoker: TLseInvoke);cdecl;
+procedure pp_math_power(const invoker: TLseInvoke);cdecl;
+procedure pp_math_sqrt(const invoker: TLseInvoke);cdecl;
+procedure pp_math_sqr(const invoker: TLseInvoke);cdecl;
+procedure pp_math_log10(const invoker: TLseInvoke);cdecl;
+procedure pp_math_log2(const invoker: TLseInvoke);cdecl;
+procedure pp_math_logn(const invoker: TLseInvoke);cdecl;
+procedure pp_math_arcCos(const invoker: TLseInvoke);cdecl;
+procedure pp_math_arcCosh(const invoker: TLseInvoke);cdecl;
+procedure pp_math_arcSin(const invoker: TLseInvoke);cdecl;
+procedure pp_math_arcSinh(const invoker: TLseInvoke);cdecl;
+procedure pp_math_cos(const invoker: TLseInvoke);cdecl;
+procedure pp_math_cosecant(const invoker: TLseInvoke);cdecl;
+procedure pp_math_cosh(const invoker: TLseInvoke);cdecl;
+procedure pp_math_cot(const invoker: TLseInvoke);cdecl;
+procedure pp_math_csc(const invoker: TLseInvoke);cdecl;
+procedure pp_math_sec(const invoker: TLseInvoke);cdecl;
+procedure pp_math_sin(const invoker: TLseInvoke);cdecl;
+procedure pp_math_sinh(const invoker: TLseInvoke);cdecl;
+procedure pp_math_tan(const invoker: TLseInvoke);cdecl;
+procedure pp_math_tanh(const invoker: TLseInvoke);cdecl;
+procedure pp_math_arctan(const invoker: TLseInvoke);cdecl;
 
 
 const
   KTE_MATH = 'mathError';
 
-  math_func_count = 35;
-  math_func_array: array[0..math_func_count - 1] of RLseFuncRec = (
+  func_count = 35;
+  func_array: array[0..func_count - 1] of RLseFunc = (
     (fr_prot:'float pi()';
      fr_addr:@pp_math_pi;
      fr_desc:'3.1415926.....'
@@ -237,531 +237,191 @@ implementation
 uses
   Math;
 
-procedure pp_math_abs(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_abs(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(abs(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(abs(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_ceil(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_ceil(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnInt64(ceil(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnInt64(ceil(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_floor(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_floor(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnInt64(floor(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnInt64(floor(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_frac(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_frac(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(frac(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(frac(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_int(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_int(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(int(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(int(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_roundto(Param: pointer);cdecl;
+procedure pp_math_roundto(const invoker: TLseInvoke);cdecl;
 var
-  this: double;
   digits: TRoundToRange;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    digits := invoker.paramInt(1);
-    invoker.returnFloat(Roundto(this, digits));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  digits := invoker.paramInt(1);
+  invoker.returnFloat(Roundto(invoker.paramFloat(0), digits));
 end;
 
-procedure pp_math_round(Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
+procedure pp_math_round(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnInt64(Round(invoker.paramFloat(0)));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnInt64(Round(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_trunc(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_trunc(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnInt64(trunc(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnInt64(trunc(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_pi(Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
+procedure pp_math_pi(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnFloat(pi);
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(pi);
 end;
 
-procedure pp_math_isZero(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_isZero(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnBool(math.IsZero(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnBool(math.IsZero(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_ln(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_ln(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.ln(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.ln(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_lnxp1(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_lnxp1(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.lnXP1(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.lnXP1(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_exp(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_exp(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.exp(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.exp(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_ldexp(Param: pointer);cdecl;
+procedure pp_math_ldexp(const invoker: TLseInvoke);cdecl;
 var
-  this: double;
   digit: integer;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    digit := invoker.paramInt(1);
-    invoker.returnFloat(math.Ldexp(this, digit));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  digit := invoker.paramInt(1);
+  invoker.returnFloat(math.Ldexp(invoker.paramFloat(0), digit));
 end;
 
-procedure pp_math_power(Param: pointer);cdecl;
+procedure pp_math_power(const invoker: TLseInvoke);cdecl;
 var
-  this, exponent: double;
-  invoker: TLseInvoke;
+  exponent: double;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    exponent := invoker.paramFloat(1);
-    invoker.returnFloat(math.power(this, exponent));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  exponent := invoker.paramFloat(1);
+  invoker.returnFloat(math.power(invoker.paramFloat(0), exponent));
 end;
 
-procedure pp_math_sqrt(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_sqrt(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.sqrt(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.sqrt(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_sqr(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_sqr(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.sqr(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.sqr(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_log10(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_log10(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.Log10(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.Log10(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_log2(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_log2(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.Log2(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.Log2(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_logn(Param: pointer);cdecl;
+procedure pp_math_logn(const invoker: TLseInvoke);cdecl;
 var
-  this, base: double;
-  invoker: TLseInvoke;
+  base: double;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    base := invoker.paramFloat(1);
-    invoker.returnFloat(math.LogN(base, this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  base := invoker.paramFloat(1);
+  invoker.returnFloat(math.LogN(base, invoker.paramFloat(0)));
 end;
 
-procedure pp_math_arcCos(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_arcCos(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.ArcCos(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.ArcCos(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_arcCosh(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_arcCosh(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.ArcCosh(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.ArcCosh(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_arcSin(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_arcSin(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.ArcSin(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.ArcSin(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_arcSinh(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_arcSinh(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.ArcSinh(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.ArcSinh(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_cos(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_cos(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.cos(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.cos(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_cosecant(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_cosecant(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.Cosecant(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.Cosecant(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_cosh(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_cosh(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.Cosh(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.Cosh(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_cot(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_cot(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.cot(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.cot(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_csc(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_csc(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.csc(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.csc(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_sec(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_sec(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.sec(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.sec(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_sin(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_sin(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.sin(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.sin(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_sinh(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_sinh(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.sinh(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.sinh(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_tan(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_tan(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.tan(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.tan(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_tanh(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_tanh(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(math.tanh(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(math.tanh(invoker.paramFloat(0)));
 end;
 
-procedure pp_math_arctan(Param: pointer);cdecl;
-var
-  this: double;
-  invoker: TLseInvoke;
+procedure pp_math_arctan(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := invoker.paramFloat(0);
-    invoker.returnFloat(system.arctan(this));
-  except
-    invoker.returnError(KTE_MATH, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnFloat(system.arctan(invoker.paramFloat(0)));
 end;
 
 end.

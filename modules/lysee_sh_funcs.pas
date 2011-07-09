@@ -75,159 +75,135 @@ type
     property IsDir: boolean read GetIsDir;
   end;
 
-procedure searcher_create(const Param: pointer);cdecl;
-procedure searcher_findFirst(const Param: pointer);cdecl;
-procedure searcher_findNext(const Param: pointer);cdecl;
-procedure searcher_findClose(const Param: pointer);cdecl;
-procedure searcher_getName(const Param: pointer);cdecl;
-procedure searcher_eof(const Param: pointer);cdecl;
-procedure searcher_getSize(const Param: pointer);cdecl;
-procedure searcher_getTime(const Param: pointer);cdecl;
-procedure searcher_getPath(const Param: pointer);cdecl;
-procedure searcher_getFullName(const Param: pointer);cdecl;
-procedure searcher_getIsDir(const Param: pointer);cdecl;
-procedure searcher_getIsFile(const Param: pointer);cdecl;
+procedure searcher_create(const invoker: TLseInvoke);cdecl;
+procedure searcher_findFirst(const invoker: TLseInvoke);cdecl;
+procedure searcher_findNext(const invoker: TLseInvoke);cdecl;
+procedure searcher_findClose(const invoker: TLseInvoke);cdecl;
+procedure searcher_getName(const invoker: TLseInvoke);cdecl;
+procedure searcher_eof(const invoker: TLseInvoke);cdecl;
+procedure searcher_getSize(const invoker: TLseInvoke);cdecl;
+procedure searcher_getPath(const invoker: TLseInvoke);cdecl;
+procedure searcher_getFullName(const invoker: TLseInvoke);cdecl;
+procedure searcher_getIsDir(const invoker: TLseInvoke);cdecl;
+procedure searcher_getIsFile(const invoker: TLseInvoke);cdecl;
+
+procedure sh_isfile(const invoker: TLseInvoke);cdecl;
+procedure sh_isdir(const invoker: TLseInvoke);cdecl;
+procedure sh_dir(const invoker: TLseInvoke);cdecl;
+procedure sh_change_dir(const invoker: TLseInvoke);cdecl;
+procedure sh_copy(const invoker: TLseInvoke);cdecl;
+procedure sh_delete(const invoker: TLseInvoke);cdecl;
+procedure sh_list(const invoker: TLseInvoke);cdecl;
+procedure sh_rmdir(const invoker: TLseInvoke);cdecl;
+procedure sh_mkdir(const invoker: TLseInvoke);cdecl;
+procedure sh_system(const invoker: TLseInvoke);cdecl;
+procedure sh_shexec(const invoker: TLseInvoke);cdecl;
 
 const
-  KTE_SEARCHREC = 'searcherError';
+  func_count = 22;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'isfile:int |fileName:string|';
+     fr_addr:@sh_isfile;
+     fr_desc:'is it an ordinary file?'
+    ),
+    (fr_prot:'isdir:int |directory:string|';
+     fr_addr:@sh_isdir;
+     fr_desc:'is it an directory?'
+    ),
+    (fr_prot:'dir:string ||';
+     fr_addr:@sh_dir;
+     fr_desc:'get current directory'
+    ),
+    (fr_prot:'cd:int |newDirectory:string|';
+     fr_addr:@sh_change_dir;
+     fr_desc:'change current directory'
+    ),
+    (fr_prot:'copy:int |srcFile:string, dstFile:string, failIfFileExists:int|';
+     fr_addr:@sh_copy;
+     fr_desc:'copy file'
+    ),
+    (fr_prot:'del:int |fileMask:string';
+     fr_addr:@sh_delete;
+     fr_desc:'delete specified file'
+    ),
+    (fr_prot:'ls:string |directoryOrfileMask:string|';
+     fr_addr:@sh_list;
+     fr_desc:'list file'
+    ),
+    (fr_prot:'rmdir:int |dir:string, deltree:int|';
+     fr_addr:@sh_rmdir;
+     fr_desc:'remove specified directory'
+    ),
+    (fr_prot:'mkdir:int |dir:string|';
+     fr_addr:@sh_mkdir;
+     fr_desc:'create directory'
+    ),
+    (fr_prot:'system:string |commandline:string, dir:string|';
+     fr_addr:@sh_system;
+     fr_desc:'execute command line and get its output'
+    ),
+    (fr_prot:'shexec:int |commandline:string, dir:string, wait:int)';
+     fr_addr:@sh_shexec;
+     fr_desc:'execute command line'
+    ),
 
-  searchrec_func_count = 12;
-  searchrec_func_array: array[0..searchrec_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'searcher searcher(string fileNameMask)';
+    { searcher }
+
+    (fr_prot:'searcher_create:searcher |fileNameMask:string|';
      fr_addr:@searcher_create;
      fr_desc:'create file search object'
     ),
-    (fr_prot:'string get_path()';
+    (fr_prot:'searcher_get_path:string |sr:searcher|';
      fr_addr:@searcher_getPath;
      fr_desc:'get search path'
     ),
-    (fr_prot:'string get_name()';
+    (fr_prot:'searcher_get_name:string |sr:searcher|';
      fr_addr:@searcher_getName;
      fr_desc:'get file name without search path'
     ),
-    (fr_prot:'bool get_eof()';
+    (fr_prot:'searcher_get_eof:int |sr:searcher|';
      fr_addr:@searcher_eof;
      fr_desc:'return true when no more file can be found'
     ),
-    (fr_prot:'string fullName()';
+    (fr_prot:'searcher_fullName:string |sr:searcher|';
      fr_addr:@searcher_getFullName;
      fr_desc:'get full file name'
     ),
-    (fr_prot:'int get_size()';
+    (fr_prot:'searcher_get_size:int |sr:searcher|';
      fr_addr:@searcher_getSize;
      fr_desc:'get file size'
     ),
-    (fr_prot:'time get_age()';
-     fr_addr:@searcher_getTime;
-     fr_desc:'get file age'
-    ),
-    (fr_prot:'bool isdir()';
+    (fr_prot:'searcher_isdir:int |sr:searcher|';
      fr_addr:@searcher_getisdir;
      fr_desc:'is it a directory?'
     ),
-    (fr_prot:'bool isfile()';
+    (fr_prot:'searcher_isfile:int |sr:searcher|';
      fr_addr:@searcher_getisfile;
      fr_desc:'is it an ordinary file?'
     ),
-    (fr_prot:'bool find(string fileNameMask)';
+    (fr_prot:'searcher_find:int |sr:searcher, fileNameMask:string|';
      fr_addr:@searcher_findFirst;
      fr_desc:'find first file'
     ),
-    (fr_prot:'bool next()';
+    (fr_prot:'searcher_next:int |sr:searcher|';
      fr_addr:@searcher_findNext;
      fr_desc:'find next file'
     ),
-    (fr_prot:'void close()';
+    (fr_prot:'searcher_close:void |sr:searcher|';
      fr_addr:@searcher_findClose;
      fr_desc:'close searcher'
     )
   );
-
-  searcher_class: RLseClassRec = (
-    vtype      : LSV_OBJECT;
-    name       : 'searcher';
-    desc       : 'file searcher';
-    incRefcount:@lse_incRefcount;
-    decRefcount:@lse_decRefcount;
-    funcs      : (count:searchrec_func_count; entry:@searchrec_func_array);
-    writeTo    : nil;
-    toVargen   : nil;
-    toString   : nil;
-    stringTo   : nil;
-    addItem    : nil;
-    lysee_class: nil
-  );
-
-procedure sh_find(const Param: pointer);cdecl;
-procedure sh_isfile(const Param: pointer);cdecl;
-procedure sh_isdir(const Param: pointer);cdecl;
-procedure sh_dir(const Param: pointer);cdecl;
-procedure sh_change_dir(const Param: pointer);cdecl;
-procedure sh_copy(const Param: pointer);cdecl;
-procedure sh_delete(const Param: pointer);cdecl;
-procedure sh_list(const Param: pointer);cdecl;
-procedure sh_rmdir(const Param: pointer);cdecl;
-procedure sh_mkdir(const Param: pointer);cdecl;
-procedure sh_system(const Param: pointer);cdecl;
-procedure sh_shexec(const Param: pointer);cdecl;
-
-const
-  KTN_FS = 'fs';
-  KTD_FS = 'file system management module for lysee';
-  KTE_FS = 'fsError';
-
-  sh_func_count = 12;
-  sh_func_array: array[0..sh_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'searcher find(string fileNameMask)';
-     fr_addr:@sh_find;
-     fr_desc:'find first file'
-    ),
-    (fr_prot:'bool isfile(string fileName)';
-     fr_addr:@sh_isfile;
-     fr_desc:'is it an ordinary file?'
-    ),
-    (fr_prot:'bool isdir(string directory)';
-     fr_addr:@sh_isdir;
-     fr_desc:'is it an directory?'
-    ),
-    (fr_prot:'string dir()';
-     fr_addr:@sh_dir;
-     fr_desc:'get current directory'
-    ),
-    (fr_prot:'bool cd(string newDirectory)';
-     fr_addr:@sh_change_dir;
-     fr_desc:'change current directory'
-    ),
-    (fr_prot:'bool copy(string sourceFile, string destiFile, bool failIfFileExists)';
-     fr_addr:@sh_copy;
-     fr_desc:'copy file'
-    ),
-    (fr_prot:'int del(string fileMask)';
-     fr_addr:@sh_delete;
-     fr_desc:'delete specified file'
-    ),
-    (fr_prot:'strlist ls(string directoryOrfileMask)';
-     fr_addr:@sh_list;
-     fr_desc:'list file'
-    ),
-    (fr_prot:'bool rmdir(string dir, bool deltree)';
-     fr_addr:@sh_rmdir;
-     fr_desc:'remove specified directory'
-    ),
-    (fr_prot:'bool mkdir(string dir)';
-     fr_addr:@sh_mkdir;
-     fr_desc:'create directory'
-    ),
-    (fr_prot:'string system(string commandline, string dir)';
-     fr_addr:@sh_system;
-     fr_desc:'execute command line and get its output'
-    ),
-    (fr_prot:'bool shexec(string commandline, string dir, bool wait)';
-     fr_addr:@sh_shexec;
-     fr_desc:'execute command line'
-    )
-  );
   
+var
+  searcher_type: RLseType = (
+    cr_type    : LSV_OBJECT;
+    cr_name    : 'searcher';
+    cr_desc    : 'file searcher';
+    cr_addref  :@lse_addref_obj;
+    cr_release :@lse_release_obj
+  );
+
 implementation
 
 uses
@@ -282,397 +258,206 @@ begin
   end;
 end;
   
-procedure searcher_create(const Param: pointer);cdecl;
+procedure searcher_create(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    this := TLiSearch.Create(invoker.paramStr(1));
-    invoker.returnObject(searcher_class.lysee_class, this);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  this := TLiSearch.Create(invoker.paramStr(0));
+  invoker.returnObject(searcher_type.cr_class, this);
 end;
 
-procedure searcher_findFirst(const Param: pointer);cdecl;
+procedure searcher_findFirst(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnBool(this.FindFirst(invoker.paramStr(1)));
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnBool(this.FindFirst(invoker.paramStr(1)));
 end;
 
-procedure searcher_findNext(const Param: pointer);cdecl;
+procedure searcher_findNext(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnBool(this.FindNext);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnBool(this.FindNext);
 end;
 
-procedure searcher_findClose(const Param: pointer);cdecl;
+procedure searcher_findClose(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      this.FindClose;
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    this.FindClose;
 end;
 
-procedure searcher_getName(const Param: pointer);cdecl;
+procedure searcher_getName(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnStr(this.Name);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnStr(this.Name);
 end;
 
-procedure searcher_eof(const Param: pointer);cdecl;
+procedure searcher_eof(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnBool(not this.Active);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnBool(not this.Active);
 end;
 
-procedure searcher_getSize(const Param: pointer);cdecl;
+procedure searcher_getSize(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnInt64(this.FSrec.size);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnInt64(this.FSrec.size);
 end;
 
-procedure searcher_getTime(const Param: pointer);cdecl;
+procedure searcher_getPath(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnFloat(FileDateToDateTime(this.FSrec.Time));
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnStr(this.SearchPath);
 end;
 
-procedure searcher_getPath(const Param: pointer);cdecl;
+procedure searcher_getFullName(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnStr(this.SearchPath);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnStr(this.FullName);
 end;
 
-procedure searcher_getFullName(const Param: pointer);cdecl;
+procedure searcher_getIsDir(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnStr(this.FullName);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnBool(this.IsDir);
 end;
 
-procedure searcher_getIsDir(const Param: pointer);cdecl;
+procedure searcher_getIsFile(const invoker: TLseInvoke);cdecl;
 var
   this: TLiSearch;
-  invoker: TLseInvoke;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnBool(this.IsDir);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  if invoker.GetThis(this) then
+    invoker.returnBool(this.IsFile);
 end;
 
-procedure searcher_getIsFile(const Param: pointer);cdecl;
-var
-  this: TLiSearch;
-  invoker: TLseInvoke;
+procedure sh_isfile(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    if invoker.GetThis(this) then
-      invoker.returnBool(this.IsFile);
-  except
-    invoker.returnError(KTE_SEARCHREC, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnBool(FileExists(invoker.paramStr(0)));
 end;
 
-procedure sh_find(const Param: pointer);cdecl;
-var
-  sr: TLiSearch;
-  invoker: TLseInvoke;
+procedure sh_isdir(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    sr := TLiSearch.Create(invoker.paramStr(0));
-    if sr.Active then
-      invoker.returnObject(searcher_class.lysee_class, sr) else
-      sr.Free;
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnBool(DirectoryExists(invoker.paramStr(0)));
 end;
 
-procedure sh_isfile(const Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
+procedure sh_dir(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnBool(FileExists(invoker.paramStr(0)));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnStr(GetCurrentDir);
 end;
 
-procedure sh_isdir(const Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
+procedure sh_change_dir(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnBool(DirectoryExists(invoker.paramStr(0)));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnBool(SetCurrentDir(invoker.paramStr(0)));
 end;
 
-procedure sh_dir(const Param: pointer);cdecl;
+procedure sh_copy(const invoker: TLseInvoke);cdecl;
 var
-  invoker: TLseInvoke;
-begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnStr(GetCurrentDir);
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
-end;
-
-procedure sh_change_dir(const Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
-begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnBool(SetCurrentDir(invoker.paramStr(0)));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
-end;
-
-procedure sh_copy(const Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
   f_src, f_dst: string;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    f_src := invoker.paramStr(0);
-    f_dst := invoker.paramStr(1);
-    invoker.returnBool(copy_file(f_src, f_dst, invoker.paramBool(2)));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  f_src := invoker.paramStr(0);
+  f_dst := invoker.paramStr(1);
+  invoker.returnBool(copy_file(f_src, f_dst, invoker.paramBool(2)));
 end;
 
-procedure sh_delete(const Param: pointer);cdecl;
+procedure sh_delete(const invoker: TLseInvoke);cdecl;
 var
-  invoker: TLseInvoke;
   fmask: string;
   count: integer;
   sr: TLiSearch;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    count := 0;
-    fmask := invoker.paramStr(0);
-    if (Pos('*', fmask) > 0) or (Pos('?', fmask) > 0) then
-    begin
-      sr := TLiSearch.Create(fmask);
-      try
-        count := sr.DeleteAll(true, false, false);
-      finally
-        sr.Free;
-      end;
-    end;
-    if SysUtils.DeleteFile(fmask) then Inc(count);
-    invoker.returnInt(count);
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
-end;
-
-procedure sh_list(const Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
-  list: string;
-  sr: TLiSearch;
-begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    list := Trim(invoker.paramStr(0));
-    if list = '' then list := '.\*.*' else
-    if DirectoryExists(list) then
-      list := IncludeTrailingPathDelimiter(list) + '*.*';
-    sr := TLiSearch.Create(list);
+  count := 0;
+  fmask := invoker.paramStr(0);
+  if (Pos('*', fmask) > 0) or (Pos('?', fmask) > 0) then
+  begin
+    sr := TLiSearch.Create(fmask);
     try
-      if sr.Active then
-      begin
-        list := sr.FullName;
-        while sr.FindNext do
-          list := list + sLineBreak + sr.FullName;
-        invoker.returnStr(list);
-      end;
+      count := sr.DeleteAll(true, false, false);
     finally
       sr.Free;
     end;
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
   end;
-  invoker.Free;
+  if SysUtils.DeleteFile(fmask) then Inc(count);
+  invoker.returnInt(count);
 end;
 
-procedure sh_rmdir(const Param: pointer);cdecl;
+procedure sh_list(const invoker: TLseInvoke);cdecl;
 var
-  invoker: TLseInvoke;
+  list: string;
+  sr: TLiSearch;
+begin
+  list := Trim(invoker.paramStr(0));
+  if list = '' then list := '.\*.*' else
+  if DirectoryExists(list) then
+    list := IncludeTrailingPathDelimiter(list) + '*.*';
+  sr := TLiSearch.Create(list);
+  try
+    if sr.Active then
+    begin
+      list := sr.FullName;
+      while sr.FindNext do
+        list := list + sLineBreak + sr.FullName;
+      invoker.returnStr(list);
+    end;
+  finally
+    sr.Free;
+  end;
+end;
+
+procedure sh_rmdir(const invoker: TLseInvoke);cdecl;
+var
   dir: string;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    dir := ExpandFileName(Trim(invoker.paramStr(0)));
-    dir := ExcludeTrailingPathDelimiter(dir);
-    if DirectoryExists(dir) then
-    begin
-      if SysUtils.RemoveDir(dir) then
-        invoker.returnBool(true) else
-      if invoker.paramBool(1) then
-        invoker.returnBool(remove_tree(dir));
-    end;
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
+  dir := ExpandFileName(Trim(invoker.paramStr(0)));
+  dir := ExcludeTrailingPathDelimiter(dir);
+  if DirectoryExists(dir) then
+  begin
+    if SysUtils.RemoveDir(dir) then
+      invoker.returnBool(true) else
+    if invoker.paramBool(1) then
+      invoker.returnBool(remove_tree(dir));
   end;
-  invoker.Free;
 end;
 
-procedure sh_mkdir(const Param: pointer);cdecl;
-var
-  invoker: TLseInvoke;
+procedure sh_mkdir(const invoker: TLseInvoke);cdecl;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    invoker.returnBool(ForceDirectories(Trim(invoker.paramStr(0))));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  invoker.returnBool(ForceDirectories(Trim(invoker.paramStr(0))));
 end;
 
-procedure sh_system(const Param: pointer);cdecl;
+procedure sh_system(const invoker: TLseInvoke);cdecl;
 var
-  invoker: TLseInvoke;
   v_cmd, v_dir: string;
   status: integer;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    v_cmd := Trim(invoker.paramFmt(0));
-    v_dir := Trim(invoker.paramFmt(1));
-    invoker.returnStr(spawn_shouts(v_cmd, v_dir, status));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  v_cmd := Trim(invoker.paramFmt(0));
+  v_dir := Trim(invoker.paramFmt(1));
+  invoker.returnStr(spawn_shouts(v_cmd, v_dir, status));
 end;
 
-procedure sh_shexec(const Param: pointer);cdecl;
+procedure sh_shexec(const invoker: TLseInvoke);cdecl;
 var
-  invoker: TLseInvoke;
   v_cmd, v_dir: string;
   status: integer;
 begin
-  invoker := TLseInvoke.Create(Param);
-  try
-    v_cmd := Trim(invoker.paramFmt(0));
-    v_dir := Trim(invoker.paramFmt(1));
-    invoker.returnBool(spawn_shexec(v_cmd, v_dir,
-      invoker.paramBool(2), status));
-  except
-    invoker.returnError(KTE_FS, 0, lse_exception_str);
-  end;
-  invoker.Free;
+  v_cmd := Trim(invoker.paramFmt(0));
+  v_dir := Trim(invoker.paramFmt(1));
+  invoker.returnBool(spawn_shexec(v_cmd, v_dir,
+    invoker.paramBool(2), status));
 end;
 
 { TLiSearch }

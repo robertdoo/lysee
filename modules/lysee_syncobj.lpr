@@ -49,14 +49,16 @@ uses
   lse_syncobj in '../lse_syncobj.pas',
   lysee_syncobj_funcs;
 
-procedure InitExchange(const MR: PLseModuleRec; const QE: TLseQueryEntry);cdecl;
+procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lse_prepare(QE);
-  MR^.iw_version       := LSE_VERSION;
-  MR^.iw_desc          := 'syncronisizing object module for lysee';
-  MR^.iw_classes.count := syncobj_class_count;
-  MR^.iw_classes.entry :=@syncobj_class_array;
-  MR^.iw_invoke        :=@lse_call_gate;
+  lseu.lse_entries      := ER;
+  MR^.iw_version        := LSE_VERSION;
+  MR^.iw_desc           := 'syncronisizing object module for lysee';
+  MR^.iw_types.cl_count := syncobj_class_count;
+  MR^.iw_types.cl_entry :=@syncobj_class_array;
+  MR^.iw_funcs.fl_count := func_count;
+  MR^.iw_funcs.fl_entry :=@func_array;
+  MR^.iw_invoke         :=@lse_call_gate;
 end;
 
 exports

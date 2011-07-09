@@ -136,6 +136,7 @@ type
     ToolButton30: TToolButton;
     miEditReadonly: TMenuItem;
     ToolButton31: TToolButton;
+    JJJ1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
     procedure miFileSaveAsClick(Sender: TObject);
@@ -156,7 +157,6 @@ type
     procedure acViewRefreshExecute(Sender: TObject);
     procedure acFilePrintExecute(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure acViewModeExecute(Sender: TObject);
     procedure acEditUndoExecute(Sender: TObject);
     procedure acEditCopyExecute(Sender: TObject);
     procedure acEditCutExecute(Sender: TObject);
@@ -172,9 +172,9 @@ type
     procedure pnContainerResize(Sender: TObject);
     procedure eTextChange(Sender: TObject);
     procedure acPageSizeExecute(Sender: TObject);
+    procedure JJJ1Click(Sender: TObject);
   private
     FView: TEasyView;
-    FBook: TEfxBook;
     FUpdating: boolean;
     FFile: string;
     FPath: string;
@@ -185,6 +185,8 @@ type
     procedure ShowModified;
     function QuerySave: boolean;
     procedure UndoStatus(Sender: TObject);
+    procedure ResizingRow(Sender: TObject; Row, NewHeight: integer);
+    procedure ResizingColumn(Sender: TObject; Col, NewWidth: integer);
     procedure ErrorListClose(Sender: TObject);
     procedure ErrorListShow(Sender: TObject);
     procedure ClosePreview(Sender: TObject);
@@ -205,7 +207,7 @@ uses
 {$R *.DFM}
 
 const
-  UndoRecSize = sizeof(TUndoRec);
+  UndoRecSize = sizeof(RUndoRec);
 	EdgeBase    = 13;                    {<--start edge icon index}
 	SizingFmt   = '%3d / %-3d';
 
@@ -229,6 +231,8 @@ begin
   FView.OnSelect := acViewRefreshExecute;
   FView.OnChange := SetButtons;
   FView.OnUndoStatus := UndoStatus;
+  FView.OnResizingRow := ResizingRow;
+  FView.OnResizingColumn := ResizingColumn;
   FView.Visible := true;
   FView.SelectRange(Point(0, 0), Point(0, 0));
   pnClient.Align := alClient;
@@ -238,10 +242,6 @@ begin
   SetButtons(nil);
 
   FPath := ExtractFilePath(Application.ExeName);
-
-  FBook := TEfxBook.Create(FView.Form);
-  FBook.IncRefcount;
-  FBook.OnErrorAt := ErrorList.ErrorAt;
 
   ErrorList.View := FView;
   ErrorList.OnHideList := ErrorListClose;
@@ -270,6 +270,24 @@ begin
         Break;
       end;
     end;
+  end;
+end;
+
+procedure TMainForm.JJJ1Click(Sender: TObject);
+var
+  R, C: integer;
+begin
+  FView.BeginUpdate;
+  try
+    FView.Form.ColCount := 16;
+    FView.Form.RowCount := 32;
+    for R := 0 to 31 do
+      for C := 0 to 15 do
+        FView.Form.Force(C, R).Text := IntToStr(R * 32 + C + 1);
+    FView.Form.FixedColCount := 2;
+    FView.Form.FixedRowCount := 2;
+  finally
+    FView.EndUpdate;
   end;
 end;
 
@@ -383,6 +401,16 @@ begin
 		else Result := true;
 end;
 
+procedure TMainForm.ResizingColumn(Sender: TObject; Col, NewWidth: integer);
+begin
+  SetStatusText(0, IntToStr(NewWidth));
+end;
+
+procedure TMainForm.ResizingRow(Sender: TObject; Row, NewHeight: integer);
+begin
+  SetStatusText(0, IntToStr(NewHeight));
+end;
+
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
 	CanClose := QuerySave;
@@ -427,7 +455,7 @@ procedure TMainForm.acDeleteTargetExecute(Sender: TObject);
 begin
   if not FUpdating and FView.Targeted then
   begin
-    FView.DeleteTarget(FView.Mode = emEnter);
+    FView.DeleteTarget(true);
     SetButtons(nil);
   end;
 end;
@@ -526,14 +554,6 @@ end;
 
 const
   MoveHint = '将当前页由第%d页改为第%d页，肯定吗？';
-
-procedure TMainForm.acViewModeExecute(Sender: TObject);
-begin
-  if FView.Mode = emEnter then
-    FView.Mode := emDesign else
-    FView.Mode := emEnter;
-  acViewMode.Checked := (FView.Mode = emEnter);
-end;
 
 procedure TMainForm.SetButtons(Sender: TObject);
 var

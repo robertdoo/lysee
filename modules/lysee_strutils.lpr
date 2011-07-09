@@ -49,14 +49,16 @@ uses
   lse_funcs in '../lse_funcs.pas',
   lysee_strutils_funcs;
 
-procedure InitExchange(const MR: PLseModuleRec; const QE: TLseQueryEntry);cdecl;
+procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lse_prepare(QE);
+  lseu.lse_entries      := ER;
   MR^.iw_version        := LSE_VERSION;
   MR^.iw_desc           := 'string utilities module for lysee';
-  MR^.iw_classes.count  := 2;
-  MR^.iw_classes.entry  := @strutils_class;
-  MR^.iw_invoke         := @lse_call_gate;
+  MR^.iw_types.cl_count := 2;
+  MR^.iw_types.cl_entry :=@strutils_types;
+  MR^.iw_funcs.fl_count := func_count;
+  MR^.iw_funcs.fl_entry :=@func_array;
+  MR^.iw_invoke         :=@lse_call_gate;
 end;
 
 exports

@@ -1,41 +1,10 @@
 {==============================================================================}
 {        UNIT: lse_patten                                                      }
 { DESCRIPTION: match patten (regular expression) functions                     }
+{   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
+{     LICENSE: modified BSD license                                            }
 {     CREATED: 2010/02/28                                                      }
-{    MODIFIED: 2010/08/31                                                      }
-{==============================================================================}
-{ Copyright (c) 2010, Li Yun Jie                                               }
-{ All rights reserved.                                                         }
-{                                                                              }
-{ Redistribution and use in source and binary forms, with or without           }
-{ modification, are permitted provided that the following conditions are met:  }
-{                                                                              }
-{ Redistributions of source code must retain the above copyright notice, this  }
-{ list of conditions and the following disclaimer.                             }
-{                                                                              }
-{ Redistributions in binary form must reproduce the above copyright notice,    }
-{ this list of conditions and the following disclaimer in the documentation    }
-{ and/or other materials provided with the distribution.                       }
-{                                                                              }
-{ Neither the name of Li Yun Jie nor the names of its contributors may         }
-{ be used to endorse or promote products derived from this software without    }
-{ specific prior written permission.                                           }
-{                                                                              }
-{ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  }
-{ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    }
-{ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   }
-{ ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR  }
-{ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL       }
-{ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR   }
-{ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER   }
-{ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT           }
-{ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    }
-{ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH  }
-{ DAMAGE.                                                                      }
-{==============================================================================}
-{ The Initial Developer of the Original Code is Li Yun Jie (CHINA).            }
-{ Portions created by Li Yun Jie are Copyright (C) 2010.                       }
-{ All Rights Reserved.                                                         }
+{    MODIFIED: 2011/07/09                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -458,15 +427,9 @@ end;
 
 function init_patten(mp: PLiMatchPatten; const Patten: PLseValue): boolean;
 begin
-  if Patten^.value_class^.vtype = LSV_STRING then
-    Result := init_patten(mp, lse_strec_data(Patten^.VString)) else
-  if Patten^.value_class^.vtype = LSV_CHAR then
-  begin
-    mp^.mp_boscp[0] := Patten^.VChar;
-    mp^.mp_boscp[1] := #0;
-    Result := init_patten(mp, mp^.mp_boscp);
-  end
-  else Result := false;
+  if Patten^.vtype^.cr_type = LSV_STRING then
+    Result := init_patten(mp, lse_strec_data(Patten^.VObject)) else
+    Result := false;
 end;
 
 var
@@ -541,12 +504,8 @@ end;
 
 function exec_patten(mp: PLiMatchPatten; const S: PLseValue): boolean;
 begin
-  if S^.value_class^.vtype = LSV_STRING then
-    Result := exec_patten(mp, lse_strec_data(S^.VString),
-      lse_strec_length(S^.VString)) else
-  if S^.value_class^.vtype = LSV_CHAR then
-    Result := exec_patten(mp, @(S^.VChar), 1) else
-    Result := false;
+  Result := (S^.vtype^.cr_type = LSV_STRING) and
+            exec_patten(mp, lse_strec_data(S^.VObject), lse_strec_length(S^.VObject));
 end;
 
 end.

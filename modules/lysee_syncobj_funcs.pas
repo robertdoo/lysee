@@ -56,42 +56,43 @@ procedure pp_lock_trylock(const invoker: TLseInvoke);cdecl;
 procedure pp_lock_unlock(const invoker: TLseInvoke);cdecl;
 
 const
-  lock_func_count = 4;
-  lock_func_array: array[0..lock_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'lock lock()';
+  func_count = 4;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'lock_create:lock ||';
      fr_addr:@pp_lock_create;
      fr_desc:'create lock';
     ),
-    (fr_prot:'void enter()';
+    (fr_prot:'lock_enter |sl:lock|';
      fr_addr:@pp_lock_lock;
      fr_desc:'lock';
     ),
-    (fr_prot:'bool tryEnter()';
+    (fr_prot:'lock_tryEnter:int |sl:lock|';
      fr_addr:@pp_lock_trylock;
      fr_desc:'try lock';
     ),
-    (fr_prot:'void leave()';
+    (fr_prot:'lock_leave |sl:lock|';
      fr_addr:@pp_lock_unlock;
      fr_desc:'unlock';
     )
   );
 
   syncobj_class_count = 1;
-  syncobj_class_array: array[0..syncobj_class_count - 1] of RLseClassRec = (
-   (vtype      : LSV_OBJECT;
-    name       : 'lock';
-    desc       : 'lock';
-    incRefcount:@lse_incRefcount;
-    decRefcount:@lse_decRefcount;
-    funcs      : (count:lock_func_count; entry:@lock_func_array)
+
+var
+  syncobj_class_array: array[0..syncobj_class_count - 1] of RLseType = (
+   (cr_type    : LSV_OBJECT;
+    cr_name    :'lock';
+    cr_desc    :'spinlock';
+    cr_addref  :@lse_addref_obj;
+    cr_release :@lse_release_obj
     )
   );
 
-function lock_classrec: PLseClassRec;
+function lock_type: PLseType;
 
 implementation
 
-function lock_classrec: PLseClassRec;
+function lock_type: PLseType;
 begin
   Result := @syncobj_class_array[0];
 end;
@@ -100,7 +101,7 @@ end;
 
 procedure pp_lock_create(const invoker: TLseInvoke);cdecl;
 begin
-  invoker.returnObj(lock_classrec, TLseSpinLock.Create);
+  invoker.returnObj(lock_type, TLseSpinLock.Create);
 end;
 
 procedure pp_lock_lock(const invoker: TLseInvoke);cdecl;

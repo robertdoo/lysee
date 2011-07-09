@@ -48,14 +48,16 @@ uses
   lseu in '../lseu.pas',
   lysee_inifs_funcs;
 
-procedure InitExchange(const MR: PLseModuleRec; const QE: TLseQueryEntry);cdecl;
+procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lse_prepare(QE);
+  lseu.lse_entries      := ER;
   MR^.iw_version        := LSE_VERSION;
-  MR^.iw_desc           := 'ini file module for lysee';
-  MR^.iw_classes.count  := 1;
-  MR^.iw_classes.entry  := @inifile_class;
-  MR^.iw_invoke         := @lse_call_gate;
+  MR^.iw_desc           :='ini file module for lysee';
+  MR^.iw_types.cl_count := 1;
+  MR^.iw_types.cl_entry :=@inifile_class;
+  MR^.iw_funcs.fl_count := func_count;
+  MR^.iw_funcs.fl_entry :=@func_array;
+  MR^.iw_invoke         :=@lse_call_gate;
 end;
 
 exports

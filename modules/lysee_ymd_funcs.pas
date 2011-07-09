@@ -48,27 +48,27 @@ interface
 uses
   Classes, SysUtils, lseu;
 
-procedure ymd_now(invoker: TLseInvoke);cdecl;
-procedure ymd_check(invoker: TLseInvoke);cdecl;
-procedure ymd_next(invoker: TLseInvoke);cdecl;
-procedure ymd_prev(invoker: TLseInvoke);cdecl;
+procedure ymd_now(const invoker: TLseInvoke);cdecl;
+procedure ymd_check(const invoker: TLseInvoke);cdecl;
+procedure ymd_next(const invoker: TLseInvoke);cdecl;
+procedure ymd_prev(const invoker: TLseInvoke);cdecl;
 
 const
-  ymd_func_count = 4;
-  ymd_func_array: array[0..ymd_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'int now()';
+  func_count = 4;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'now:int ||';
      fr_addr:@ymd_now;
      fr_desc:'get current ymd'
     ),
-    (fr_prot:'bool check(int ymd)';
+    (fr_prot:'check:int |ymd:int|';
      fr_addr:@ymd_check;
      fr_desc:'check ymd'
     ),
-    (fr_prot:'int next(int ymd, int days)';
+    (fr_prot:'next:int |ymd:int, days:int|';
      fr_addr:@ymd_next;
      fr_desc:'get next ymd'
     ),
-    (fr_prot:'int prev(int ymd, int days)';
+    (fr_prot:'prev:int |ymd:int, days:int|';
      fr_addr:@ymd_prev;
      fr_desc:'get prev ymd'
     )
@@ -79,7 +79,7 @@ implementation
 uses
   DateUtils, lse_funcs;
 
-procedure ymd_now(invoker: TLseInvoke);cdecl;
+procedure ymd_now(const invoker: TLseInvoke);cdecl;
 var
   y, m, d: word;
 begin
@@ -87,14 +87,14 @@ begin
   invoker.returnInt((y * 10000) + (m * 100) + d);
 end;
 
-procedure ymd_check(invoker: TLseInvoke);cdecl;
+procedure ymd_check(const invoker: TLseInvoke);cdecl;
 var
   y, m, d: integer;
 begin
   invoker.returnBool(__decodeYMD(invoker.paramInt(0), y, m, d));
 end;
 
-procedure ymd_next(invoker: TLseInvoke);cdecl;
+procedure ymd_next(const invoker: TLseInvoke);cdecl;
 var
   n, ymd: integer;
 begin
@@ -113,7 +113,7 @@ begin
   invoker.returnInt(ymd);
 end;
 
-procedure ymd_prev(invoker: TLseInvoke);cdecl;
+procedure ymd_prev(const invoker: TLseInvoke);cdecl;
 var
   n, ymd: integer;
 begin
