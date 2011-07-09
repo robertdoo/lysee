@@ -1,43 +1,8 @@
 {==============================================================================}
-{     PROJECT: lysee_strutils_funcs                                            }
+{        UNIT: lysee_strutils_funcs                                            }
 { DESCRIPTION: string utility functions (FPC)                                  }
 {     CREATED: 2003/12/10                                                      }
-{    MODIFIED: 2010/09/01                                                      }
-{==============================================================================}
-{ Copyright (c) 2003-2010, Li Yun Jie                                          }
-{ All rights reserved.                                                         }
-{                                                                              }
-{ Redistribution and use in source and binary forms, with or without           }
-{ modification, are permitted provided that the following conditions are met:  }
-{                                                                              }
-{ Redistributions of source code must retain the above copyright notice, this  }
-{ list of conditions and the following disclaimer.                             }
-{                                                                              }
-{ Redistributions in binary form must reproduce the above copyright notice,    }
-{ this list of conditions and the following disclaimer in the documentation    }
-{ and/or other materials provided with the distribution.                       }
-{                                                                              }
-{ Neither the name of Li Yun Jie nor the names of its contributors may         }
-{ be used to endorse or promote products derived from this software without    }
-{ specific prior written permission.                                           }
-{                                                                              }
-{ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  }
-{ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    }
-{ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   }
-{ ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR  }
-{ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL       }
-{ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR   }
-{ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER   }
-{ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT           }
-{ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    }
-{ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH  }
-{ DAMAGE.                                                                      }
-{==============================================================================}
-{ The Initial Developer of the Original Code is Li Yun Jie (CHINA).            }
-{ Portions created by Li Yun Jie are Copyright (C) 2003-2010.                  }
-{ All Rights Reserved.                                                         }
-{==============================================================================}
-{ Contributor(s):                                                              }
+{    MODIFIED: 2011/07/05                                                      }
 {==============================================================================}
 unit lysee_strutils_funcs;
 
@@ -149,112 +114,6 @@ procedure pp_strbuf_randomize(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_contains(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_copy(const invoker: TLseInvoke);cdecl;
 
-const
-
-  strbuf_func_count = 25;
-  strbuf_func_array: array[0..strbuf_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'strbuf strbuf(string value)';
-     fr_addr:@pp_strbuf_create;
-     fr_desc:'create strbuf object';
-    ),
-    (fr_prot:'int get_length()';
-     fr_addr:@pp_strbuf_length;
-     fr_desc:'get strbuf size';
-    ),
-    (fr_prot:'void set_length(int length)';
-     fr_addr:@pp_strbuf_setlen;
-     fr_desc:'set strbuf size';
-    ),
-    (fr_prot:'string get_data()';
-     fr_addr:@pp_strbuf_gets;
-     fr_desc:'get data string';
-    ),
-    (fr_prot:'void set_data(string data)';
-     fr_addr:@pp_strbuf_sets;
-     fr_desc:'set data string';
-    ),
-    (fr_prot:'char getiv(int index)';
-     fr_addr:@pp_strbuf_getiv;
-     fr_desc:'get charactor item by index';
-    ),
-    (fr_prot:'void setiv(int index, char value)';
-     fr_addr:@pp_strbuf_setiv;
-     fr_desc:'get charactor item by index';
-    ),
-    (fr_prot:'string get_value()';
-     fr_addr:@pp_strbuf_getValue;
-     fr_desc:'get strbuf string';
-    ),
-    (fr_prot:'void set_value(string value)';
-     fr_addr:@pp_strbuf_setValue;
-     fr_desc:'set strbuf string';
-    ),
-    (fr_prot:'void replace(string patten, string newStr, bool ignoreCase, bool replaceFirstOnly)';
-     fr_addr:@pp_strbuf_replace;
-     fr_desc:'replace patten to new string';
-    ),
-    (fr_prot:'int pos(string SubStr, bool IgnoreCase, int start)';
-     fr_addr:@pp_strbuf_pos;
-     fr_desc:'get first sub-string position';
-    ),
-    (fr_prot:'int lastpos(string SubStr, bool IgnoreCase, int start)';
-     fr_addr:@pp_strbuf_lastPos;
-     fr_desc:'get last sub-string position';
-    ),
-    (fr_prot:'void trim()';
-     fr_addr:@pp_strbuf_trim;
-     fr_desc:'clear left and right spaces';
-    ),
-    (fr_prot:'void trimLeft()';
-     fr_addr:@pp_strbuf_trimLeft;
-     fr_desc:'clear left spaces';
-    ),
-    (fr_prot:'void trimRight()';
-     fr_addr:@pp_strbuf_trimRight;
-     fr_desc:'clear right spaces';
-    ),
-    (fr_prot:'void trimAll()';
-     fr_addr:@pp_strbuf_trimAll;
-     fr_desc:'clear all spaces';
-    ),
-    (fr_prot:'void lower()';
-     fr_addr:@pp_strbuf_lower;
-     fr_desc:'translate to lower case';
-    ),
-    (fr_prot:'void upper()';
-     fr_addr:@pp_strbuf_upper;
-     fr_desc:'translate to upper case';
-    ),
-    (fr_prot:'void delete(int index, int count)';
-     fr_addr:@pp_strbuf_delete;
-     fr_desc:'delete sub-string by range';
-    ),
-    (fr_prot:'void insert(string substr, int index)';
-     fr_addr:@pp_strbuf_insert;
-     fr_desc:'insert sub-string at specified position';
-    ),
-    (fr_prot:'void join(string str)';
-     fr_addr:@pp_strbuf_join;
-     fr_desc:'join (concatenate) string';
-    ),
-    (fr_prot:'void reverse()';
-     fr_addr:@pp_strbuf_reverse;
-     fr_desc:'reverse string buffer';
-    ),
-    (fr_prot:'void randomize()';
-     fr_addr:@pp_strbuf_randomize;
-     fr_desc:'randomize string buffer';
-    ),
-    (fr_prot:'bool contains(string subStr, bool ignoreCase)';
-     fr_addr:@pp_strbuf_contains;
-     fr_desc:'test if contains specified sub-string';
-    ),
-    (fr_prot:'string copy(int index, int count)';
-     fr_addr:@pp_strbuf_copy;
-     fr_desc:'copy sub-string by range';
-    )
-  );
-
 { strcut }
 
 procedure pp_strcut_create(const invoker: TLseInvoke);cdecl;
@@ -286,147 +145,268 @@ procedure pp_strcut_delimiter(const invoker: TLseInvoke);cdecl;
 
 const
 
-  strcut_func_count = 26;
-  strcut_func_array: array[0..strcut_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'strcut strcut(string keylist, char delimiter)';
+  func_count = 51;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'strbuf_create:strbuf |data:string|';
+     fr_addr:@pp_strbuf_create;
+     fr_desc:'create strbuf object';
+    ),
+    (fr_prot:'strbuf_get_length:int |sb:strbuf|';
+     fr_addr:@pp_strbuf_length;
+     fr_desc:'get strbuf size';
+    ),
+    (fr_prot:'strbuf_set_length:void |sb:strbuf, length:int|';
+     fr_addr:@pp_strbuf_setlen;
+     fr_desc:'set strbuf size';
+    ),
+    (fr_prot:'strbuf_get_data:string |sb:strbuf|';
+     fr_addr:@pp_strbuf_gets;
+     fr_desc:'get data string';
+    ),
+    (fr_prot:'strbuf_set_data:void |sb:strbuf, data:string|';
+     fr_addr:@pp_strbuf_sets;
+     fr_desc:'set data string';
+    ),
+    (fr_prot:'strbuf_getiv:string |sb:strbuf, index:int|';
+     fr_addr:@pp_strbuf_getiv;
+     fr_desc:'get charactor item by index';
+    ),
+    (fr_prot:'strbuf_setiv:void |sb:strbuf, index:int, ch:string|';
+     fr_addr:@pp_strbuf_setiv;
+     fr_desc:'get charactor item by index';
+    ),
+    (fr_prot:'strbuf_get_value:string |sb:strbuf|';
+     fr_addr:@pp_strbuf_getValue;
+     fr_desc:'get strbuf string';
+    ),
+    (fr_prot:'strbuf_set_value:void |sb:strbuf, value:string|';
+     fr_addr:@pp_strbuf_setValue;
+     fr_desc:'set strbuf string';
+    ),
+    (fr_prot:'strbuf_replace:void |sb:strbuf, patten:string, newStr:string, ignoreCase:int, replaceFirstOnly:int|';
+     fr_addr:@pp_strbuf_replace;
+     fr_desc:'replace patten to new string';
+    ),
+    (fr_prot:'strbuf_pos:int |sb:strbuf, SubStr:string, IgnoreCase:int, start:int|';
+     fr_addr:@pp_strbuf_pos;
+     fr_desc:'get first sub-string position';
+    ),
+    (fr_prot:'strbuf_lastpos:int |sb:strbuf, SubStr:string, IgnoreCase:int, start:int|';
+     fr_addr:@pp_strbuf_lastPos;
+     fr_desc:'get last sub-string position';
+    ),
+    (fr_prot:'strbuf_trim:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_trim;
+     fr_desc:'clear left and right spaces';
+    ),
+    (fr_prot:'strbuf_trimLeft:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_trimLeft;
+     fr_desc:'clear left spaces';
+    ),
+    (fr_prot:'strbuf_trimRight:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_trimRight;
+     fr_desc:'clear right spaces';
+    ),
+    (fr_prot:'strbuf_trimAll:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_trimAll;
+     fr_desc:'clear all spaces';
+    ),
+    (fr_prot:'strbuf_lower:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_lower;
+     fr_desc:'translate to lower case';
+    ),
+    (fr_prot:'strbuf_upper:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_upper;
+     fr_desc:'translate to upper case';
+    ),
+    (fr_prot:'strbuf_delete:void |sb:strbuf, index:int, count:int|';
+     fr_addr:@pp_strbuf_delete;
+     fr_desc:'delete sub-string by range';
+    ),
+    (fr_prot:'strbuf_insert:void |sb:strbuf, substr:string, index:int|';
+     fr_addr:@pp_strbuf_insert;
+     fr_desc:'insert sub-string at specified position';
+    ),
+    (fr_prot:'strbuf_join:void |sb:strbuf, str:string|';
+     fr_addr:@pp_strbuf_join;
+     fr_desc:'join (concatenate) string';
+    ),
+    (fr_prot:'strbuf_reverse:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_reverse;
+     fr_desc:'reverse string buffer';
+    ),
+    (fr_prot:'strbuf_randomize:void |sb:strbuf|';
+     fr_addr:@pp_strbuf_randomize;
+     fr_desc:'randomize string buffer';
+    ),
+    (fr_prot:'strbuf_contains:int |sb:strbuf, subStr:string, ignoreCase:int|';
+     fr_addr:@pp_strbuf_contains;
+     fr_desc:'test if contains specified sub-string';
+    ),
+    (fr_prot:'strbuf_copy:string |sb:strbuf, index:int, count:int|';
+     fr_addr:@pp_strbuf_copy;
+     fr_desc:'copy sub-string by range';
+    ),
+
+    { strcut }
+
+    (fr_prot:'strcut_create:strcut |keylist:string, delimiter:string|';
      fr_addr:@pp_strcut_create;
      fr_desc:'create strcut object';
     ),
-    (fr_prot:'void reinit(string keylist, char delimiter)';
+    (fr_prot:'strcut_reinit:void |sc:strcut, keylist:string, delimiter:string|';
      fr_addr:@pp_strcut_reinit;
      fr_desc:'reinitialize this string cutter';
     ),
-    (fr_prot:'void parse(string text)';
+    (fr_prot:'strcut_parse:void |sc:strcut, text:string|';
      fr_addr:@pp_strcut_parse;
      fr_desc:'parse plain text';
     ),
-    (fr_prot:'int get_length()';
+    (fr_prot:'strcut_get_length:int |sc:strcut|';
      fr_addr:@pp_strcut_length;
      fr_desc:'get key count';
     ),
-    (fr_prot:'string getiv(int index)';
+    (fr_prot:'strcut_getiv:string |sc:strcut, index:int|';
      fr_addr:@pp_strcut_getiv;
      fr_desc:'get value by key index';
     ),
-    (fr_prot:'void setiv(int index, string value)';
+    (fr_prot:'strcut_setiv:void |sc:strcut, index:int, value:string|';
      fr_addr:@pp_strcut_setiv;
      fr_desc:'set value by key index';
     ),
-    (fr_prot:'string getpv(string key)';
+    (fr_prot:'strcut_getpv:string |sc:strcut, key:string|';
      fr_addr:@pp_strcut_getpv;
      fr_desc:'get value by key name';
     ),
-    (fr_prot:'void setpv(string key, string value)';
+    (fr_prot:'strcut_setpv:void |sc:strcut, key:string, value:string|';
      fr_addr:@pp_strcut_setpv;
      fr_desc:'set value by key name';
     ),
-    (fr_prot:'string getKey(int index)';
+    (fr_prot:'strcut_getKey:string |sc:strcut, index:int|';
      fr_addr:@pp_strcut_getname;
      fr_desc:'get key name by index';
     ),
-    (fr_prot:'void setKey(int index, string newKey)';
+    (fr_prot:'strcut_setKey:void |sc:strcut, index:int, key:string|';
      fr_addr:@pp_strcut_setname;
      fr_desc:'change key name by index';
     ),
-    (fr_prot:'void rename(string key, string newKey)';
+    (fr_prot:'strcut_rename:void |sc:strcut, key:string, newKey:string|';
      fr_addr:@pp_strcut_rename;
      fr_desc:'rename key';
     ),
-    (fr_prot:'int indexOf(string key)';
+    (fr_prot:'strcut_indexOf:int |sc:strcut, key:string|';
      fr_addr:@pp_strcut_indexof;
      fr_desc:'get key index';
     ),
-    (fr_prot:'void clear()';
+    (fr_prot:'strcut_clear:void |sc:strcut|';
      fr_addr:@pp_strcut_clear;
      fr_desc:'clear values';
     ),
-    (fr_prot:'string get_keyList()';
+    (fr_prot:'strcut_get_keyList:string |sc:strcut|';
      fr_addr:@pp_strcut_keylist;
      fr_desc:'list key with delimiter char';
     ),
-    (fr_prot:'string get_valueList()';
+    (fr_prot:'strcut_get_valueList:string |sc:strcut|';
      fr_addr:@pp_strcut_valist;
      fr_desc:'list value with delimiter char';
     ),
-    (fr_prot:'strlist get_keys()';
+    (fr_prot:'strcut_get_keys:string |sc:strcut|';
      fr_addr:@pp_strcut_keys;
      fr_desc:'list key into strlist';
     ),
-    (fr_prot:'strlist get_values()';
+    (fr_prot:'strcut_get_values:string |sc:strcut|';
      fr_addr:@pp_strcut_values;
      fr_desc:'list value into strlist';
     ),
-    (fr_prot:'strlist get_strlist()';
+    (fr_prot:'strcut_get_strlist:string |sc:strcut|';
      fr_addr:@pp_strcut_strlist;
      fr_desc:'convert to strlist';
     ),
-    (fr_prot:'void delete(int index)';
+    (fr_prot:'strcut_delete:void |sc:strcut, index:int|';
      fr_addr:@pp_strcut_delete;
      fr_desc:'delete key by index';
     ),
-    (fr_prot:'void remove(string key)';
+    (fr_prot:'strcut_remove:void |sc:strcut, key:string|';
      fr_addr:@pp_strcut_remove;
      fr_desc:'remove key by name';
     ),
-    (fr_prot:'void exchange(int X1, int X2)';
+    (fr_prot:'strcut_exchange:void |sc:strcut, X1:int, X2:int|';
      fr_addr:@pp_strcut_exchange;
      fr_desc:'exchange two keys by index';
     ),
-    (fr_prot:'void exchangeByName(string name1, string name2)';
+    (fr_prot:'strcut_exchangeByName:void |sc:strcut, key1:string, key2:string|';
      fr_addr:@pp_strcut_exchangeByName;
      fr_desc:'exchange two keys by name';
     ),
-    (fr_prot:'void move(int X1, int X2)';
+    (fr_prot:'strcut_move:void |sc:strcut, X1:int, X2:int|';
      fr_addr:@pp_strcut_move;
      fr_desc:'move key to another place by index';
     ),
-    (fr_prot:'void moveByName(string key, string another)';
+    (fr_prot:'strcut_moveByName:void |sc:strcut, key:string, another:string|';
      fr_addr:@pp_strcut_moveByName;
      fr_desc:'move key to another place by name';
     ),
-    (fr_prot:'string get_mask()';
+    (fr_prot:'strcut_get_mask:string |sc:strcut|';
      fr_addr:@pp_strcut_mask;
      fr_desc:'get parsing mask';
     ),
-    (fr_prot:'char get_delimiter()';
+    (fr_prot:'strcut_get_delimiter:string |sc:strcut|';
      fr_addr:@pp_strcut_delimiter;
      fr_desc:'get parsing delimiter';
     )
   );
 
-  strutils_class: array[0..1] of RLseClassRec = (
-   (vtype      : LSV_OBJECT;
-    name       : 'strbuf';
-    desc       : 'string buffer object';
-    incRefcount:@lse_incRefcount;
-    decRefcount:@lse_decRefcount;
-    funcs      : (count:strbuf_func_count; entry:@strbuf_func_array)
+function strbuf_writeto(obj: pointer; stream: PLseStream): integer;cdecl;
+function strbuf_otos(obj: pointer): PLseString;cdecl;
+function strbuf_stoo(str: PLseString; engine: pointer): pointer;cdecl;
+function strbuf_add(obj: pointer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_length(obj: pointer): integer;cdecl;
+function strbuf_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+
+var
+  strutils_types: array[0..1] of RLseType = (
+   (cr_type     : LSV_OBJECT;
+    cr_name     : 'strbuf';
+    cr_desc     : 'string buffer object';
+    cr_addref   :@lse_addref_obj;
+    cr_release  :@lse_release_obj;
+    cr_write_to :@strbuf_writeto;
+    cr_vargen   : nil;
+    cr_otos     :@strbuf_otos;
+    cr_stoo     :@strbuf_stoo;
+    cr_add      :@strbuf_add;
+    cr_getiv    :@strbuf_getiv;
+    cr_setiv    :@strbuf_setiv;
+    cr_getpv    : nil;
+    cr_setpv    : nil;
+    cr_length   :@strbuf_length;
+    cr_class    : nil
    ),
-   (vtype      : LSV_OBJECT;
-    name       : 'strcut';
-    desc       : 'string cutter object';
-    incRefcount:@lse_incRefcount;
-    decRefcount:@lse_decRefcount;
-    funcs      : (count:strcut_func_count; entry:@strcut_func_array)
+   (cr_type   : LSV_OBJECT;
+    cr_name   : 'strcut';
+    cr_desc   : 'string cutter object';
+    cr_addref :@lse_addref_obj;
+    cr_release:@lse_release_obj
    )
   );
 
-function strbuf_classrec: PLseClassRec;
-function strcut_classrec: PLseClassRec;
+function strbuf_type: PLseType;
+function strcut_type: PLseType;
 
 implementation
 
 uses
-  math, strutils, lse_funcs;
+  strutils, lse_funcs;
 
-function strbuf_classrec: PLseClassRec;
+function strbuf_type: PLseType;
 begin
-  Result := @strutils_class[0];
+  Result := @strutils_types[0];
 end;
 
-function strcut_classrec: PLseClassRec;
+function strcut_type: PLseType;
 begin
-  Result := @strutils_class[1];
+  Result := @strutils_types[1];
 end;
 
 { strbuf }
@@ -435,8 +415,8 @@ procedure pp_strbuf_create(const invoker: TLseInvoke);cdecl;
 var
   this: TLiStrBuf;
 begin
-  this := TLiStrBuf.Create(invoker.paramStr(1));
-  invoker.returnObj(strbuf_classrec, this);
+  this := TLiStrBuf.Create(invoker.paramStr(0));
+  invoker.returnObj(strbuf_type, this);
 end;
 
 procedure pp_strbuf_length(const invoker: TLseInvoke);cdecl;
@@ -747,6 +727,101 @@ begin
   end;
 end;
 
+function strbuf_writeto(obj: pointer; stream: PLseStream): integer;cdecl;
+var
+  S: TLiStrBuf;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrBuf(obj);
+    Result := lse_stream_write(stream, S.FStrBuf);
+  end;
+end;
+
+function strbuf_otos(obj: pointer): PLseString;cdecl;
+var
+  S: TLiStrBuf;
+begin
+  if obj <> nil then
+    Result := lse_strec_alloc(TLiStrBuf(obj).FStrBuf) else
+    Result := nil;
+end;
+
+function strbuf_stoo(str: PLseString; engine: pointer): pointer;cdecl;
+begin
+  Result := TLiStrBuf.Create(lse_strec_string(str));
+end;
+
+function strbuf_add(obj: pointer; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrBuf;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    lse_casto_string(value);
+    S := TLiStrBuf(obj);
+    S.FStrBuf := S.FStrBuf + lse_strec_string(value^.VObject);
+    Result := 1;
+  end;
+end;
+
+function strbuf_length(obj: pointer): integer;cdecl;
+var
+  S: TLiStrBuf;
+begin
+  if obj <> nil then
+    Result := Length(TLiStrBuf(obj).FStrBuf) else
+    Result := 0;
+end;
+
+function strbuf_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrBuf;
+  L: integer;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrBuf(obj);
+    L := S.GetStrLen;
+    if index < 0 then
+      Inc(index, L);
+    if (index >= 0) and (index < L) then
+    begin
+      lse_set_char(value, S.FStrBuf[index + 1]);
+      Result := 1;
+    end;
+  end;
+end;
+
+function strbuf_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrBuf;
+  L: integer;
+  P: pchar;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrBuf(obj);
+    L := S.GetStrLen;
+    if index < 0 then
+      Inc(index, L);
+    if (index >= 0) and (index < L) then
+    begin
+      lse_casto_string(value);
+      P := lse_strec_data(value^.VObject);
+      if P <> nil then
+      begin
+        S.FStrBuf[index + 1] := P^;
+        Result := 1;
+      end;
+    end;
+  end;
+end;
+
 { strcut }
 
 procedure pp_strcut_create(const invoker: TLseInvoke);cdecl;
@@ -754,9 +829,9 @@ var
   header: string;
   delimiter: char;
 begin
-  header := invoker.paramStr(1);
-  delimiter := invoker.paramChar(2);
-  invoker.returnObj(strcut_classrec, TLiStrCut.Create(header, delimiter));
+  header := invoker.paramStr(0);
+  delimiter := invoker.paramChar(1);
+  invoker.returnObj(strcut_type, TLiStrCut.Create(header, delimiter));
 end;
 
 procedure pp_strcut_reinit(const invoker: TLseInvoke);cdecl;

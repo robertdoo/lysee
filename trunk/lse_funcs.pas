@@ -1,41 +1,10 @@
 {==============================================================================}
 {        UNIT: lse_funcs                                                       }
 { DESCRIPTION: classes and functions used by kernel                            }
+{   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
+{     LICENSE: modified BSD license                                            }
 {     CREATED: 2008/01/21                                                      }
-{    MODIFIED: 2010/10/03                                                      }
-{==============================================================================}
-{ Copyright (c) 2008-2010, Li Yun Jie                                          }
-{ All rights reserved.                                                         }
-{                                                                              }
-{ Redistribution and use in source and binary forms, with or without           }
-{ modification, are permitted provided that the following conditions are met:  }
-{                                                                              }
-{ Redistributions of source code must retain the above copyright notice, this  }
-{ list of conditions and the following disclaimer.                             }
-{                                                                              }
-{ Redistributions in binary form must reproduce the above copyright notice,    }
-{ this list of conditions and the following disclaimer in the documentation    }
-{ and/or other materials provided with the distribution.                       }
-{                                                                              }
-{ Neither the name of Li Yun Jie nor the names of its contributors may         }
-{ be used to endorse or promote products derived from this software without    }
-{ specific prior written permission.                                           }
-{                                                                              }
-{ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  }
-{ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    }
-{ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   }
-{ ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR  }
-{ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL       }
-{ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR   }
-{ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER   }
-{ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT           }
-{ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    }
-{ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH  }
-{ DAMAGE.                                                                      }
-{==============================================================================}
-{ The Initial Developer of the Original Code is Li Yun Jie (CHINA).            }
-{ Portions created by Li Yun Jie are Copyright (C) 2008-2010.                  }
-{ All Rights Reserved.                                                         }
+{    MODIFIED: 2011/07/09                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -88,28 +57,6 @@ type
 
   KLiExtInt = (eiNone, eiInt, eiExt);
 
-  { KLiStrlist }
-
-  KLiStrlist = class(TStringList)
-  private
-    FRefcount: integer;
-  public
-    constructor Create(const S: string = '');
-    function IncRefcount: integer;
-    function DecRefcount: integer;
-    function Copy(Index, ACount: integer): KLiStrlist;
-    function CopyFrom(List: TStrings; Index, ACount: integer): integer;
-    function ReadValue(const Name, DefValue: string): string;overload;
-    function Read(const Name: string; var Value: string): boolean;
-    function Match(Index1, Index2: integer): boolean;
-    function CompStr(const S1, S2: string): integer;
-    function First: string;
-    function Last: string;
-    function MinStr: string;
-    function MaxStr: string;
-    property Refcount: integer read FRefcount;
-  end;
-
   { KLiList }
 
   KLiList = class(TList)
@@ -127,6 +74,43 @@ type
   { KLiObject }
 
   KLiObject = TLseObject;
+
+  { KLiNameObject }
+
+  KLiNameObject = class(KLiObject)
+  private
+    FName: string;
+  public
+    constructor Create(const AName: string);
+    property Name: string read FName;
+  end;
+
+  { KLiNameHashed }
+
+  PLiNameItem = ^RLiNameItem;
+  RLiNameItem = packed record
+    ni_next: PLiNameItem;
+    ni_nobj: KLiNameObject;
+  end;
+
+  KLiNameHashed = class(KLiObject)
+  private
+    FBuckets: array of PLiNameItem;
+    FSize: cardinal;
+    FCount: cardinal;
+  protected
+    function HashOf(const Key: string): cardinal;
+    function NewItem: PLiNameItem;
+    procedure FreeItem(Item: PLiNameItem);
+    function FindItem(const Key: string): PLiNameItem;
+  public
+    constructor Create(Size: cardinal);
+    destructor Destroy; override;
+    procedure Clear;
+    procedure Remove(const Key: string);
+    procedure Put(AObj: KLiNameObject);
+    function Get(const Key: string): KLiNameObject;
+  end;
 
   { KLiHashTable }
 
@@ -172,6 +156,8 @@ type
     property IgnoreCase: boolean read FIgnoreCase write FIgnoreCase;
   end;
 
+  { KLiMD5 }
+  
   pardinal = ^cardinal;
 
   KLiMD5 = class(KLiObject)
@@ -193,20 +179,6 @@ type
     function sumStream(Stream: TStream): string;
     function sumFile(const fname: string): string;
   end;
-
-{-----------------------------------------------------------------------
-( F_NAME: LsIncRefcount | LsDecRefcount
-(
-( F_DESC: manage reference count of KLiStrlist
-(
-( F_ARGS: obj: pointer - KLiStrings
-(
-( F_TYPE: integer - new reference count
-(
-( EXCEPT:
-(----------------------------------------------------------------------}
-function LsIncRefcount(const obj: pointer): integer;cdecl;
-function LsDecRefcount(const obj: pointer): integer;cdecl;
 
 {-----------------------------------------------------------------------
 ( F_NAME: __hexcv
@@ -1071,20 +1043,6 @@ uses
   Math, DateUtils
   {$IFDEF WINDOWS},ActiveX{$ENDIF};
 
-function LsIncRefcount(const obj: pointer): integer;cdecl;
-begin
-  if obj <> nil then
-    Result := KLiStrlist(obj).IncRefcount else
-    Result := 0;
-end;
-
-function LsDecRefcount(const obj: pointer): integer;cdecl;
-begin
-  if obj <> nil then
-    Result := KLiStrlist(obj).DecRefcount else
-    Result := 0;
-end;
-
 function __hexcv(ch: char): integer;
 begin
   case ch of
@@ -1314,14 +1272,14 @@ end;
 function __parseStr(var S: pchar; desti: TStream; allow_esc_char: boolean): boolean;
 var
   times: integer;
-  ch: char;
+  quotc, ch: char;
 
   function str_end: boolean;
   var
     count: integer;
     next: pchar;
   begin
-    Result := (S^ = '"');
+    Result := (S^ = quotc);
     if Result and (times > 2) then
     begin
       count := times;
@@ -1329,26 +1287,31 @@ var
       repeat
         Dec(count);
         Inc(next);
-      until (count = 0) or (next^ <> '"');
-      Result := (count = 0) and (next^ <> '"');
+      until (count = 0) or (next^ <> quotc);
+      Result := (count = 0) and (next^ <> quotc);
     end;
   end;
   
 begin
+  quotc := #0;
   times := 0;
   if S <> nil then
   begin
     S := __skipch(S, SpaceChar);
-    while (S^ = '"') and (times < 3) do
+    if S^ in ['"', ''''] then
     begin
-      Inc(S);
-      Inc(times);
+      quotc := S^;
+      while (S^ = quotc) and (times < 3) do
+      begin
+        Inc(S);
+        Inc(times);
+      end;
     end;
   end;
   
   Result := (times = 2);
   if Result or not (times in [1, 3]) then Exit;
-  if times = 3 then
+  if (times = 3) or (quotc = '''') then
     allow_esc_char := false;
     
   while not str_end do
@@ -2630,114 +2593,6 @@ begin
   Result := __countTab(lse_strec_data(this), lse_strec_length(this), LCount, MCount, RCount);
 end;
 
-{ KLiStrlist }
-
-function KLiStrlist.CompStr(const S1, S2: string): integer;
-begin
-  {$IFDEF FPC}
-  if CaseSensitive then
-    Result := AnsiCompareStr(S1, S2) else
-    Result := AnsiCompareText(S1, S2);
-  {$ELSE}
-  Result := CompareStrings(S1, S2);
-  {$ENDIF}
-end;
-
-function KLiStrlist.Copy(Index, ACount: integer): KLiStrlist;
-begin
-  Result := KLiStrlist.Create;
-  Result.CopyFrom(Self, Index, ACount);
-end;
-
-function KLiStrlist.CopyFrom(List: TStrings; Index, ACount: integer): integer;
-begin
-  if Index >= 0 then
-  begin
-    Result := Max(0, Min(ACount, List.Count - Index));
-    for ACount := 1 to Result do
-    begin
-      AddObject(List[Index], List.Objects[Index]);
-      Inc(Index);
-    end;
-  end
-  else Result := 0;
-end;
-
-constructor KLiStrlist.Create(const S: string);
-begin
-  inherited Create;
-  SetTextStr(S);
-end;
-
-function KLiStrlist.DecRefcount: integer;
-begin
-  Dec(FRefcount);
-  Result := FRefcount;
-  if Result = 0 then Free;
-end;
-
-function KLiStrlist.First: string;
-begin
-  Result := Get(0);
-end;
-
-function KLiStrlist.IncRefcount: integer;
-begin
-  Inc(FRefcount);
-  Result := FRefcount;
-  if Result = 0 then Free;
-end;
-
-function KLiStrlist.Last: string;
-begin
-  Result := Get(GetCount - 1);
-end;
-
-function KLiStrlist.Match(Index1, Index2: integer): boolean;
-begin
-  if CaseSensitive then
-    Result := Strings[Index1] = Strings[Index2] else
-    Result := CompareText(Strings[Index1], Strings[Index2]) = 0;
-end;
-
-function KLiStrlist.MaxStr: string;
-var
-  index: integer;
-begin
-  Result := Last;
-  if not Sorted then
-    for index := 0 to GetCount - 2 do
-      if CompStr(Get(index), Result) > 0 then
-        Result := Get(index);
-end;
-
-function KLiStrlist.MinStr: string;
-var
-  index: integer;
-begin
-  Result := First;
-  if not Sorted then
-    for index := 1 to GetCount - 1 do
-      if CompStr(Get(index), Result) < 0 then
-        Result := Get(index);
-end;
-
-function KLiStrlist.ReadValue(const Name, DefValue: string): string;
-begin
-  Result := DefValue;
-  Read(Name, Result);
-end;
-
-function KLiStrlist.Read(const Name: string; var Value: string): boolean;
-var
-  index: integer;
-begin
-  index := IndexOfName(Name);
-  Result := (index >= 0);
-  if Result then
-    Value := System.Copy(Strings[index], Length(Name) + 2, MaxInt);
-end;
-
 { KLiList }
 
 function KLiList.DecRefcount: integer;
@@ -2770,6 +2625,161 @@ begin
     begin
       Delete(index);
       Exit;
+    end;
+end;
+
+{ KLiNameObject }
+
+constructor KLiNameObject.Create(const AName: string);
+begin
+  FName := AName;
+end;
+
+{ KLiNameHashed }
+
+procedure KLiNameHashed.Clear;
+var
+  X: integer;
+  B, N: PLiNameItem;
+begin
+  for X := 0 to FSize - 1 do
+  begin
+    B := FBuckets[X];
+    FBuckets[X] := nil;
+    while B <> nil do
+    begin
+      N := B^.ni_next;
+      FreeItem(B);
+      B := N;
+    end;
+  end;
+end;
+
+constructor KLiNameHashed.Create(Size: cardinal);
+begin
+  inherited Create;
+  FSize := Max(2, Size);
+  SetLength(FBuckets, FSize);
+  FillChar(FBuckets[0], FSize * sizeof(PLiNameItem), 0);
+end;
+
+destructor KLiNameHashed.Destroy;
+begin
+  Clear;
+  SetLength(FBuckets, 0);
+  inherited;
+end;
+
+function KLiNameHashed.FindItem(const Key: string): PLiNameItem;
+begin
+  Result := FBuckets[HashOf(Key)];
+  while Result <> nil do
+  begin
+    if Key = Result^.ni_nobj.FName then Exit;
+    Result := Result^.ni_next;
+  end;
+end;
+
+procedure KLiNameHashed.FreeItem(Item: PLiNameItem);
+begin
+  Dec(FCount);
+  lse_mem_free(Item, sizeof(RLiNameItem));
+end;
+
+function KLiNameHashed.Get(const Key: string): KLiNameObject;
+var
+  M: PLiNameItem;
+begin
+  M := FindItem(Key);
+  if M <> nil then
+    Result := M^.ni_nobj else
+    Result := nil;
+end;
+
+function KLiNameHashed.HashOf(const Key: string): cardinal;
+begin
+  Result := __hashof(Key) mod FSize;
+end;
+
+function KLiNameHashed.NewItem: PLiNameItem;
+var
+  Z: cardinal;
+  L: TList;
+  M: PLiNameItem;
+  X, H: integer;
+begin
+  Result := lse_mem_alloc_zero(sizeof(RLiNameItem));
+  Inc(FCount);
+  Z := FCount div 16;
+  if Z > FSize then
+  begin
+    L := TList.Create;
+    try
+      for X := 0 to FSize - 1 do
+      begin
+        M := FBuckets[X];
+        while M <> nil do
+        begin
+          L.Add(M);
+          M := M^.ni_next;
+        end;
+      end;
+      SetLength(FBuckets, Z);
+      FillChar(FBuckets[0], Z * sizeof(PLiNameItem), 0);
+      FSize := Z;
+      for X := 0 to L.Count - 1 do
+      begin
+        M := PLiNameItem(L[X]);
+        H := HashOf(M^.ni_nobj.FName);
+        M^.ni_next := FBuckets[H];
+        FBuckets[H] := M;
+      end;
+    finally
+      L.Free;
+    end;
+  end; 
+end;
+
+procedure KLiNameHashed.Put(AObj: KLiNameObject);
+var
+  X: integer;
+  M: PLiNameItem;
+begin
+  if AObj <> nil then
+    if FindItem(AObj.FName) = nil then
+    begin
+      X := HashOf(AObj.FName);
+      M := NewItem;
+      M^.ni_nobj := AObj;
+      M^.ni_next := FBuckets[X];
+      FBuckets[X] := M;
+    end;
+end;
+
+procedure KLiNameHashed.Remove(const Key: string);
+var
+  X: integer;
+  M, P: PLiNameItem;
+begin
+  X := HashOf(Key);
+  P := FBuckets[X];
+  if P <> nil then
+    if Key = P^.ni_nobj.FName then
+    begin
+      FBuckets[X] := P^.ni_next;
+      FreeItem(P);
+    end
+    else
+    while P^.ni_next <> nil do
+    begin
+      M := P^.ni_next;
+      if Key = M^.ni_nobj.FName then
+      begin
+        P^.ni_next := M^.ni_next;
+        FreeItem(M);
+        Exit;
+      end;
+      P := M;
     end;
 end;
 

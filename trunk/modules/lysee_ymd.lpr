@@ -49,13 +49,13 @@ uses
   lse_funcs in '../lse_funcs.pas',
   lysee_ymd_funcs;
 
-procedure InitExchange(const MR: PLseModuleRec; const QE: TLseQueryEntry);cdecl;
+procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lse_prepare(QE);
+  lseu.lse_entries      := ER;
   MR^.iw_version        := LSE_VERSION;
   MR^.iw_desc           := 'fpc ymd module for lysee';
-  MR^.iw_libfuncs.count := ymd_func_count;
-  MR^.iw_libfuncs.entry :=@ymd_func_array;
+  MR^.iw_funcs.fl_count := func_count;
+  MR^.iw_funcs.fl_entry :=@func_array;
   MR^.iw_invoke         :=@lse_call_gate;
 end;
 

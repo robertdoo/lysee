@@ -92,7 +92,7 @@ type
   end;
   PEasyRanges = ^REasyRanges;
 
-  TEasyItem = class
+  TEasyItem = class(TLseObject)
   private
     FForm: TEasyForm;
     FText: WideString;
@@ -115,11 +115,11 @@ type
     function IntersectRanges(Ranges: PEasyRanges): boolean;
     procedure Resize(ACol, ARow, AColSpan, ARowSpan: integer);
     procedure Ensure;
+    procedure Leave;
   public
     constructor Create(AForm: TEasyForm);
     destructor Destroy;override;
-    procedure BeginUpdate;
-    procedure EndUpdate;
+    procedure Validate;
     procedure Assign(AItem: TEasyItem);
     procedure Changed;
     procedure Delete;
@@ -128,11 +128,11 @@ type
     function Top: integer;
     function Width: integer;
     function Height: integer;
+    function Active: boolean;
     function Selected: boolean;
     function ItemID: string;
     function ItemRange: TRect;
     function ItemRangeID: string;
-    function Active: boolean;
     property Form: TEasyForm read FForm;
     property Text: WideString read FText write SetText;
     property Row: integer read FRow write SetRow;
@@ -145,7 +145,7 @@ type
   TEasyFormState = (efsModified, efsChanged, efsResized, efsDestroying);
   TEasyFormStates = set of TEasyFormState;
 
-  TEasyForm = class
+  TEasyForm = class(TLseObject)
   private
     FView: TEasyView;
     FName: string;
@@ -160,7 +160,7 @@ type
     FUpdateCount: integer;
     FOnChange: TNotifyEvent;
     FOnDestroying: TNotifyEvent;
-    FOnDestroyingItem: TNotifyEvent;
+    FOnDelete: TNotifyEvent;
     procedure SetName(const Value: string);
     function GetModified: boolean;
     procedure SetModified(Value: boolean);
@@ -251,7 +251,7 @@ type
     property Script: TEasyScript read FScript;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnDestroying: TNotifyEvent read FOnDestroying write FOnDestroying;
-    property OnDestroyingItem: TNotifyEvent read FOnDestroyingItem write FOnDestroyingItem;
+    property OnDelete: TNotifyEvent read FOnDelete write FOnDelete;
   end;
 
   TEasyScript = class(TLseObject)
@@ -882,7 +882,7 @@ type
     procedure SetName(const Value: string);
     function GetName: string;
     procedure OnDestroying(Sender: TObject);
-    procedure OnDestroyingItem(AItem: TObject);
+    procedure OnDelete(AItem: TObject);
     function MakeUp(AItem: TEasyItem): TEfxCell;
     procedure SetPageIndex(Value: integer);
     function GetPageIndex: integer;
@@ -2428,13 +2428,13 @@ end;
 
 procedure TEasyItem.Changed;
 begin
-  BeginUpdate;
+  FForm.BeginUpdate;
   try
     if Active then
       FForm.FView.AddChangedRange(ItemRange);
     FForm.Modified := true;
   finally
-    EndUpdate;
+    FForm.EndUpdate;
   end;
 end;
 
@@ -2449,37 +2449,28 @@ end;
 constructor TEasyItem.Create(AForm: TEasyForm);
 begin
   FForm := AForm;
-  BeginUpdate;
+  FForm.BeginUpdate;
   try
+    IncRefcount;
     FForm.FItems.Add(Self);
     FRowSpan := 1;
     FColSpan := 1;
     FStyle := '';
     FForm.Modified := true;
   finally
-    EndUpdate;
+    FForm.EndUpdate;
   end;
 end;
 
 procedure TEasyItem.Delete;
 begin
-  Free;
+  Leave;
+  DecRefcount;
 end;
 
 destructor TEasyItem.Destroy;
 begin
-  if FForm <> nil then
-  begin
-    if Assigned(FForm.FOnDestroyingItem) then
-      FForm.FOnDestroyingItem(Self);
-    BeginUpdate;
-    try
-      lse_remove_item(FForm.FItems, Self);
-      Changed;
-    finally
-      EndUpdate;
-    end;
-  end;
+  Leave;
   inherited;
 end;
 
@@ -2535,12 +2526,12 @@ end;
 
 procedure TEasyItem.Ensure;
 begin
-  BeginUpdate;
+  FForm.BeginUpdate;
   try
     FForm.SetRowCount(Max(FForm.RowCount, FRow + FRowSpan));
     FForm.SetColCount(Max(FForm.ColCount, FCol + FColSpan));
   finally
-    EndUpdate;
+    FForm.EndUpdate;
   end;
 end;
 
@@ -2602,7 +2593,7 @@ begin
     if (N <> Self) and N.Intersects(R) then Exit;
   end;
 
-  BeginUpdate;
+  FForm.BeginUpdate;
   try
     Changed; {<--current rect changed}
     FCol := ACol;
@@ -2612,7 +2603,7 @@ begin
     Ensure;
     Changed; {<--new rect changed}
   finally
-    EndUpdate;
+    FForm.EndUpdate;
   end;
 end;
 
@@ -2659,16 +2650,6 @@ begin
   end;
 end;
 
-procedure TEasyItem.BeginUpdate;
-begin
-  FForm.BeginUpdate;
-end;
-
-procedure TEasyItem.EndUpdate;
-begin
-  FForm.EndUpdate;
-end;
-
 procedure TEasyItem.SaveToStream(Stream: TEasyStream);
 begin
   Stream.write_easytag(egItemBegin);
@@ -2689,7 +2670,7 @@ begin
   FCol := Stream.read_taged_longint(egItemCol);
   FColSpan := Stream.read_taged_longint(egItemColSpan);
   FText := Stream.read_taged_string(egItemText);
-  Stream.read_taged_string(egItemSname);
+  FStyle := Stream.read_taged_string(egItemSname);
   Stream.read_easytag_check(egItemEnd);
 end;
 
@@ -2700,7 +2681,7 @@ end;
 
 procedure TEasyItem.Assign(AItem: TEasyItem);
 begin
-  BeginUpdate;
+  FForm.BeginUpdate;
   try
     Changed;
     FRow := AItem.FRow;
@@ -2712,7 +2693,27 @@ begin
     Ensure;
     Changed;
   finally
-    EndUpdate;
+    FForm.EndUpdate;
+  end;
+end;
+
+procedure TEasyItem.Leave;
+var
+  F: TEasyForm;
+begin
+  if FForm <> nil then
+  begin
+    F := FForm;
+    if Assigned(F.FOnDelete) then
+      F.FOnDelete(Self);
+    F.BeginUpdate;
+    try
+      lse_remove_last_item(F.FItems, Self);
+      Changed;
+      FForm := nil;
+    finally
+      F.EndUpdate;
+    end;
   end;
 end;
 
@@ -2724,6 +2725,12 @@ end;
 function TEasyItem.Top: integer;
 begin
   Result := FForm.GetTops(FRow);
+end;
+
+procedure TEasyItem.Validate;
+begin
+  if (Self = nil) or (FForm = nil) then
+    lse_error('invalid easy item');
 end;
 
 function TEasyItem.Width: integer;
@@ -2746,7 +2753,7 @@ end;
 
 function TEasyItem.Selected: boolean;
 begin
-  Result := (FForm.FView <> nil) and
+  Result := Active and 
             FForm.FView.Targeted and
             Contains(FForm.FView.FHot.X, FForm.FView.FHot.Y);
 end;
@@ -2779,19 +2786,14 @@ end;
 procedure TEasyForm.Clear;
 var
   A: integer;
-  N: TEasyItem;
 begin
   BeginUpdate;
   try
     FScript.Clear;
     FStyles.ClearUserStyles;
     for A := GetItemCount - 1 downto 0 do
-    begin
-      N := GetItem(A);
-      FItems.Delete(A);
-      N.FForm := nil;
-      N.Free;
-    end;
+      GetItem(A).Delete;
+    FItems.Clear;
     FWidths.Clear;
     FHeights.Clear;
     if not (efsDestroying in FState) then
@@ -8035,7 +8037,7 @@ begin
   FBook.FList.Add(Self);
   FPage := AForm;
   FPage.OnDestroying := {$IFDEF FPC}@{$ENDIF}OnDestroying;
-  FPage.OnDestroyingItem := {$IFDEF FPC}@{$ENDIF}OnDestroyingItem;
+  FPage.OnDelete := {$IFDEF FPC}@{$ENDIF}OnDelete;
   FList := TList.Create;
 end;
 
@@ -8174,7 +8176,7 @@ begin
   if Assigned(FPage) then
   begin
     FPage.OnDestroying := nil;
-    FPage.OnDestroyingItem := nil;
+    FPage.OnDelete := nil;
     FPage := nil;
   end;
 
@@ -8190,7 +8192,7 @@ begin
   end;
 end;
 
-procedure TEfxPage.OnDestroyingItem(AItem: TObject);
+procedure TEfxPage.OnDelete(AItem: TObject);
 var
   index: integer;
   cell: TEfxCell;

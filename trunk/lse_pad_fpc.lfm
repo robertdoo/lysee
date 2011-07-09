@@ -14,7 +14,7 @@ object LspadForm: TLspadForm
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   Position = poDefault
-  LCLVersion = '0.9.28.2'
+  LCLVersion = '0.9.30'
   object StatusBar: TStatusBar
     Left = 0
     Height = 20
@@ -41,7 +41,7 @@ object LspadForm: TLspadForm
     ClientHeight = 453
     ClientWidth = 760
     TabOrder = 1
-    object smLysee: TSynMemo
+    inline smLysee: TSynMemo
       Cursor = crIBeam
       Left = 0
       Height = 397
@@ -59,11 +59,11 @@ object LspadForm: TLspadForm
       PopupMenu = popEdit
       TabOrder = 0
       BookMarkOptions.Xoffset = 15
-      BookMarkOptions.OnChange = nil
+      BorderStyle = bsSingle
       Gutter.Color = 15000804
       Gutter.LeftOffset = 2
       Gutter.Visible = False
-      Gutter.Width = 0
+      Gutter.Width = 21
       Gutter.MouseActions = <      
         item
           Shift = []
@@ -536,9 +536,9 @@ object LspadForm: TLspadForm
       OnChange = smLyseeChange
       OnSpecialLineColors = smLyseeSpecialLineColors
       OnStatusChange = smLyseeStatusChange
-      object TSynGutterPartList
+      inline TSynGutterPartList
         object TSynGutterLineNumber
-          Width = 25
+          Width = 17
           MouseActions = <>
           MarkupInfo.Background = clBtnFace
           MarkupInfo.Foreground = clNone
@@ -580,7 +580,6 @@ object LspadForm: TLspadForm
         Width = 75
         HelpType = htKeyword
         Caption = '&Find   '
-        Color = clBtnFace
         Enabled = False
         Flat = True
         Glyph.Data = {
@@ -636,7 +635,6 @@ object LspadForm: TLspadForm
         Top = 33
         Width = 75
         Caption = '&Replace'
-        Color = clBtnFace
         Enabled = False
         Flat = True
         Glyph.Data = {
@@ -684,7 +682,6 @@ object LspadForm: TLspadForm
         Top = 33
         Width = 96
         Caption = 'Replace &All'
-        Color = clBtnFace
         Enabled = False
         Flat = True
         Glyph.Data = {
@@ -731,7 +728,6 @@ object LspadForm: TLspadForm
         Height = 20
         Top = 4
         Width = 20
-        Color = clBtnFace
         Flat = True
         Glyph.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100

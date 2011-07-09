@@ -37,7 +37,6 @@ type
     procedure EndUpdate;
     procedure Clear;
     procedure Sort;
-    procedure ErrorAt(Sender: TObject; Page: TEfxPage; const Cell, Msg: string);
     procedure SaveToList(list: TStrings);
     property View: TEasyView read FView write FView;
     property ErrorCount: integer read GetErrorCount;
@@ -142,19 +141,6 @@ begin
     index := 0;
   Caption := Format('¥ÌŒÛ¡–±Ì [%5d/%-5d]', [Index, ErrorCount]);
   lse_msgbox.unlock_cursor;
-end;
-
-procedure TErrorForm.ErrorAt(Sender: TObject; Page: TEfxPage;
-  const Cell, Msg: string);
-var
-  item: TListItem;
-begin
-  item := lvError.Items.Add;
-  item.Caption := IntToStr(Page.PageIndex + 1);
-  item.SubItems.Add(Cell);
-  item.SubItems.Add(Msg);
-  item.ImageIndex := 0;
-  Show;
 end;
 
 procedure TErrorForm.Sort;

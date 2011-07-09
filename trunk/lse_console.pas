@@ -1,8 +1,10 @@
 {==============================================================================}
 {        UNIT: lse_console                                                     }
 { DESCRIPTION: console implementation of lysee script interpreter              }
+{   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
+{     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2010/10/17                                                      }
+{    MODIFIED: 2011/07/09                                                      }
 {==============================================================================}
 { Copyright (c) 2003-2010, Li Yun Jie                                          }
 { All rights reserved.                                                         }
@@ -251,7 +253,7 @@ begin
             code := '';
           end
           else
-          if masked(SCT_OK + SCT_DOTCOMMA) then
+          if masked(SCT_OK + SCT_RBLOCK) then
           begin
             if FEngine.ExecuteCode(code) then
               FEngine.WriteLine(FEngine.ResultText) else

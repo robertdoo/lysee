@@ -218,10 +218,6 @@ object StyleForm: TStyleForm
         BevelOuter = bvNone
         Caption = 'Text'
         TabOrder = 1
-        ExplicitLeft = 48
-        ExplicitTop = 16
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
     end
     object pnBackColorBox: TPanel
@@ -264,10 +260,6 @@ object StyleForm: TStyleForm
         BevelOuter = bvNone
         Caption = 'Background'
         TabOrder = 1
-        ExplicitLeft = 64
-        ExplicitTop = 8
-        ExplicitWidth = 185
-        ExplicitHeight = 41
       end
     end
     object edtLineDistance: TSpinEdit
@@ -380,7 +372,6 @@ object StyleForm: TStyleForm
       BorderWidth = 8
       Color = clWindow
       TabOrder = 0
-      ExplicitTop = -5
       object pbxSample: TPaintBox
         Left = 8
         Top = 8

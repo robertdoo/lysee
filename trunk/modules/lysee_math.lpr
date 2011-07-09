@@ -50,13 +50,14 @@ uses
 
 {$IFDEF WINDOWS}{$R lysee_math.rc}{$ENDIF}
 
-procedure InitExchange(rec: PLseModuleRec; proc: TLseQueryEntry);cdecl;
+procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lse_prepare(proc);
-  rec^.iw_version        := LSE_VERSION;
-  rec^.iw_desc           := 'mathematic module for lysee';
-  rec^.iw_libfuncs.count := math_func_count;
-  rec^.iw_libfuncs.entry :=@math_func_array;
+  lseu.lse_entries      := ER;
+  MR^.iw_version        := LSE_VERSION;
+  MR^.iw_desc           := 'mathematic module for lysee';
+  MR^.iw_funcs.fl_count := func_count;
+  MR^.iw_funcs.fl_entry :=@func_array;
+  MR^.iw_invoke         :=@lse_call_gate;
 end;
 
 exports

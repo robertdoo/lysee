@@ -117,7 +117,7 @@ begin
   ID := '';
   if InputStyleName(ID) then
   begin
-    font := TEasyStyle.Create(ID, false);
+    font := TEasyStyle.Create(ID);
     if FStyle <> nil then
       font.Assign(FStyle);
     FStyleList.Add(font);
@@ -160,7 +160,7 @@ begin
       begin
         lsbFonts.ItemIndex := index;
         lsbFontsClick(nil);
-        if (FStyle <> nil) and not FStyle.Builtin then
+        if FStyle <> nil then
           btnDeleteClick(nil);
       end;
       Select(style);
@@ -216,7 +216,7 @@ procedure TStyleForm.cbxItemTypeChange(Sender: TObject);
 begin
   if not FPutting and (FStyle <> nil) then
   begin
-    FStyle.ItemType := TEasyStyleType(cbxItemType.ItemIndex);
+    FStyle.CellType := TEasyStyleType(cbxItemType.ItemIndex);
     NotifyChange;
   end;
 end;
@@ -357,9 +357,9 @@ begin
     FStyle := TEasyStyle(lsbFonts.Items.Objects[index]) else
     FStyle := nil;
   btnOk.Enabled := (FStyle <> nil);
-  grpInfo.Enabled := (FStyle <> nil) and not FStyle.Builtin;
-  btnRename.Enabled := (FStyle <> nil) and not FStyle.Builtin;
-  btnDelete.Enabled := (FStyle <> nil) and not FStyle.Builtin;
+  grpInfo.Enabled := (FStyle <> nil);
+  btnRename.Enabled := (FStyle <> nil);
+  btnDelete.Enabled := (FStyle <> nil);
   if FStyle <> nil then
   begin
     FPutting := true;
@@ -374,7 +374,7 @@ begin
     cbxVert.ItemIndex := Ord(FStyle.VAlign);
     edtLineDistance.Value := FStyle.LineDistance;
     chkWordWrap.Checked := FStyle.WordWrap;
-    cbxItemType.ItemIndex := Ord(FStyle.ItemType);
+    cbxItemType.ItemIndex := Ord(FStyle.CellType);
     chkLeft.Checked := eeLeft in FStyle.Edges;
     chkTop.Checked := eeTop in FStyle.Edges;
     chkRight.Checked := eeRight in FStyle.Edges;
@@ -410,7 +410,7 @@ begin
   try
     L.Add('Sample text.');
     L.Add('Virtue is its own reward.');
-    Rectout(L, V, R, FStyle.HAlign, FStyle.VAlign,
+    Rectout(L.CommaText, V, R, FStyle.HAlign, FStyle.VAlign,
       FStyle.LineDistance, FStyle.WordWrap);
   finally
     L.Free;
@@ -418,12 +418,12 @@ begin
 
   R := ZoomRect(R, 1, 1);
   V.Pen.Color := DefLineColor;
-  DrawBox(V, R, [eeLeft, eeTop, eeRight, eeBottom], 1, 1);
+  DrawEdges(V, R, [eeLeft, eeTop, eeRight, eeBottom], 1, 1);
   
   if FStyle.Edges <> [] then
   begin
     V.Pen.Color := DefEdgeColor;
-    DrawBox(V, R, FStyle.Edges, 1, 1);
+    DrawEdges(V, R, FStyle.Edges, 1, 1);
   end;
 end;
 

@@ -56,36 +56,34 @@ type
   private
     FFileList: TStrings;
   public
-    procedure UnZipOneFile(Item: {$IFDEF VER2_4_0}TFullZipFileEntry
-                                 {$ELSE}TZipFileEntry
-                                 {$ENDIF});override;
+    procedure UnZipOneFile(Item: TFullZipFileEntry);override;
   end;
 
   { TMyZipper }
 
   TMyZipper = TZipper;
 
-procedure zipper_list(invoker: TLseInvoke);cdecl;
-procedure zipper_unzip(invoker: TLseInvoke);cdecl;
-procedure zipper_unzip_file(invoker: TLseInvoke);cdecl;
-procedure zipper_zip(invoker: TLseInvoke);cdecl;
+procedure zipper_list(const invoker: TLseInvoke);cdecl;
+procedure zipper_unzip(const invoker: TLseInvoke);cdecl;
+procedure zipper_unzip_file(const invoker: TLseInvoke);cdecl;
+procedure zipper_zip(const invoker: TLseInvoke);cdecl;
 
 const
-  zipper_func_count = 4;
-  zipper_func_array: array[0..zipper_func_count - 1] of RLseFuncRec = (
-    (fr_prot:'strlist list(string zipFile)';
+  func_count = 4;
+  func_array: array[0..func_count - 1] of RLseFunc = (
+    (fr_prot:'list:string |zipFile:string|';
      fr_addr:@zipper_list;
      fr_desc:'list sub-files in source zip file'
     ),
-    (fr_prot:'void unzip(string zipFile, string outputPath)';
+    (fr_prot:'unzip:void |zipFile:string, outputPath:string|';
      fr_addr:@zipper_unzip;
      fr_desc:'unzip all files to specified path'
     ),
-    (fr_prot:'void unzipf(string zipFile, string subFile, string outputPath)';
+    (fr_prot:'unzipf:void |zipFile:string, subFile:string, outputPath:string|';
      fr_addr:@zipper_unzip_file;
      fr_desc:'unzip specified sub file'
     ),
-    (fr_prot:'int zip(string zipFile, string sourceFile)';
+    (fr_prot:'zip:int |zipFile:string, sourceFile:string|';
      fr_addr:@zipper_zip;
      fr_desc:'create zip file with passed source file or LB delimited list'
     )
@@ -93,7 +91,7 @@ const
 
 implementation
 
-procedure zipper_list(invoker: TLseInvoke);cdecl;
+procedure zipper_list(const invoker: TLseInvoke);cdecl;
 var
   Z: TMyUnZipper;
 begin
@@ -111,7 +109,7 @@ begin
   end;
 end;
 
-procedure zipper_unzip(invoker: TLseInvoke);cdecl;
+procedure zipper_unzip(const invoker: TLseInvoke);cdecl;
 var
   Z: TMyUnZipper;
 begin
@@ -124,7 +122,7 @@ begin
   end;
 end;
 
-procedure zipper_unzip_file(invoker: TLseInvoke);cdecl;
+procedure zipper_unzip_file(const invoker: TLseInvoke);cdecl;
 var
   Z: TMyUnZipper;
   L: TStrings;
@@ -149,7 +147,7 @@ begin
   end;
 end;
 
-procedure zipper_zip(invoker: TLseInvoke);cdecl;
+procedure zipper_zip(const invoker: TLseInvoke);cdecl;
 var
   Z: TZipper;
   L: TStrings;
@@ -183,10 +181,7 @@ end;
 
 { TMyUnZipper }
 
-procedure TMyUnZipper.UnZipOneFile(Item:
-  {$IFDEF VER2_4_0}TFullZipFileEntry
-  {$ELSE}TZipFileEntry
-  {$ENDIF});
+procedure TMyUnZipper.UnZipOneFile(Item: TFullZipFileEntry);
 var
   ofile: string;
 begin

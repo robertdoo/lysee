@@ -175,32 +175,6 @@ begin
   end;
 end;
 
-function vds_getfm(DS: PLseDS; index: integer): currency;cdecl;
-var
-  vds: TVendorDS;
-begin
-  vds := get_vds(DS);
-  try
-    Result := __getfm(vds.Fields[index]);
-  except
-    vds.HandleError;
-    Result := 0;
-  end;
-end;
-
-function vds_getfb(DS: PLseDS; index: integer): integer;cdecl;
-var
-  vds: TVendorDS;
-begin
-  vds := get_vds(DS);
-  try
-    Result := Ord(__getfb(vds.Fields[index]));
-  except
-    vds.HandleError;
-    Result := 0;
-  end;
-end;
-
 function vds_isnull(DS: PLseDS; index: integer): integer;cdecl;
 var
   vds: TVendorDS;
@@ -508,8 +482,6 @@ begin
     Result^.ds_getfi    :=@vds_getfi;
     Result^.ds_getfs    :=@vds_getfs;
     Result^.ds_getfd    :=@vds_getfd;
-    Result^.ds_getfm    :=@vds_getfm;
-    Result^.ds_getfb    :=@vds_getfb;
     Result^.ds_isnull   :=@vds_isnull;
     Result^.ds_length   :=@vds_length;
     Result^.ds_bof      :=@vds_bof;
@@ -689,8 +661,8 @@ end;
 
 var
   registered: boolean = false;
-  vendor: RLseDBVendor;
-  module: RLseModuleRec;
+  vendor: RLseVendor;
+  module: RLseModule;
 
 procedure register_dbv;
 begin
@@ -717,7 +689,7 @@ begin
       FillChar(module, sizeof(module), 0);
       module.iw_version := LSE_VERSION;
       module.iw_desc    := DBV_DESC;
-      lse_module_setup(DBV_NAME, ExpandFileName(ParamStr(0)), @module);
+      lse_register_module(DBV_NAME, ExpandFileName(ParamStr(0)), @module);
     end;
   except
     { safe & quiet }

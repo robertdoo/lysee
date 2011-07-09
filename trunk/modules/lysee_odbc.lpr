@@ -49,11 +49,11 @@ uses
   lse_dbu in '../lse_dbu.pas',
   lysee_odbc_funcs;
 
-procedure InitExchange(const MR: PLseModuleRec; const QE: TLseQueryEntry);cdecl;
+procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lse_prepare(QE);
-  MR^.iw_version := LSE_VERSION;
-  MR^.iw_desc    := 'ODBC vendor for lysee';
+  lseu.lse_entries := ER;
+  MR^.iw_version   := LSE_VERSION;
+  MR^.iw_desc      := 'ODBC vendor for lysee';
   lysee_odbc_funcs.register_dbv;
 end;
 

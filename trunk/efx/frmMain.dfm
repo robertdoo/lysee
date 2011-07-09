@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 198
   Top = 122
   Caption = #31616#21333#25253#34920#31995#32479
-  ClientHeight = 506
+  ClientHeight = 525
   ClientWidth = 665
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
@@ -25,13 +25,13 @@ object MainForm: TMainForm
     Left = 0
     Top = 0
     Width = 665
-    Height = 506
+    Height = 525
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object sttDesign: TStatusBar
       Left = 0
-      Top = 488
+      Top = 507
       Width = 665
       Height = 18
       Panels = <
@@ -55,7 +55,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 48
       Width = 665
-      Height = 440
+      Height = 459
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
@@ -432,6 +432,10 @@ object MainForm: TMainForm
       GroupIndex = 5
       object A1: TMenuItem
         Action = acHelpAbout
+      end
+      object JJJ1: TMenuItem
+        Caption = 'JJJ'
+        OnClick = JJJ1Click
       end
     end
   end
@@ -3888,7 +3892,6 @@ object MainForm: TMainForm
       Caption = #24405#20837#27169#24335'(&E)'
       Hint = #24405#20837#27169#24335'|'#23558#34920#26684#32534#36753#22120#36716#25442#21040#24405#20837#27169#24335
       ShortCut = 118
-      OnExecute = acViewModeExecute
     end
     object acViewRule: TAction
       Category = 'view'
