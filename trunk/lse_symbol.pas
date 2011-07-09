@@ -24,7 +24,7 @@ uses
 type
   KLiSymbol = (
     syError, syBegin, syImport, syConst, sySyntax, syLambda, syClass, syThis,
-    syObject, syDefine, syReturn, syIf, syThen, syElif, syElse, syWhile,
+    syObject, syWith, syLet, sySet, syGet, syHas, syDefine, syReturn, syIf, syThen, syElif, syElse, syWhile,
     syRepeat, syUntil, syFor, syDo, syBreak, syContinue, sySwitch, syCase,
     syTry, syExcept, syFinally, syIn, syIs, syAs, syLike, syAnd, syOr, syNot,
     syFrom, syTo, syEnd, syBecome, syAdd, syDec, syMul, syDiv, syMod, syBNot,
@@ -53,6 +53,11 @@ const
     (SY:syClass;     ID:'class';        SM:'class'),
     (SY:syThis;      ID:'this';         SM:'this'),
     (SY:syObject;    ID:'object';       SM:'object'),
+    (SY:syWith;      ID:'with';         SM:'with'),
+    (SY:syLet;       ID:'let';          SM:'let'),
+    (SY:sySet;       ID:'set';          SM:'set'),
+    (SY:syGet;       ID:'get';          SM:'get'),
+    (SY:syHas;       ID:'has';          SM:'has'),
     (sy:syDefine;    ID:'def';          SM:'define functions'),
     (SY:syReturn;    ID:'return';       SM:'return'),
     (SY:syIf;        ID:'if';           SM:'if'),

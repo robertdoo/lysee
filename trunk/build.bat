@@ -15,17 +15,9 @@ echo ***** lysee_pad_fpc.lpr => lysee_pad_fpc.exe
 del lysee_pad_fpc.exe
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu. -WG -dSYN_LAZARUS -dLCL -dLCLwin32  -Fu..\..\..\..\Developments\lazarus\components\synedit\units\i386-win32\ -Fu..\..\..\..\Developments\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\Developments\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\Developments\lazarus\packager\units\i386-win32\ -olysee_pad_fpc.exe lysee_pad_fpc.lpr
 
-echo ***** modules\lysee_ib.lpr => modules\lysee_ib.dll
-del modules\lysee_ib.dll
-fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_ib.dll modules\lysee_ib.lpr
-
 echo ***** modules\lysee_odbc.lpr => modules\lysee_odbc.dll
 del modules\lysee_odbc.dll
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_odbc.dll modules\lysee_odbc.lpr
-
-echo ***** modules\lysee_postgres.lpr => modules\lysee_postgres.dll
-del modules\lysee_postgres.dll
-fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_postgres.dll modules\lysee_postgres.lpr
 
 echo ***** modules\lysee_sh.lpr => modules\lysee_sh.dll
 del modules\lysee_sh.dll
@@ -68,7 +60,7 @@ dcc32.exe -B -M -CC lysee_exe.dpr
 
 cd modules
 
-dcc32.exe -B -M lysee_adodbv.dpr
+::dcc32.exe -B -M lysee_adodbv.dpr
 
 cd ..
 

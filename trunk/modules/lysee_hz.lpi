@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="372"/>
+      <BuildNr Value="373"/>
       <StringTable FileDescription="chinese pinyin" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.1.1.315"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -41,11 +41,10 @@
         <Filename Value="lysee_hz.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_hz"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="42"/>
-        <CursorPos X="1" Y="54"/>
+        <TopLine Value="13"/>
+        <CursorPos X="1" Y="13"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -111,10 +110,11 @@
         <Filename Value="lysee_hz_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_hz_funcs"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="39"/>
-        <CursorPos X="79" Y="56"/>
+        <TopLine Value="16"/>
+        <CursorPos X="1" Y="22"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -133,7 +133,7 @@
         <UsageCount Value="20"/>
       </Unit11>
     </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
+    <JumpHistory Count="11" HistoryIndex="10">
       <Position1>
         <Filename Value="lysee_hz.lpr"/>
         <Caret Line="10" Column="35" TopLine="3"/>
@@ -150,6 +150,34 @@
         <Filename Value="lysee_hz_funcs.pas"/>
         <Caret Line="51" Column="27" TopLine="39"/>
       </Position4>
+      <Position5>
+        <Filename Value="lysee_hz.lpr"/>
+        <Caret Line="54" Column="1" TopLine="42"/>
+      </Position5>
+      <Position6>
+        <Filename Value="lysee_hz_funcs.pas"/>
+        <Caret Line="56" Column="79" TopLine="39"/>
+      </Position6>
+      <Position7>
+        <Filename Value="lysee_hz_funcs.pas"/>
+        <Caret Line="30" Column="1" TopLine="30"/>
+      </Position7>
+      <Position8>
+        <Filename Value="lysee_hz.lpr"/>
+        <Caret Line="35" Column="1" TopLine="11"/>
+      </Position8>
+      <Position9>
+        <Filename Value="lysee_hz_funcs.pas"/>
+        <Caret Line="3" Column="1" TopLine="1"/>
+      </Position9>
+      <Position10>
+        <Filename Value="lysee_hz_funcs.pas"/>
+        <Caret Line="33" Column="1" TopLine="9"/>
+      </Position10>
+      <Position11>
+        <Filename Value="lysee_hz.lpr"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
+      </Position11>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

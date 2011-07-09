@@ -127,7 +127,7 @@ type
     procedure SymTestLastPureID;
     procedure SymTestNextPureID;
     function CloneSym(sym: PLiToken): PLiToken;
-    procedure ExpandSyntax(ASyntax: KLiSyntax; IsStatement: boolean);
+    procedure ExpandSyntax(ASyntax: KLiSyntax);
     function FindSyntax(const ID: string): KLiSyntax;
     { labels }
     procedure SaveLabels(var BreakLabel, ContinueLabel: string; CreateNewLabels: boolean);
@@ -4531,7 +4531,7 @@ begin
           syntax := FindSyntax(FLast^.Val);
           if syntax <> nil then
           begin
-            ExpandSyntax(syntax, true);
+            ExpandSyntax(syntax);
             SymGotoNext;
             goto SYNTAX_BACK;
           end;
@@ -5200,8 +5200,6 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
     hashed: boolean;
     syntax: KLiSyntax;
   begin
-    SYNTAX_BACK:
-    
     if FCurrent.IsLambdaFunc then
       SymTestLast(ExprHeadSyms) else
       SymTestLast(ExprHeadSyms - [syGetSV]);
@@ -5265,6 +5263,7 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
       else
       if L^.Sym = syLBlock then
       begin
+        SYNTAX_BACK:
         if FLast^.Sym = syRBlock then
         begin
           L^.Sym := syNil;
@@ -5277,7 +5276,7 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
             syntax := FindSyntax(FLast^.Val);
             if syntax <> nil then
             begin
-              ExpandSyntax(syntax, false);
+              ExpandSyntax(syntax);
               SymGotoNext;
               goto SYNTAX_BACK;
             end;
@@ -5466,7 +5465,7 @@ begin
   Result := FModule.FEngine.FError;
 end;
 
-procedure KLiParser.ExpandSyntax(ASyntax: KLiSyntax; IsStatement: boolean);
+procedure KLiParser.ExpandSyntax(ASyntax: KLiSyntax);
 type
   RTokens = packed record
               name: string;
@@ -5547,8 +5546,7 @@ begin
     else SymTestNext([syRBlock]);
 
     // 2.put back to FTokenizer
-    if IsStatement then
-      FTokenizer.PutBack(FLast); // syRBlock
+    FTokenizer.PutBack(FLast); // syRBlock
     ASyntax.RenameLocals;
     lastsym := FLast^.Sym;
     for index := ASyntax.FBody.Count - 1 downto 0 do
@@ -5557,9 +5555,14 @@ begin
       if (token^.Sym = syID) and (token^.Val[1] <> '#') and (lastsym <> syDot) then
       begin
         I := id_index(token^.Val);
-        if I >= 0 then
-          FTokenizer.PutBack(lists[I].list) else
-          FTokenizer.PutBack(token);
+        if I < 0 then FTokenizer.PutBack(token);
+        if lists[I].list.Count = 0 then
+        begin
+          token := FTokenizer.PutBack(FLast);
+          token^.Sym := syNil;
+          token^.Val := 'nil';
+        end
+        else FTokenizer.PutBack(lists[I].list);
       end
       else FTokenizer.PutBack(token);
       lastsym := token^.Sym;
@@ -5667,19 +5670,16 @@ begin
   end;
 
   pair := 0;
+  SymTestNext([syLBlock]);
   SymGotoNext;
-  while (FLast^.Sym <> syRBlock) or (pair > 0) do
+  while (FLast^.Sym <> syRBlock) or (pair <> 0) do
   begin
     if FLast^.Sym = syLBlock then Inc(pair) else
-    if FLast^.Sym = syRBlock then
-    begin
-      Dec(pair);
-      if pair < 0 then
-        Error.SymUnexpected(Self); 
-    end;
+    if FLast^.Sym = syRBlock then Dec(pair);
     synx.AddToken(FLast);
     SymGotoNext;
   end;
+  SymTestNext([syRBlock]);
 end;
 
 procedure KLiParser.SaveLabels(var BreakLabel, ContinueLabel: string; CreateNewLabels: boolean);

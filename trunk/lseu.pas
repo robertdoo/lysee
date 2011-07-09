@@ -35,7 +35,7 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (C) 2003-2011 Li Yun Jie - http://www.lysee.net';
-  LSE_VERSION        = '1.2.2';
+  LSE_VERSION        = '2.0.0';
   LSE_BIRTHDAY       = 20030228;
   LSE_BUILDDAY       = 20110623;
   LSE_MAX_PARAMS     = 12;

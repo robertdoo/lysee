@@ -56,8 +56,6 @@ uses
   lse_syncobj,
   lse_patten;
 
-{$IFDEF WINDOWS}{$R lysee_fpc.rc}{$ENDIF}
-
 begin
   try
     lse_console.Execute;

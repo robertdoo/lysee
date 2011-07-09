@@ -14,11 +14,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="2"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="373"/>
-      <StringTable FileDescription="year-month-day module" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.1.1.315"/>
+      <MajorVersionNr Value="2"/>
+      <BuildNr Value="377"/>
+      <StringTable FileDescription="year-month-day module" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="2.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="default" Default="True"/>
@@ -41,11 +39,12 @@
         <Filename Value="lysee_ymd.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_ymd"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="43"/>
-        <CursorPos X="1" Y="59"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="8"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit0>
@@ -81,9 +80,10 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <TopLine Value="3823"/>
-        <CursorPos X="3" Y="3825"/>
-        <UsageCount Value="23"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="29" Y="23"/>
+        <UsageCount Value="24"/>
       </Unit5>
       <Unit6>
         <Filename Value="D:\Developments\lazarus\fpc\2.2.2\source\packages\paszlib\src\zipper.pp"/>
@@ -108,15 +108,11 @@
       </Unit8>
       <Unit9>
         <Filename Value="lysee_ymd_funcs.pas"/>
-        <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_ymd_funcs"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="51"/>
-        <CursorPos X="45" Y="63"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
+        <TopLine Value="36"/>
+        <CursorPos X="3" Y="49"/>
+        <UsageCount Value="21"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\lse_api.pas"/>
@@ -131,10 +127,10 @@
         <UnitName Value="lse_funcs"/>
         <TopLine Value="694"/>
         <CursorPos X="46" Y="698"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit11>
     </Units>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="7" HistoryIndex="6">
       <Position1>
         <Filename Value="lysee_ymd.lpr"/>
         <Caret Line="21" Column="38" TopLine="1"/>
@@ -144,9 +140,25 @@
         <Caret Line="7" Column="40" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="lysee_ymd_funcs.pas"/>
-        <Caret Line="50" Column="41" TopLine="37"/>
+        <Filename Value="lysee_ymd.lpr"/>
+        <Caret Line="72" Column="1" TopLine="48"/>
       </Position3>
+      <Position4>
+        <Filename Value="lysee_ymd.lpr"/>
+        <Caret Line="21" Column="27" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="lysee_ymd.lpr"/>
+        <Caret Line="39" Column="1" TopLine="15"/>
+      </Position5>
+      <Position6>
+        <Filename Value="lysee_ymd.lpr"/>
+        <Caret Line="73" Column="1" TopLine="50"/>
+      </Position6>
+      <Position7>
+        <Filename Value="lysee_ymd.lpr"/>
+        <Caret Line="61" Column="24" TopLine="61"/>
+      </Position7>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -180,6 +192,9 @@
     </Linking>
     <Other>
       <WriteFPCLogo Value="False"/>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>

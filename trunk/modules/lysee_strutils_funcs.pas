@@ -1,8 +1,12 @@
 {==============================================================================}
 {        UNIT: lysee_strutils_funcs                                            }
 { DESCRIPTION: string utility functions (FPC)                                  }
+{   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
+{     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/12/10                                                      }
-{    MODIFIED: 2011/07/05                                                      }
+{    MODIFIED: 2011/07/09                                                      }
+{==============================================================================}
+{ Contributor(s):                                                              }
 {==============================================================================}
 unit lysee_strutils_funcs;
 
@@ -89,14 +93,9 @@ type
 { strbuf }
 
 procedure pp_strbuf_create(const invoker: TLseInvoke);cdecl;
-procedure pp_strbuf_length(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_setlen(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_gets(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_sets(const invoker: TLseInvoke);cdecl;
-procedure pp_strbuf_getiv(const invoker: TLseInvoke);cdecl;
-procedure pp_strbuf_setiv(const invoker: TLseInvoke);cdecl;
-procedure pp_strbuf_getValue(const invoker: TLseInvoke);cdecl;
-procedure pp_strbuf_setValue(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_replace(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_pos(const invoker: TLseInvoke);cdecl;
 procedure pp_strbuf_lastPos(const invoker: TLseInvoke);cdecl;
@@ -119,11 +118,6 @@ procedure pp_strbuf_copy(const invoker: TLseInvoke);cdecl;
 procedure pp_strcut_create(const invoker: TLseInvoke);cdecl;
 procedure pp_strcut_reinit(const invoker: TLseInvoke);cdecl;
 procedure pp_strcut_parse(const invoker: TLseInvoke);cdecl;
-procedure pp_strcut_length(const invoker: TLseInvoke);cdecl;
-procedure pp_strcut_getiv(const invoker: TLseInvoke);cdecl;
-procedure pp_strcut_setiv(const invoker: TLseInvoke);cdecl;
-procedure pp_strcut_getpv(const invoker: TLseInvoke);cdecl;
-procedure pp_strcut_setpv(const invoker: TLseInvoke);cdecl;
 procedure pp_strcut_getname(const invoker: TLseInvoke);cdecl;
 procedure pp_strcut_setname(const invoker: TLseInvoke);cdecl;
 procedure pp_strcut_rename(const invoker: TLseInvoke);cdecl;
@@ -145,15 +139,11 @@ procedure pp_strcut_delimiter(const invoker: TLseInvoke);cdecl;
 
 const
 
-  func_count = 51;
+  func_count = 41;
   func_array: array[0..func_count - 1] of RLseFunc = (
     (fr_prot:'strbuf_create:strbuf |data:string|';
      fr_addr:@pp_strbuf_create;
      fr_desc:'create strbuf object';
-    ),
-    (fr_prot:'strbuf_get_length:int |sb:strbuf|';
-     fr_addr:@pp_strbuf_length;
-     fr_desc:'get strbuf size';
     ),
     (fr_prot:'strbuf_set_length:void |sb:strbuf, length:int|';
      fr_addr:@pp_strbuf_setlen;
@@ -166,22 +156,6 @@ const
     (fr_prot:'strbuf_set_data:void |sb:strbuf, data:string|';
      fr_addr:@pp_strbuf_sets;
      fr_desc:'set data string';
-    ),
-    (fr_prot:'strbuf_getiv:string |sb:strbuf, index:int|';
-     fr_addr:@pp_strbuf_getiv;
-     fr_desc:'get charactor item by index';
-    ),
-    (fr_prot:'strbuf_setiv:void |sb:strbuf, index:int, ch:string|';
-     fr_addr:@pp_strbuf_setiv;
-     fr_desc:'get charactor item by index';
-    ),
-    (fr_prot:'strbuf_get_value:string |sb:strbuf|';
-     fr_addr:@pp_strbuf_getValue;
-     fr_desc:'get strbuf string';
-    ),
-    (fr_prot:'strbuf_set_value:void |sb:strbuf, value:string|';
-     fr_addr:@pp_strbuf_setValue;
-     fr_desc:'set strbuf string';
     ),
     (fr_prot:'strbuf_replace:void |sb:strbuf, patten:string, newStr:string, ignoreCase:int, replaceFirstOnly:int|';
      fr_addr:@pp_strbuf_replace;
@@ -262,26 +236,6 @@ const
      fr_addr:@pp_strcut_parse;
      fr_desc:'parse plain text';
     ),
-    (fr_prot:'strcut_get_length:int |sc:strcut|';
-     fr_addr:@pp_strcut_length;
-     fr_desc:'get key count';
-    ),
-    (fr_prot:'strcut_getiv:string |sc:strcut, index:int|';
-     fr_addr:@pp_strcut_getiv;
-     fr_desc:'get value by key index';
-    ),
-    (fr_prot:'strcut_setiv:void |sc:strcut, index:int, value:string|';
-     fr_addr:@pp_strcut_setiv;
-     fr_desc:'set value by key index';
-    ),
-    (fr_prot:'strcut_getpv:string |sc:strcut, key:string|';
-     fr_addr:@pp_strcut_getpv;
-     fr_desc:'get value by key name';
-    ),
-    (fr_prot:'strcut_setpv:void |sc:strcut, key:string, value:string|';
-     fr_addr:@pp_strcut_setpv;
-     fr_desc:'set value by key name';
-    ),
     (fr_prot:'strcut_getKey:string |sc:strcut, index:int|';
      fr_addr:@pp_strcut_getname;
      fr_desc:'get key name by index';
@@ -302,7 +256,7 @@ const
      fr_addr:@pp_strcut_clear;
      fr_desc:'clear values';
     ),
-    (fr_prot:'strcut_get_keyList:string |sc:strcut|';
+    (fr_prot:'strcut_get_keysList:string |sc:strcut|';
      fr_addr:@pp_strcut_keylist;
      fr_desc:'list key with delimiter char';
     ),
@@ -364,6 +318,12 @@ function strbuf_length(obj: pointer): integer;cdecl;
 function strbuf_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
 function strbuf_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
 
+function strcut_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_length(obj: pointer): integer;cdecl;
+function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+
 var
   strutils_types: array[0..1] of RLseType = (
    (cr_type     : LSV_OBJECT;
@@ -383,11 +343,22 @@ var
     cr_length   :@strbuf_length;
     cr_class    : nil
    ),
-   (cr_type   : LSV_OBJECT;
-    cr_name   : 'strcut';
-    cr_desc   : 'string cutter object';
-    cr_addref :@lse_addref_obj;
-    cr_release:@lse_release_obj
+   (cr_type     : LSV_OBJECT;
+    cr_name     : 'strcut';
+    cr_desc     : 'string cutter object';
+    cr_addref   :@lse_addref_obj;
+    cr_release  :@lse_release_obj;
+    cr_write_to : nil;
+    cr_vargen   : nil;
+    cr_otos     : nil;
+    cr_stoo     : nil;
+    cr_add      : nil;
+    cr_getiv    :@strcut_getiv;
+    cr_setiv    :@strcut_setiv;
+    cr_getpv    :@strcut_getpv;
+    cr_setpv    :@strcut_setpv;
+    cr_length   :@strcut_length;
+    cr_class    : nil
    )
   );
 
@@ -419,14 +390,6 @@ begin
   invoker.returnObj(strbuf_type, this);
 end;
 
-procedure pp_strbuf_length(const invoker: TLseInvoke);cdecl;
-var
-  this: TLiStrBuf;
-begin
-  if invoker.GetThis(this) then
-    invoker.returnInt(this.StrLen);
-end;
-
 procedure pp_strbuf_setlen(const invoker: TLseInvoke);cdecl;
 var
   this: TLiStrBuf;
@@ -444,48 +407,6 @@ begin
 end;
 
 procedure pp_strbuf_sets(const invoker: TLseInvoke);cdecl;
-var
-  this: TLiStrBuf;
-begin
-  if invoker.GetThis(this) then
-    this.FStrBuf := invoker.paramStr(1);
-end;
-
-procedure pp_strbuf_getiv(const invoker: TLseInvoke);cdecl;
-var
-  this: TLiStrBuf;
-  index: integer;
-begin
-  if invoker.GetThis(this) then
-  begin
-    index := lse_vary_index(invoker.paramInt64(1), this.StrLen);
-    lse_check_index(index, this.StrLen);
-    invoker.returnChar(this.Chars[index]);
-  end;
-end;
-
-procedure pp_strbuf_setiv(const invoker: TLseInvoke);cdecl;
-var
-  this: TLiStrBuf;
-  index: integer;
-begin
-  if invoker.GetThis(this) then
-  begin
-    index := lse_vary_index(invoker.paramInt64(1), this.StrLen);
-    lse_check_index(index, this.StrLen);
-    this.Chars[index] := invoker.paramChar(2);
-  end;
-end;
-
-procedure pp_strbuf_getValue(const invoker: TLseInvoke);cdecl;
-var
-  this: TLiStrBuf;
-begin
-  if invoker.GetThis(this) then
-    invoker.returnStr(this.FStrBuf);
-end;
-
-procedure pp_strbuf_setValue(const invoker: TLseInvoke);cdecl;
 var
   this: TLiStrBuf;
 begin
@@ -822,6 +743,81 @@ begin
   end;
 end;
 
+function strcut_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrCut;
+  L: integer;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrCut(obj);
+    L := S.Count;
+    if index < 0 then Inc(index, L);
+    if (index >= 0) and (index < L) then
+      lse_set_string(value, S.ValueAt(index));
+  end;
+end;
+
+function strcut_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrCut;
+  L: integer;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrCut(obj);
+    L := S.Count;
+    if index < 0 then Inc(index, L);
+    if (index >= 0) and (index < L) then
+    begin
+      lse_casto_string(value);
+      S.FValueList[index] := lse_strec_string(value^.VObject);
+    end;
+  end;
+end;
+
+function strcut_length(obj: pointer): integer;cdecl;
+begin
+  if obj <> nil then
+    Result := TLiStrCut(obj).Count else
+    Result := 0;
+end;
+
+function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrCut;
+  X: integer;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrCut(obj);
+    X := S.IndexOf(prop);
+    if X >= 0 then
+      lse_set_string(value, S.ValueAt(X));
+  end;
+end;
+
+function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+var
+  S: TLiStrCut;
+  X: integer;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    S := TLiStrCut(obj);
+    X := S.IndexOf(prop);
+    if X >= 0 then
+    begin
+      lse_casto_string(value);
+      S.FValueList[X] := lse_strec_string(value^.VObject);
+    end;
+  end;
+end;
+
 { strcut }
 
 procedure pp_strcut_create(const invoker: TLseInvoke);cdecl;
@@ -856,72 +852,6 @@ var
 begin
   if invoker.GetThis(cutter) then
     cutter.Parse(invoker.paramStr(1));
-end;
-
-procedure pp_strcut_length(const invoker: TLseInvoke);cdecl;
-var
-  cutter: TLiStrCut;
-begin
-  if invoker.GetThis(cutter) then
-    invoker.returnInt64(cutter.Count);
-end;
-
-procedure pp_strcut_getiv(const invoker: TLseInvoke);cdecl;
-var
-  cutter: TLiStrCut;
-  index: integer;
-begin
-  if invoker.GetThis(cutter) then
-  begin
-    index := lse_Vary_index(invoker.paramInt64(1), cutter.Count);
-    lse_check_index(index, cutter.Count);
-    invoker.returnStr(cutter.ValueAt(index));
-  end;
-end;
-
-procedure pp_strcut_setiv(const invoker: TLseInvoke);cdecl;
-var
-  cutter: TLiStrCut;
-  index: integer;
-begin
-  if invoker.GetThis(cutter) then
-  begin
-    index := lse_vary_index(invoker.paramInt64(1), cutter.Count);
-    lse_check_index(index, cutter.Count);
-    cutter.FValueList[index] := invoker.paramStr(2);
-  end;
-end;
-
-procedure pp_strcut_getpv(const invoker: TLseInvoke);cdecl;
-var
-  cutter: TLiStrCut;
-  column: string;
-  index: integer;
-begin
-  if invoker.GetThis(cutter) then
-  begin
-    column := invoker.paramStr(1);
-    index := cutter.IndexOf(column);
-    if index < 0 then
-      invoker.returnError('', 0, Format('key "%s" not found', [column])) else
-      invoker.returnStr(cutter.ValueAt(index));
-  end;
-end;
-
-procedure pp_strcut_setpv(const invoker: TLseInvoke);cdecl;
-var
-  cutter: TLiStrCut;
-  column: string;
-  index: integer;
-begin
-  if invoker.GetThis(cutter) then
-  begin
-    column := invoker.paramStr(1);
-    index := cutter.IndexOf(column);
-    if index < 0 then
-      invoker.returnError('', 0, Format('key "%s" not found', [column])) else
-      cutter.FValueList[index] := invoker.paramStr(2);
-  end;
 end;
 
 procedure pp_strcut_getname(const invoker: TLseInvoke);cdecl;

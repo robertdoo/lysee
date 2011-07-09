@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="399"/>
+      <BuildNr Value="401"/>
       <StringTable FileDescription="mathmetics module for lysee" LegalCopyright="Copyright (C) 2003-2010 Li Yun Jie" ProductVersion="0.1.8.391"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -45,8 +45,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="22" Y="57"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="8"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -65,8 +65,8 @@
         <UnitName Value="lysee_math_funcs"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="337"/>
-        <CursorPos X="30" Y="349"/>
+        <TopLine Value="195"/>
+        <CursorPos X="1" Y="219"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -81,7 +81,7 @@
         <Loaded Value="True"/>
       </Unit3>
     </Units>
-    <JumpHistory Count="10" HistoryIndex="9">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
         <Filename Value="lysee_math.lpr"/>
         <Caret Line="28" Column="18" TopLine="4"/>
@@ -122,6 +122,22 @@
         <Filename Value="lysee_math.lpr"/>
         <Caret Line="61" Column="1" TopLine="38"/>
       </Position10>
+      <Position11>
+        <Filename Value="lysee_math.lpr"/>
+        <Caret Line="57" Column="22" TopLine="44"/>
+      </Position11>
+      <Position12>
+        <Filename Value="lysee_math.lpr"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="lysee_math.lpr"/>
+        <Caret Line="19" Column="17" TopLine="11"/>
+      </Position13>
+      <Position14>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="349" Column="30" TopLine="337"/>
+      </Position14>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

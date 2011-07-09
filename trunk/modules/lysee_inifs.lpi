@@ -41,11 +41,10 @@
         <Filename Value="lysee_inifs.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_inifs"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="44"/>
-        <CursorPos X="1" Y="62"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="8"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -61,8 +60,9 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <TopLine Value="211"/>
-        <CursorPos X="5" Y="218"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="8"/>
         <UsageCount Value="21"/>
       </Unit2>
       <Unit3>
@@ -95,15 +95,16 @@
         <Filename Value="lysee_inifs_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_inifs_funcs"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="124"/>
-        <CursorPos X="39" Y="147"/>
+        <TopLine Value="33"/>
+        <CursorPos X="1" Y="33"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
+    <JumpHistory Count="7" HistoryIndex="6">
       <Position1>
         <Filename Value="lysee_inifs.lpr"/>
         <Caret Line="24" Column="35" TopLine="24"/>
@@ -120,6 +121,18 @@
         <Filename Value="lysee_inifs.lpr"/>
         <Caret Line="60" Column="22" TopLine="42"/>
       </Position4>
+      <Position5>
+        <Filename Value="lysee_inifs.lpr"/>
+        <Caret Line="62" Column="1" TopLine="44"/>
+      </Position5>
+      <Position6>
+        <Filename Value="lysee_inifs.lpr"/>
+        <Caret Line="25" Column="1" TopLine="13"/>
+      </Position6>
+      <Position7>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="147" Column="39" TopLine="124"/>
+      </Position7>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
