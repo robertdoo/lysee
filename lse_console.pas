@@ -253,7 +253,7 @@ begin
             code := '';
           end
           else
-          if masked(SCT_OK + SCT_RBLOCK) then
+          if masked(SCT_OK {+ SCT_RBLOCK}) then
           begin
             if FEngine.ExecuteCode(code) then
               FEngine.WriteLine(FEngine.ResultText) else

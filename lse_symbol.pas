@@ -24,17 +24,18 @@ uses
 type
   KLiSymbol = (
     syError, syBegin, syImport, syConst, sySyntax, syLambda, syClass, syThis,
-    syObject, syWith, syLet, sySet, syGet, syHas, syDefine, syReturn, syIf, syThen, syElif, syElse, syWhile,
-    syRepeat, syUntil, syFor, syDo, syBreak, syContinue, sySwitch, syCase,
-    syTry, syExcept, syFinally, syIn, syIs, syAs, syLike, syAnd, syOr, syNot,
-    syFrom, syTo, syEnd, syBecome, syAdd, syDec, syMul, syDiv, syMod, syBNot,
-    syBXor, syBAnd, syBOr, syBShr, syBShl, syFill, syLParen, syRParen, syLBlock,
-    syRBlock, syLArray, syRArray, syDot, syAsk, syDot2, syComma, syEQ, syNE,
-    syLess, syLE, syMore, syME, syFormat, syID, syFloat, syInt, syStr, syNil,
-    syNeg, syCall, syJmpT, syJmpF, syJmpTP, syJmpFP, syJump, syPress, syType,
-    syFunc, syIdle, syGetEnv, syLabel, syGoto, syGoTP, syGoFP, syModule, sySTMT,
-    syVarGen, syRINR, syGETV, sySETV, syGetIV, sySetIV, syDupLast, syEOF,
-    syEcho, syGetSV, sySetSV, sySend, syVarList, syHashed
+    syObject, syWith, syLet, sySet, syGet, syHas, syDefine, syReturn, syIf,
+    syThen, syElif, syElse, syWhile, syRepeat, syUntil, syFor, syDo, syBreak,
+    syContinue, sySwitch, syCase, syTry, syExcept, syFinally, syIn, syIs,
+    syAs, syLike, syAnd, syOr, syNot, syFrom, syTo, syEnd, syBecome, syAdd,
+    syDec, syMul, syDiv, syMod, syBNot, syBXor, syBAnd, syBOr, syBShr, syBShl,
+    syFill, syLParen, syRParen, syLBlock, syRBlock, syLArray, syRArray, syDot,
+    syAsk, syDot2, syComma, sySemicolon, syEQ, syRefer, syNE, syLess, syLE, syMore,
+    syME, syFormat, syID, syFloat, syInt, syStr, syNil, syNeg, syCall, syJmpT,
+    syJmpF, syJmpTP, syJmpFP, syJump, syPress, syType, syFunc, syIdle, syGetEnv,
+    syLabel, syGoto, syGoTP, syGoFP, syModule, sySTMT, syVarGen, syRINR, syGETV,
+    sySETV, syGetIV, sySetIV, syDupLast, syEOF, syEcho, syGetSV, sySetSV,
+    sySend, syVarList, syHashed, syReferAsk
   );
   KLiSymbols = set of KLiSymbol;
 
@@ -109,7 +110,9 @@ const
     (SY:syAsk;       ID:'?';            SM:'ask'),
     (SY:syDot2;      ID:':';            SM:'dot 2'),
     (SY:syComma;     ID:',';            SM:'comma'),
+    (SY:sySemicolon; ID:';';            SM:'semicolon'),
     (SY:syEQ;        ID:'==';           SM:'equal'),
+    (SY:syRefer;     ID:'=>';           SM:'refer to'),
     (SY:syNE;        ID:'!=';           SM:'not equal'),
     (SY:syLess;      ID:'<';            SM:'less'),
     (SY:syLE;        ID:'<=';           SM:'less equal'),
@@ -152,7 +155,8 @@ const
     (SY:sySetSV;     ID:'<SETSV>';      SM:'set super value'),
     (SY:sySend;      ID:'<SEND>';       SM:'send next value'),
     (SY:syVarList;   ID:'<VARLIST>';    SM:'create varlist'),
-    (SY:syHashed;    ID:'<HASHED>';     SM:'create hashed')
+    (SY:syHashed;    ID:'<HASHED>';     SM:'create hashed'),
+    (SY:syReferAsk;  ID:'<REFERASK>';   SM:'refer ask')
   );
 
   FirstKeyword = syBegin;
@@ -798,7 +802,8 @@ begin
     '?'     : get_operator(syAsk, [], []);
     ':'     : get_operator(syDot2, [], []);
     ','     : get_operator(syComma,  [], []);
-    '='     : get_operator(syBecome, ['='], [syEQ]);
+    ';'     : get_operator(sySemicolon,  [], []);
+    '='     : get_operator(syBecome, ['=', '>'], [syEQ, syRefer]);
     '!'     : get_operator(syError, ['=', '<', '>'], [syNE, syME, syLE]);
     '<'     : begin
                 get_operator(syLess, ['=', '<'], [syLE, syBShl]);
