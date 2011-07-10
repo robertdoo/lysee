@@ -129,42 +129,12 @@ type
     function CloneSym(sym: PLiToken): PLiToken;
     procedure ExpandSyntax(ASyntax: KLiSyntax);
     function FindSyntax(const ID: string): KLiSyntax;
-    { labels }
     procedure SaveLabels(var BreakLabel, ContinueLabel: string; CreateNewLabels: boolean);
     procedure RestoreLabels(const BreakLabel, ContinueLabel: string);
-    { parsing }
     procedure ParseArguments(Func: KLiFunc; EndSym: KLiSymbols; OnHead: boolean);
-    function  ParseLambda: KLiFunc;
-    function  ParseLambdaFunc: KLiFunc;
-    function  ParseVarType(Token: PLiToken): KLiType;
-    procedure ParseVarb(var varb: KLiVarb; var vrec: PLiToken;
-                        EndSyms: KLiSymbols; OnHead: boolean);
-
-    procedure ParseDefine;
-    procedure ParseImport;
-    procedure ParseConst;
-    procedure ParseSyntax;
     procedure ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
     procedure ParseStatement(OnHead: boolean);
-    procedure ParseAny;
-    procedure ParseIf;
-    procedure ParseFor;
-    procedure ParseWhile;
-    procedure ParseRepeatUntil;
-    procedure ParseSwitch;
-    procedure ParseBreak;
-    procedure ParseContinue;
-    procedure ParseReturn;
-    procedure ParseTry;
-    procedure ParseEcho;
-
-    procedure ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean);
-    procedure ParseDotItem(Expr: TList);
-    procedure ParseAsk(Expr: TList);
-    { tail if }
-    procedure BeginTailIf(var end_if_label: string; EndSym: KLiSymbol);
-    procedure EndTailIf(const end_if_label: string);
-    procedure TailIf(ExprList: TList);
+    procedure ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
   public
     constructor Create(AModule: KLiModule);
     destructor Destroy;override;
@@ -214,7 +184,6 @@ type
     function ToVarlist(Engine: KLiEngine): KLiVarList;
     function AsString(HideType: boolean): string;
     function IsParam: boolean;
-    function FirstIs(AType: KLiType): boolean;
     property Func: KLiFunc read FFunc;
     property Count: integer read GetCount;
     property Varbs[Index: integer]: KLiVarb read GetVarb;default;
@@ -291,7 +260,7 @@ type
     constructor Create(AFunc: KLiFunc);
     destructor Destroy;override;
     procedure Satisfy;
-    procedure Clear(Sender: TObject = nil);
+    procedure Clear(Sender: TObject);
     procedure Delete(Index: integer);
     function Add(AExprRec: PLiExprRec): integer;
     procedure Insert(Index: integer; AExprRec: PLiExprRec);
@@ -300,7 +269,6 @@ type
     procedure LoadToken(token: PLiToken);
     procedure LoadExpr(List: TList; Start: integer = 0);
     procedure DumpCode(List: TStrings; const Margin: string);
-    procedure EndStatement;
     function IsEmpty: boolean;
     { locals }
     function AddLocal(const Name: string; varType: KLiType): KLiVarb;
@@ -1289,6 +1257,7 @@ procedure __runner_as(Sender: KLiRunner);
 procedure __runner_statement(Sender: KLiRunner);
 procedure __runner_vargen(Sender: KLiRunner);
 procedure __runner_ask(Sender: KLiRunner);
+procedure __runner_refer_ask(Sender: KLiRunner);
 procedure __runner_try(Sender: KLiRunner);
 procedure __runner_return(Sender: KLiRunner);
 procedure __runner_jump(Sender: KLiRunner);
@@ -3923,8 +3892,17 @@ begin
 end;
 
 procedure __runner_statement(Sender: KLiRunner);
+var
+  base, last: integer;
 begin
-  Sender.FStack.SetCount(Sender.FCurrent^.base);
+  base := Sender.FCurrent^.base;
+  last := Sender.FStack.Count - 1;
+  if last >= base then
+  begin
+    lse_set_value(Sender.FCurrent^.output, Sender.FStack[last]);
+    Sender.FStack.SetCount(base);
+  end
+  else lse_clear_value(Sender.FCurrent^.output);
   __runner_next(Sender);
 end;
 
@@ -3976,6 +3954,19 @@ begin
     else lse_error('invalid call to %s', [clss.FullName]);
   end;
   __runner_next(Sender);
+end;
+
+procedure __runner_refer_ask(Sender: KLiRunner);
+var
+  base, prmc: integer;
+begin
+  with Sender do
+  begin
+    prmc := FExprrec^.ParamCount;
+    base := FStack.Count - prmc;
+    FStack.Exchange(base, base + 1);
+  end;
+  __runner_ask(Sender);
 end;
 
 procedure __runner_try(Sender: KLiRunner);
@@ -4332,44 +4323,19 @@ begin
   FCurrent := nil;
   FreeAndNil(FTokenizer);
   FTokenizer := KLiTokenizer.Create(Code);
-
-  if FRunner <> nil then
+  if (FRunner = nil) and FModule.IsMainModule then
   begin
-    Result := FModule.NewFunc;
+    FCurrent := FModule.FEngine.GetMainFunc;
+    FCurrent.FCodes.Clear(nil);
+  end
+  else
+  begin
+    FCurrent := FModule.NewFunc;
     if FModule.FMainFunc = nil then
-      FModule.FMainFunc := Result;
-  end
-  else
-  if FModule.IsMainModule then
-  begin
-    Result := FModule.FEngine.GetMainFunc;
-    Result.FCodes.Clear;
-  end
-  else
-  if FModule.FMainFunc = nil then
-  begin
-    Result := FModule.NewFunc;
-    FModule.FMainFunc := Result;
-  end
-  else Result := nil;
-
-  while GetNextSym and (FLast^.Sym <> syEof) do
-  begin
-    SymTestLast([syLBlock]);
-    SymGotoNext;
-    case FLast^.Sym of
-      syDefine: ParseDefine;
-      syImport: ParseImport;
-      syConst : ParseConst;
-      sySyntax: ParseSyntax
-      else
-      if (FLast^.Sym <> syRBlock) and (Result <> nil) then
-      begin
-        FCurrent := Result;
-        ParseStatement(true);
-      end;
-    end;
+      FModule.FMainFunc := FCurrent;
   end;
+  Result := FCurrent;
+  ParseBlock([syEOF], false);
 end;
 
 function KLiParser.GetSym(sym: PLiToken): boolean;
@@ -4400,94 +4366,9 @@ begin
   Result := GetSym(FSymbols.Next);
 end;
 
-procedure KLiParser.ParseVarb(var varb: KLiVarb; var vrec: PLiToken;
-  EndSyms: KLiSymbols; OnHead: boolean);
-var
-  clss: KLiType;
-  data: PLiToken;
-  rec: KLiFindRec;
-begin
-  if not OnHead then
-    SymTestNextPureID else
-    SymTestLastPureID;
-
-  data := FLast;
-  clss := KT_VARIANT;
-  
-  if PeekNextSym = syDot2 then
-  begin
-    if FCurrent.FindInside(data^.Val) then
-    begin
-      FLast := data;
-      Error.Redeclared(Self);
-    end;
-    SymGotoNext;
-    SymGotoNext;
-    clss := ParseVarType(FLast);
-    varb := CurCodes.AddLocal(data^.Val, clss);
-    varb.FPos := data^.Pos;
-  end
-  else
-  if not FCurrent.FindBy(data^.Val, @rec, [foVarb]) then
-  begin
-    if FCurrent.FindInside(data^.Val) then
-    begin
-      FLast := data;
-      Error.Redeclared(Self);
-    end;
-    varb := CurCodes.AddLocal(data^.Val, clss);
-    varb.FPos := data^.Pos;
-  end
-  else varb := rec.VVarb;
-
-  vrec := data;
-  SymTestNext(EndSyms);
-end;
-
-function KLiParser.ParseVarType(Token: PLiToken): KLiType;
-var
-  m_name, c_name: string;
-  L: PLiToken;
-begin
-  c_name := __decodeTypeName(Token^.Val, m_name);
-  Result := FModule.FindTypeBy(c_name, m_name);
-  if Result = nil then
-  begin
-    L := FLast;
-    try
-      FLast := Token;
-      Error.TypeNotExists(Self);
-    finally
-      FLast := L;
-    end;
-  end;
-end;
-
-procedure KLiParser.ParseEcho;
-var
-  L: PLiToken;
-begin
-  FExpr.Clear;
-  L := FLast;
-  L^.VParamCount := 0;
-  repeat
-    SymGotoNext;
-    ParseExpr(FExpr, [syIf, syRBlock, syComma], true);
-    Inc(L^.VParamCount);
-  until FLast^.Sym in [syIf, syRBlock];
-  FExpr.Add(L);
-  L^.Sym := syEcho;
-  TailIf(FExpr);
-end;
-
 procedure KLiParser.ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
 begin
-  if not OnHead then
-  begin
-    FSymbols.Clear;
-    SymGotoNext;
-  end;
-  
+  if not OnHead then SymGotoNext;
   while not (FLast^.Sym in EndSyms) do
   begin
     ParseStatement(false);
@@ -4496,237 +4377,252 @@ begin
 end;
 
 procedure KLiParser.ParseStatement(OnHead: boolean);
-label
-  SYNTAX_BACK;
-var
-  syntax: KLiSyntax;
-begin
-  try
+  
+  procedure parse_if;
+  var
+    bl, cl: string;
+    cx: PLiExprRec;
+  begin
+    bl := FModule.NewLabelName;
+    repeat
+      FExpr.Clear;
+      ParseExpr([syThen], false);
+      CurCodes.LoadExpr(FExpr);
+      cl := FModule.NewLabelName;
+      cx := CurCodes.AddGoto(cl, FLast^.Pos);
+      cx^.Sym := syGoFP;
+      ParseBlock([sySemicolon, syRBlock, syElse, syElif], false);
+      if FLast^.Sym <> syRBlock then
+      begin
+        CurCodes.AddGoto(bl, FLast^.Pos);
+        CurCodes.AddLabel(cl, FLast^.Pos);
+        if FLast^.Sym = syElse then
+          ParseBlock([sySemicolon, syRBlock], false);
+      end
+      else cx^.Name := bl;
+    until FLast^.Sym in [sySemicolon, syRBlock];
+    cl := CurCodes.LastLabel;
+    if cl = '' then
+      CurCodes.AddLabel(bl, FLast^.Pos) else
+      CurCodes.ChangeGoto(bl, cl);
+  end;
+
+  procedure parse_varb(var varb: KLiVarb; var vrec: PLiToken;
+    EndSyms: KLiSymbols; OnHead: boolean);
+  var
+    rec: KLiFindRec;
+  begin
     if not OnHead then
+      SymTestNextPureID else
+      SymTestLastPureID;
+    if not FCurrent.FindBy(FLast^.Val, @rec, [foVarb]) then
     begin
-      SymTestLast([syLBlock]);
-      SymGotoNext;
-    end;
-    SYNTAX_BACK:
-    case FLast^.Sym of
-      syIf      : ParseIf;
-      syFor     : ParseFor;
-      syWhile   : ParseWhile;
-      syRepeat  : ParseRepeatUntil;
-      sySwitch  : ParseSwitch;
-      syBreak   : ParseBreak;
-      syContinue: ParseContinue;
-      syReturn  : ParseReturn;
-      syTry     : ParseTry;
-      syBecome  : ParseEcho;
-      syImport  : ParseImport;
-      syDefine  : ParseDefine;
-      syConst   : ParseConst;
-      sySyntax  : ParseSyntax;
-      syDo      : ParseBlock([syRBlock], false);
-      syRBlock, syEOF: {ignored};
-      else begin
-        if FLast^.Sym = syID then
-        begin
-          syntax := FindSyntax(FLast^.Val);
-          if syntax <> nil then
-          begin
-            ExpandSyntax(syntax);
-            SymGotoNext;
-            goto SYNTAX_BACK;
-          end;
-        end;
-        ParseAny;
+      if FCurrent.FindInside(FLast^.Val) then
+        Error.Redeclared(Self);
+      varb := CurCodes.AddLocal(FLast^.Val, KT_VARIANT);
+      varb.FPos := FLast^.Pos;
+    end
+    else varb := rec.VVarb;
+    vrec := FLast;
+    SymTestNext(EndSyms);
+  end;
+
+  procedure parse_for;
+  var
+    varb: KLiVarb;
+    vrec: PLiToken;
+    bl, cl: string;
+    expr: PLiExprRec;
+  begin
+    // --------------------------------------------
+    // BLOCK: for varb in vargen if condition do
+    //          ...
+    //        end
+    // --------------------------------------------
+    //      SAVE VARGEN TO TV
+    // CONTINUE_LABEL:
+    //      <vargen>
+    //      GOTO BREAK_LABEL IF FALSE
+    //      <condition>
+    //      GOTO CONTINUE_LABEL IF FALSE
+    //      varb = <vargen>
+    //      <statements>
+    //      GOTO CONTINUE_LABEL
+    // BREAK_LABEL:
+    // --------------------------------------------
+
+    SaveLabels(bl, cl, true);
+    try
+      parse_varb(varb, vrec, [syIn], false);
+
+      expr := CurCodes.AddGoto(FBreakLabel, FLast^.Pos);
+      expr^.Sym := syRINR;
+
+      FExpr.Clear;
+      ParseExpr([syIf, syDo], false);
+      CurCodes.LoadExpr(FExpr);
+      CurCodes.AddNew(syVarGen, @(FLast^.Pos));
+      CurCodes.AddNew(sySETV, @(FLast^.Pos));
+
+      CurCodes.AddLabel(FContinueLabel, FLast^.Pos);
+
+      expr := CurCodes.AddNew(sySend, @vrec^.Pos);
+      expr^.VVarb := varb;
+      expr^.flags := expr^.flags + [xrSatisfied];
+      expr := CurCodes.AddGoto(FBreakLabel, FLast^.Pos);
+      expr^.Sym := syGoFP;
+
+      if FLast^.Sym = syIf then
+      begin
+        FExpr.Clear;
+        ParseExpr([syDo], false);
+        CurCodes.LoadExpr(FExpr);
+        expr := CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
+        expr^.Sym := syGoFP;
       end;
+    
+      ParseBlock([sySemicolon, syRBlock], false);
+      CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
+      CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
+    finally
+      RestoreLabels(bl, cl);
     end;
-  finally
-    FExpr.Clear;
-    FSymbols.Clear;
   end;
-end;
-
-procedure KLiParser.ParseWhile;
-var
-  bl, cl, ll: string;
-begin
-// --------------------------------------------
-// BLOCK: while condition do
-//          ...
-//        end
-// --------------------------------------------
-// CONTINUE_LABEL:
-//      <condition>
-//      GOTO BREAK_LABEL IF FALSE
-//      <statements>
-//      GOTO CONTINUE_LABEL
-// BREAK_LABEL:
-// --------------------------------------------
-  SaveLabels(bl, cl, true);
-  try
-    ll := CurCodes.LastLabel;
-    if ll = '' then
-      CurCodes.AddLabel(FContinueLabel, FLast^.Pos) else
-      FContinueLabel := ll;
-    FExpr.Clear;
-    ParseExpr(FExpr, [syDo], false);
-    CurCodes.LoadExpr(FExpr);
-    CurCodes.AddGoto(FBreakLabel, FLast^.Pos)^.Sym := syGoFP;
-    ParseBlock([syRBlock], false);
-    CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
-    CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
-  finally
-    RestoreLabels(bl, cl);
-  end;
-end;
-
-procedure KLiParser.ParseIf;
-var
-  bl, cl: string;
-  cx: PLiExprRec;
-begin
-  bl := FModule.NewLabelName;
-  repeat
-    FExpr.Clear;
-    ParseExpr(FExpr, [syThen], false);
-    CurCodes.LoadExpr(FExpr);
-    cl := FModule.NewLabelName;
-    cx := CurCodes.AddGoto(cl, FLast^.Pos);
-    cx^.Sym := syGoFP;
-    ParseBlock([syRBlock, syElse, syElif], false);
-    if FLast^.Sym <> syRBlock then
-    begin
-      CurCodes.AddGoto(bl, FLast^.Pos);
-      CurCodes.AddLabel(cl, FLast^.Pos);
-      if FLast^.Sym = syElse then
-        ParseBlock([syRBlock], false);
-    end
-    else cx^.Name := bl;
-  until FLast^.Sym = syRBlock;
-  cl := CurCodes.LastLabel;
-  if cl = '' then
-    CurCodes.AddLabel(bl, FLast^.Pos) else
-    CurCodes.ChangeGoto(bl, cl);
-end;
-
-procedure KLiParser.ParseBreak;
-var
-  end_if: string;
-begin
-  if FBreakLabel = '' then
-    Error.BreakNoLoop(Self);
-  SymTestNext([syIf, syRBlock]);
-  if FLast^.Sym = syIf then
+  
+  procedure parse_while;
+  var
+    bl, cl, ll: string;
   begin
-    BeginTailIf(end_if, syRBlock);
+    // --------------------------------------------
+    // BLOCK: while condition do
+    //          ...
+    //        end
+    // --------------------------------------------
+    // CONTINUE_LABEL:
+    //      <condition>
+    //      GOTO BREAK_LABEL IF FALSE
+    //      <statements>
+    //      GOTO CONTINUE_LABEL
+    // BREAK_LABEL:
+    // --------------------------------------------
+    SaveLabels(bl, cl, true);
+    try
+      ll := CurCodes.LastLabel;
+      if ll = '' then
+        CurCodes.AddLabel(FContinueLabel, FLast^.Pos) else
+        FContinueLabel := ll;
+      FExpr.Clear;
+      ParseExpr([syDo], false);
+      CurCodes.LoadExpr(FExpr);
+      CurCodes.AddGoto(FBreakLabel, FLast^.Pos)^.Sym := syGoFP;
+      ParseBlock([sySemicolon, syRBlock], false);
+      CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
+      CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
+    finally
+      RestoreLabels(bl, cl);
+    end;
+  end;
+
+  procedure parse_repeat_until;
+  var
+    bl, cl, ll, body: string;
+  begin
+    // --------------------------------------------
+    // BLOCK: repeat
+    //          ...
+    //        until condition;
+    // --------------------------------------------
+    // BODY_LABEL:
+    //      <statements>
+    // CONTINUE_LABEL:
+    //      <condition>
+    //      GOTO BODY_LABEL IF FALSE
+    // BREAK_LABEL:
+    // --------------------------------------------
+    SaveLabels(bl, cl, true);
+    try
+      body := CurCodes.LastLabel;
+      if body = '' then
+      begin
+        body := FModule.NewLabelName;
+        CurCodes.AddLabel(body, FLast^.Pos);
+      end;
+
+      ParseBlock([syUntil], false);
+
+      ll := CurCodes.LastLabel;
+      if ll <> '' then
+      begin
+        CurCodes.ChangeGoto(FContinueLabel, ll);
+        FContinueLabel := ll;
+      end
+      else CurCodes.AddLabel(FContinueLabel, FLast^.Pos);
+
+      FExpr.Clear;
+      ParseExpr([sySemicolon, syRBlock], false);
+      CurCodes.LoadExpr(FExpr);
+      CurCodes.AddGoto(body, FLast^.Pos)^.Sym := syGoFP;
+      CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
+    finally
+      RestoreLabels(bl, cl);
+    end;
+  end;
+
+  procedure parse_switch;
+  var
+    bl, cl: string;
+    cx: PLiExprRec;
+  begin
+    // --------------------------------------------
+    // BLOCK: switch expr
+    //          case expr1: ...
+    //          case ...  : ...
+    //          case exprN: ...
+    //          else        ...
+    //        end
+    // --------------------------------------------
+    bl := FModule.NewLabelName;
+    CurCodes.AddGoto(bl, FLast^.Pos)^.Sym := syRINR;
+    FExpr.Clear;
+    ParseExpr([syCase], false);
+    CurCodes.LoadExpr(FExpr);
+    CurCodes.AddNew(sySETV, @FLast^.Pos);
+    repeat
+      FExpr.Clear;
+      ParseExpr([syDot2], false);
+      CurCodes.LoadExpr(FExpr);
+      CurCodes.AddNew(syCase, @(FLast^.Pos));
+      cl := FModule.NewLabelName;
+      cx := CurCodes.AddGoto(cl, FLast^.Pos);
+      cx^.Sym := syGoFP;
+      ParseBlock([syCase, syElse, sySemicolon, syRBlock], false);
+      if FLast^.Sym in [syCase, syElse] then
+      begin
+        CurCodes.AddGoto(bl, FLast^.Pos);
+        CurCodes.AddLabel(cl, FLast^.Pos);
+        if FLast^.Sym = syElse then
+          ParseBlock([sySemicolon, syRBlock], false);
+      end
+      else cx^.Name := bl;
+    until FLast^.Sym  in [sySemicolon, syRBlock];
+    CurCodes.AddLabel(bl, FLast^.Pos);
+  end;
+
+  procedure parse_break;
+  begin
+    if FBreakLabel = '' then
+      Error.BreakNoLoop(Self);
+    SymTestNext([syRBlock]);
     CurCodes.AddGoto(FBreakLabel, FLast^.Pos);
-    EndTailIf(end_if);
-  end
-  else CurCodes.AddGoto(FBreakLabel, FLast^.Pos);
-end;
-
-procedure KLiParser.ParseConst;
-var
-  clss: KLiType;
-  data: PLiToken;
-  curr: KLiFunc;
-begin
-  SymTestNextPureID;
-  if FModule.Find(FLast^.Val) then
-    Error.Redeclared(Self);
-  data := FLast;
-
-  SymGotoNext;
-  if FLast^.Sym = syDot2 then
-  begin
-    SymTestNext([syID]);
-    clss := ParseVarType(FLast);
-    SymGotoNext;
-  end
-  else clss := KT_VARIANT;
-
-  SymTestLast([syBecome]);
-  SymGotoNext;
-
-  curr := FCurrent;
-  try
-    FCurrent := KLiFunc.Create(FModule, clss, data^.Val, nil, nil);
-    FCurrent.IsConstFunc := true;
-    FCurrent.IsNameCall := true;
-    FExpr.Clear;
-    ParseExpr(FExpr, [syRBlock], true);
-    FLast^.Sym := syReturn;
-    FLast^.VParamCount := 1;
-    FExpr.Add(FLast);
-    FCurrent.FCodes.LoadExpr(FExpr);
-  finally
-    FCurrent := curr;
   end;
-end;
 
-procedure KLiParser.ParseContinue;
-var
-  end_if: string;
-begin
-  if FContinueLabel = '' then
-    Error.ContinueNoLoop(Self);
-  SymTestNext([syIf, syRBlock]);
-  if FLast^.Sym = syIf then
+  procedure parse_continue;
   begin
-    BeginTailIf(end_if, syRBlock);
+    if FContinueLabel = '' then
+      Error.ContinueNoLoop(Self);
+    SymTestNext([syRBlock]);
     CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
-    EndTailIf(end_if);
-  end
-  else CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
-end;
-
-procedure KLiParser.ParseRepeatUntil;
-var
-  bl, cl, ll, body: string;
-begin
-// --------------------------------------------
-// BLOCK: repeat
-//          ...
-//        until condition;
-// --------------------------------------------
-// BODY_LABEL:
-//      <statements>
-// CONTINUE_LABEL:
-//      <condition>
-//      GOTO BODY_LABEL IF FALSE
-// BREAK_LABEL:
-// --------------------------------------------
-  SaveLabels(bl, cl, true);
-  try
-    body := CurCodes.LastLabel;
-    if body = '' then
-    begin
-      body := FModule.NewLabelName;
-      CurCodes.AddLabel(body, FLast^.Pos);
-    end;
-
-    ParseBlock([syUntil], false);
-
-    ll := CurCodes.LastLabel;
-    if ll <> '' then
-    begin
-      CurCodes.ChangeGoto(FContinueLabel, ll);
-      FContinueLabel := ll;
-    end
-    else CurCodes.AddLabel(FContinueLabel, FLast^.Pos);
-
-    FExpr.Clear;
-    ParseExpr(FExpr, [syRBlock], false);
-    CurCodes.LoadExpr(FExpr);
-    CurCodes.AddGoto(body, FLast^.Pos)^.Sym := syGoFP;
-    CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
-  finally
-    RestoreLabels(bl, cl);
   end;
-end;
-
-procedure KLiParser.ParseReturn;
-var
-  end_if: string;
 
   procedure setup_return(has_result: boolean);
   var
@@ -4736,166 +4632,440 @@ var
     expr^.ParamCount := Ord(has_result);
   end;
 
-begin
-  SymGotoNext;
-  
-  if FLast^.Sym = syRBlock then
+  procedure parse_return;
   begin
-    setup_return(false);
-    Exit;
-  end;
-
-  FExpr.Clear;
-  
-  if FLast^.Sym = syIf then
-  begin
-    BeginTailIf(end_if, syRBlock);
-    setup_return(false);
-    EndTailIf(end_if);
-    Exit;
-  end;
-  
-  ParseExpr(FExpr, [syRBlock, syIf], true);
-  if FLast^.Sym = syRBlock then
-  begin
-    CurCodes.LoadExpr(FExpr);
-    setup_return(true);
-    Exit;
-  end;
-  
-  BeginTailIf(end_if, syRBlock);
-  CurCodes.LoadExpr(FExpr);
-  setup_return(true);
-  EndTailIf(end_if);
-end;
-
-procedure KLiParser.ParseFor;
-var
-  varb: KLiVarb;
-  vrec: PLiToken;
-  bl, cl: string;
-  expr: PLiExprRec;
-begin
-// --------------------------------------------
-// BLOCK: for varb in vargen if condition do
-//          ...
-//        end
-// --------------------------------------------
-//      SAVE VARGEN TO TV
-// CONTINUE_LABEL:
-//      <vargen>
-//      GOTO BREAK_LABEL IF FALSE 
-//      <condition>
-//      GOTO CONTINUE_LABEL IF FALSE 
-//      varb = <vargen>
-//      <statements>
-//      GOTO CONTINUE_LABEL
-// BREAK_LABEL:
-// --------------------------------------------
-
-  SaveLabels(bl, cl, true);
-  try
-    ParseVarb(varb, vrec, [syIn], false);
-
-    expr := CurCodes.AddGoto(FBreakLabel, FLast^.Pos);
-    expr^.Sym := syRINR;
-
-    FExpr.Clear;
-    ParseExpr(FExpr, [syIf, syDo], false);
-    CurCodes.LoadExpr(FExpr);
-    CurCodes.AddNew(syVarGen, @(FLast^.Pos));
-    CurCodes.AddNew(sySETV, @(FLast^.Pos));
-
-    CurCodes.AddLabel(FContinueLabel, FLast^.Pos);
-
-    expr := CurCodes.AddNew(sySend, @vrec^.Pos);
-    expr^.VVarb := varb;
-    expr^.flags := expr^.flags + [xrSatisfied];
-    expr := CurCodes.AddGoto(FBreakLabel, FLast^.Pos);
-    expr^.Sym := syGoFP;
-
-    if FLast^.Sym = syIf then
+    SymGotoNext;
+    if FLast^.Sym <> syRBlock then
     begin
       FExpr.Clear;
-      ParseExpr(FExpr, [syDo], false);
+      ParseExpr([syRBlock], true);
       CurCodes.LoadExpr(FExpr);
-      expr := CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
-      expr^.Sym := syGoFP;
+      setup_return(true);
+    end
+    else setup_return(false);
+  end;
+  
+  procedure parse_try;
+  var
+    leave_label, catch_label: string;
+    expr: PLiExprRec;
+    in_finally: boolean;
+  begin
+    // BLOCK: try ... except ... end |  try ... finally ... end
+    // ------------------------------+-------------------------
+    // try                           |  try
+    //     <statements>              |      <statements>
+    //     GOTO LEAVE_LABE           |      GOTO FINALLY_LABE
+    // except                        |  finally
+    //   CATCH_LABEL:                |    CATCH_LABEL:
+    //   [                           |      SET ?ERROR? = true
+    //     case ExceptionName_1:     |      GOTO DEAL_LABEL
+    //       <statements>            |    FINALLY_LABEL:
+    //       GOTO LEAVE_LABEL        |      SET ?ERROR? = false
+    //     case ExceptionName_2:     |    DEAL_LABEL:
+    //       <statements>            |      <statements>
+    //       GOTO LEAVE_LABEL        |    THROW IF ?ERROR?
+    //     ....                      |  end
+    //     case ExceptionName_N:     |
+    //       <statements>            |
+    //       GOTO LEAVE_LABEL        |
+    //     default:                  |
+    //   ]                           |
+    //     <statements>              |
+    // end                           |
+    // LEAVE_LABEL:                  |
+    // ------------------------------+-------------------------
+    catch_label := FModule.NewLabelName;
+    leave_label := FModule.NewLabelName;
+
+    { try }
+
+    expr := CurCodes.AddTry(catch_label, FLast^.Pos);
+    Inc(FTryCount);
+    try
+      ParseBlock([syFinally, syExcept], false);
+      CurCodes.AddGoto(leave_label, FLast^.Pos);
+    finally
+      Dec(FTryCount);
+    end;
+
+    { catch or finally }
+
+    in_finally := (FLast^.Sym = syFinally);
+    if in_finally then
+      expr^.flags := expr^.flags + [xrInFinally];
+
+    Inc(FCatchCount);
+    try
+      if in_finally then
+      begin
+        CurCodes.ChangeGoto(catch_label, leave_label);
+        catch_label := leave_label;
+        leave_label := FModule.NewLabelName;
+      end;
+      CurCodes.AddLabel(catch_label, FLast^.Pos);
+      expr := CurCodes.AddGoto(leave_label, FLast^.Pos);
+      expr^.Sym := syRINR;
+      ParseBlock([sySemicolon, syRBlock], false);
+      CurCodes.AddLabel(leave_label, FLast^.Pos);
+    finally
+      Dec(FCatchCount);
+    end;
+  end;
+
+  procedure parse_echo;
+  var
+    L: PLiToken;
+  begin
+    FExpr.Clear;
+    L := FLast;
+    L^.VParamCount := 0;
+    repeat
+      SymGotoNext;
+      ParseExpr([sySemicolon, syRBlock, syComma], true);
+      Inc(L^.VParamCount);
+    until FLast^.Sym in [sySemicolon, syRBlock];
+    FExpr.Add(L);
+    L^.Sym := syEcho;
+    CurCodes.LoadExpr(FExpr);
+  end;
+
+  procedure parse_do;
+  begin
+    ParseBlock([syRBlock], false);
+  end;
+
+  const
+    OPRS = [syMul, syDiv, syMod, syAdd, syDec, syBXor,
+            syBAnd, syBOr, syBShl, syBShr];
+
+  function is_become(S1, S2: KLiSymbol): boolean;
+  begin
+    Result := (S1 = syBecome) or ((S2 = syBecome) and (S1 in OPRS));
+  end;
+  
+  procedure parse_default;
+  var
+    R, M, L: PLiToken;
+    S, X: KLiSymbol;
+    V: KLiVarb;
+    syntax: KLiSyntax;
+  begin
+    if FLast^.Sym = syID then
+    begin
+      syntax := FindSyntax(FLast^.Val);
+      if syntax <> nil then
+      begin
+        ExpandSyntax(syntax);
+        FLast^.Sym := sySemicolon;
+        Exit;
+      end;
     end;
     
-    ParseBlock([syRBlock], false);
-    CurCodes.AddGoto(FContinueLabel, FLast^.Pos);
-    CurCodes.AddLabel(FBreakLabel, FLast^.Pos);
-  finally
-    RestoreLabels(bl, cl);
+    M := nil;
+    FExpr.Clear;
+    PeekNextTwoSym(S, X);
+
+    if IsPureID(FLast) and is_become(S, X) then
+    begin
+      parse_varb(V, R, [syBecome] + OPRS, true);
+      S := FLast^.Sym;
+      if S in OPRS then
+      begin
+        M := FLast;
+        SymTestNext([syBecome]);
+        FExpr.Add(CloneSym(R));
+      end;
+      ParseExpr([sySemicolon, syRBlock], false);
+      if S in OPRS then
+        FExpr.Add(M);
+      FExpr.Add(R);
+      R^.Sym := syBecome;
+    end
+    else
+    if (FLast^.Sym = syGetSV) and is_become(S, X) then
+    begin
+      FCurrent.AddSuper;
+      R := FLast;
+      SymGotoNext;
+      S := FLast^.Sym;
+      if S in OPRS then
+      begin
+        M := FLast;
+        SymTestNext([syBecome]);
+        FExpr.Add(CloneSym(R));
+      end;
+      ParseExpr([sySemicolon, syRBlock], false);
+      if S in OPRS then
+        FExpr.Add(M);
+      FExpr.Add(R);
+      R^.Sym := sySetSV;
+    end
+    else
+    if (FLast^.Sym = syID) and (S in ConstantSyms + [syID, syNot, syLBlock, syFormat, syLambda]) then
+    begin
+      FExpr.Add(FLast);
+      L := CloneSym(FLast);
+      L^.Sym := syAsk;
+      L^.VParamCount := 1;
+      repeat
+        ParseExpr([sySemicolon, syRBlock, syComma], false);
+        Inc(L^.VParamCount);
+      until FLast^.Sym in [sySemicolon, syRBlock];
+      FExpr.Add(L);
+    end
+    else
+    begin
+      ParseExpr([syBecome, sySemicolon, syRBlock] + OPRS, true);
+      S := FLast^.Sym;
+      if S in [syBecome] + OPRS then
+      begin
+        R := FExpr.Last;
+        if R^.Sym <> syGetIV then
+        begin
+          FLast := R;
+          Error.SymExpected(Self, SymsToStrList([syGetIV]));
+        end;
+
+        if S in OPRS then
+        begin
+          M := FLast;
+          SymTestNext([syBecome]);
+          L := CloneSym(R);
+          FExpr.Add(L);
+          R^.Sym := syDupLast;
+          R := CloneSym(L);
+        end
+        else FExpr.Delete(FExpr.Count - 1);
+
+        ParseExpr([sySemicolon, syRBlock], false);
+
+        if S in OPRS then FExpr.Add(M);
+        FExpr.Add(R);
+
+        Inc(R^.VParamCount);
+        R^.Sym := sySetIV;
+      end;
+    end;
+
+    CurCodes.LoadExpr(FExpr);
+    CurCodes.AddNew(sySTMT, @FLast^.Pos);
   end;
-end;
 
-procedure KLiParser.ParseImport;
-label
-  NEXT;
-var
-  m_name, f_name: string;
-  is_lib: boolean;
-  curr: KLiModule;
-begin
-  lock_kernel;
-  try
-    repeat
-      SymTestNextPureID;
-      m_name := FLast^.Val;
+  procedure parse_define;
+  begin
+    SymTestNextPureID;
+    if FModule.Find(FLast^.Val) then
+      Error.Redeclared(Self);
+    FCurrent := KLiFunc.Create(FModule, KT_VARIANT, FLast^.Val, nil, nil);
+    SymGotoNext;
+    if FLast^.Sym = syBOr then
+    begin
+      ParseArguments(FCurrent, [syBOr], false);
+      SymGotoNext;
+    end
+    else FCurrent.IsNameCall := true;
+    if FLast^.Sym = syLBlock then
+      ParseBlock([syRBlock], true) else
+      ParseStatement(true);
+  end;
 
-      if FModule.FindModule(m_name, false) <> nil then
-        goto NEXT;
+  procedure parse_import;
+  label
+    NEXT;
+  var
+    m_name, f_name: string;
+    is_lib: boolean;
+    module: KLiModule;
+  begin
+    lock_kernel;
+    try
+      SymGotoNext;
+      repeat
+        SymTestLastPureID;
+        m_name := FLast^.Val;
 
-      if FModule.Find(m_name) then
-        Error.ModuleReimport(Self);
+        if FModule.FindModule(m_name, false) <> nil then goto NEXT;
+        if FModule.Find(m_name) then
+          Error.ModuleReimport(Self);
 
-      curr := KLiModule(__findNamed(sys_libraries, m_name));
-      if curr <> nil then
+        module := KLiModule(__findNamed(sys_libraries, m_name));
+        if module <> nil then
+        begin
+          FModule.FModules.Add(module);
+          goto NEXT;
+        end;
+
+        module := FModule.FEngine.FModules.Find(m_name);
+        if module <> nil then
+        begin
+          if module.Parsing then
+            Error.ImportEachOther(Self, module);
+          module.AddImporter(FModule);
+          FModule.FModules.Add(module);
+          goto NEXT;
+        end;
+
+        is_lib := false;
+        f_name := m_name;
+        if not __searchModule(f_name, FModule.FEngine.GetSearchPath, is_lib) then
+          Error.ModuleNotFound(Self);
+
+        if is_lib then
+        begin
+          module := __loadLibrary(m_name, f_name);
+          if module = nil then
+            Error.WrongLibrary(Self);
+          FModule.FModules.Add(module);
+        end
+        else
+        begin
+          module := KLiModule.Create(m_name, FModule.FEngine, moyScript);
+          module.FFileName := f_name;
+          module.Parsing := true;
+          KLiParser.Create(module).ParseAndFree(__fileText(f_name));
+          module.Parsing := false;
+          module.AddImporter(FModule);
+          FModule.FModules.Add(module);
+        end;
+
+        NEXT:
+        SymTestNext([syID, sySemicolon, syRBlock]);
+      until FLast^.Sym <> syID;
+    finally
+      unlock_kernel;
+    end;
+  end;
+
+  procedure parse_const;
+  var
+    data: PLiToken;
+  begin
+    SymTestNextPureID;
+    if FModule.Find(FLast^.Val) then
+      Error.Redeclared(Self);
+    data := FLast;
+    SymTestNext([syBecome]);
+    FCurrent := KLiFunc.Create(FModule, KT_VARIANT, data^.Val, nil, nil);
+    FCurrent.IsConstFunc := true;
+    FCurrent.IsNameCall := true;
+    FExpr.Clear;
+    ParseExpr([syRBlock], false);
+    FCurrent.FCodes.LoadExpr(FExpr);
+    FCurrent.FCodes.AddNew(syReturn, @FLast^.Pos)^.ParamCount := 1;
+  end;
+
+  procedure parse_syntax;
+  const
+    SR = [FirstKeyword..LastOper] - [syLBlock, syRBlock];
+  var
+    synx: KLiSyntax;
+    onid: boolean;
+    pair: integer;
+  begin
+  // {syntax {name ... } syntax }
+    SymTestNext([syLBlock]);
+    SymTestNextPureID;
+    if FModule.Find(FLast^.Val) then
+      Error.Redeclared(Self);
+
+    synx := KLiSyntax.Create(FModule, FLast^.Val);
+    onid := false;
+    SymGotoNext;
+    while FLast^.Sym <> syRBlock do
+    begin
+      if onid then
       begin
-        FModule.FModules.Add(curr);
-        goto NEXT;
-      end;
-
-      curr := FModule.FEngine.FModules.Find(m_name);
-      if curr <> nil then
-      begin
-        if curr.Parsing then
-          Error.ImportEachOther(Self, curr);
-        curr.AddImporter(FModule);
-        FModule.FModules.Add(curr);
-        goto NEXT;
-      end;
-
-      is_lib := false;
-      f_name := m_name;
-      if not __searchModule(f_name, FModule.FEngine.GetSearchPath, is_lib) then
-        Error.ModuleNotFound(Self);
-
-      if is_lib then
-      begin
-        curr := __loadLibrary(m_name, f_name);
-        if curr = nil then
-          Error.WrongLibrary(Self);
-        FModule.FModules.Add(curr);
+        SymTestLast(SR);
+        onid := false;
       end
       else
       begin
-        curr := KLiModule.Create(m_name, FModule.FEngine, moyScript);
-        curr.FFileName := f_name;
-        curr.Parsing := true;
-        KLiParser.Create(curr).ParseAndFree(__fileText(f_name));
-        curr.Parsing := false;
-        curr.AddImporter(FModule);
-        FModule.FModules.Add(curr);
+        SymTestLast(SR + [syID]);
+        if FLast^.Sym = syID then
+        begin
+          SymTestLastPureID;
+          if 'v_' = Copy(FLast^.Val, 1, 2) then // locals
+            Error.SymUnexpected(Self);
+          onid := true;
+        end
+        else onid := false;
+      end;
+      synx.AddArgument(FLast);
+      SymGotoNext;
+    end;
+
+    pair := 0;
+    SymTestNext([syLBlock]);
+    SymGotoNext;
+    while (FLast^.Sym <> syRBlock) or (pair <> 0) do
+    begin
+      if FLast^.Sym = syLBlock then Inc(pair) else
+      if FLast^.Sym = syRBlock then Dec(pair);
+      synx.AddToken(FLast);
+      SymGotoNext;
+    end;
+    SymTestNext([syRBlock]);
+  end;
+
+var
+  curr: KLiFunc;
+begin
+  curr := FCurrent;
+  try
+    while not OnHead and (FLast^.Sym <> syLBlock) do
+    begin
+      FExpr.Clear;
+      ParseExpr([], true);
+      CurCodes.LoadExpr(FExpr);
+      CurCodes.AddNew(sySTMT, @FLast^.Pos);
+      if FLast^.Sym = syEOF then
+      begin
+        FTokenizer.DupCurrentToken;
+        Exit;
+      end;
+    end;
+
+    if not OnHead then
+    begin
+      SymTestLast([syLBlock]);
+      FSymbols.Clear;
+      SymGotoNext;
+    end;
+
+    while FLast^.Sym <> syRBlock do
+    begin
+      FExpr.Clear;
+      case FLast^.Sym of
+        syDefine   : parse_define;
+        syImport   : parse_import;
+        syConst    : parse_const;
+        sySyntax   : parse_syntax;
+        syIf       : parse_if;
+        syFor      : parse_for;
+        syWhile    : parse_while;
+        syRepeat   : parse_repeat_until;
+        sySwitch   : parse_switch;
+        syBreak    : parse_break;
+        syContinue : parse_continue;
+        syReturn   : parse_return;
+        syTry      : parse_try;
+        syBecome   : parse_echo;
+        syDo       : parse_do;
+        sySemicolon: {ignored}
+        else         parse_default;
       end;
 
-      NEXT:
-      SymTestNext([syComma, syRBlock]);
-    until FLast^.Sym = syRBlock;
+      if FLast^.Sym = sySemicolon then
+      begin
+        FSymbols.Clear;
+        SymGotoNext;
+      end;
+    end;
   finally
-    unlock_kernel;
+    FCurrent := curr;
+    FSymbols.Clear;
+    FExpr.Clear;
   end;
 end;
 
@@ -4929,95 +5099,10 @@ begin
   SymTestLastPureID;
 end;
 
-procedure KLiParser.TailIf(ExprList: TList);
-var
-  F: string;
-begin
-  if FLast^.Sym = syIf then
-  begin
-    BeginTailIf(F, syRBlock);
-    CurCodes.LoadExpr(ExprList);
-    EndTailIf(F);
-  end
-  else
-  begin
-    CurCodes.LoadExpr(ExprList);
-    CurCodes.EndStatement;
-  end;
-end;
-
 procedure KLiParser.SymGotoNext;
 begin
   if not GetNextSym then
     Error.SymNotFound(Self);
-end;
-
-procedure KLiParser.ParseTry;
-var
-  leave_label, catch_label: string;
-  expr: PLiExprRec;
-  in_finally: boolean;
-begin
-// BLOCK: try ... except ... end  |  try ... finally ... end
-// ------------------------------+-------------------------
-// try                           |  try
-//     <statements>              |      <statements>
-//     GOTO LEAVE_LABE           |      GOTO FINALLY_LABE
-// except                        |  finally 
-//   CATCH_LABEL:                |    CATCH_LABEL:
-//   [                           |      SET ?ERROR? = true
-//     case ExceptionName_1:     |      GOTO DEAL_LABEL
-//       <statements>            |    FINALLY_LABEL:
-//       GOTO LEAVE_LABEL        |      SET ?ERROR? = false
-//     case ExceptionName_2:     |    DEAL_LABEL:
-//       <statements>            |      <statements>
-//       GOTO LEAVE_LABEL        |    THROW IF ?ERROR?
-//     ....                      |  end
-//     case ExceptionName_N:     |
-//       <statements>            |
-//       GOTO LEAVE_LABEL        |
-//     default:                  |
-//   ]                           |
-//     <statements>              |
-// end                           |
-// LEAVE_LABEL:                  |
-// --------------------------------------------
-  catch_label := FModule.NewLabelName;
-  leave_label := FModule.NewLabelName;
-
-  { try }
-
-  expr := CurCodes.AddTry(catch_label, FLast^.Pos);
-  Inc(FTryCount);
-  try
-    ParseBlock([syFinally, syExcept], false);
-    CurCodes.AddGoto(leave_label, FLast^.Pos);
-  finally
-    Dec(FTryCount);
-  end;
-
-  { catch or finally }
-
-  in_finally := (FLast^.Sym = syFinally); 
-  if in_finally then
-    expr^.flags := expr^.flags + [xrInFinally];
-
-  Inc(FCatchCount);
-  try
-    if in_finally then
-    begin
-      CurCodes.ChangeGoto(catch_label, leave_label);
-      catch_label := leave_label;
-      leave_label := FModule.NewLabelName;
-    end;
-    CurCodes.AddLabel(catch_label, FLast^.Pos);
-    expr := CurCodes.AddGoto(leave_label, FLast^.Pos);
-    expr^.Sym := syRINR;
-    ParseBlock([syRBlock], false);
-    CurCodes.AddLabel(leave_label, FLast^.Pos);
-  finally
-    Dec(FCatchCount);
-  end;
 end;
 
 function KLiParser.ParseAndFree(const Code: string): KLiFunc;
@@ -5029,152 +5114,48 @@ begin
   end;
 end;
 
-procedure KLiParser.ParseAny;
-const
-  OPRS = [syMul, syDiv, syMod, syAdd, syDec, syBXor,
-          syBAnd, syBOr, syBShl, syBShr];
-var
-  R, M, L: PLiToken;
-  S, X: KLiSymbol;
-  V: KLiVarb;
-begin
-  M := nil;
-  FExpr.Clear;
-  PeekNextTwoSym(S, X);
-
-  if IsPureID(FLast) and ((S in [syBecome, syDot2]) or ((S in OPRS) and (X = syBecome))) then
-  begin
-    ParseVarb(V, R, [syBecome] + OPRS, true);
-    S := FLast^.Sym;
-    if S in OPRS then
-    begin
-      M := FLast;
-      SymTestNext([syBecome]);
-      FExpr.Add(CloneSym(R));
-    end;
-    ParseExpr(FExpr, [syIf, syRBlock], false);
-    if S in OPRS then
-      FExpr.Add(M);
-    FExpr.Add(R);
-    R^.Sym := syBecome;
-  end
-  else
-  if (FLast^.Sym = syGetSV) and ((S = syBecome) or ((S in OPRS) and (X = syBecome))) then
-  begin
-    FCurrent.AddSuper;
-    R := FLast;
-    SymGotoNext;
-    S := FLast^.Sym;
-    if S in OPRS then
-    begin
-      M := FLast;
-      SymTestNext([syBecome]);
-      FExpr.Add(CloneSym(R));
-    end;
-    ParseExpr(FExpr, [syIf, syRBlock], false);
-    if S in OPRS then
-      FExpr.Add(M);
-    FExpr.Add(R);
-    R^.Sym := sySetSV;
-  end
-  else
-  begin
-    ParseExpr(FExpr, [syBecome, syIf, syRBlock] + OPRS, true);
-    S := FLast^.Sym;
-    if S in [syBecome] + OPRS then
-    begin
-      R := FExpr.Last;
-
-      if R^.Sym <> syGetIV then
-      begin
-        FLast := R;
-        Error.SymExpected(Self, SymsToStrList([syGetIV]));
-      end;
-
-      if S in OPRS then
-      begin
-        M := FLast;
-        SymTestNext([syBecome]);
-        L := CloneSym(R);
-        FExpr.Add(L);
-        R^.Sym := syDupLast;
-        R := CloneSym(L);
-      end
-      else FExpr.Delete(FExpr.Count - 1);
-
-      ParseExpr(FExpr, [syRBlock, syIf], false);
-
-      if S in OPRS then
-        FExpr.Add(M);
-
-      FExpr.Add(R);
-
-      Inc(R^.VParamCount);
-      R^.Sym := sySetIV;
-    end;
-  end;
-
-  TailIf(FExpr);
-end;
-
 procedure KLiParser.ParseArguments(Func: KLiFunc; EndSym: KLiSymbols; OnHead: boolean);
-var
-  L: PLiToken;
-  V: KLiVarb;
-  T: KLiType;
 begin
   if not OnHead then SymGotoNext;
   if not (FLast^.Sym in EndSym) then
-  begin
+  repeat
     SymTestLastPureID;
-    while true do
-    begin
-      if Func.FindInside(FLast^.Val) then
-        Error.Redeclared(Self);
-      L := FLast;
-      T := KT_VARIANT;
-      SymTestNext(EndSym + [syComma, syDot2]);
-      if FLast^.Sym = syDot2 then
-      begin
-        SymTestNext([syID]);
-        T := ParseVarType(FLast);
-        SymTestNext(EndSym + [syComma]);
-      end;
-      V := Func.AddParam(L^.Val, T);
-      V.FPos := L^.Pos;
-      if FLast^.Sym in EndSym then Exit else SymTestNextPureID;
-    end;
-  end;
+    if Func.FindInside(FLast^.Val) then
+      Error.Redeclared(Self);
+    Func.AddParam(FLast^.Val, KT_VARIANT).FPos := FLast^.Pos;
+    SymTestNext(EndSym + [syComma]);
+    if FLast^.Sym = syComma then SymGotoNext else Exit;
+  until false;
 end;
 
-procedure KLiParser.ParseAsk(Expr: TList);
-var
-  ask: PLiToken;
-begin
-  while FLast^.Sym in [syLParen] do
+procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
+
+  procedure parse_ask;
+  var
+    ask: PLiToken;
   begin
-    ask := FLast;
-    ask^.VParamCount := 1;
-    SymGotoNext;
-    if FLast^.Sym <> syRParen then
+    while FLast^.Sym in [syLParen] do
     begin
-      ParseExpr(Expr, [syRParen, syComma], true);
-      Inc(ask^.VParamCount);
-      while FLast^.Sym = syComma do
+      ask := FLast;
+      ask^.VParamCount := 1;
+      SymGotoNext;
+      if FLast^.Sym <> syRParen then
       begin
-        ParseExpr(Expr, [syRParen, syComma], false);
+        ParseExpr([syRParen, syComma], true);
         Inc(ask^.VParamCount);
+        while FLast^.Sym = syComma do
+        begin
+          ParseExpr([syRParen, syComma], false);
+          Inc(ask^.VParamCount);
+        end;
       end;
+      ask^.Sym := syAsk;
+      FExpr.Add(ask);
+      SymGotoNext;
     end;
-    ask^.Sym := syAsk;
-    Expr.Add(ask);
-    SymGotoNext;
   end;
-end;
 
-procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean);
-
-  function IsOperID(Sym: KLiSymbol): boolean;
+  function is_oper_ID(Sym: KLiSymbol): boolean;
   var
     M: KLiSymbol;
   begin
@@ -5192,33 +5173,48 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
   end;
 
   procedure parse_term;
-  label
-    SYNTAX_BACK;
   var
     JT, JF, L: PLiToken;
     TX, FX: integer;
     hashed: boolean;
     syntax: KLiSyntax;
+    lambda: KLiFunc;
   begin
     if FCurrent.IsLambdaFunc then
       SymTestLast(ExprHeadSyms) else
       SymTestLast(ExprHeadSyms - [syGetSV]);
-      
-    if IsOperID(FLast^.Sym) then
+
+    if is_oper_ID(FLast^.Sym) then
     begin
       FLast^.Val := lse_symbol.Symbols[FLast^.Sym].ID;
       FLast^.Sym := syID;
     end;
-    L := FLast;
 
-    if L^.Sym = syLambda then
+    if (FLast^.Sym = syLBlock) and (PeekNextSym = syBOr) then
     begin
-      ParseLambda;
+      with Shadow do
+      try
+        lambda := FModule.NewFunc;
+        lambda.IsLambdaFunc := true;
+        FCurrent := lambda;
+        SymTestNext([syBOr]);
+        ParseArguments(lambda, [syBOr], false);
+        SymGotoNext;
+        if FLast^.Sym = syLBlock then
+          ParseBlock([syRBlock], true) else
+          ParseStatement(true);
+      finally
+        Free;
+      end;
+      FLast^.Sym := syID;
+      FLast^.Val := lambda.FullName;
+      FExpr.Add(FLast);
       SymGotoNext;
-      ParseAsk(Expr);
+      parse_ask;
     end
     else
     begin
+      L := FLast;
       SymGotoNext;
       if (L^.Sym = syDec) and (FLast^.Sym in [syFloat, syInt]) then
       begin
@@ -5231,73 +5227,69 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
       
       if L^.Sym in ConstantSyms then
       begin
-        Expr.Add(L);
+        FExpr.Add(L);
         if L^.Sym = syGetSV then
         begin
           FCurrent.AddSuper;
           FCurrent.ExpandThis := true;
         end;
         if L^.Sym in [syGetEnv, syGetSV] then
-          ParseAsk(Expr);
+          parse_ask;
       end
       else
       if L^.Sym = syID then
       begin
-        Expr.Add(L); // variable/class/function/...
-        ParseAsk(Expr);
+        FExpr.Add(L); // variable/class/function/...
+        parse_ask;
       end
       else
       if L^.Sym in [syNot, syDec, syBNot, syFormat] then // 单目操作
       begin
         if L^.Sym = syDec then L^.Sym := syNeg; // 负号
         parse_term;
-        Expr.Add(L);
+        FExpr.Add(L);
       end
       else
       if L^.Sym = syLParen then
       begin
-        ParseExpr(Expr, [syRParen], true);
+        ParseExpr([syRParen], true);
         SymGotoNext;
-        ParseAsk(Expr);
+        parse_ask;
       end
       else
       if L^.Sym = syLBlock then
       begin
-        SYNTAX_BACK:
-        if FLast^.Sym = syRBlock then
+        while FLast^.Sym = syID do
         begin
-          L^.Sym := syNil;
-          Expr.Add(L);
-        end
-        else
-        begin
-          if FLast^.Sym = syID then
+          syntax := FindSyntax(FLast^.Val);
+          if syntax <> nil then
           begin
-            syntax := FindSyntax(FLast^.Val);
-            if syntax <> nil then
-            begin
-              ExpandSyntax(syntax);
-              SymGotoNext;
-              goto SYNTAX_BACK;
-            end;
-          end;
-          ParseExpr(Expr, [syAsk, syRBlock], true);
-          if FLast^.Sym = syAsk then
-          begin
-            JF := FLast;
-            JF^.Sym := syJmpFP;
-            FX := Expr.Add(JF);
-            ParseExpr(Expr, [syDot2], false);
-            JT := FLast;
-            JT^.Sym := syJump;
-            TX := Expr.Add(JT);
-            JF^.VParamCount := Expr.Count - FX;
-            ParseExpr(Expr, [syRBlock], false);
-            JT^.VParamCount := Expr.Count - TX;
-          end;
+            ExpandSyntax(syntax);
+            SymGotoNext;
+          end
+          else Break;
         end;
+
+        if FLast^.Sym = syRBlock then
+          Error.SymUnexpected(Self);
+          
+        ParseExpr([syAsk, syRBlock], true);
+        if FLast^.Sym = syAsk then
+        begin
+          JF := FLast;
+          JF^.Sym := syJmpFP;
+          FX := FExpr.Add(JF);
+          ParseExpr([syDot2], false);
+          JT := FLast;
+          JT^.Sym := syJump;
+          TX := FExpr.Add(JT);
+          JF^.VParamCount := FExpr.Count - FX;
+          ParseExpr([syRBlock], false);
+          JT^.VParamCount := FExpr.Count - TX;
+        end;
+
         SymGotoNext;
-        ParseAsk(Expr);
+        parse_ask;
       end
       else
       if L^.Sym = syLArray then // varlist | hashed
@@ -5308,20 +5300,20 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
         begin
           if L^.VParamCount = 0 then
           begin
-            ParseExpr(Expr, [syDot2, syComma, syRArray], true);
+            ParseExpr([syDot2, syComma, syRArray], true);
             hashed := (FLast^.Sym = syDot2); // hashed
             if hashed then
-              ParseExpr(Expr, [syComma, syRArray], false);
+              ParseExpr([syComma, syRArray], false);
           end
           else
           begin
             if hashed then
-              ParseExpr(Expr, [syDot2], false);
-            ParseExpr(Expr, [syComma, syRArray], false);
+              ParseExpr([syDot2], false);
+            ParseExpr([syComma, syRArray], false);
           end;
           Inc(L^.VParamCount, 1 + Ord(hashed));
         end;
-        Expr.Add(L);
+        FExpr.Add(L);
         if hashed then
           L^.Sym := syHashed else
           L^.Sym := syVarList;
@@ -5329,7 +5321,24 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
       end;
     end;
 
-    ParseDotItem(Expr);
+    while FLast^.Sym in [syDot, syLArray] do
+    begin
+      L := FLast;
+      if L^.Sym = syDot then
+      begin
+        SymGotoNext;
+        if not (FLast^.Sym in [FirstKeyword..LastKeyword]) then
+          SymTestLastPureID;
+        FExpr.Add(FLast);
+        FLast^.Sym := syStr;
+      end
+      else ParseExpr([syRArray], false);
+      L^.Sym := syGetIV;
+      L^.VParamCount := 2;
+      FExpr.Add(L);
+      SymGotoNext;
+      parse_ask;
+    end;
   end;
 
   procedure parse_fact(Level: integer);
@@ -5351,40 +5360,46 @@ procedure KLiParser.ParseExpr(Expr: TList; EndSyms: KLiSymbols; OnHead: boolean)
         if L^.Sym = syAnd then
           J^.Sym := syJmpF else
           J^.Sym := syJmpT;
-        X := Expr.Add(J);
+        X := FExpr.Add(J);
       end;
       SymGotoNext;
       if Level > 0 then
         parse_fact(Level - 1) else
         parse_term;
-      Expr.Add(L);
+      FExpr.Add(L);
       if Assigned(J) then
       begin
-        J^.VParamCount := Expr.Count - X;
+        J^.VParamCount := FExpr.Count - X;
         J := nil;
       end;
     end;
   end;
 
+var
+  token: PLiToken;
 begin
   if not OnHead then SymGotoNext;
   parse_fact(High(ExprOperSyms));
-  SymTestLast(EndSyms);
-end;
-
-procedure KLiParser.BeginTailIf(var end_if_label: string; EndSym: KLiSymbol);
-var
-  cond: TList;
-begin
-  cond := TList.Create;
-  try
-    end_if_label := FModule.NewLabelName;
-    ParseExpr(cond, [EndSym], false);
-    CurCodes.LoadExpr(cond);
-    CurCodes.AddGoto(end_if_label, FLast^.Pos)^.Sym := syGoFP;
-  finally
-    cond.Free;
+  while FLast^.Sym = syRefer do
+  begin
+    SymGotoNext;
+    parse_fact(High(ExprOperSyms));
+    token := PLiToken(FExpr.Last);
+    if token^.Sym = syAsk then
+    begin
+      Inc(token^.VParamCount);
+      token^.Sym := syReferAsk;
+    end
+    else
+    begin
+      token := CloneSym(FLast);
+      token^.Sym := syReferAsk;
+      token^.VParamCount := 2;
+      FExpr.Add(token);
+    end;
   end;
+  if EndSyms <> [] then
+    SymTestLast(EndSyms);
 end;
 
 function KLiParser.CloneSym(sym: PLiToken): PLiToken;
@@ -5394,70 +5409,6 @@ begin
   Result^.Pos := sym^.Pos;
   Result^.Val := sym^.Val;
   Result^.VInteger := sym^.VInteger;
-end;
-
-procedure KLiParser.ParseDefine;
-var
-  clss: KLiType;
-  data: PLiToken;
-  curr: KLiFunc;
-begin
-  SymTestNextPureID;
-  if FModule.Find(FLast^.Val) then
-    Error.Redeclared(Self);
-  data := FLast;
-
-  SymGotoNext;
-  if FLast^.Sym = syDot2 then
-  begin
-    SymTestNext([syID]);
-    clss := ParseVarType(FLast);
-    SymGotoNext;                               
-  end
-  else clss := KT_VARIANT;
-
-  curr := FCurrent;
-  try
-    FCurrent := KLiFunc.Create(FModule, clss, data^.Val, nil, nil);
-    if FLast^.Sym = syBOr then
-    begin
-      ParseArguments(FCurrent, [syBOr], false);
-      SymGotoNext;
-    end
-    else FCurrent.IsNameCall := true;
-    ParseBlock([syRBlock], true);
-  finally
-    FCurrent := curr;
-  end;
-end;
-
-procedure KLiParser.ParseDotItem(Expr: TList);
-var
-  L: PLiToken;
-begin
-  while FLast^.Sym in [syDot, syLArray] do
-  begin
-    L := FLast;
-    if L^.Sym = syDot then
-    begin
-      SymGotoNext;
-      if not (FLast^.Sym in [FirstKeyword..LastKeyword]) then
-        SymTestLastPureID;
-      Expr.Add(FLast);
-      FLast^.Sym := syStr;
-    end
-    else ParseExpr(Expr, [syRArray], false);
-    L^.Sym := syGetIV;
-    L^.VParamCount := 2;
-    Expr.Add(L);
-    SymGotoNext;
-    ParseAsk(Expr);
-  end;
-end;
-
-procedure KLiParser.EndTailIf(const end_if_label: string);
-begin
-  CurCodes.AddLabel(end_if_label, FLast^.Pos);
 end;
 
 function KLiParser.Error: KLiError;
@@ -5477,7 +5428,7 @@ var
   token: PLiToken;
   lastsym: KLiSymbol;
 
-  procedure read_to(const ID: string; EndSym: KLiSymbol);
+  procedure read_to(const ID: string; EndSyms: KLiSymbols);
   var
     X, pair: integer;
   begin
@@ -5488,7 +5439,7 @@ var
     lists[X].list := TList.Create;
     pair := 0;
     SymGotoNext;
-    while (FLast^.Sym <> EndSym) or (pair > 0) do
+    while (pair > 0) or not (FLast^.Sym in EndSyms) do
     begin
       if FLast^.Sym = syLBlock then Inc(pair) else
       if FLast^.Sym = syRBlock then
@@ -5529,24 +5480,24 @@ begin
         begin
           SymTestNext([token^.Sym]);
           if index = ASyntax.ArgCount - 1 then
-            SymTestNext([syRBlock]);
+            SymTestNext([sySemicolon, syRBlock]);
         end
         else
         if index < ASyntax.ArgCount - 1 then
         begin
-          read_to(token^.Val, ASyntax.ArgToken(index + 1)^.Sym);
+          read_to(token^.Val, [ASyntax.ArgToken(index + 1)^.Sym]);
           Inc(index);
           if index = ASyntax.ArgCount - 1 then
-            SymTestNext([syRBlock]);
+            SymTestNext([sySemicolon, syRBlock]);
         end
-        else read_to(token^.Val, syRBlock);
+        else read_to(token^.Val, [sySemicolon, syRBlock]);
         Inc(index);
       end;
     end
-    else SymTestNext([syRBlock]);
+    else SymTestNext([sySemicolon, syRBlock]);
 
     // 2.put back to FTokenizer
-    FTokenizer.PutBack(FLast); // syRBlock
+    FTokenizer.PutBack(FLast); // sySemicolon | syRBlock
     ASyntax.RenameLocals;
     lastsym := FLast^.Sym;
     for index := ASyntax.FBody.Count - 1 downto 0 do
@@ -5587,99 +5538,6 @@ begin
   if FModule.FindBy(S, M, @R) and (R.fo_type = foSyntax) then
     Result := R.VSyntax else
     Result := nil;
-end;
-
-procedure KLiParser.ParseSwitch;
-var
-  bl, cl: string;
-  cx: PLiExprRec;
-begin
-// --------------------------------------------
-// BLOCK: switch expr
-//          case expr1: ...
-//          case ...  : ...
-//          case exprN: ...
-//          else        ...
-//        end
-// --------------------------------------------
-  bl := FModule.NewLabelName;
-  CurCodes.AddGoto(bl, FLast^.Pos)^.Sym := syRINR;
-  FExpr.Clear;
-  ParseExpr(FExpr, [syCase], false);
-  CurCodes.LoadExpr(FExpr);
-  CurCodes.AddNew(sySETV, @FLast^.Pos);
-  repeat
-    FExpr.Clear;
-    ParseExpr(FExpr, [syDot2], false);
-    CurCodes.LoadExpr(FExpr);
-    CurCodes.AddNew(syCase, @(FLast^.Pos));
-    cl := FModule.NewLabelName;
-    cx := CurCodes.AddGoto(cl, FLast^.Pos);
-    cx^.Sym := syGoFP;
-    ParseBlock([syCase, syElse, syRBlock], false);
-    if FLast^.Sym <> syRBlock then
-    begin
-      CurCodes.AddGoto(bl, FLast^.Pos);
-      CurCodes.AddLabel(cl, FLast^.Pos);
-      if FLast^.Sym = syElse then
-        ParseBlock([syRBlock], false);
-    end
-    else cx^.Name := bl;
-  until FLast^.Sym = syRBlock;
-  CurCodes.AddLabel(bl, FLast^.Pos);
-end;
-
-procedure KLiParser.ParseSyntax;
-const
-  SR = [FirstKeyword..LastOper] - [syLBlock, syRBlock];
-var
-  synx: KLiSyntax;
-  onid: boolean;
-  pair: integer;
-begin
-// {syntax {name ... } syntax }
-  SymTestNext([syLBlock]);
-  SymTestNextPureID;
-  if FModule.Find(FLast^.Val) then
-    Error.Redeclared(Self);
-  synx := KLiSyntax.Create(FModule, FLast^.Val);
-
-  onid := false;
-  SymGotoNext;
-  while FLast^.Sym <> syRBlock do
-  begin
-    if onid then
-    begin
-      SymTestLast(SR);
-      onid := false;
-    end
-    else
-    begin
-      SymTestLast(SR + [syID]);
-      if FLast^.Sym = syID then
-      begin
-        SymTestLastPureID;
-        if 'v_' = Copy(FLast^.Val, 1, 2) then // locals
-          Error.SymUnexpected(Self); 
-        onid := true;
-      end
-      else onid := false;
-    end;
-    synx.AddArgument(FLast);
-    SymGotoNext;
-  end;
-
-  pair := 0;
-  SymTestNext([syLBlock]);
-  SymGotoNext;
-  while (FLast^.Sym <> syRBlock) or (pair <> 0) do
-  begin
-    if FLast^.Sym = syLBlock then Inc(pair) else
-    if FLast^.Sym = syRBlock then Dec(pair);
-    synx.AddToken(FLast);
-    SymGotoNext;
-  end;
-  SymTestNext([syRBlock]);
 end;
 
 procedure KLiParser.SaveLabels(var BreakLabel, ContinueLabel: string; CreateNewLabels: boolean);
@@ -5742,17 +5600,6 @@ begin
   Result := FLast^.Val;
 end;
 
-function KLiParser.ParseLambdaFunc: KLiFunc;
-begin
-  Result := FModule.NewFunc;
-  Result.IsLambdaFunc := true;
-  FCurrent := Result;
-  SymTestNext([syLBlock]);
-  SymTestNext([syBOr]);
-  ParseArguments(Result, [syBOr], false);
-  ParseBlock([syRBlock], false);
-end;
-
 function KLiParser.Shadow: KLiParser;
 begin
   Result := KLiParser.Create(FModule);
@@ -5761,22 +5608,6 @@ begin
   Result.FCurrent := FCurrent;
   Result.FIsShadow := true;
   Result.FLast := FLast;
-end;
-
-function KLiParser.ParseLambda: KLiFunc;
-var
-  parser: KLiParser;
-begin
-  parser := Shadow;
-  try
-    Result := parser.ParseLambdaFunc;
-    FLast := CloneSym(FLast);
-    FLast^.Sym := syID;
-    FLast^.Val := Result.FullName;
-    FExpr.Add(FLast);
-  finally
-    parser.Free;
-  end;
 end;
 
 { KLiVarb }
@@ -5871,11 +5702,6 @@ begin
   if X >= 0 then
     Result := GetVarb(X) else
     Result := nil;
-end;
-
-function KLiVarbList.FirstIs(AType: KLiType): boolean;
-begin
-  Result := (GetCount > 0) and (GetVarb(0).FType = AType);
 end;
 
 function KLiVarbList.GetCount: integer;
@@ -5991,7 +5817,6 @@ begin
     FCodes := KLiExprList.Create(Self);
     FCodes.IncRefcount;
     FCodes.FItems.OnDestroy := {$IFDEF FPC}@{$ENDIF}FCodes.Clear;
-    FCodes.FLocals.IncRefcount;
   end;
 
   if FModule.FEngine <> nil then
@@ -6022,7 +5847,6 @@ begin
 
   if FCodes <> nil then
   begin
-    FCodes.FLocals.DecRefcount;
     FCodes.DecRefcount;
     FCodes := nil;
   end;
@@ -6199,12 +6023,25 @@ var
   M, T: KLiModule;
   F: KLiFunc;
   X: integer;
+  
+  function match_class(func: KLiFunc): boolean;
+  var
+    T: KLiType;
+  begin
+    if (func <> nil) and (func.FParams.GetCount > 0) then
+    begin
+      T := func.FParams.GetVarb(0).FType;
+      Result := (T = AType) or (T = KT_VARIANT);
+    end
+    else Result := false;
+  end;
+  
 begin
   N := AType.Name + '_' + AName;
   M := Module;
 
   F := M.FindFunc(N);
-  if (F <> nil) and F.FParams.FirstIs(AType) then
+  if match_class(F) then
   begin
     Result := F;
     Exit;
@@ -6218,7 +6055,7 @@ begin
       if T <> M then
       begin
         F := T.FindFunc(N);
-        if (F <> nil) and F.FParams.FirstIs(AType) then
+        if match_class(F) then
         begin
           Result := F;
           Exit;
@@ -6228,7 +6065,7 @@ begin
     if M.FModules.Find('sys') = nil then
     begin
       F := sys_module.FindFunc(N);
-      if (F <> nil) and F.FParams.FirstIs(AType) then
+      if match_class(F) then
       begin
         Result := F;
         Exit;
@@ -6236,7 +6073,9 @@ begin
     end;
   end;
 
-  Result := nil;
+  if AType <> KT_VARIANT then
+    Result := FindMethod(AName, KT_VARIANT) else
+    Result := nil;
 end;
 
 function KLiFunc.HasState(Index: KLiFuncState): boolean;
@@ -6325,13 +6164,6 @@ begin
   Result^.Sym := syTry;
 end;
 
-procedure KLiExprList.EndStatement;
-begin
-  if GetCount > 0 then
-    if not (GetLast^.Sym in [syReturn, sySTMT, syLabel, syEcho]) then
-      AddNew(sySTMT, nil);
-end;
-
 function KLiExprList.ChangeGoto(const OrgLabel, NewLabel: string): integer;
 var
   X: integer;
@@ -6352,32 +6184,40 @@ end;
 
 procedure KLiExprList.Clear(Sender: TObject);
 var
-  index: integer;
+  X, N: integer;
   V: KLiVarb;
-  F: boolean;
+  S: KLiVarSnap;
 begin
   FSatisfyIndex := 0;
   try
-    for index := 0 to FItems.Count - 1 do
-      __FreeExprec(FItems[index]);
-    if FLocals <> nil then
-    begin
-      F := false;
-      for index := FLocals.Count - 1 downto 0 do
-      begin
-        V := FLocals[index];
-        if V.Name[1] = '#' then
-        begin
-          FLocals.Delete(index);
-          F := true;
-        end;
-      end;
-      if F then
-        for index := 0 to FLocals.Count - 1 do
-          FLocals[index].FIndex := FFunc.FParams.Count + index;
-    end;
+    for X := 0 to FItems.Count - 1 do
+      __FreeExprec(FItems[X]);
   finally
     FItems.Clear;
+  end;
+
+  if (Sender <> nil) and (Sender is KLiVarSnap) then
+  begin
+    S := KLiVarSnap(Sender);
+    if (S.FParams = FFunc.FParams) and (S.FLocals = FLocals) then
+    begin
+      S.Prepare;
+      for X := FLocals.Count - 1 downto 0 do
+      begin
+        V := FLocals[X];
+        if '#' = V.Name[1] then
+        begin
+          lse_set_nil(S.Datas[V.FIndex]);
+          if (V.Refcount < 2) {and (FLocals.Refcount < 3)} then
+          begin
+            S.Delete(V.FIndex);
+            FLocals.Delete(X);
+            for N := X to FLocals.Count - 1 do
+              FLocals[X].FIndex := S.FParams.Count + N;
+          end;
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -6419,7 +6259,7 @@ begin
   FLocals.FFunc := nil;
   FLocals.DecRefcount;
   FLocals := nil;
-  Clear;
+  Clear(nil);
   FItems.DecRefcount;
   FItems := nil;
   inherited;
@@ -6431,6 +6271,7 @@ var
   R: PLiExprRec;
   L: TList;
   H: string;
+  V: KLiVarb;
 
   function Log(const S: string): integer;
   begin
@@ -6439,8 +6280,10 @@ var
 
 begin
   for A := 0 to FLocals.Count - 1 do
-    Log(Format('     VARB %s: %s',
-      [FLocals[A].Name, FLocals[A].ValueType.Name]));
+  begin
+    V := FLocals[A];
+    Log(Format('     VARB %s: %s', [V.Name, V.ValueType.Name]));
+  end;
       
   L := TList.Create;
   try
@@ -6465,6 +6308,7 @@ begin
         syJmpTP     : H := Format('JMPT &%.4d: POP', [A + R^.VOffset]);
         syCall      : H := Format('CALL %s: %d', [R^.VFunc.FullName, R^.ParamCount]);
         syAsk       : H := Format('CASK [%d]', [R^.ParamCount]);
+        syReferAsk  : H := Format('RASK [%d]', [R^.ParamCount]);
         syIdle      : H := 'IDLE';
         syPress     : if R^.ParamCount > 1 then
                         H := Format('POPL  [%d]', [R^.ParamCount]) else
@@ -6982,6 +6826,15 @@ var
     exec_last(clss, exprec^.ParamCount);
   end;
 
+  procedure exec_refer_ask;
+  var
+    base: integer;
+  begin
+    base := stack.Count - exprec^.ParamCount;
+    stack.FItems.Exchange(base, base + 1);
+    exec_ask;
+  end;
+  
   procedure exec_curry;
   begin
     exec_last(KT_FUNC, 1);
@@ -7081,6 +6934,7 @@ begin
           syLabel    : stack.Clear;
           
           syAsk      : exec_ask;
+          syReferAsk : exec_refer_ask;
           sySTMT     : stack.Clear;
           syGETV     : exec_push(KT_VARIANT);
           sySETV     : stack.Press;
@@ -8755,7 +8609,7 @@ begin
       lock_engine(Self);
       try
         EndExecute;
-        FMainFunc.FCodes.Clear;
+        FMainFunc.FCodes.Clear(FMainSnap);
         Reset(false);
       finally
         unlock_engine(Self);
@@ -9161,11 +9015,15 @@ end;
 
 procedure KLiVarSnap.Prepare;
 var
-  index, total: integer;
+  X, N: integer;
+  V: KLiVarb;
 begin
-  total := FParams.Count + FLocals.Count;
-  for index := GetCount to total - 1 do
-    AddDefault(GetVarb(index).ValueType.TypeRec);
+  N := FParams.Count + FLocals.Count;
+  for X := GetCount to N - 1 do
+  begin
+    V := GetVarb(X);
+    AddDefault(V.ValueType.TypeRec);
+  end;
 end;
 
 { KLiCallStack }
@@ -9955,6 +9813,7 @@ begin
       sys_runner_procs[sySTMT]     := {$IFDEF FPC}@{$ENDIF}__runner_statement;
       sys_runner_procs[syVarGen]   := {$IFDEF FPC}@{$ENDIF}__runner_vargen;
       sys_runner_procs[syAsk]      := {$IFDEF FPC}@{$ENDIF}__runner_ask;
+      sys_runner_procs[syReferAsk] := {$IFDEF FPC}@{$ENDIF}__runner_refer_ask;
       sys_runner_procs[syLabel]    := {$IFDEF FPC}@{$ENDIF}__runner_statement;
       sys_runner_procs[syIdle]     := {$IFDEF FPC}@{$ENDIF}__runner_next;
       sys_runner_procs[syTry]      := {$IFDEF FPC}@{$ENDIF}__runner_try;

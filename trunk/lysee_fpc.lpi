@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="699"/>
+      <BuildNr Value="702"/>
       <StringTable FileDescription="lysee script interpretor (FPC)" LegalCopyright="Copyright (C) 2003-2011 li yun jie <libudi@hotmail.com>" ProductVersion="2.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -38,7 +38,6 @@
         <Filename Value="lysee_fpc.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_fpc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="42"/>
@@ -50,10 +49,11 @@
         <Filename Value="lse_kernel.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_kernel"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2228"/>
-        <CursorPos X="67" Y="2240"/>
+        <TopLine Value="5829"/>
+        <CursorPos X="26" Y="5843"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="1197" ID="3"/>
@@ -588,123 +588,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="1377" Column="1" TopLine="1355"/>
+        <Caret Line="119" Column="1" TopLine="99"/>
       </Position1>
       <Position2>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="1870" Column="1" TopLine="1852"/>
+        <Caret Line="351" Column="23" TopLine="338"/>
       </Position2>
       <Position3>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="2091" Column="1" TopLine="2070"/>
+        <Filename Value="lse_dbu.pas"/>
+        <Caret Line="308" Column="1" TopLine="294"/>
       </Position3>
       <Position4>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="2232" Column="1" TopLine="2212"/>
+        <Caret Line="3885" Column="1" TopLine="3869"/>
       </Position4>
       <Position5>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="2329" Column="1" TopLine="2320"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position5>
       <Position6>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="93" Column="11" TopLine="82"/>
+        <Filename Value="lse_dbu.pas"/>
+        <Caret Line="1642" Column="1" TopLine="1620"/>
       </Position6>
       <Position7>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="119" Column="1" TopLine="99"/>
+        <Caret Line="207" Column="1" TopLine="187"/>
       </Position7>
       <Position8>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="351" Column="23" TopLine="338"/>
+        <Caret Line="711" Column="1" TopLine="702"/>
       </Position8>
       <Position9>
-        <Filename Value="lse_dbu.pas"/>
-        <Caret Line="308" Column="1" TopLine="294"/>
+        <Filename Value="lse_api.pas"/>
+        <Caret Line="312" Column="21" TopLine="300"/>
       </Position9>
       <Position10>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="3885" Column="1" TopLine="3869"/>
+        <Caret Line="1092" Column="1" TopLine="1080"/>
       </Position10>
       <Position11>
         <Filename Value="lse_api.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1138" Column="1" TopLine="1115"/>
       </Position11>
       <Position12>
-        <Filename Value="lse_dbu.pas"/>
-        <Caret Line="1642" Column="1" TopLine="1620"/>
-      </Position12>
-      <Position13>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="207" Column="1" TopLine="187"/>
-      </Position13>
-      <Position14>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="711" Column="1" TopLine="702"/>
-      </Position14>
-      <Position15>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="312" Column="21" TopLine="300"/>
-      </Position15>
-      <Position16>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="1092" Column="1" TopLine="1080"/>
-      </Position16>
-      <Position17>
-        <Filename Value="lse_api.pas"/>
-        <Caret Line="1138" Column="1" TopLine="1115"/>
-      </Position17>
-      <Position18>
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="2196" Column="3" TopLine="2172"/>
-      </Position18>
-      <Position19>
+      </Position12>
+      <Position13>
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="3502" Column="38" TopLine="3487"/>
-      </Position19>
-      <Position20>
+      </Position13>
+      <Position14>
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="3496" Column="68" TopLine="3485"/>
-      </Position20>
-      <Position21>
+      </Position14>
+      <Position15>
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
-      </Position21>
-      <Position22>
+      </Position15>
+      <Position16>
         <Filename Value="lseu.pas"/>
         <Caret Line="1021" Column="32" TopLine="997"/>
-      </Position22>
-      <Position23>
+      </Position16>
+      <Position17>
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="1431" Column="46" TopLine="1418"/>
-      </Position23>
-      <Position24>
+      </Position17>
+      <Position18>
         <Filename Value="lse_symbol.pas"/>
         <Caret Line="205" Column="1" TopLine="188"/>
-      </Position24>
-      <Position25>
+      </Position18>
+      <Position19>
         <Filename Value="lse_symbol.pas"/>
         <Caret Line="221" Column="1" TopLine="209"/>
-      </Position25>
-      <Position26>
+      </Position19>
+      <Position20>
         <Filename Value="lse_symbol.pas"/>
         <Caret Line="242" Column="1" TopLine="230"/>
-      </Position26>
-      <Position27>
+      </Position20>
+      <Position21>
         <Filename Value="lseu.pas"/>
         <Caret Line="242" Column="32" TopLine="218"/>
-      </Position27>
-      <Position28>
+      </Position21>
+      <Position22>
         <Filename Value="lysee_fpc.lpr"/>
         <Caret Line="51" Column="17" TopLine="44"/>
-      </Position28>
-      <Position29>
+      </Position22>
+      <Position23>
         <Filename Value="lysee_fpc.lpr"/>
         <Caret Line="63" Column="1" TopLine="44"/>
-      </Position29>
-      <Position30>
+      </Position23>
+      <Position24>
         <Filename Value="lysee_fpc.lpr"/>
         <Caret Line="69" Column="1" TopLine="46"/>
+      </Position24>
+      <Position25>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1056" Column="11" TopLine="1044"/>
+      </Position25>
+      <Position26>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position26>
+      <Position27>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="32" Column="12" TopLine="12"/>
+      </Position27>
+      <Position28>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="269" Column="15" TopLine="257"/>
+      </Position28>
+      <Position29>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="98" Column="43" TopLine="85"/>
+      </Position29>
+      <Position30>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="31" Column="7" TopLine="25"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

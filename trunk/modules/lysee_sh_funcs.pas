@@ -91,7 +91,7 @@ const
      fr_addr:@sh_copy;
      fr_desc:'copy file'
     ),
-    (fr_prot:'del:int |fileMask:string';
+    (fr_prot:'del:int |fileMask:string|';
      fr_addr:@sh_delete;
      fr_desc:'delete specified file'
     ),

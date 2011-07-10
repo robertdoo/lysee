@@ -1874,11 +1874,17 @@ function addi_function(obj: pointer; Value: PLseValue; Engine: pointer): integer
 var
   F: KLiFunc;
   R: KLiRunner;
+  B: integer;
 begin
   F := KLiFunc(obj);
   R := KLiEngine(Engine).MainRunner;
-  R.Stack.Add(Value);
-  Result := Ord(R.Goon(F, 1, nil));
+  B := R.Stack.Count;
+  try
+    R.Stack.Add(Value);
+    Result := Ord(R.Goon(F, 1, nil));
+  finally
+    R.Stack.Count := B;
+  end;
 end;
 
 { GETIV: get item value }
