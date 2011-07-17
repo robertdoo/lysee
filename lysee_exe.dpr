@@ -1,8 +1,12 @@
 {==============================================================================}
 {     PROJECT: lysee_exe                                                       }
 { DESCRIPTION: lysee script interpreter (Delphi)                               }
+{   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
+{     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/07/07                                                      }
+{    MODIFIED: 2011/07/17                                                      }
+{==============================================================================}
+{ Contributor(s):                                                              }
 {==============================================================================}
 program lysee_exe;
 
@@ -11,14 +15,7 @@ program lysee_exe;
 uses
   lseu in 'lseu.pas',
   lse_console in 'lse_console.pas',
-  lse_kernel in 'lse_kernel.pas',
-  lse_export in 'lse_export.pas',
-  lse_symbol in 'lse_symbol.pas',
-  lse_funcs in 'lse_funcs.pas',
-  lse_api in 'lse_api.pas',
-  lse_cgi in 'lse_cgi.pas',
-  lse_syncobj in 'lse_syncobj.pas',
-  lse_patten in 'lse_patten.pas';
+  lse_kernel in 'lse_kernel.pas';
 
 begin
   lse_console.Execute;

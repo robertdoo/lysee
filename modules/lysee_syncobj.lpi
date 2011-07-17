@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="381"/>
+      <BuildNr Value="382"/>
       <StringTable FileDescription="syncronisizing objects" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -61,10 +61,12 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2461"/>
-        <CursorPos X="37" Y="2465"/>
+        <TopLine Value="1"/>
+        <CursorPos X="18" Y="14"/>
         <UsageCount Value="20"/>
+        <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\lse_dbu.pas"/>
@@ -111,7 +113,7 @@
         <UsageCount Value="10"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="10" HistoryIndex="9">
+    <JumpHistory Count="11" HistoryIndex="10">
       <Position1>
         <Filename Value="lysee_syncobj.lpr"/>
         <Caret Line="18" Column="21" TopLine="1"/>
@@ -152,6 +154,10 @@
         <Filename Value="lysee_syncobj.lpr"/>
         <Caret Line="41" Column="1" TopLine="17"/>
       </Position10>
+      <Position11>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="2465" Column="37" TopLine="2461"/>
+      </Position11>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

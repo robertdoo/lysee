@@ -35,10 +35,11 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (C) 2003-2011 Li Yun Jie - http://www.lysee.net';
-  LSE_VERSION        = '2.0.0';
+  LSE_VERSION        = '2.0.1';
   LSE_BIRTHDAY       = 20030228;
   LSE_BUILDDAY       = 20110623;
   LSE_MAX_PARAMS     = 12;
+  LSE_LU_DISTANCE    = Ord('a') - Ord('A');
   LSE_MAX_CODES      = MaxInt div 2;
 
   { LSV: Lysee Script Value }
@@ -206,7 +207,7 @@ type
 (======================================================================}
 
   TLseKernelType = (kcVoid, kcString, kcInteger, kcFloat, kcVariant, kcType,
-                    kcModule, kcFunc, kcVariable, kcError, kcStream, kcVarlist,
+                    kcModule, kcFunc, kcError, kcStream, kcVarlist,
                     kcVarsnap, kcHashed, kcVargen);
 
   RLseKernelTypeList = array[TLseKernelType] of PLseType;
@@ -268,19 +269,6 @@ type
   end;
 
   TLseException = class(Exception);
-
-{======================================================================)
-(======== TLseLock ====================================================)
-(======================================================================}
-
-  TLseLock = class(TLseObject)
-  public
-    procedure Enter;virtual;abstract;
-    procedure Leave;virtual;abstract;
-    function TryEnter: boolean;virtual;abstract;
-  end;
-
-  TLseLockError = class(TLseException);
 
 {======================================================================)
 (======== engine interface: TLseEngine ================================)
@@ -451,8 +439,6 @@ type
     cik_write: procedure(const Engine: pointer; const Text: pchar; Count: integer);cdecl;
     cik_read: function(const Engine: pointer; const Buf: pchar; Count: integer): integer;cdecl;
     cik_readln: function(const Engine: pointer): PLseString;cdecl;
-    cik_begin_cgi: procedure(const Engine: pointer);cdecl;
-    cik_end_cgi: procedure(const Engine: pointer);cdecl;
     cik_register_module: function(const Name: pchar; const MR: PLseModule): pointer;cdecl;
     cik_register_type: function(const CR: PLseType): PLseType;cdecl;
     cik_typerec: function(const KernelType: pointer): PLseType;cdecl;
@@ -646,6 +632,8 @@ function  lse_strec_cat(S1, S2: PLseString): PLseString;overload;
 function  lse_strec_cat(S1: PLseString; const S2: string): PLseString;overload;
 function  lse_strec_cat(const S1: string; S2: PLseString): PLseString;overload;
 function  lse_strec_same(S1, S2: PLseString): boolean;
+function  lse_strec_lower(S: PLseString): PLseString;
+function  lse_strec_upper(S: PLseString): PLseString;
 
 {======================================================================)
 (======== stream ======================================================)
@@ -1255,6 +1243,42 @@ begin
     Result := false;
 end;
 
+function lse_strec_lower(S: PLseString): PLseString;
+
+  procedure __lower(buf: pchar; count: integer);
+  begin
+    if (buf <> nil) and (count > 0) then
+    repeat
+      if buf^ in ['A'..'Z'] then
+        Inc(buf^, LSE_LU_DISTANCE);
+      Inc(buf);
+      Dec(count);
+    until count < 1;
+  end;
+
+begin
+  Result := lse_strec_dup(S);
+  __lower(lse_strec_data(Result), lse_strec_length(Result));
+end;
+
+function lse_strec_upper(S: PLseString): PLseString;
+
+  procedure __upper(buf: pchar; count: integer);
+  begin
+    if (buf <> nil) and (count > 0) then
+    repeat
+      if buf^ in ['a'..'z'] then
+        Dec(buf^, LSE_LU_DISTANCE);
+      Inc(buf);
+      Dec(count);
+    until count < 1;
+  end;
+  
+begin
+  Result := lse_strec_dup(S);
+  __upper(lse_strec_data(Result), lse_strec_length(Result));
+end;
+
 {======================================================================)
 (======== kernel - load/manifest lysee kernel =========================)
 (======================================================================}
@@ -1263,7 +1287,7 @@ function lse_prepare(QE: TLseQueryEntry): boolean;
 begin
   if lse_entries = nil then
     if Assigned(QE) then
-      lse_entries := PLseEntry(QE('qe_entries'));
+      lse_entries := PLseEntry(QE('cik_entries'));
   Result := (lse_entries <> nil);
 end;
 
