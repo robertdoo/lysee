@@ -46,19 +46,11 @@ library lysee;
 uses
   Classes,
   lseu,
-  lse_symbol,
-  lse_kernel,
-  lse_funcs,
-  lse_export,
-  lse_api,
-  lse_cgi,
-  lse_spawn,
-  lse_syncobj,
-  lse_patten;
+  lse_kernel;
 
 function QueryEntry(const ID: pchar): pointer;cdecl;
 begin
-  Result := qe_query(ID);
+  Result := query_entry(ID);
 end;
 
 exports QueryEntry;

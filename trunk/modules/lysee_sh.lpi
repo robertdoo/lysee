@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="374"/>
+      <BuildNr Value="375"/>
       <StringTable FileDescription="os shell functions" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.0.0.1885"/>
     </VersionInfo>
     <BuildModes Count="1">

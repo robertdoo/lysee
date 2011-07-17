@@ -46,15 +46,7 @@ program lysee_fpc;
 uses
   lseu,
   lse_console,
-  lse_symbol,
-  lse_kernel,
-  lse_funcs,
-  lse_export,
-  lse_api,
-  lse_cgi,
-  lse_spawn,
-  lse_syncobj,
-  lse_patten;
+  lse_kernel;
 
 begin
   try

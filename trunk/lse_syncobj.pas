@@ -23,6 +23,17 @@ uses
 
 type
 
+  { TLseLock }
+
+  TLseLock = class(TLseObject)
+  public
+    procedure Enter;virtual;abstract;
+    procedure Leave;virtual;abstract;
+    function TryEnter: boolean;virtual;abstract;
+  end;
+
+  TLseLockError = class(TLseException);
+
   { TLseSpinLock }
 
   TLseSpinLock = class(TLseLock)

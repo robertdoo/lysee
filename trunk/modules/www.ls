@@ -1,3 +1,4 @@
 {import sh}
 
-{def wgets |URL| system @'wget --quiet --output-document - %(URL)'}
+{def wgets |URL|
+    {system @'wget --quiet --output-document - %(URL)'}}
