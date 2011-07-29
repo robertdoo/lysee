@@ -232,7 +232,7 @@ var
   this: TLiSearch;
 begin
   this := TLiSearch.Create(invoker.paramStr(0));
-  invoker.returnObject(searcher_type.cr_class, this);
+  invoker.returnObject(@searcher_type, this);
 end;
 
 procedure searcher_findFirst(const invoker: TLseInvoke);cdecl;

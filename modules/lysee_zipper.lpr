@@ -19,7 +19,7 @@ uses
 
 procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lseu.lse_entries      := ER;
+  lse_prepare(ER);
   MR^.iw_version        := LSE_VERSION;
   MR^.iw_desc           := 'fpc zip/unzip module for lysee';
   MR^.iw_funcs.fl_count := func_count;

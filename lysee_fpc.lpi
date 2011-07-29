@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="703"/>
+      <BuildNr Value="707"/>
       <StringTable FileDescription="lysee script interpretor (FPC)" LegalCopyright="Copyright (C) 2003-2011 li yun jie <libudi@hotmail.com>" ProductVersion="2.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -33,27 +33,25 @@
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="77">
+    <Units Count="81">
       <Unit0>
         <Filename Value="lysee_fpc.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_fpc"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="34"/>
         <CursorPos X="1" Y="51"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="lse_kernel.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_kernel"/>
-        <EditorIndex Value="2"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="5829"/>
-        <CursorPos X="3" Y="5831"/>
+        <TopLine Value="2452"/>
+        <CursorPos X="3" Y="2468"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="1197" ID="3"/>
@@ -71,12 +69,10 @@
       <Unit3>
         <Filename Value="lse_dbu.pas"/>
         <UnitName Value="lse_dbu"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="346"/>
         <CursorPos X="1" Y="349"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="lse_export.pas"/>
@@ -92,12 +88,10 @@
       <Unit5>
         <Filename Value="lse_funcs.pas"/>
         <UnitName Value="lse_funcs"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="103"/>
         <CursorPos X="37" Y="116"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="lse_regexpr.pas"/>
@@ -156,8 +150,8 @@
         <UnitName Value="lseu"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="27"/>
-        <CursorPos X="30" Y="38"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="16" Y="645" ID="0"/>
@@ -569,80 +563,83 @@
         <CursorPos X="1" Y="233"/>
         <UsageCount Value="10"/>
       </Unit76>
+      <Unit77>
+        <Filename Value="D:\Developments\lazarus\fpc\2.4.2\source\rtl\win\wininc\struct.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1419"/>
+        <CursorPos X="6" Y="1431"/>
+        <UsageCount Value="10"/>
+      </Unit77>
+      <Unit78>
+        <Filename Value="D:\Developments\lazarus\fpc\2.4.2\source\packages\regexpr\examples\testreg1.pp"/>
+        <UnitName Value="testreg1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="109"/>
+        <CursorPos X="51" Y="125"/>
+        <UsageCount Value="10"/>
+      </Unit78>
+      <Unit79>
+        <Filename Value="D:\Developments\lazarus\fpc\2.4.2\source\packages\regexpr\src\regexpr.pp"/>
+        <UnitName Value="RegExpr"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="93"/>
+        <CursorPos X="33" Y="117"/>
+        <UsageCount Value="10"/>
+      </Unit79>
+      <Unit80>
+        <Filename Value="D:\Developments\lazarus\fpc\2.4.2\source\packages\regexpr\src\regex.pp"/>
+        <UnitName Value="Regex"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1204"/>
+        <CursorPos X="5" Y="1228"/>
+        <UsageCount Value="10"/>
+      </Unit80>
     </Units>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="11" HistoryIndex="10">
       <Position1>
-        <Filename Value="lse_dbu.pas"/>
-        <Caret Line="308" Column="1" TopLine="294"/>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="1021" Column="32" TopLine="997"/>
       </Position1>
       <Position2>
-        <Filename Value="lse_dbu.pas"/>
-        <Caret Line="1642" Column="1" TopLine="1620"/>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="242" Column="32" TopLine="218"/>
       </Position2>
       <Position3>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="2196" Column="3" TopLine="2172"/>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="38" Column="30" TopLine="27"/>
       </Position3>
       <Position4>
         <Filename Value="lse_kernel.pas"/>
-        <Caret Line="3502" Column="38" TopLine="3487"/>
+        <Caret Line="659" Column="25" TopLine="639"/>
       </Position4>
       <Position5>
         <Filename Value="lse_kernel.pas"/>
-        <Caret Line="3496" Column="68" TopLine="3485"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position5>
       <Position6>
         <Filename Value="lse_kernel.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="3835" Column="20" TopLine="3811"/>
       </Position6>
       <Position7>
-        <Filename Value="lseu.pas"/>
-        <Caret Line="1021" Column="32" TopLine="997"/>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="3849" Column="26" TopLine="3829"/>
       </Position7>
       <Position8>
         <Filename Value="lse_kernel.pas"/>
-        <Caret Line="1431" Column="46" TopLine="1418"/>
+        <Caret Line="3860" Column="26" TopLine="3840"/>
       </Position8>
       <Position9>
-        <Filename Value="lseu.pas"/>
-        <Caret Line="242" Column="32" TopLine="218"/>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="4859" Column="26" TopLine="4835"/>
       </Position9>
       <Position10>
-        <Filename Value="lysee_fpc.lpr"/>
-        <Caret Line="51" Column="17" TopLine="44"/>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="3849" Column="11" TopLine="3837"/>
       </Position10>
       <Position11>
-        <Filename Value="lysee_fpc.lpr"/>
-        <Caret Line="63" Column="1" TopLine="44"/>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="11208" Column="48" TopLine="11208"/>
       </Position11>
-      <Position12>
-        <Filename Value="lysee_fpc.lpr"/>
-        <Caret Line="69" Column="1" TopLine="46"/>
-      </Position12>
-      <Position13>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="1056" Column="11" TopLine="1044"/>
-      </Position13>
-      <Position14>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position14>
-      <Position15>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="32" Column="12" TopLine="12"/>
-      </Position15>
-      <Position16>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="269" Column="15" TopLine="257"/>
-      </Position16>
-      <Position17>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="98" Column="43" TopLine="85"/>
-      </Position17>
-      <Position18>
-        <Filename Value="lse_kernel.pas"/>
-        <Caret Line="31" Column="7" TopLine="25"/>
-      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -751,10 +751,10 @@ end;
 function lse_ds_field_class(dso: PLseDS; Index: integer): PLseType;
 begin
   case lse_ds_field_vtype(dso, Index) of
-    LSV_INT   : Result := lse_type(LSV_INT);
-    lSV_STRING: Result := lse_type(LSV_STRING);
-    LSV_FLOAT : Result := lse_type(LSV_FLOAT);
-           else Result := lse_type(LSV_STRING);
+    LSV_INT   : Result := KT_INT;
+    lSV_STRING: Result := KT_STRING;
+    LSV_FLOAT : Result := KT_FLOAT;
+           else Result := KT_STRING;
   end;
 end;
 

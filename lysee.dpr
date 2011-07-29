@@ -21,7 +21,7 @@ uses
 
 function QueryEntry(const ID: pchar): pointer;cdecl;
 begin
-  Result := query_entry(ID);
+  Result := kernel_query(ID);
 end;
 
 exports QueryEntry;

@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="402"/>
+      <BuildNr Value="403"/>
       <StringTable FileDescription="mathmetics module for lysee" LegalCopyright="Copyright (C) 2003-2010 Li Yun Jie" ProductVersion="0.1.8.391"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -46,7 +46,7 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="8"/>
+        <CursorPos X="1" Y="23"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>

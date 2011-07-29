@@ -312,17 +312,17 @@ const
 
 function strbuf_writeto(obj: pointer; stream: PLseStream): integer;cdecl;
 function strbuf_otos(obj: pointer): PLseString;cdecl;
-function strbuf_stoo(str: PLseString; engine: pointer): pointer;cdecl;
-function strbuf_add(obj: pointer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_stoo(str: PLseString): pointer;cdecl;
+function strbuf_add(obj: pointer; value: PLseValue): integer;cdecl;
 function strbuf_length(obj: pointer): integer;cdecl;
-function strbuf_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
-function strbuf_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+function strbuf_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 
-function strcut_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
-function strcut_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+function strcut_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 function strcut_length(obj: pointer): integer;cdecl;
-function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
-function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
+function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
 
 var
   strutils_types: array[0..1] of RLseType = (
@@ -340,8 +340,7 @@ var
     cr_setiv    :@strbuf_setiv;
     cr_getpv    : nil;
     cr_setpv    : nil;
-    cr_length   :@strbuf_length;
-    cr_class    : nil
+    cr_length   :@strbuf_length
    ),
    (cr_type     : LSV_OBJECT;
     cr_name     : 'strcut';
@@ -357,8 +356,7 @@ var
     cr_setiv    :@strcut_setiv;
     cr_getpv    :@strcut_getpv;
     cr_setpv    :@strcut_setpv;
-    cr_length   :@strcut_length;
-    cr_class    : nil
+    cr_length   :@strcut_length
    )
   );
 
@@ -669,19 +667,19 @@ begin
     Result := nil;
 end;
 
-function strbuf_stoo(str: PLseString; engine: pointer): pointer;cdecl;
+function strbuf_stoo(str: PLseString): pointer;cdecl;
 begin
   Result := TLiStrBuf.Create(lse_strec_string(str));
 end;
 
-function strbuf_add(obj: pointer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_add(obj: pointer; value: PLseValue): integer;cdecl;
 var
   S: TLiStrBuf;
 begin
   Result := 0;
   if obj <> nil then
   begin
-    lse_casto_string(value);
+    lse_type_cast(KT_STRING, value);
     S := TLiStrBuf(obj);
     S.FStrBuf := S.FStrBuf + lse_strec_string(value^.VObject);
     Result := 1;
@@ -697,7 +695,7 @@ begin
     Result := 0;
 end;
 
-function strbuf_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 var
   S: TLiStrBuf;
   L: integer;
@@ -717,7 +715,7 @@ begin
   end;
 end;
 
-function strbuf_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strbuf_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 var
   S: TLiStrBuf;
   L: integer;
@@ -732,7 +730,7 @@ begin
       Inc(index, L);
     if (index >= 0) and (index < L) then
     begin
-      lse_casto_string(value);
+      lse_type_cast(KT_STRING, value);
       P := lse_strec_data(value^.VObject);
       if P <> nil then
       begin
@@ -743,7 +741,7 @@ begin
   end;
 end;
 
-function strcut_getiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 var
   S: TLiStrCut;
   L: integer;
@@ -759,7 +757,7 @@ begin
   end;
 end;
 
-function strcut_setiv(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 var
   S: TLiStrCut;
   L: integer;
@@ -772,7 +770,7 @@ begin
     if index < 0 then Inc(index, L);
     if (index >= 0) and (index < L) then
     begin
-      lse_casto_string(value);
+      lse_type_cast(KT_STRING, value);
       S.FValueList[index] := lse_strec_string(value^.VObject);
     end;
   end;
@@ -785,7 +783,7 @@ begin
     Result := 0;
 end;
 
-function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
 var
   S: TLiStrCut;
   X: integer;
@@ -800,7 +798,7 @@ begin
   end;
 end;
 
-function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
 var
   S: TLiStrCut;
   X: integer;
@@ -812,7 +810,7 @@ begin
     X := S.IndexOf(prop);
     if X >= 0 then
     begin
-      lse_casto_string(value);
+      lse_type_cast(KT_STRING, value);
       S.FValueList[X] := lse_strec_string(value^.VObject);
     end;
   end;

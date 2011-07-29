@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="385"/>
+      <BuildNr Value="387"/>
       <StringTable FileDescription="zip/unzip file" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.1.1.315"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -40,11 +40,10 @@
         <Filename Value="lysee_zipper.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_zipper"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="8"/>
+        <CursorPos X="1" Y="23"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -81,10 +80,13 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="8"/>
+        <TopLine Value="4564"/>
+        <CursorPos X="52" Y="4576"/>
         <UsageCount Value="25"/>
+        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="D:\Developments\lazarus\fpc\2.2.2\source\packages\paszlib\src\zipper.pp"/>
@@ -97,7 +99,7 @@
         <Filename Value="lysee_zipper_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_zipper_funcs"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="121"/>
         <CursorPos X="1" Y="121"/>
@@ -127,7 +129,7 @@
         <UsageCount Value="10"/>
       </Unit10>
     </Units>
-    <JumpHistory Count="12" HistoryIndex="11">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
         <Filename Value="lysee_zipper.lpr"/>
         <Caret Line="47" Column="28" TopLine="45"/>
@@ -176,6 +178,14 @@
         <Filename Value="lysee_zipper.lpr"/>
         <Caret Line="14" Column="14" TopLine="1"/>
       </Position12>
+      <Position13>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="4576" Column="43" TopLine="4564"/>
+      </Position14>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

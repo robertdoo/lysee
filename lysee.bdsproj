@@ -149,8 +149,8 @@
 			<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 			<VersionInfo Name="MajorVer">2</VersionInfo>
 			<VersionInfo Name="MinorVer">0</VersionInfo>
-			<VersionInfo Name="Release">1</VersionInfo>
-			<VersionInfo Name="Build">405</VersionInfo>
+			<VersionInfo Name="Release">2</VersionInfo>
+			<VersionInfo Name="Build">410</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
 			<VersionInfo Name="Special">False</VersionInfo>
@@ -162,7 +162,7 @@
 		<VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName">lysee</VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription">Lysee script kernel</VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">2.0.1.405</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">2.0.2.410</VersionInfoKeys>
 			<VersionInfoKeys Name="InternalName">lysee</VersionInfoKeys>
 			<VersionInfoKeys Name="LegalCopyright">Copyright (C) 2003-2010 Li Yun Jie</VersionInfoKeys>
 			<VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
