@@ -20,7 +20,7 @@ uses
 
 procedure InitExchange(const MR: PLseModule; const ER: PLseEntry);cdecl;
 begin
-  lseu.lse_entries      := ER;
+  lse_prepare(ER);
   MR^.iw_version        := LSE_VERSION;
   MR^.iw_desc           := 'syncronisizing object module for lysee';
   MR^.iw_types.cl_count := syncobj_class_count;

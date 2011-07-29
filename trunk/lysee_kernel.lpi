@@ -16,7 +16,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="402"/>
+      <BuildNr Value="404"/>
       <StringTable FileDescription="Lysee Script Kernel (FPC)" LegalCopyright="Copyright (C) 2003-2010 Li Yun Jie" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -40,10 +40,11 @@
         <Filename Value="lysee_kernel.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_kernel"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="38"/>
-        <CursorPos X="24" Y="53"/>
+        <CursorPos X="25" Y="53"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -94,7 +95,6 @@
         <Filename Value="lse_kernel.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_kernel"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1715"/>
@@ -346,7 +346,7 @@
         <UsageCount Value="20"/>
       </Unit43>
     </Units>
-    <JumpHistory Count="9" HistoryIndex="8">
+    <JumpHistory Count="10" HistoryIndex="9">
       <Position1>
         <Filename Value="lseu.pas"/>
         <Caret Line="117" Column="12" TopLine="103"/>
@@ -383,6 +383,10 @@
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="4373" Column="1" TopLine="4370"/>
       </Position9>
+      <Position10>
+        <Filename Value="lysee_kernel.lpr"/>
+        <Caret Line="53" Column="24" TopLine="38"/>
+      </Position10>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

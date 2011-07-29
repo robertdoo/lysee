@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/07/09                                                      }
+{    MODIFIED: 2011/07/29                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -35,12 +35,25 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (C) 2003-2011 Li Yun Jie - http://www.lysee.net';
-  LSE_VERSION        = '2.0.1';
+  LSE_VERSION        = '2.0.2';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20110623;
+  LSE_BUILDDAY       = 20110729;
   LSE_MAX_PARAMS     = 12;
-  LSE_LU_DISTANCE    = Ord('a') - Ord('A');
   LSE_MAX_CODES      = MaxInt div 2;
+
+  { LCS: Lysee Char Set }
+
+  LCS_DIGIT          = ['0'..'9'];
+  LCS_ALPHA          = ['A'..'Z', 'a'..'z'];
+  LCS_DISTANCE       = Ord('a') - Ord('A');
+  LCS_ALNUM          = LCS_ALPHA + LCS_DIGIT;
+  LCS_ID             = LCS_ALNUM + ['_'];
+  LCS_HEAD           = LCS_ALPHA + ['_'];
+  LCS_PUNCT          = ['!'..'~'] - LCS_ALNUM;
+  LCS_CNTRL          = [#$00..#$1F, #$7F];
+  LCS_QUOTE          = ['"', ''''];
+  LCS_SPACE          = [#$09, #$0A, #$0C, #$0D, #$20];
+  LCS_HEX            = ['A'..'F', 'a'..'f'] + LCS_DIGIT;
 
   { LSV: Lysee Script Value }
 
@@ -76,6 +89,7 @@ type
 
   PLseString = ^RLseString;
   PLseValue  = ^RLseValue;
+  PLseVarb   = ^RLseVarb;
   PLseParam  = ^RLseParam;
   PLseFunc   = ^RLseFunc;
   PLseVargen = ^RLseVargen;
@@ -84,6 +98,11 @@ type
   PLseStream = ^RLseStream;
   PLseEngine = ^RLseEngine;
   PLseEntry  = ^RLseEntry;
+
+  TLseCompareResult = (crEqual, crLess, crMore, crDiff);
+  TLseCompareResults = set of TLseCompareResult;
+
+  TLseCharSet = set of char;
 
 {======================================================================)
 (======== string interface ============================================)
@@ -107,6 +126,15 @@ type
       LSV_INT   : (VInteger: int64);
       LSV_FLOAT : (VFloat  : double);
       LSV_OBJECT: (VObject : pointer);
+  end;
+
+  {======================================================================)
+  (======== variable interface ==========================================)
+  (======================================================================}
+
+  RLseVarb = packed record
+    va_name: string;
+    va_type: PLseType;
   end;
 
 {======================================================================)
@@ -166,13 +194,13 @@ type
   TLseAddref = function(const obj: pointer): integer;cdecl;
   TLseRelease = TLseAddref;
   TLseWriteTo = function(obj: pointer; stream: PLseStream): integer;cdecl;
-  TLseToVargen = function(obj, engine: pointer): PLseVargen;cdecl;
+  TLseToVargen = function(obj: pointer): PLseVargen;cdecl;
   TLseToString = function(obj: pointer): PLseString;cdecl;
-  TLseStringTo = function(str: PLseString; engine: pointer): pointer;cdecl;
-  TLseAddItem = function(obj: pointer; value: PLseValue; engine: pointer): integer;cdecl;
+  TLseStringTo = function(str: PLseString): pointer;cdecl;
+  TLseAddItem = function(obj: pointer; value: PLseValue): integer;cdecl;
   TLseLength = function(obj: pointer): integer;cdecl;
-  TLseGetItem = function(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
-  TLseGetProp = function(obj: pointer; const prop: pchar; value: PLseValue; engine: pointer): integer;cdecl; 
+  TLseGetItem = function(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+  TLseGetProp = function(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl; 
 
   RLseType = packed record
     cr_type    : TLseValue;       {<--value type: LSV_XXXX}
@@ -190,7 +218,7 @@ type
     cr_getpv   : TLseGetProp;     {<--get property}
     cr_setpv   : TLseGetProp;     {<--set property}
     cr_length  : TLseLength;      {<--get item count}
-    cr_class   : pointer;         {<--lse_kernel.KLiType}
+    cr_module  : pointer;         {<--lse_kernel.KLiModule}
   end;
 
   ALseTypeList = array[0..1023] of RLseType;
@@ -206,9 +234,9 @@ type
 (======== kernel types ================================================)
 (======================================================================}
 
-  TLseKernelType = (kcVoid, kcString, kcInteger, kcFloat, kcVariant, kcType,
-                    kcModule, kcFunc, kcError, kcStream, kcVarlist,
-                    kcVarsnap, kcHashed, kcVargen);
+  TLseKernelType = (kcVoid, kcString, kcInteger, kcFloat, kcVariant,
+                    kcType, kcModule, kcFunc, kcError, kcStream,
+                    kcVarlist, kcVarsnap, kcHashed, kcVargen);
 
   RLseKernelTypeList = array[TLseKernelType] of PLseType;
   PLseKernelTypeList = ^RLseKernelTypeList;
@@ -283,7 +311,6 @@ type
     er_executed : TLseEngineEvent; {<--L: OnExecuted}
     er_input    : PLseStream;      {<--L: input stream}
     er_output   : PLseStream;      {<--L: output stream}
-    er_errput   : PLseStream;      {<--L: errput stream}
     er_data     : pointer;         {<--L: binding data}
     er_kernel   : pointer;         {<--K: kernel engine instance}
   end;
@@ -298,7 +325,6 @@ type
     FEngineRec: RLseEngine;
     FInput: RLseStream;
     FOutput: RLseStream;
-    FErrput: RLseStream;
     FOnExecuting: TNotifyEvent;
     FOnExecuted: TNotifyEvent;
     FOnReadln: TLseReadln;
@@ -374,7 +400,7 @@ type
     procedure ReturnStr(const Value: string);
     procedure ReturnChar(const Value: char);
     procedure ReturnBool(const Value: boolean);
-    procedure ReturnObject(KernelType: pointer; Value: pointer);
+    procedure ReturnObject(T: PLseType; Value: pointer);
     procedure ReturnObj(CR: PLseType; Value: pointer);
     procedure ReturnStream(Value: TStream);overload;
     procedure ReturnStream(Value: PLseStream);overload;
@@ -403,11 +429,135 @@ type
   end;
 
 {======================================================================)
+(======== TLsePatten ==================================================)
+(======================================================================}
+
+  RLseMatch = packed record
+    m_str: pchar;
+    m_len: integer;
+  end;
+  PLseMatch = ^RLseMatch;
+
+  TLsePatten = class(TLseObject)
+  private
+    FPatten: pchar;
+    FError: boolean;  // invalid patten?
+    FAnchor: boolean; // FPatten^ = '^'?
+    FSource: pchar;
+    FEos: pchar;      // end of source
+    FMatches: array of RLseMatch;
+    FCount: integer;
+    function Match(Src, Pat: pchar): pchar;
+    procedure Check(ok: boolean);
+    procedure ResetResult;
+  public
+    constructor Create(const Patten: pchar);
+    destructor Destroy;override;
+    function Init(const Patten: pchar): boolean;
+    function Exec(S: pchar; L: integer): boolean;
+    function ExecStrec(S: PLseString): boolean;
+    function Next: boolean;
+    function Replace(Src, New: PLseString; Times: int64): PLseString;
+    function MatchCount: integer;
+    function MatchStr(Index: integer): pchar;
+    function MatchPos(Index: integer): integer;
+    function MatchLen(Index: integer): integer;
+    function SourceLength: integer;
+    property Source: pchar read FSource;
+  end;
+
+{======================================================================)
+(======== TLseHashTable ===============================================)
+(======================================================================}
+
+  PLiHashItem = ^RLiHashItem;
+  RLiHashItem = packed record
+    hi_next: PLiHashItem;
+    hi_key : pointer;
+    hi_data: pointer;
+  end;
+
+  RLiHashPair = packed record
+    hp_head: PLiHashItem;
+    hp_tail: PLiHashItem;
+  end;
+  PLiHashPair = ^RLiHashPair;
+  
+  KLiEnumKeyData = procedure(const Key: string; Value, Param: pointer) of object;
+  
+  TLseHashTable = class(TLseObject)
+  private
+    FBucketList: array of RLiHashPair;
+    FBucketSize: integer;
+    FIgnoreCase: boolean;
+    FCount: integer;
+  protected
+    function HashOf(const Key: string): cardinal;
+    function NewItem: PLiHashItem;virtual;
+    procedure FreeItem(Item: PLiHashItem);virtual;
+    function MatchKey(const Key, ID: string): boolean;
+    procedure DoPut(const Key: string; Value: pointer);
+    function DoGet(const Key: string): pointer;
+  public
+    constructor Create(Size: integer);
+    destructor Destroy; override;
+    procedure Clear;
+    procedure Remove(const Key: string);
+    function Find(const Key: string): PLiHashItem;
+    function IsSet(const Key: string): boolean;
+    function ListKey(List: TStrings): integer;
+    function ListData(List: TList): integer;
+    function EnumKeyData(Proc: KLiEnumKeyData; Param: pointer): integer;
+    property ItemCount: integer read FCount;
+    property IgnoreCase: boolean read FIgnoreCase write FIgnoreCase;
+  end;
+
+{======================================================================)
+(======== TLseNamed ==================================================)
+(======================================================================}
+
+  TLseNamed = class(TLseObject)
+  private
+    FName: string;
+  public
+    constructor Create(const AName: string);
+    property Name: string read FName;
+  end;
+
+{======================================================================)
+(======== TLseHashNamed ==============================================)
+(======================================================================}
+
+  PLiNameItem = ^RLiNameItem;
+  RLiNameItem = packed record
+    ni_next: PLiNameItem;
+    ni_nobj: TLseNamed;
+  end;
+
+  TLseHashNamed = class(TLseObject)
+  private
+    FBuckets: array of PLiNameItem;
+    FSize: cardinal;
+    FCount: cardinal;
+  protected
+    function HashOf(const Key: string): cardinal;
+    function NewItem: PLiNameItem;
+    procedure FreeItem(Item: PLiNameItem);
+    function FindItem(const Key: string): PLiNameItem;
+  public
+    constructor Create(Size: cardinal);
+    destructor Destroy; override;
+    procedure Clear;
+    procedure Remove(const Key: string);
+    procedure Put(AObj: TLseNamed);
+    function Get(const Key: string): TLseNamed;
+  end;
+
+{======================================================================)
 (======== CIK interface ===============================================)
 (======================================================================}
 
   RLseEntry = packed record
-    cik_types: PLseKernelTypeList;
     { engine }
     cik_create: function(const EngineRec: PLseEngine): pointer;cdecl;
     cik_destroy: procedure(const Engine: pointer);cdecl;
@@ -440,10 +590,8 @@ type
     cik_read: function(const Engine: pointer; const Buf: pchar; Count: integer): integer;cdecl;
     cik_readln: function(const Engine: pointer): PLseString;cdecl;
     cik_register_module: function(const Name: pchar; const MR: PLseModule): pointer;cdecl;
-    cik_register_type: function(const CR: PLseType): PLseType;cdecl;
-    cik_typerec: function(const KernelType: pointer): PLseType;cdecl;
+    cik_register_type: function(const CR: PLseType): integer;cdecl;
     cik_register_func: function(const FR: PLseFunc): pointer;cdecl;
-    cik_casto_string: procedure(const V: PLseValue);cdecl;
     { param }
     cik_param_engine: function(const Param: PLseParam): PLseEngine;cdecl;
     cik_param_format: function(const Param: PLseParam; const Fmt: pchar): PLseString;cdecl;
@@ -456,6 +604,7 @@ type
     cik_copyright: function: pchar;cdecl;
     cik_tmpath: function: pchar;cdecl;
     cik_query: TLseQueryEntry;
+    cik_kernel_type: function(Index: TLseKernelType): PLseType;cdecl;
     cik_simple_test: function(const Code: pchar): integer;cdecl;
     cik_startup: function: integer;cdecl;
     cik_cleanup: procedure;cdecl;
@@ -497,6 +646,7 @@ const
 ( lse_register_module  : register new module
 ( lse_register_type    : register new type in 'sys' module
 ( lse_register_func    : register new function in 'sys' module
+( lse_hash_of          : calculate hash value
 (======== MISC ========================================================)
 ( lse_error            : raise exception
 ( lse_exception_str    : get execption string
@@ -509,7 +659,7 @@ const
 ( lse_vary_range       : adjust list index and range count
 ( lse_check_index      : check index in list range
 (----------------------------------------------------------------------}
-function  lse_prepare(QE: TLseQueryEntry): boolean;
+procedure lse_prepare(Entry: PLseEntry);
 function  lse_query(const ID: string): pointer;
 procedure lse_load_kernel(const KernelFile: string);
 procedure lse_load_config(const ConfigFile: string);
@@ -522,11 +672,15 @@ procedure lse_set_program_file(const ProgramFile: string);
 function  lse_kernel_production(IncludeVC: boolean = false): string;
 function  lse_kernel_version: string;
 function  lse_kernel_copyright: string;
+function  lse_kernel_type(Index: TLseKernelType): PLseType;
 function  lse_simple_test(const Script: string): integer;
 function  lse_keywords: string;
 function  lse_register_module(const Name, FileName: string; MR: PLseModule): pointer;
-function  lse_register_type(const TR: PLseType): PLseType;
+function  lse_register_type(const TR: PLseType): boolean;
 function  lse_register_func(const FR: PLseFunc): pointer;
+function  lse_hash_of(Key: pchar; Len: integer): cardinal;overload;
+function  lse_hash_of(const Key: string): cardinal;overload;
+procedure lse_check(ok: boolean; const msg: string);
 procedure lse_error(const error: string);overload;
 procedure lse_error(const error: string; const Args: array of const);overload;
 function  lse_exception_str: string;
@@ -534,29 +688,37 @@ procedure lse_call_gate(const Call: TLseFuncInvoke; const Param: PLseParam);cdec
 function  lse_veryPD(const Path: string): string;
 function  lse_veryUD(const URL: string): string;
 function  lse_expand_fname(const FileName: string): string;
+function  lse_full_path(const path: string): string;
 function  lse_complete_fname(const FileName: string): string;
 function  lse_vary_index(index, length: int64): int64;
 function  lse_vary_range(index, length: int64; var count: int64): int64;
 procedure lse_check_index(index, range: int64);
-
+function  lse_exe_name: string;
+function  lse_lib_name: string;
+function  lse_in_charset(S: pchar; Len: integer; Chars: TLseCharSet): boolean;overload;
+function  lse_in_charset(S: pchar; Chars: TLseCharSet): boolean;overload;
+function  lse_is_ident(S: pchar): boolean;
+function  lse_is_idhead(C: char): boolean;
 
 {======================================================================)
 (======== type ========================================================)
-(======================================================================)
-( lse_fill_typerec: fill type registration record
-(----------------------------------------------------------------------}
-function lse_fill_typerec(CR: PLseType; Name, Desc: pchar; VT: TLseValue): PLseType;overload;
-function lse_fill_typerec(CR: PLseType; VT: TLseValue): PLseType;overload;
-function lse_typerec(const KernelType: pointer): PLseType;
+(======================================================================}
+function  lse_type_init(CR: PLseType; Name, Desc: pchar; VT: TLseValue): PLseType;overload;
+function  lse_type_init(CR: PLseType; VT: TLseValue): PLseType;overload;
+function  lse_type_prot(T: PLseType; const ID: string): string;overload;
+function  lse_type_prot(V: PLseVarb): string;overload;
+function  lse_type_otos(T: PLseType; obj: pointer): string;
+function  lse_type_stoo(T: PLseType; const S: PLseString): pointer;
+function  lse_type_match(T, AType: PLseType): boolean;
+function  lse_type_desc(T: PLseType): string;
+procedure lse_type_cast(T: PLseType; V: PLseValue);
 
 {======================================================================)
 (======== reference ===================================================)
-(======================================================================)
-( lse_addref_obj : increase reference count of a TLseObject
-( lse_release_obj: decrease reference count of a TLseObject
-(----------------------------------------------------------------------}
+(======================================================================}
 function lse_addref_obj(const obj: pointer): integer;cdecl;
 function lse_release_obj(const obj: pointer): integer;cdecl;
+function lse_long_life(const obj: pointer): integer;cdecl;
 
 {======================================================================)
 (======== memory ======================================================)
@@ -568,6 +730,11 @@ function lse_release_obj(const obj: pointer): integer;cdecl;
 function  lse_mem_alloc(count: integer): pointer;
 function  lse_mem_alloc_zero(count: integer): pointer;
 procedure lse_mem_free(const memory: pointer; count: integer);
+procedure lse_mem_zero(const memory: pointer; count: integer);
+function  lse_mem_comp(B1, B2: pointer; Len: integer; IgnoreCase: boolean): integer;overload;
+function  lse_mem_comp(B1: pointer; L1: integer; B2: pointer; L2: integer; IgnoreCase: boolean): integer;overload;
+function  lse_mem_same(B1, B2: pointer; Len: integer; IgnoreCase: boolean): boolean;overload;
+function  lse_mem_same(B1: pointer; L1: integer; B2: pointer; L2: integer; IgnoreCase: boolean): boolean;overload;
 
 {======================================================================)
 (======== ENV - get/set environment values ============================)
@@ -614,9 +781,6 @@ function  lse_get_proc(Handle: THandle; const ProcName: string): pointer;
 ( lse_strec_dup    : clone string
 ( lse_strec_cat    : concat two string
 ( lse_strec_same   : compare two string
-(----------------------------------------------------------------------)
-( lse_encode_object: encode object string
-( lse_decode_object: decode object string
 (----------------------------------------------------------------------}
 function  lse_strec_alloc(const AStr: pchar; Count: integer): PLseString;overload;
 function  lse_strec_alloc(const AStr: string): PLseString;overload;
@@ -631,9 +795,30 @@ function  lse_strec_dup(strec: PLseString): PLseString;
 function  lse_strec_cat(S1, S2: PLseString): PLseString;overload;
 function  lse_strec_cat(S1: PLseString; const S2: string): PLseString;overload;
 function  lse_strec_cat(const S1: string; S2: PLseString): PLseString;overload;
-function  lse_strec_same(S1, S2: PLseString): boolean;
+function  lse_strec_same(S1, S2: PLseString): boolean;overload;
+function  lse_strec_same(S1, S2: PLseString; IgnoreCase: boolean): boolean;overload;
 function  lse_strec_lower(S: PLseString): PLseString;
 function  lse_strec_upper(S: PLseString): PLseString;
+function  lse_strec_comp(S1, S2: PLseString; IgnoreCase: boolean): integer;
+function  lse_strec_pos(S, SubStr: PLseString): integer;
+function  lse_strec_last_pos(S, SubStr: PLseString): integer;
+function  lse_strec_tabs(S: PLseString; var L, M, R: integer): integer;
+function  lse_strec_trim(S: PLseString): PLseString;
+function  lse_strec_trimL(S: PLseString): PLseString;
+function  lse_strec_trimR(S: PLseString): PLseString;
+function  lse_strec_trim_all(S: PLseString): PLseString;
+function  lse_strec_copy(S: PLseString; index, count: int64): PLseString;
+function  lse_strec_left(S: PLseString; count: int64): PLseString;
+function  lse_strec_right(S: PLseString; count: int64): PLseString;
+function  lse_strec_name(S: PLseString): PLseString;
+function  lse_strec_value(S: PLseString): PLseString;
+function  lse_strec_set(S: PLseString; X: integer; ch: char): PLseString;
+function  lse_strec_get(S: PLseString; X: integer): char;
+function  lse_strec_delete(S: PLseString; X, N: int64): PLseString;
+function  lse_strec_insert(S, R: PLseString; X: int64): PLseString;
+procedure lse_strec_save(S: PLseString; const FileName: string);
+function  lse_strec_load(const FileName: string): PLseString;
+function  lse_strec_hash(S: PLseString): cardinal;
 
 {======================================================================)
 (======== stream ======================================================)
@@ -709,17 +894,36 @@ procedure lse_clear_string(V: PLseValue);
 procedure lse_clear_object(V: PLseValue);
 procedure lse_addref(V: PLseValue);
 procedure lse_release(V: PLseValue);
-procedure lse_set_nil(V: PLseValue);
 function  lse_is_defv(V: PLseValue): boolean;
 function  lse_is_obj(V: PLseValue): boolean;
 function  lse_is_void(V: PLseValue): boolean;
 function  lse_vtype(V: PLseValue): TLseValue;
-function  lse_type(V: TLseKernelType): PLseType;overload;
-function  lse_type(V: TLseValue): PLseType;overload;
-function  lse_type(V: PLseValue): PLseType;overload;
+function  lse_type(V: PLseValue): PLseType;
 function  lse_length(V: PLseValue): integer;
-procedure lse_set_int64(V: PLseValue; Value: int64);
-procedure lse_set_integer(V: PLseValue; Value: integer);
+{ new }
+function  lse_new_value: PLseValue;overload;
+function  lse_new_value(Value: int64): PLseValue;overload;
+function  lse_new_value(Value: double): PLseValue;overload;
+function  lse_new_value(const Value: string): PLseValue;overload;
+function  lse_new_value(const Value: PLseString): PLseValue;overload;
+function  lse_new_value(const Value: PLseValue): PLseValue;overload;
+function  lse_new_value(const Value: pointer; AType: PLseType): PLseValue;overload;
+procedure lse_free_value(V: PLseValue);
+{ get }
+function  lse_get_strec(V: PLseValue): PLseString;
+function  lse_get_pchar(V: PLseValue): pchar;
+function  lse_get_str(V: PLseValue): string;
+function  lse_get_int(V: PLseValue): int64;
+function  lse_get_float(V: PLseValue): double;
+function  lse_get_time(V: PLseValue): TDateTime;
+function  lse_get_fname(V: PLseValue): string;
+function  lse_get_char(V: PLseValue): char;
+function  lse_get_bool(V: PLseValue): boolean;
+function  lse_get_obj(V: PLseValue): pointer;overload;
+function  lse_get_obj(V: PLseValue; P: PLseType): pointer;overload;
+function  lse_get_vargen(V: PLseValue): PLseVargen;
+{ set }
+procedure lse_set_int(V: PLseValue; Value: int64);
 procedure lse_set_float(V: PLseValue; Value: double);
 procedure lse_set_bool(V: PLseValue; Value: boolean);
 procedure lse_set_char(V: PLseValue; Value: char);
@@ -728,11 +932,42 @@ procedure lse_set_string(V: PLseValue; const Value: string);overload;
 procedure lse_set_string(V: PLseValue; const Value: pchar);overload;
 procedure lse_set_string(V: PLseValue; const Value: pchar; Length: integer);overload;
 procedure lse_set_object(V: PLseValue; CR: PLseType; Value: pointer);
-procedure lse_set_class(V: PLseValue; Value: PLseType);
+procedure lse_set_type(V: PLseValue; Value: PLseType);
 procedure lse_set_stream(V: PLseValue; Value: PLseStream);
 procedure lse_set_vargen(V: PLseValue; Value: PLseVargen);
 procedure lse_set_value(V: PLseValue; Value: PLseValue);
-procedure lse_casto_string(V: PLseValue);
+procedure lse_set_nil(V: PLseValue);overload;
+procedure lse_set_nil(V: PLseValue; T: PLseType);overload;
+{ compare }
+function  lse_compare(V1, V2: PLseValue): TLseCompareResult;
+function  lse_match(V1, V2: PLseValue; Test: TLseCompareResults): boolean;
+procedure lse_equal(V1, V2: PLseValue);      // V1 <=     V1 ==   V2
+procedure lse_diff(V1, V2: PLseValue);       // V1 <=     V1 !=   V2
+procedure lse_less(V1, V2: PLseValue);       // V1 <=     V1 <    V2
+procedure lse_eqless(V1, V2: PLseValue);     // V1 <=     V1 <=   V2
+procedure lse_more(V1, V2: PLseValue);       // V1 <=     V1 >    V2
+procedure lse_eqmore(V1, V2: PLseValue);     // V1 <=     V1 >=   V2
+procedure lse_abseq(V1, V2: PLseValue);      // V1 <=     V1 ===  V2
+{ operators }
+procedure lse_add(V1, V2: PLseValue);        // V1 <=     V1  +   V2
+procedure lse_dec(V1, V2: PLseValue);        // V1 <=     V1  -   V2
+procedure lse_mul(V1, V2: PLseValue);        // V1 <=     V1  *   V2
+procedure lse_div(V1, V2: PLseValue);        // V1 <=     V1  /   V2
+procedure lse_mod(V1, V2: PLseValue);        // V1 <=     V1  %   V2
+procedure lse_neg(V1: PLseValue);            // V1 <=   - V1
+procedure lse_bit_xor(V1, V2: PLseValue);    // V1 <=     V1  ^   V2
+procedure lse_bit_and(V1, V2: PLseValue);    // V1 <=     V1  &   V2
+procedure lse_bit_or(V1, V2: PLseValue);     // V1 <=     V1  |   V2
+procedure lse_bit_shl(V1, V2: PLseValue);    // V1 <=     V1  <<  V2
+procedure lse_bit_shr(V1, V2: PLseValue);    // V1 <=     V1  >>  V2
+procedure lse_bit_not(V1: PLseValue);        // V1 <=   ~ V1
+procedure lse_logic_and(V1, V2: PLseValue);  // V1 <=     V1  and V2
+procedure lse_logic_or(V1, V2: PLseValue);   // V1 <=     V1  or  V2
+procedure lse_logic_not(V1: PLseValue);      // V1 <= not V1
+procedure lse_is(V1, V2: PLseValue);         // V1 <=     V1 is   V2
+procedure lse_as(V1, V2: PLseValue);         // V1 <=     V1 as   V2
+procedure lse_fill(V1, V2: PLseValue);       // V1 <=     V1 <<<  V2
+procedure lse_like(V1, V2: PLseValue);       // V1 <=     V1 like V2
 
 {======================================================================)
 (======== vargen - variant generator ==================================)
@@ -767,6 +1002,11 @@ function lse_input: integer;
 function lse_output: integer;
 function lse_errput: integer;
 
+var
+  KT_VOID, KT_STRING, KT_INT, KT_FLOAT, KT_VARIANT, KT_TYPE,
+  KT_MODULE, KT_FUNC, KT_ERROR, KT_STREAM, KT_VARLIST, KT_HASHED,
+  KT_VARGEN, KT_VARSNAP: PLseType;
+
 implementation
 
 procedure lse_executing(Engine: PLseEngine);cdecl;
@@ -783,7 +1023,7 @@ end;
 (======== type ========================================================)
 (======================================================================}
 
-function lse_fill_typerec(CR: PLseType; Name, Desc: pchar; VT: TLseValue): PLseType;
+function lse_type_init(CR: PLseType; Name, Desc: pchar; VT: TLseValue): PLseType;
 begin
   Result := CR;
   FillChar(CR^, sizeof(RLseType), 0);
@@ -794,14 +1034,75 @@ begin
   CR^.cr_release := @lse_release_obj;
 end;
 
-function lse_fill_typerec(CR: PLseType; VT: TLseValue): PLseType;
+function lse_type_init(CR: PLseType; VT: TLseValue): PLseType;
 begin
-  Result := lse_fill_typerec(CR, pchar(lse_vtype_names[VT]), nil, VT);
+  Result := lse_type_init(CR, pchar(lse_vtype_names[VT]), nil, VT);
 end;
 
-function lse_typerec(const KernelType: pointer): PLseType;
+function lse_type_prot(T: PLseType; const ID: string): string;
 begin
-  Result := lse_entries^.cik_typerec(KernelType);
+  if T <> KT_VARIANT then
+    Result := ID + ':' + T^.cr_name else
+    Result := ID;
+end;
+
+function lse_type_prot(V: PLseVarb): string;
+begin
+  Result := lse_type_prot(V^.va_type, V^.va_name);
+end;
+
+function lse_type_otos(T: PLseType; obj: pointer): string;
+var
+  sr: PLseString;
+begin
+  if Assigned(T^.cr_otos) then
+  begin
+    sr := T^.cr_otos(obj);
+    lse_strec_inclife(sr);
+    try
+      Result := lse_strec_string(sr);
+    finally
+      lse_strec_declife(sr);
+    end;
+  end
+  else Result := '';
+end;
+
+function lse_type_stoo(T: PLseType; const S: PLseString): pointer;
+begin
+  if Assigned(T^.cr_stoo) then
+    Result := T^.cr_stoo(S) else
+    Result := nil;
+end;
+
+function lse_type_match(T, AType: PLseType): boolean;
+begin
+  Result := (T = AType) or (T = KT_VARIANT);
+end;
+
+function lse_type_desc(T: PLseType): string;
+begin
+  Result := T^.cr_desc;
+end;
+
+procedure lse_type_cast(T: PLseType; V: PLseValue);
+var
+  K: PLseType;
+begin
+  if T <> KT_VARIANT then
+  begin
+    K := lse_type(V);
+    if T <> K then
+      if T = KT_VOID   then lse_clear_value(V) else
+      if T = KT_VARGEN then lse_set_vargen(V, lse_get_vargen(V)) else
+      if T = KT_STRING then lse_set_string(V, lse_get_str(V)) else
+      if T = KT_INT    then lse_set_int(V, lse_get_int(V)) else
+      if T = KT_FLOAT  then lse_set_float(V, lse_get_float(V)) else
+      if T = KT_TYPE   then lse_set_type(V, K) else
+      if K = KT_STRING then
+        lse_set_object(V, T, lse_type_stoo(T, V^.VObject)) else
+        lse_set_object(V, T, nil);
+  end;
 end;
 
 {======================================================================)
@@ -820,6 +1121,11 @@ begin
   if obj <> nil then
     Result := TLseObject(obj).DecRefcount else
     Result := 0;
+end;
+
+function lse_long_life(const obj: pointer): integer;cdecl;
+begin
+  Result := Ord(obj <> nil);
 end;
 
 {======================================================================)
@@ -846,6 +1152,53 @@ begin
     if count > 0 then
       FreeMem(memory, count) else
       FreeMem(memory);
+end;
+
+procedure lse_mem_zero(const memory: pointer; count: integer);
+begin
+  FillChar(memory^, count, 0);
+end;
+
+function lse_mem_comp(B1, B2: pointer; Len: integer; IgnoreCase: boolean): integer;
+var
+  S, R: pchar;
+begin
+  S := B1;
+  R := B2;
+  while Len > 0 do
+  begin
+    if IgnoreCase and (S^ in LCS_ALPHA) and (R^ in LCS_ALPHA) then
+      Result := (byte(S^) or $20) - (byte(R^) or $20) else
+      Result := byte(S^) - byte(R^);
+    if Result <> 0 then Exit;
+    Inc(S);
+    Inc(R);
+    Dec(Len);
+  end;
+  Result := 0;
+end;
+
+function lse_mem_comp(B1: pointer; L1: integer; B2: pointer; L2: integer; IgnoreCase: boolean): integer;
+begin
+  Result := lse_mem_comp(B1, B2, Min(L1, L2), IgnoreCase);
+  if Result = 0 then
+    Result := (L1 - L2);
+end;
+
+function lse_mem_same(B1, B2: pointer; Len: integer; IgnoreCase: boolean): boolean;
+begin
+  if IgnoreCase then
+    Result := (lse_mem_comp(B1, B2, Len, true) = 0) else
+    Result := CompareMem(B1, B2, Len);
+end;
+
+function lse_mem_same(B1: pointer; L1: integer; B2: pointer; L2: integer; IgnoreCase: boolean): boolean;
+begin
+  Result := (L1 = L2);
+  if Result then
+    if IgnoreCase then
+      Result := (lse_mem_comp(B1, B2, L1, true) = 0) else
+      Result := CompareMem(B1, B2, L1);
 end;
 
 {======================================================================)
@@ -1238,9 +1591,12 @@ end;
 
 function lse_strec_same(S1, S2: PLseString): boolean;
 begin
-  if (S1 <> S2) and (lse_strec_length(S1) = lse_strec_length(S2)) then
-    Result := (StrComp(lse_strec_data(S1), lse_strec_data(S2)) = 0) else
-    Result := false;
+  Result := (lse_strec_comp(S1, S2, false) = 0);
+end;
+
+function lse_strec_same(S1, S2: PLseString; IgnoreCase: boolean): boolean;
+begin
+  Result := (lse_strec_comp(S1, S2, IgnoreCase) = 0);
 end;
 
 function lse_strec_lower(S: PLseString): PLseString;
@@ -1250,7 +1606,7 @@ function lse_strec_lower(S: PLseString): PLseString;
     if (buf <> nil) and (count > 0) then
     repeat
       if buf^ in ['A'..'Z'] then
-        Inc(buf^, LSE_LU_DISTANCE);
+        Inc(buf^, LCS_DISTANCE);
       Inc(buf);
       Dec(count);
     until count < 1;
@@ -1268,7 +1624,7 @@ function lse_strec_upper(S: PLseString): PLseString;
     if (buf <> nil) and (count > 0) then
     repeat
       if buf^ in ['a'..'z'] then
-        Dec(buf^, LSE_LU_DISTANCE);
+        Dec(buf^, LCS_DISTANCE);
       Inc(buf);
       Dec(count);
     until count < 1;
@@ -1279,16 +1635,356 @@ begin
   __upper(lse_strec_data(Result), lse_strec_length(Result));
 end;
 
+function lse_strec_comp(S1, S2: PLseString; IgnoreCase: boolean): integer;
+begin
+  if S1 = S2 then Result := 0 else
+  Result := lse_mem_comp(lse_strec_data(S1), lse_strec_length(S1),
+                         lse_strec_data(S2), lse_strec_length(S2), IgnoreCase);
+end;
+
+function lse_strec_pos(S, SubStr: PLseString): integer;
+var
+  S1, S2, SP: pchar;
+  L1, L2: integer;
+begin
+  Result := -1;
+  if (S <> nil) and (SubStr <> nil) then
+    if S <> SubStr then
+    begin
+      S1 := lse_strec_data(S);
+      S2 := lse_strec_data(SubStr);
+      L1 := lse_strec_length(S);
+      L2 := lse_strec_length(SubStr);
+      SP := S1;
+      while L1 >= L2 do
+      begin
+        if CompareMem(SP, S2, L2) then
+        begin
+          Result := (SP - S1);
+          Exit;
+        end;
+        Dec(L1);
+        Inc(SP);
+      end;
+    end
+    else Result := 0;
+end;
+
+function lse_strec_last_pos(S, SubStr: PLseString): integer;
+var
+  S1, S2, SP: pchar;
+  L2: integer;
+begin
+  Result := -1;
+  if (S <> nil) and (SubStr <> nil) then
+    if S <> SubStr then
+    begin
+      S1 := lse_strec_data(S);
+      S2 := lse_strec_data(SubStr);
+      L2 := lse_strec_length(SubStr);
+      SP := S1 + (lse_strec_length(S) - L2);
+      while SP >= S1 do
+      begin
+        if CompareMem(SP, S2, L2) then
+        begin
+          Result := (SP - S1);
+          Exit;
+        end;
+        Dec(SP);
+      end;
+    end
+    else Result := 0;
+end;
+
+function lse_strec_tabs(S: PLseString; var L, M, R: integer): integer;
+var
+  base, head, last: pchar;
+  size: integer;
+begin
+  L := 0;
+  M := 0;
+  R := 0;
+  base := lse_strec_data(S);
+  if base <> nil then
+  begin
+    size := lse_strec_length(S);
+    head := base;
+    last := base + (size - 1);
+    while (head <= last) and (head^ in LCS_SPACE) do Inc(head);
+    L := head - base;     // base .. head .. last
+    base := last;
+    while (head <= base) and (base^ in LCS_SPACE) do Dec(base);
+    R := last - base;     // head .. base .. last
+    Inc(head);
+    while head < base do
+    begin
+      if head^ in LCS_SPACE then Inc(M);
+      Inc(head);
+    end;
+  end;
+  Result := L + M + R;
+end;
+
+function lse_strec_trim(S: PLseString): PLseString;
+var
+  L, M, R: integer;
+begin
+  if (lse_strec_tabs(S, L, M, R) > 0) and ((L + R) > 0) then
+  begin
+    M := lse_strec_length(S) - (L + R);
+    Result := lse_strec_alloc(lse_strec_data(S) + L, M);
+  end
+  else Result := S;
+end;
+
+function lse_strec_trimL(S: PLseString): PLseString;
+var
+  L, M, R: integer;
+begin
+  if (lse_strec_tabs(S, L, M, R) > 0) and (L > 0) then
+  begin
+    M := lse_strec_length(S) - L;
+    Result := lse_strec_alloc(lse_strec_data(S) + L, M);
+  end
+  else Result := S;
+end;
+
+function lse_strec_trimR(S: PLseString): PLseString;
+var
+  L, M, R: integer;
+begin
+  if (lse_strec_tabs(S, L, M, R) > 0) and (R > 0) then
+  begin
+    M := lse_strec_length(S) - R;
+    Result := lse_strec_alloc(lse_strec_data(S), M);
+  end
+  else Result := S;
+end;
+
+function lse_strec_trim_all(S: PLseString): PLseString;
+var
+  L, M, R, Z: integer;
+  P, N: pchar;
+begin
+  if lse_strec_tabs(S, L, M, R) > 0 then
+  begin
+    P := lse_strec_data(S); // source
+    Z := lse_strec_length(S); // count
+    S := lse_strec_alloc(nil, Z - (L + M + R));
+    if S <> nil then
+    begin
+      N := lse_strec_data(S); // desti
+      while Z > 0 do
+      begin
+        if not (P^ in LCS_SPACE) then
+        begin
+          N^ := P^;
+          Inc(N);
+        end;
+        Inc(P);
+        Dec(Z);
+      end;
+    end;
+  end;
+  Result := S;
+end;
+
+function lse_strec_copy(S: PLseString; index, count: int64): PLseString;
+var
+  L: int64;
+begin
+  Result := nil;
+  L := lse_strec_length(S);
+  if L > 0 then
+  begin
+    index := lse_vary_range(index, L, count);
+    if count > 0 then
+      if count < L then
+        Result := lse_strec_alloc(lse_strec_data(S) + index, count) else
+        Result := S;
+  end;
+end;
+
+function lse_strec_left(S: PLseString; count: int64): PLseString;
+begin
+  Result := lse_strec_copy(S, 0, count);
+end;
+
+function lse_strec_right(S: PLseString; count: int64): PLseString;
+begin
+  Result := lse_strec_copy(S, - count, count);
+end;
+
+function lse_strec_name(S: PLseString): PLseString;
+var
+  base, next: pchar;
+begin
+  Result := nil;
+  base := lse_strec_data(S);
+  if (base <> nil) and (base^ <> #0) then
+  begin
+    next := base;
+    while not (next^ in [#0, '=']) do Inc(next);
+    if (next^ = '=') and (next <> base) then
+      Result := lse_strec_alloc(base, next - base);
+  end;
+end;
+
+function lse_strec_value(S: PLseString): PLseString;
+var
+  base, next: pchar;
+begin
+  Result := nil;
+  base := lse_strec_data(S);
+  if (base <> nil) and (base^ <> #0) then
+  begin
+    next := base;
+    while not (next^ in [#0, '=']) do Inc(next);
+    if (next^ = '=') and (next <> base) then
+      Result := lse_strec_alloc(next + 1, lse_strec_length(S) - (next - base) - 1);
+  end;
+end;
+
+function lse_strec_set(S: PLseString; X: integer; ch: char): PLseString;
+var
+  L: integer;
+begin
+  L := lse_strec_length(S);
+  X := lse_vary_index(X, L);
+  lse_check_index(X, L);
+  if lse_strec_data(S)[X] <> ch then
+  begin
+    S := lse_strec_alloc(lse_strec_data(S), L);
+    lse_strec_data(S)[X] := ch;
+  end;
+  Result := S;
+end;
+
+function lse_strec_get(S: PLseString; X: integer): char;
+var
+  L: integer;
+begin
+  L := lse_strec_length(S);
+  X := lse_vary_index(X, L);
+  lse_check_index(X, L);
+  Result := lse_strec_data(S)[X];
+end;
+
+function lse_strec_delete(S: PLseString; X, N: int64): PLseString;
+var
+  P, T: pchar;
+  L: int64;
+begin
+  L := lse_strec_length(S);
+  if L > 0 then
+  begin
+    X := lse_vary_range(X, L, N);
+    if N > 0 then
+    begin
+      Dec(L, N);
+      if L > 0 then
+      begin
+        P := lse_strec_data(S);
+        S := lse_strec_alloc(nil, L);
+        T := lse_strec_data(S);
+        if X > 0 then
+        begin
+          Move(P^, T^, X);
+          Dec(L, X);
+          Inc(T, X);
+          Inc(P, X + N);
+        end;
+        Move(P^, T^, L);
+      end
+      else S := nil;
+    end;
+  end;
+  Result := S;
+end;
+
+function lse_strec_insert(S, R: PLseString; X: int64): PLseString;
+var
+  P, T: pchar;
+  N, L: int64;
+begin
+  L := lse_strec_length(S);
+  N := lse_strec_length(R);
+  if N > 0 then
+  begin
+    X := lse_vary_index(X, L);
+    if (X >= 0) and (X <= L) then
+      if L > 0 then
+      begin
+        P := lse_strec_data(S);
+        S := lse_strec_alloc(nil, L + N);
+        T := lse_strec_data(S);
+        if X > 0 then
+        begin
+          Move(P^, T^, X);
+          Dec(L, X);
+          Inc(P, X);
+          Inc(T, X);
+        end;
+        Move(lse_strec_data(R)^, T^, N);
+        Inc(T, N);
+        Move(P^, T^, L);
+      end
+      else S := R;
+  end;
+  Result := S;
+end;
+
+procedure lse_strec_save(S: PLseString; const FileName: string);
+begin
+  with TFileStream.Create(FileName, fmCreate) do
+  try
+    WriteBuffer(lse_strec_data(S)^, lse_strec_length(S));
+  finally
+    Free;
+  end;
+end;
+
+function lse_strec_load(const FileName: string): PLseString;
+begin
+  with TFileStream.Create(FileName, fmShareDenyWrite) do
+  try
+    Result := lse_strec_alloc(nil, size);
+    if Result <> nil then
+      Read(lse_strec_data(Result)^, size);
+  finally
+    Free;
+  end;
+end;
+
+function lse_strec_hash(S: PLseString): cardinal;
+begin
+  Result := lse_hash_of(lse_strec_data(S), lse_strec_length(S));
+end;
+
 {======================================================================)
 (======== kernel - load/manifest lysee kernel =========================)
 (======================================================================}
 
-function lse_prepare(QE: TLseQueryEntry): boolean;
+procedure lse_prepare(Entry: PLseEntry);
 begin
-  if lse_entries = nil then
-    if Assigned(QE) then
-      lse_entries := PLseEntry(QE('cik_entries'));
-  Result := (lse_entries <> nil);
+  lse_entries := Entry;
+  if lse_startup then
+  begin
+    KT_VOID    := lse_kernel_type(kcVoid);
+    KT_STRING  := lse_kernel_type(kcString);
+    KT_INT     := lse_kernel_type(kcInteger);
+    KT_FLOAT   := lse_kernel_type(kcFloat);
+    KT_VARIANT := lse_kernel_type(kcVariant);
+    KT_TYPE    := lse_kernel_type(kcType);
+    KT_MODULE  := lse_kernel_type(kcModule);
+    KT_FUNC    := lse_kernel_type(kcFunc);
+    KT_ERROR   := lse_kernel_type(kcError);
+    KT_STREAM  := lse_kernel_type(kcStream);
+    KT_VARLIST := lse_kernel_type(kcVarList);
+    KT_HASHED  := lse_kernel_type(kcHashed);
+    KT_VARGEN  := lse_kernel_type(kcVarGen);
+    KT_VARSNAP := lse_kernel_type(kcVarSnap);
+  end;
 end;
 
 function lse_query(const ID: string): pointer;
@@ -1302,26 +1998,30 @@ procedure lse_load_kernel(const KernelFile: string);
 const
   FLLK = 'Failed loading lysee kernel: %s';
 var
-  handle: THandle;
-  knfile: string;
+  H: THandle;
+  F: string;
+  Q: TLseQueryEntry;
 begin
   if lse_entries = nil then
   begin
-    knfile := lse_expand_fname(KernelFile);
-    if FileExists(knfile) then
+    F := lse_expand_fname(KernelFile);
+    if FileExists(F) then
     begin
-      handle := 0;
-      if lse_load_library(knfile, handle) then
+      H := 0;
+      if lse_load_library(F, H) then
       try
-        lse_prepare(TLseQueryEntry(lse_get_proc(handle, 'QueryEntry')));
+        Q := TLseQueryEntry(lse_get_proc(H, 'QueryEntry'));
+        if Assigned(Q) then
+          lse_prepare(PLseEntry(Q('cik_entries'))) else
+          lse_entries := nil;
         if lse_startup then
-          lse_set_kernel_file(knfile) else
-          lse_error(FLLK, [knfile]);
+          lse_set_kernel_file(F) else
+          lse_error(FLLK, [F]);
       except
-        lse_free_library(handle);
+        lse_free_library(H);
         raise;
       end
-      else lse_error(FLLK, [knfile]);
+      else lse_error(FLLK, [F]);
     end;
   end
   else lse_startup;
@@ -1384,6 +2084,11 @@ begin
   Result := lse_entries^.cik_copyright();
 end;
 
+function lse_kernel_type(Index: TLseKernelType): PLseType;
+begin
+  Result := lse_entries^.cik_kernel_type(Index);
+end;
+
 function lse_simple_test(const Script: string): integer;
 begin
   Result := lse_entries^.cik_simple_test(pchar(Script));
@@ -1404,9 +2109,9 @@ begin
   Result := lse_entries^.cik_register_module(pchar(mname), MR);
 end;
 
-function lse_register_type(const TR: PLseType): PLseType;
+function lse_register_type(const TR: PLseType): boolean;
 begin
-  Result := lse_entries^.cik_register_type(TR);
+  Result := (lse_entries^.cik_register_type(TR) <> 0);
 end;
 
 function lse_register_func(const FR: PLseFunc): pointer;
@@ -1414,9 +2119,31 @@ begin
   Result := lse_entries^.cik_register_func(FR);
 end;
 
+function lse_hash_of(Key: pchar; Len: integer): cardinal;
+var
+  X: integer;
+begin
+  Result := 0;
+  for X := Min(Len, 64) downto 1 do
+  begin
+    Result := ((Result shl 2) or (Result shr (sizeof(Result) * 8 - 2))) xor Ord(Key^);
+    Inc(Key);
+  end;
+end;
+
+function lse_hash_of(const Key: string): cardinal;
+begin
+  Result := lse_hash_of(pchar(Key), Length(Key));
+end;
+
 {======================================================================)
 (======== misc ========================================================)
 (======================================================================}
+
+procedure lse_check(ok: boolean; const msg: string);
+begin
+  if not ok then lse_error(msg);
+end;
 
 procedure lse_error(const error: string);
 begin
@@ -1488,6 +2215,13 @@ begin
     Result := '';
 end;
 
+function lse_full_path(const path: string): string;
+begin
+  Result := lse_expand_fname(path);
+  if Result <> '' then
+    Result := IncludeTrailingPathDelimiter(Result);
+end;
+
 function lse_complete_fname(const FileName: string): string;
 begin
   Result := lse_expand_fname(FileName);
@@ -1529,6 +2263,77 @@ procedure lse_check_index(index, range: int64);
 begin
   if (index < 0) or (index >= range) then
     lse_error('index %d is out of range %d', [index, range]);
+end;
+
+function lse_exe_name: string;
+{$IFDEF WINDOWS}
+var
+  buffer: array[0..MAX_PATH] of char;
+{$ENDIF}
+begin
+  {$IFDEF WINDOWS}
+  if IsLibrary then
+  begin
+    GetModuleFileName(MainInstance, buffer, sizeof(buffer));
+    Result := lse_expand_fname(buffer);
+    Exit;
+  end;
+  {$ENDIF}
+  Result := lse_expand_fname(ParamStr(0));
+end;
+
+function lse_lib_name: string;
+{$IFDEF WINDOWS}
+var
+  buffer: array[0..MAX_PATH] of char;
+{$ENDIF}
+begin
+  {$IFDEF WINDOWS}
+  if IsLibrary then
+  begin
+    GetModuleFileName(HInstance, buffer, sizeof(buffer));
+    Result := lse_expand_fname(buffer);
+    Exit;
+  end;
+  {$ENDIF}
+  Result := lse_exe_name;
+end;
+
+function lse_in_charset(S: pchar; Len: integer; Chars: TLseCharSet): boolean;
+begin
+  Result := (Len > 0) and (S <> nil) and (S^ in Chars);
+  while Result and (Len > 1) do
+  begin
+    Dec(Len);
+    Inc(S);
+    Result := S^ in Chars;
+  end;
+end;
+
+function lse_in_charset(S: pchar; Chars: TLseCharSet): boolean;
+begin
+  Result := false;
+  if (S <> nil) and (S^ <> #0) and (S^ in Chars) then
+  begin
+    Chars := Chars - [#0];
+    repeat Inc(S) until not (S^ in Chars);
+    Result := (S^ = #0);
+  end;
+end;
+
+function lse_is_ident(S: pchar): boolean;
+begin
+  Result := false;
+  if (S <> nil) and (S^ in LCS_HEAD) then
+  begin
+    Inc(S);
+    Result := (S^ = #0) or lse_in_charset(S, LCS_ID);
+  end;
+end;
+
+function lse_is_idhead(C: char): boolean;
+begin
+  Result := (C in LCS_HEAD);
 end;
 
 {======================================================================)
@@ -2169,55 +2974,6 @@ begin
   end;
 end;
 
-{ TLseEngine.FErrput }
-
-function errput_write(S: PLseStream; Buffer: pointer; Count: integer): integer;cdecl;
-var
-  engine: TLseEngine;
-begin
-  try
-    Result := 0;
-    engine := TLseEngine(S^.s_data);
-    if engine <> nil then
-    begin
-      if Assigned(engine.FOnWrite) then
-        engine.FOnWrite(engine, Buffer, Count) else
-        FileWrite(lse_errput, Buffer^, Count);
-      Result := Count;
-    end;
-  except
-    Result := 0;
-  end;
-end;
-
-function errput_eof(S: PLseStream): integer;cdecl;
-begin
-  try
-    if S^.s_data <> nil then
-      if System.Eof(ErrOutput) then
-        S^.s_data := nil;
-    Result := Ord(S^.s_data = nil);
-  except
-    Result := 1;
-  end;
-end;
-
-procedure errput_close(S: PLseStream);cdecl;
-var
-  engine: TLseEngine;
-begin
-  try
-    engine := TLseEngine(S^.s_data);
-    if engine <> nil then
-    begin
-      S^.s_data := nil;
-      System.Close(ErrOutput);
-    end;
-  except
-    { do nothing }
-  end;
-end;
-
 {======================================================================)
 (======== PLseValue - get/set/test value ==============================)
 (======================================================================}
@@ -2267,22 +3023,6 @@ begin
   end;
 end;
 
-procedure lse_set_nil(V: PLseValue);
-begin
-  case lse_vtype(V) of
-    LSV_STRING: begin
-                  lse_strec_declife(V^.VObject);
-                  V^.VObject := nil;
-                end;
-    LSV_INT   : V^.VInteger := 0;
-    LSV_FLOAT : V^.VFloat := 0;
-    LSV_OBJECT: begin
-                  V^.vtype^.cr_release(V^.VObject);
-                  V^.VObject := nil;
-                end;
-  end;
-end;
-
 function lse_is_defv(V: PLseValue): boolean;
 begin
   Result := (V^.vtype = nil);
@@ -2291,7 +3031,7 @@ begin
       LSV_STRING : Result := (V^.VObject = nil);
       LSV_INT    : Result := (V^.VInteger = 0);
       LSV_FLOAT  : Result := IsZero(V^.VFloat);
-      LSV_OBJECT : Result := (V^.VObject = nil) or (V^.vtype^.cr_class = V^.VObject);
+      LSV_OBJECT : Result := (V^.VObject = nil) or (V^.vtype = V^.VObject);
     end;
 end;
 
@@ -2314,23 +3054,11 @@ begin
     Result := LSV_VOID;
 end;
 
-function lse_type(V: TLseKernelType): PLseType;
-begin
-  Result := lse_entries^.cik_types^[V];
-end;
-
-function lse_type(V: TLseValue): PLseType;
-begin
-  if V <> LSV_OBJECT then
-    Result := lse_entries^.cik_types^[TLseKernelType(Ord(V))] else
-    Result := nil;
-end;
-
 function lse_type(V: PLseValue): PLseType;
 begin
   Result := V^.vtype;
   if Result = nil then
-    Result := lse_entries^.cik_types^[kcVoid];
+    Result := KT_VOID;
 end;
 
 function lse_length(V: PLseValue): integer;
@@ -2340,40 +3068,216 @@ begin
     Result := 0;
 end;
 
-procedure lse_set_int64(V: PLseValue; Value: int64);
+function lse_new_value: PLseValue;
 begin
-  lse_release(V);
-  V^.vtype := lse_type(LSV_INT);
-  V^.VInteger := Value;
+  Result := lse_mem_alloc(sizeof(RLseValue));
+  Result^.vtype := nil;
 end;
 
-procedure lse_set_integer(V: PLseValue; Value: integer);
+function lse_new_value(Value: int64): PLseValue;
+begin
+  Result := lse_new_value();
+  Result^.vtype := KT_INT;
+  Result^.VInteger := Value; 
+end;
+
+function lse_new_value(Value: double): PLseValue;
+begin
+  Result := lse_new_value();
+  Result^.vtype := KT_FLOAT;
+  Result^.VFloat := Value;
+end;
+
+function lse_new_value(const Value: string): PLseValue;
+begin
+  Result := lse_new_value();
+  Result^.vtype := KT_STRING;
+  Result^.VObject := lse_strec_alloc(Value);
+  lse_strec_inclife(Result^.VObject);
+end;
+
+function lse_new_value(const Value: PLseString): PLseValue;
+begin
+  Result := lse_new_value();
+  Result^.vtype := KT_STRING;
+  Result^.VObject := Value;
+  lse_strec_inclife(Value);
+end;
+
+function lse_new_value(const Value: PLseValue): PLseValue;
+begin
+  Result := lse_mem_alloc(sizeof(RLseValue));
+  Move(Value^, Result^, sizeof(RLseValue));
+  lse_addref(Result);
+end;
+
+function lse_new_value(const Value: pointer; AType: PLseType): PLseValue;
+begin
+  Result := lse_mem_alloc(sizeof(RLseValue));
+  Result^.vtype := AType;
+  Result^.VObject := Value;
+  AType^.cr_addref(Value);
+end;
+
+procedure lse_free_value(V: PLseValue);
+begin
+  if V <> nil then
+  begin
+    lse_set_nil(V);
+    lse_mem_free(V, sizeof(RLseValue));
+  end;
+end;
+
+function lse_get_strec(V: PLseValue): PLseString;
+begin
+  if lse_vtype(V) = LSV_STRING then
+    Result := V^.VObject else
+    Result := nil;
+end;
+
+function lse_get_pchar(V: PLseValue): pchar;
+begin
+  Result := lse_strec_data(lse_get_strec(V));
+end;
+
+function lse_get_str(V: PLseValue): string;
+var
+  S: PLseString;
+begin
+  Result := '';
+  case lse_vtype(V) of
+    LSV_STRING: Result := lse_strec_string(V^.VObject);
+    LSV_INT   : Result := IntToStr(V^.VInteger);
+    LSV_FLOAT : Result := FloatToStr(V^.VFloat);
+    LSV_OBJECT: if Assigned(V^.vtype^.cr_otos) then
+                begin
+                  S := V^.vtype^.cr_otos(V^.VObject);
+                  lse_strec_inclife(S);
+                  Result := lse_strec_string(S);
+                  lse_strec_declife(S);
+                end;
+  end;
+end;
+
+function lse_get_int(V: PLseValue): int64;
+begin
+  case lse_vtype(V) of
+    LSV_STRING: Result := StrToInt64Def(lse_strec_string(V^.VObject), 0);
+    LSV_INT   : Result := V^.VInteger;
+    LSV_FLOAT : Result := Trunc(V^.VFloat);
+    else Result := 0;
+  end;
+end;
+
+function lse_get_float(V: PLseValue): double;
+begin
+  case lse_vtype(V) of
+    LSV_STRING: Result := StrToFloatDef(lse_strec_string(V^.VObject), 0);
+    LSV_INT   : Result := V^.VInteger;
+    LSV_FLOAT : Result := V^.VFloat;
+    else Result := 0;
+  end;
+end;
+
+function lse_get_time(V: PLseValue): TDateTime;
+begin
+  case lse_vtype(V) of
+    LSV_STRING: Result := lse_decode_GMT(lse_get_str(V));
+    LSV_FLOAT : Result := V^.VFloat;
+    LSV_INT   : Result := UnixToDateTime(V^.VInteger);
+    else Result := 0;
+  end;
+end;
+
+function lse_get_fname(V: PLseValue): string;
+begin
+  if lse_vtype(V) = LSV_STRING then
+    Result := lse_veryPD(lse_strec_string(V^.VObject)) else
+    Result := '';
+end;
+
+function lse_get_char(V: PLseValue): char;
+begin
+  case lse_vtype(V) of
+    LSV_STRING: if V^.VObject <> nil then
+                  Result := lse_strec_data(V^.VObject)^ else
+                  Result := #0;
+    LSV_INT   : Result := char(V^.VInteger);
+    else        Result := #0;
+  end;
+end;
+
+function lse_get_bool(V: PLseValue): boolean;
+begin
+  case lse_vtype(V) of
+    LSV_STRING: Result := (lse_strec_length(V^.VObject) > 0);
+    LSV_INT   : Result := (V^.VInteger <> 0);
+    LSV_FLOAT : Result := not IsZero(V^.VFloat);
+    LSV_OBJECT: Result := (V^.VObject <> nil);
+    else        Result := false;
+  end;
+end;
+
+function lse_get_obj(V: PLseValue): pointer;
+begin
+  if lse_vtype(V) = LSV_OBJECT then
+    Result := V^.VObject else
+    Result := nil;
+end;
+
+function lse_get_obj(V: PLseValue; P: PLseType): pointer;
+var
+  R: PLseType;
+begin
+  R := lse_type(V);
+  if (R^.cr_type = LSV_OBJECT) and (R = P) then
+    Result := V^.VObject else
+    Result := nil;
+end;
+
+function lse_get_vargen(V: PLseValue): PLseVargen;
+var
+  T: PLseType;
+begin
+  Result := nil;
+  T := lse_type(V);
+  if Assigned(T^.cr_vargen) then
+    if T = KT_VARGEN then
+      Result := PLseVargen(V^.VObject) else
+    if T = KT_INT then
+      Result := T^.cr_vargen(@V^.VInteger) else
+    if T^.cr_type in [LSV_STRING, LSV_OBJECT] then
+      Result := T^.cr_vargen(V^.VObject) else
+    if T = KT_FLOAT then
+      Result := T^.cr_vargen(@V^.VFloat);
+  Result := lse_vargen_ensure(Result);
+end;
+
+procedure lse_set_int(V: PLseValue; Value: int64);
 begin
   lse_release(V);
-  V^.vtype := lse_type(LSV_INT);
+  V^.vtype := KT_INT;
   V^.VInteger := Value;
 end;
 
 procedure lse_set_float(V: PLseValue; Value: double);
 begin
   lse_release(V);
-  V^.vtype := lse_type(LSV_FLOAT);
+  V^.vtype := KT_FLOAT;
   V^.VFloat := Value;
 end;
 
 procedure lse_set_bool(V: PLseValue; Value: boolean);
 begin
   lse_release(V);
-  V^.vtype := lse_type(LSV_INT);
-  if Value then
-    V^.VInteger := 1 else
-    V^.VInteger := 0;
+  V^.vtype := KT_INT;
+  V^.VInteger := Ord(Value);
 end;
 
 procedure lse_set_char(V: PLseValue; Value: char);
 begin
   lse_release(V);
-  V^.vtype := lse_type(LSV_INT);
+  V^.vtype := KT_INT;
   V^.VInteger := Ord(Value);
 end;
 
@@ -2381,7 +3285,7 @@ procedure lse_set_string(V: PLseValue; Value: PLseString);
 begin
   lse_strec_inclife(Value);
   lse_release(V);
-  V^.vtype := lse_type(LSV_STRING);
+  V^.vtype := KT_STRING;
   V^.VObject := Value;
 end;
 
@@ -2408,19 +3312,19 @@ begin
   V^.VObject := Value;
 end;
 
-procedure lse_set_class(V: PLseValue; Value: PLseType);
+procedure lse_set_type(V: PLseValue; Value: PLseType);
 begin
-  lse_set_object(V, lse_type(kcType), Value^.cr_class);
+  lse_set_object(V, KT_TYPE, Value);
 end;
 
 procedure lse_set_stream(V: PLseValue; Value: PLseStream);
 begin
-  lse_set_object(V, lse_type(kcStream), Value);
+  lse_set_object(V, KT_STREAM, Value);
 end;
 
 procedure lse_set_vargen(V: PLseValue; Value: PLseVargen);
 begin
-  lse_set_object(V, lse_type(kcVargen), Value);
+  lse_set_object(V, KT_VARGEN, Value);
 end;
 
 procedure lse_set_value(V: PLseValue; Value: PLseValue);
@@ -2430,9 +3334,509 @@ begin
   Move(Value^, V^, sizeof(RLseValue));
 end;
 
-procedure lse_casto_string(V: PLseValue);
+procedure lse_set_nil(V: PLseValue);
 begin
-  lse_entries^.cik_casto_string(V);
+  case lse_vtype(V) of
+    LSV_STRING: begin
+                  lse_strec_declife(V^.VObject);
+                  V^.VObject := nil;
+                end;
+    LSV_INT   : V^.VInteger := 0;
+    LSV_FLOAT : V^.VFloat := 0;
+    LSV_OBJECT: begin
+                  V^.vtype^.cr_release(V^.VObject);
+                  V^.VObject := nil;
+                end;
+  end;
+end;
+
+procedure lse_set_nil(V: PLseValue; T: PLseType);
+begin
+  case T^.cr_type of
+    LSV_STRING: lse_set_string(V, '');
+    LSV_INT   : lse_set_int(V, 0);
+    LSV_FLOAT : lse_set_float(V, 0);
+    LSV_OBJECT: lse_set_object(V, T, nil);
+    else lse_clear_value(V);
+  end;
+end;
+
+function lse_compare(V1, V2: PLseValue): TLseCompareResult;
+var
+  T1, T2: PLseType;
+  R1, R2: TLseValue;
+
+  function compareS(const A, B: string): TLseCompareResult;
+  var
+    X: integer;
+  begin
+    X := AnsiCompareStr(A, B);
+    if X = 0 then
+      Result := crEqual else if X > 0 then
+      Result := crMore else
+      Result := crLess;
+  end;
+
+  function compareF(A, B: double): TLseCompareResult;
+  begin
+    A := A - B;
+    if IsZero(A) then
+      Result := crEqual else if A > 0 then
+      Result := crMore  else
+      Result := crLess;
+  end;
+
+  function compareI(A, B: int64): TLseCompareResult;
+  begin
+    A := A - B;
+    if A = 0 then
+      Result := crEqual else if A > 0 then
+      Result := crMore else
+      Result := crLess;
+  end;
+
+begin
+  T1 := lse_type(V1);
+  R1 := T1^.cr_type;
+  
+  if R1 = LSV_VOID then
+  begin
+    if lse_is_defv(V2) then 
+      Result := crEqual else
+      Result := crDiff;
+    Exit;
+  end;
+  
+  T2 := lse_type(V2);
+  R2 := T2^.cr_type;
+  
+  if R2 = LSV_VOID then
+  begin
+    if lse_is_defv(V1) then 
+      Result := crEqual else
+      Result := crDiff;
+    Exit;
+  end;
+
+  if R1 = LSV_STRING then
+  begin
+    if R2 = LSV_STRING then
+      Result := compareS(lse_get_str(V1), lse_get_str(V2)) else
+      Result := crDiff;
+    Exit;
+  end;
+
+  if R1 = LSV_OBJECT then
+  begin
+    if (T1 = T2) and (V1^.VObject = V2^.VObject) then
+      Result := crEqual else
+      Result := crDiff;
+    Exit;
+  end;
+
+  if R2 in [LSV_STRING, LSV_OBJECT] then
+  begin
+    Result := crDiff;
+    Exit;
+  end;
+
+  if (R1 = LSV_FLOAT) or (R2 = LSV_FLOAT) then
+    Result := compareF(lse_get_float(V1), lse_get_float(V2)) else
+    Result := compareI(lse_get_int(V1), lse_get_int(V2));
+end;
+
+function lse_match(V1, V2: PLseValue; Test: TLseCompareResults): boolean;
+begin
+  Result := (lse_compare(V1, V2) in Test);
+end;
+
+procedure lse_equal(V1, V2: PLseValue);
+begin
+  lse_set_bool(V1, lse_match(V1, V2, [crEqual]));
+end;
+
+procedure lse_diff(V1, V2: PLseValue);
+begin
+  lse_set_bool(V1, lse_match(V1, V2, [crLess, crMore, crDiff]));
+end;
+
+procedure lse_less(V1, V2: PLseValue);
+begin
+  lse_set_bool(V1, lse_match(V1, V2, [crLess]));
+end;
+
+procedure lse_eqless(V1, V2: PLseValue);
+begin
+  lse_set_bool(V1, lse_match(V1, V2, [crLess, crEqual]));
+end;
+
+procedure lse_more(V1, V2: PLseValue);
+begin
+  lse_set_bool(V1, lse_match(V1, V2, [crMore]));
+end;
+
+procedure lse_eqmore(V1, V2: PLseValue);
+begin
+  lse_set_bool(V1, lse_match(V1, V2, [crMore, crEqual]));
+end;
+
+procedure lse_abseq(V1, V2: PLseValue);
+var
+  clss: PLseType;
+  same: boolean;
+begin
+  same := false;
+  clss := lse_type(V1);
+  if clss = lse_type(V2) then
+    case clss^.cr_type of
+      LSV_VOID   : same := true;
+      LSV_STRING : same := lse_strec_same(V1^.VObject, V2^.VObject);
+      LSV_INT    : same := (V1^.VInteger = V2^.VInteger);
+      LSV_FLOAT  : same := IsZero(V1^.VFloat - V2^.VFloat);
+      LSV_VARIANT: same := true;
+      LSV_OBJECT : same := (V1^.VObject = V2^.VObject);
+    end;
+  lse_set_bool(V1, same);
+end;
+
+procedure lse_add(V1, V2: PLseValue);
+
+  procedure on_string(R: TLseValue);
+  begin
+    if R = LSV_STRING then
+      lse_set_string(V1, lse_strec_cat(V1^.VObject, V2^.VObject)) else
+      lse_set_string(V1, lse_strec_cat(V1^.VObject, lse_get_str(V2)));
+  end;
+
+  procedure on_int(R: TLseValue);
+  begin
+    if R = LSV_FLOAT then
+      lse_set_float(V1, V1^.VInteger + V2^.VFloat) else
+    if R = LSV_INT then
+      lse_set_int(V1, V1^.VInteger + V2^.VInteger) else
+    if R = LSV_STRING then
+      lse_set_string(V1, lse_strec_cat(IntToStr(V1^.VInteger), V2^.VObject)) else
+      V1^.vtype := nil;
+  end;
+
+  procedure on_float(R: TLseValue);
+  begin
+    if R in [LSV_FLOAT, LSV_INT] then
+      lse_set_float(V1, V1^.VFloat + lse_get_float(V2)) else
+    if R = LSV_STRING then
+      lse_set_string(V1, lse_strec_cat(FloatToStr(V1^.VFloat), V2^.VObject)) else
+      V1^.vtype := nil;
+  end;
+
+  procedure on_object(R: TLseValue);
+  begin
+    if R = LSV_STRING then
+      lse_set_string(V1, lse_strec_cat(lse_get_str(V1), V2^.VObject)) else
+      lse_clear_object(V1);
+  end;
+
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: on_string(lse_vtype(V2));
+    LSV_INT   : on_int   (lse_vtype(V2));
+    LSV_FLOAT : on_float (lse_vtype(V2));
+    LSV_OBJECT: on_object(lse_vtype(V2));
+  end;
+end;
+
+procedure lse_dec(V1, V2: PLseValue);
+
+  procedure on_int;
+  var
+    R: TLseValue;
+  begin
+    R := lse_vtype(V2);
+    if R = LSV_FLOAT then
+      lse_set_float(V1, V1^.VInteger - V2^.VFloat) else
+    if R = LSV_INT then
+      lse_set_int(V1, V1^.VInteger - V2^.VInteger) else
+      V1^.vtype := nil;
+  end;
+
+  procedure on_float;
+  begin
+    if lse_vtype(V2) in [LSV_FLOAT, LSV_INT] then
+      lse_set_float(V1, V1^.VFloat - lse_get_float(V2)) else
+      V1^.vtype := nil;
+  end;
+
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : on_int;
+    LSV_FLOAT : on_float;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_mul(V1, V2: PLseValue);
+
+  procedure on_string;
+  var
+    S, T: PLseString;
+    B, F: pchar;
+    L, N: integer;
+  begin
+    if lse_vtype(V2) = LSV_INT then
+    begin
+      S := V1^.VObject;
+      L := lse_strec_length(S);
+      N := V2^.VInteger;
+      if (L > 0) and (N > 0) then
+      begin
+        T := lse_strec_alloc(nil, L * N);
+        B := lse_strec_data(T);
+        F := lse_strec_data(S);
+        while N > 0 do
+        begin
+          Move(F^, B^, L);
+          Inc(B, L);
+          Dec(N);
+        end;
+        lse_set_string(V1, T);
+      end
+      else lse_set_string(V1, '');
+    end
+    else lse_clear_string(V1);
+  end;
+
+  procedure on_int;
+  var
+    R: TLseValue;
+  begin
+    R := lse_vtype(V2);
+    if R = LSV_FLOAT then
+      lse_set_float(V1, V1^.VInteger * lse_get_float(V2)) else
+    if R = LSV_INT then
+      lse_set_int(V1, V1^.VInteger * lse_get_int(V2)) else
+      V1^.vtype := nil;
+  end;
+
+  procedure on_float;
+  begin
+    if lse_vtype(V2) in [LSV_FLOAT, LSV_INT] then
+      lse_set_float(V1, V1^.VFloat * lse_get_float(V2)) else
+      V1^.vtype := nil;
+  end;
+
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: on_string;
+    LSV_INT   : on_int;
+    LSV_FLOAT : on_float;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_div(V1, V2: PLseValue);
+
+  procedure on_int;
+  var
+    F: double;
+  begin
+    if lse_vtype(V2) in [LSV_FLOAT, LSV_INT] then
+    begin
+      F := lse_get_float(V2);
+      if IsZero(F) then
+        lse_set_float(V1, 0) else
+        lse_set_float(V1, V1^.VInteger / F);
+    end
+    else V1^.vtype := nil;
+  end;
+
+  procedure on_float;
+  var
+    F: double;
+  begin
+    if lse_vtype(V2) in [LSV_FLOAT, LSV_INT] then
+    begin
+      F := lse_get_float(V2);
+      if IsZero(F) then
+        lse_set_float(V1, 0) else
+        lse_set_float(V1, V1^.VFloat / F);
+    end
+    else V1^.vtype := nil;
+  end;
+
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : on_int;
+    LSV_FLOAT : on_float;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_mod(V1, V2: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : if lse_vtype(V2) <> LSV_INT then
+                  V1^.vtype := nil else
+                if V2^.VInteger = 0 then
+                  lse_set_int(V1, 0) else
+                  lse_set_int(V1, V1^.VInteger mod V2^.VInteger);
+    LSV_FLOAT : V1^.vtype := nil;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_neg(V1: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : V1^.VInteger := - V1^.VInteger;
+    LSV_FLOAT : V1^.VFloat := - V1^.VFloat;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_bit_xor(V1, V2: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : if lse_vtype(V2) = LSV_INT then
+                  lse_set_int(V1, V1^.VInteger xor V2^.VInteger) else
+                  V1^.vtype := nil;
+    LSV_FLOAT : V1^.vtype := nil;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_bit_and(V1, V2: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : if lse_vtype(V2) = LSV_INT then
+                  lse_set_int(V1, V1^.VInteger and V2^.VInteger) else
+                  V1^.vtype := nil;
+    LSV_FLOAT : V1^.vtype := nil;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_bit_or(V1, V2: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : if lse_vtype(V2) = LSV_INT then
+                  lse_set_int(V1, V1^.VInteger or V2^.VInteger) else
+                  V1^.vtype := nil;
+    LSV_FLOAT : V1^.vtype := nil;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_bit_shl(V1, V2: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : if lse_vtype(V2) = LSV_INT then
+                  lse_set_int(V1, V1^.VInteger shl V2^.VInteger) else
+                  V1^.vtype := nil;
+    LSV_FLOAT : V1^.vtype := nil;
+    LSV_OBJECT: if V1^.VObject <> nil then
+                  if Assigned(V1^.vtype^.cr_add) then
+                    V1^.vtype^.cr_add(V1^.VObject, V2);
+  end;
+end;
+
+procedure lse_bit_shr(V1, V2: PLseValue);
+begin
+  case lse_vtype(V1) of
+    LSV_STRING: lse_clear_string(V1);
+    LSV_INT   : if lse_vtype(V2) = LSV_INT then
+                  lse_set_int(V1, V1^.VInteger shr V2^.VInteger) else
+                  V1^.vtype := nil;
+    LSV_FLOAT : V1^.vtype := nil;
+    LSV_OBJECT: lse_clear_object(V1);
+  end;
+end;
+
+procedure lse_bit_not(V1: PLseValue);
+begin
+  if lse_vtype(V1) = LSV_INT then
+    lse_set_int(V1, not V1^.VInteger) else
+    lse_clear_value(V1);
+end;
+
+procedure lse_logic_and(V1, V2: PLseValue);
+begin
+  if lse_get_bool(V1) and not lse_get_bool(V2) then
+    lse_set_value(V1, V2);
+end;
+
+procedure lse_logic_or(V1, V2: PLseValue);
+begin
+  if not lse_get_bool(V1) and lse_get_bool(V2) then
+    lse_set_value(V1, V2);
+end;
+
+procedure lse_logic_not(V1: PLseValue);
+begin
+  lse_set_bool(V1, not lse_get_bool(V1));
+end;
+
+procedure lse_is(V1, V2: PLseValue);
+var
+  T1, T2: PLseType;
+begin
+  T2 := lse_type(V2);
+  if T2 = KT_TYPE then
+  begin
+    T2 := PLseType(lse_get_obj(V2));
+    T1 := lse_type(V1);
+    if T1 = KT_TYPE then
+      T1 := PLseType(lse_get_obj(V1));
+    lse_set_bool(V1, T1 = T2);
+  end
+  else lse_abseq(V1, V2);
+end;
+
+procedure lse_as(V1, V2: PLseValue);
+var
+  T2: PLseType;
+begin
+  T2 := lse_type(V2);
+  if T2 = KT_TYPE then
+    T2 := PLseType(lse_get_obj(V2));
+  lse_type_cast(T2, V1);
+end;
+
+procedure lse_fill(V1, V2: PLseValue);
+var
+  K: PLseType;
+  G: PLseVargen;
+begin
+  K := lse_type(V1);
+  if Assigned(K^.cr_add) and (V1^.VObject <> nil) then
+  begin
+    G := lse_get_vargen(V2);
+    lse_vargen_addref(G);
+    try
+      while lse_vargen_send(G, V2) do
+        K^.cr_add(V1^.VObject, V2);
+    finally
+      lse_vargen_release(G);
+    end;
+  end;
+end;
+
+procedure lse_like(V1, V2: PLseValue);
+var
+  P: TLsePatten;
+begin
+  P := TLsePatten.Create(lse_get_pchar(V2));
+  try
+    lse_set_bool(V1, P.ExecStrec(lse_get_strec(V1)));
+  finally
+    P.Free;
+  end;
 end;
 
 {======================================================================)
@@ -2604,16 +4008,11 @@ begin
     FOutput.s_write := @output_write;
     FOutput.s_eof := @output_eof;
     FOutput.s_close := @output_close;
-    FErrput.s_data := Self;
-    FErrput.s_write := @errput_write;
-    FErrput.s_eof := @errput_eof;
-    FErrput.s_close := @errput_close;
     FEngineRec.er_engine := Self;
     FEngineRec.er_executing := @lse_executing;
     FEngineRec.er_executed := @lse_executed;
     FEngineRec.er_input := @FInput;
     FEngineRec.er_output := @FOutput;
-    FEngineRec.er_errput := @FErrput;
     FEngineRec.er_data := nil;
     lse_entries^.cik_create(@FEngineRec);
   end;
@@ -2913,7 +4312,7 @@ end;
 
 procedure TLseInvoke.ReturnInt64(const Value: int64);
 begin
-  lse_set_int64(FParam^.p_result, Value);
+  lse_set_int(FParam^.p_result, Value);
 end;
 
 procedure TLseInvoke.ReturnObj(CR: PLseType; Value: pointer);
@@ -2921,9 +4320,9 @@ begin
   lse_set_object(FParam^.p_result, CR, Value);
 end;
 
-procedure TLseInvoke.ReturnObject(KernelType, Value: pointer);
+procedure TLseInvoke.ReturnObject(T: PLseType; Value: pointer);
 begin
-  lse_set_object(FParam^.p_result, lse_typerec(KernelType), Value);
+  lse_set_object(FParam^.p_result, T, Value);
 end;
 
 procedure TLseInvoke.ReturnStr(const Value: string);
@@ -2943,7 +4342,7 @@ end;
 
 procedure TLseInvoke.ReturnInt(const Value: integer);
 begin
-  lse_set_integer(FParam^.p_result, Value);
+  lse_set_int(FParam^.p_result, Value);
 end;
 
 function TLseInvoke.GetThis(var obj): boolean;
@@ -3044,6 +4443,814 @@ end;
 procedure TLseInvoke.Print(const Str: string);
 begin
   lse_entries^.cik_write(KernelEngine, pchar(Str), Length(Str));
+end;
+
+{ TLsePatten }
+
+constructor TLsePatten.Create(const Patten: pchar);
+begin
+  inherited Create;
+  SetLength(FMatches, 1);
+  Init(Patten);
+end;
+
+destructor TLsePatten.Destroy;
+begin
+  SetLength(FMatches, 0);
+  inherited Destroy;
+end;
+
+const zero_char: char = #0;
+
+function TLsePatten.Exec(S: pchar; L: integer): boolean;
+var
+  ps: pchar;   // patten string
+  ep: pchar;   // end position
+  px: integer; // paren index
+begin
+  Result := false;
+  ResetResult;
+  if not FError and (FPatten <> nil) and (((L > 0) and (S <> nil)) or (L = 0)) then
+  try
+    if (L = 0) and (S = nil) then
+      S := @zero_char;
+    FSource := S;
+    FEos := S + L;
+    ps := FPatten;
+    if FAnchor then
+    begin
+      Inc(ps);
+      if (ps^ = '$') and ((ps + 1)^ = #0) then
+      begin
+        if L = 0 then
+        begin
+          FMatches[0].m_str := S;
+          Result := true;
+        end;
+        Exit;
+      end;
+    end;
+
+    repeat
+      ep := Match(S, ps);
+      if ep <> nil then
+      begin
+        for px := 1 to FCount - 1 do
+          Check(FMatches[px].m_len >= 0);
+        FMatches[0].m_str := S;
+        FMatches[0].m_len := ep - S;
+        Result := true;
+      end
+      else
+      begin
+        Inc(S);
+        FCount := 1;
+      end;
+    until Result or FAnchor or (S >= FEos);
+  except
+    Result := false;
+    FError := true;
+    ResetResult;
+  end;
+end;
+
+function TLsePatten.ExecStrec(S: PLseString): boolean;
+begin
+  Result := Exec(lse_strec_data(S), lse_strec_length(S)); 
+end;
+
+function TLsePatten.Next: boolean;
+var
+  S, P: pchar;
+begin
+  Result := false;
+  if not FError and not FAnchor and (FMatches[0].m_str <> nil) then
+  begin
+    S := FSource;
+    P := FMatches[0].m_str + FMatches[0].m_len;
+    if P < FEos then
+    try
+      Result := Exec(P, FEos - P);
+    finally
+      FSource := S;
+    end;
+  end;
+end;
+
+function TLsePatten.Replace(Src, New: PLseString; Times: int64): PLseString;
+var
+  match_list: array of RLseMatch;
+  match_len, X: integer;
+  src_str, new_str, res_str: pchar;
+  src_len, new_len, res_len: integer;
+
+  procedure save_match_result;
+  var
+    X: integer;
+  begin
+    X := Length(match_list);
+    SetLength(match_list, X + 1);
+    match_list[X] := FMatches[0];
+    Inc(match_len, FMatches[0].m_len);
+  end;
+
+begin
+  if (Times < 1) or not ExecStrec(Src) then
+  begin
+    Result := Src;
+    Exit;
+  end;
+
+  Dec(Times);
+  match_len := 0;
+  SetLength(match_list, 0);
+  save_match_result;
+  while (Times > 0) and Next do
+  begin
+    save_match_result;
+    Dec(Times);
+  end;
+
+  Times := Length(match_list);
+  new_str := lse_strec_data(New);
+  new_len := lse_strec_length(New);
+  res_len := (FEos - FSource) - match_len + integer(new_len * Times);
+  if res_len > 0 then
+  begin
+    Result := lse_strec_alloc(nil, res_len);
+    res_str := lse_strec_data(Result);
+    src_str := FSource;
+    for X := 0 to Times - 1 do
+    begin
+      src_len := match_list[X].m_str - src_str;
+      Move(src_str^, res_str^, src_len);
+      Dec(res_len, src_len);
+      Inc(res_str, src_len);
+      Move(new_str^, res_str^, new_len);
+      Dec(res_len, new_len);
+      Inc(res_str, new_len);
+      src_str := match_list[X].m_str + match_list[X].m_len;
+    end;
+    Move(src_str^, res_str^, res_len);
+  end
+  else Result := nil;
+end;
+
+function TLsePatten.MatchCount: integer;
+begin
+  if FMatches[0].m_str <> nil then
+    Result := FCount else
+    Result := 0;
+end;
+
+function TLsePatten.MatchStr(Index: integer): pchar;
+begin
+  if FMatches[0].m_str <> nil then
+    Result := FMatches[Index].m_str else
+    Result := nil;
+end;
+
+function TLsePatten.MatchPos(Index: integer): integer;
+begin
+  if FMatches[0].m_str <> nil then
+    Result := FMatches[Index].m_str - FSource else
+    Result := -1;
+end;
+
+function TLsePatten.MatchLen(Index: integer): integer;
+begin
+  if FMatches[0].m_str <> nil then
+    Result := FMatches[Index].m_len else
+    Result := -1;
+end;
+
+function TLsePatten.SourceLength: integer;
+begin
+  Result := FEos - FSource;
+end;
+
+function TLsePatten.Init(const Patten: pchar): boolean;
+begin
+  Result := false;
+  FPatten := nil;
+  FAnchor := false;
+  if (Patten <> nil) and (Patten^ <> #0) then
+    if ((Patten + 1)^ <> #0) or not (Patten^ in ['^', '$', '(', '[', '\']) then
+    begin
+      Result := true;
+      FPatten := Patten;
+      FAnchor := (Patten^ = '^');
+    end;
+  ResetResult;
+  FError := not Result;
+end;
+
+function TLsePatten.Match(Src, Pat: pchar): pchar;
+// pc: patten class
+// ch: source char
+// ss: source string
+// ps: patten string
+// ep: end position of patten
+// lc: level char
+
+  function match_escape(ch, pc: char): boolean;
+  var
+    L: char;
+  begin
+    if pc in ['A'..'Z'] then
+      L := char(Ord(pc) + LCS_DISTANCE) else
+      L := pc;
+    case L of
+      'a': Result := ch in LCS_ALPHA;
+      'c': Result := ch in LCS_CNTRL;
+      'd': Result := ch in LCS_DIGIT;
+      'l': Result := ch in ['a'..'z'];
+      'p': Result := ch in LCS_PUNCT;
+      's': Result := ch in LCS_SPACE;
+      'u': Result := ch in ['A'..'Z'];
+      'w': Result := ch in LCS_ALNUM;
+      'x': Result := ch in LCS_HEX;
+      'z': Result := (ch = #0);
+      else Result := (ch = pc);
+    end;
+    Result := Result xor (pc <> L);
+  end;
+
+  function match_bracket(ch: char; ps, ep: pchar): boolean;
+  begin
+    Result := true;
+
+    Inc(ps);
+    if ps^ = '^' then
+    begin
+      Result := false;
+      Inc(ps);
+    end;
+
+    while ps < ep do
+    begin
+      if ps^ = '\' then
+      begin
+        Inc(ps);
+        if match_escape(ch, ps^) then Exit;
+      end
+      else
+      if ((ps + 1)^ = '-') and ((ps + 2) < ep) then
+      begin
+        Inc(ps, 2);
+        if ((ps - 2)^ <= ch) and (ch <= ps^) then Exit;
+      end
+      else
+      if ps^ = ch then Exit;
+      Inc(ps);
+    end;
+
+    Result := not Result;
+  end;
+
+  function match_single(ch: char; ps, ep: pchar): boolean;
+  begin
+    if ps^ = '.' then Result := true else
+    if ps^ = '[' then
+      Result := match_bracket(ch, ps, ep - 1) else
+    if ps^ = '\' then
+      Result := match_escape(ch, (ps + 1)^) else
+      Result := (ps^ = ch);
+  end;
+
+  function match_balance(var ss: pchar; ps: pchar): boolean;
+  var
+    begc, endc: char;
+    rest: integer;
+  begin
+    Check((ps^ <> #0) and ((ps + 1)^ <> #0));
+    if ss^ = ps^ then
+    begin
+      begc := ps^;
+      endc := (ps + 1)^;
+      rest := 1;
+      Inc(ss);
+      while ss < FEos do
+      begin
+        if ss^ = endc then
+        begin
+          Dec(rest);
+          if rest = 0 then
+          begin
+            Result := true;
+            Inc(ss);
+            Exit;
+          end;
+        end
+        else
+        if ss^ = begc then Inc(rest);
+        Inc(ss);
+      end;
+    end;
+    Result := false;
+  end;
+
+  function start_paren(ss, ps: pchar): pchar;
+  var
+    X: integer;
+  begin
+    X := FCount;
+    if X = Length(FMatches) then
+      SetLength(FMatches, X + 4);
+    FMatches[X].m_str := ss;
+    FMatches[X].m_len := -1;
+    Inc(FCount);
+    Result := Match(ss, ps);
+    if Result = nil then
+      Dec(FCount);
+  end;
+
+  function close_paren(ss, ps: pchar): pchar;
+  var
+    X: integer;
+  begin
+    X := FCount - 1;
+    while (X >= 1) and (FMatches[X].m_len >= 0) do Dec(X);
+    Check(X >= 1);
+    FMatches[X].m_len := ss - FMatches[X].m_str;
+    Result := Match(ss, ps);
+    if Result = nil then
+      FMatches[X].m_len := -1;
+  end;
+
+  function max_expand(ss, ps, ep: pchar): pchar;
+  var
+    X: integer;
+  begin
+    X := 0;
+    while ((ss + X) < FEos) and match_single((ss + X)^, ps, ep) do Inc(X);
+    while X >= 0 do
+    begin
+      Result := Match(ss + X, ep + 1);
+      if Result <> nil then Exit;
+      Dec(X);
+    end;
+    Result := nil;
+  end;
+
+  function min_expand(ss, ps, ep: pchar): pchar;
+  begin
+    Result := Match(ss, ep + 1);
+    while Result = nil do
+      if (ss < FEos) and match_single(ss^, ps, ep) then
+      begin
+        Inc(ss);
+        Result := Match(ss, ep + 1);
+      end
+      else Exit;
+  end;
+
+label MATCH_AGAIN;
+var
+  ep: pchar;   // end Pat
+  sm: boolean; // single match
+begin
+  MATCH_AGAIN:
+
+  if Pat^ = '(' then
+  begin
+    Result := start_paren(Src, Pat + 1);
+    Exit;
+  end;
+
+  if Pat^ = ')' then
+  begin
+    Result := close_paren(Src, Pat + 1);
+    Exit;
+  end;
+
+  if (Pat^ = #0) or ((Pat^ = '$') and ((Pat + 1)^ = #0) and (Src = FEos)) then
+  begin
+    Result := Src;
+    Exit;
+  end;
+
+  Result := nil;
+
+  if (Pat^ = '\') and ((Pat + 1)^ = 'b') then
+    if match_balance(Src, Pat + 2) then
+    begin
+      Inc(Pat, 4);
+      goto MATCH_AGAIN; // Match(mp, Src, Pat + 4);
+    end
+    else Exit;
+
+  // get end of class
+  ep := Pat;
+  if ep^ = '\' then
+  begin
+    Inc(ep);
+    Check(ep^ <> #0);
+  end
+  else
+  if ep^ = '[' then
+  begin
+    Inc(ep);
+    if ep^ = '^' then Inc(ep);
+    repeat
+      if ep^ = '\' then Inc(ep);
+      Check(ep^ <> #0);
+      Inc(ep);
+    until ep^ = ']';
+  end;
+  Inc(ep);
+
+  if ep^ = '*' then
+  begin
+    Result := max_expand(Src, Pat, ep); // 0..max
+    Exit;
+  end;
+
+  if ep^ = '-' then
+  begin
+    Result := min_expand(Src, Pat, ep); // 0..min
+    Exit;
+  end;
+
+  sm := (Src < FEos) and match_single(Src^, Pat, ep);
+
+  if ep^ = '?' then
+  begin
+    if sm then
+    begin
+      Result := Match(Src + 1, ep + 1);
+      if Result <> nil then Exit;
+    end;
+    Pat := ep + 1;
+    goto MATCH_AGAIN; // Match(mp, Src, ep + 1);
+  end;
+
+  if sm then
+  begin
+    if ep^ = '+' then
+    begin
+      Result := max_expand(Src + 1, Pat, ep); // 1..max
+      Exit;
+    end;
+    Inc(Src);
+    Pat := ep;
+    goto MATCH_AGAIN; // Match(mp, Src + 1, ep);
+  end;
+end;
+
+procedure TLsePatten.Check(ok: boolean);
+begin
+  if not ok then Abort;
+end;
+
+procedure TLsePatten.ResetResult;
+begin
+  FMatches[0].m_str := nil;
+  FMatches[0].m_len := 0;
+  FCount := 1;
+end;
+
+{ TLseHashTable }
+
+procedure TLseHashTable.Clear;
+var
+  index: integer;
+  base, next: PLiHashItem;
+begin
+  for index := 0 to FBucketSize - 1 do
+  begin
+    base := FBucketList[index].hp_head;
+    while base <> nil do
+    begin
+      next := base^.hi_next;
+      FreeItem(base);
+      base := next;
+      Dec(FCount);
+    end;
+    FBucketList[index].hp_head := nil;
+    FBucketList[index].hp_tail := nil;
+  end;
+  FCount := 0;
+end;
+
+constructor TLseHashTable.Create(Size: integer);
+begin
+  inherited Create;
+  FCount := 0;
+  FBucketSize := Max(1, Size);
+  SetLength(FBucketList, FBucketSize);
+  FillChar(FBucketList[0], FBucketSize * sizeof(RLiHashPair), 0);
+end;
+
+destructor TLseHashTable.Destroy;
+begin
+  Clear;
+  SetLength(FBucketList, 0);
+  inherited;
+end;
+
+function TLseHashTable.DoGet(const Key: string): pointer;
+var
+  hash: PLiHashItem;
+begin
+  hash := Find(Key);
+  if hash <> nil then
+    Result := hash^.hi_data else
+    Result := nil;
+end;
+
+procedure TLseHashTable.DoPut(const Key: string; Value: pointer);
+var
+  item: PLiHashItem;
+begin
+  item := NewItem;
+  string(item^.hi_key) := Key;
+  item^.hi_data := Value;
+  with FBucketList[HashOf(Key)] do
+  begin
+    if hp_tail <> nil then
+      hp_tail^.hi_next := item else
+      hp_head := item;
+    hp_tail := item;
+  end;
+  Inc(FCount);
+end;
+
+function TLseHashTable.EnumKeyData(Proc: KLiEnumKeyData; Param: pointer): integer;
+var
+  next: integer;
+  item: PLiHashItem;
+begin
+  Result := 0;
+  for next := 0 to FBucketSize - 1 do
+  begin
+    item := FBucketList[next].hp_head;
+    while item <> nil do
+    begin
+      Proc(string(item^.hi_key), item^.hi_data, Param);
+      item := item^.hi_next;
+      Inc(Result);
+    end;
+  end;
+end;
+
+function TLseHashTable.Find(const Key: string): PLiHashItem;
+begin
+  Result := FBucketList[HashOf(Key)].hp_head;
+  while Result <> nil do
+  begin
+    if MatchKey(Key, string(Result^.hi_key)) then Exit;
+    Result := Result^.hi_next;
+  end;
+end;
+
+procedure TLseHashTable.FreeItem(Item: PLiHashItem);
+begin
+  string(Item^.hi_key) := '';
+  lse_mem_free(Item, sizeof(RLiHashItem));
+end;
+
+function TLseHashTable.HashOf(const Key: string): cardinal;
+begin
+  if FBucketSize = 1 then Result := 0 else
+  if FIgnoreCase then
+    Result := lse_hash_of(LowerCase(Key)) mod cardinal(FBucketSize) else
+    Result := lse_hash_of(Key) mod cardinal(FBucketSize);
+end;
+
+function TLseHashTable.IsSet(const Key: string): boolean;
+begin
+  Result := (Find(Key) <> nil);
+end;
+
+function TLseHashTable.ListKey(List: TStrings): integer;
+var
+  next: integer;
+  item: PLiHashItem;
+begin
+  List.Clear;
+  for next := 0 to FBucketSize - 1 do
+  begin
+    item := FBucketList[next].hp_head;
+    while item <> nil do
+    begin
+      List.Add(string(item^.hi_key));
+      item := item^.hi_next;
+    end;
+  end;
+  Result := List.Count;
+end;
+
+function TLseHashTable.ListData(List: TList): integer;
+var
+  next: integer;
+  item: PLiHashItem;
+begin
+  List.Clear;
+  for next := 0 to FBucketSize - 1 do
+  begin
+    item := FBucketList[next].hp_head;
+    while item <> nil do
+    begin
+      List.Add(item^.hi_data);
+      item := item^.hi_next;
+    end;
+  end;
+  Result := List.Count;
+end;
+
+function TLseHashTable.MatchKey(const Key, ID: string): boolean;
+begin
+  if FIgnoreCase then
+    Result := AnsiSameText(Key, ID) else
+    Result := AnsiSameStr(Key, ID);
+end;
+
+function TLseHashTable.NewItem: PLiHashItem;
+begin
+  Result := lse_mem_alloc_zero(sizeof(RLiHashItem)); 
+end;
+
+procedure TLseHashTable.Remove(const Key: string);
+var
+  item, root: PLiHashItem;
+begin
+  root := nil;
+  with FBucketList[HashOf(Key)] do
+  begin
+    item := hp_head;
+    while item <> nil do
+    begin
+      if MatchKey(Key, string(item^.hi_key)) then
+      begin
+        if root <> nil then
+          root^.hi_next := item^.hi_next else
+          hp_head := item^.hi_next;
+        if hp_tail = item then
+          hp_tail := root;
+        lse_mem_free(item, sizeof(RLiHashItem));
+        Dec(FCount);
+        Exit;
+      end;
+      root := item;
+      item := item^.hi_next;
+    end;
+  end;
+end;
+
+{ TLseNamed }
+
+constructor TLseNamed.Create(const AName: string);
+begin
+  FName := AName;
+end;
+
+{ TLseHashNamed }
+
+procedure TLseHashNamed.Clear;
+var
+  X: integer;
+  B, N: PLiNameItem;
+begin
+  for X := 0 to FSize - 1 do
+  begin
+    B := FBuckets[X];
+    FBuckets[X] := nil;
+    while B <> nil do
+    begin
+      N := B^.ni_next;
+      FreeItem(B);
+      B := N;
+    end;
+  end;
+end;
+
+constructor TLseHashNamed.Create(Size: cardinal);
+begin
+  inherited Create;
+  FSize := Max(2, Size);
+  SetLength(FBuckets, FSize);
+  FillChar(FBuckets[0], FSize * sizeof(PLiNameItem), 0);
+end;
+
+destructor TLseHashNamed.Destroy;
+begin
+  Clear;
+  SetLength(FBuckets, 0);
+  inherited;
+end;
+
+function TLseHashNamed.FindItem(const Key: string): PLiNameItem;
+begin
+  Result := FBuckets[HashOf(Key)];
+  while Result <> nil do
+  begin
+    if Key = Result^.ni_nobj.FName then Exit;
+    Result := Result^.ni_next;
+  end;
+end;
+
+procedure TLseHashNamed.FreeItem(Item: PLiNameItem);
+begin
+  Dec(FCount);
+  lse_mem_free(Item, sizeof(RLiNameItem));
+end;
+
+function TLseHashNamed.Get(const Key: string): TLseNamed;
+var
+  M: PLiNameItem;
+begin
+  M := FindItem(Key);
+  if M <> nil then
+    Result := M^.ni_nobj else
+    Result := nil;
+end;
+
+function TLseHashNamed.HashOf(const Key: string): cardinal;
+begin
+  Result := lse_hash_of(Key) mod FSize;
+end;
+
+function TLseHashNamed.NewItem: PLiNameItem;
+var
+  Z: cardinal;
+  L: TList;
+  M: PLiNameItem;
+  X, H: integer;
+begin
+  Result := lse_mem_alloc_zero(sizeof(RLiNameItem));
+  Inc(FCount);
+  Z := FCount div 16;
+  if Z > FSize then
+  begin
+    L := TList.Create;
+    try
+      for X := 0 to FSize - 1 do
+      begin
+        M := FBuckets[X];
+        while M <> nil do
+        begin
+          L.Add(M);
+          M := M^.ni_next;
+        end;
+      end;
+      SetLength(FBuckets, Z);
+      FillChar(FBuckets[0], Z * sizeof(PLiNameItem), 0);
+      FSize := Z;
+      for X := 0 to L.Count - 1 do
+      begin
+        M := PLiNameItem(L[X]);
+        H := HashOf(M^.ni_nobj.FName);
+        M^.ni_next := FBuckets[H];
+        FBuckets[H] := M;
+      end;
+    finally
+      L.Free;
+    end;
+  end; 
+end;
+
+procedure TLseHashNamed.Put(AObj: TLseNamed);
+var
+  X: integer;
+  M: PLiNameItem;
+begin
+  if AObj <> nil then
+    if FindItem(AObj.FName) = nil then
+    begin
+      X := HashOf(AObj.FName);
+      M := NewItem;
+      M^.ni_nobj := AObj;
+      M^.ni_next := FBuckets[X];
+      FBuckets[X] := M;
+    end;
+end;
+
+procedure TLseHashNamed.Remove(const Key: string);
+var
+  X: integer;
+  M, P: PLiNameItem;
+begin
+  X := HashOf(Key);
+  P := FBuckets[X];
+  if P <> nil then
+    if Key = P^.ni_nobj.FName then
+    begin
+      FBuckets[X] := P^.ni_next;
+      FreeItem(P);
+    end
+    else
+    while P^.ni_next <> nil do
+    begin
+      M := P^.ni_next;
+      if Key = M^.ni_nobj.FName then
+      begin
+        P^.ni_next := M^.ni_next;
+        FreeItem(M);
+        Exit;
+      end;
+      P := M;
+    end;
 end;
 
 end.

@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="376"/>
+      <BuildNr Value="377"/>
       <StringTable FileDescription="ini file accessing module for lysee" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -41,10 +41,11 @@
         <Filename Value="lysee_inifs.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_inifs"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="8"/>
+        <CursorPos X="1" Y="23"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -95,7 +96,6 @@
         <Filename Value="lysee_inifs_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_inifs_funcs"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="33"/>

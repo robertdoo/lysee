@@ -231,9 +231,9 @@ const
   );
 
 function otos_dataset(inst: pointer): PLseString;cdecl;
-function cvgr_dataset(obj, kernel_engine: pointer): PLseVargen;cdecl;
-function getiv_ds(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
-function getpv_ds(obj: pointer; const name: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+function cvgr_dataset(obj: pointer): PLseVargen;cdecl;
+function getiv_ds(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+function getpv_ds(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
 function length_ds(obj: pointer): integer;cdecl;
 
 var
@@ -252,8 +252,7 @@ var
     cr_setiv    : nil;
     cr_getpv    : nil;
     cr_setpv    : nil;
-    cr_length   : nil;
-    cr_class    : nil
+    cr_length   : nil
    ),
    (cr_type     : LSV_OBJECT;
     cr_name     : 'dataset';
@@ -269,8 +268,7 @@ var
     cr_setiv    : nil;
     cr_getpv    :@getpv_ds;
     cr_setpv    : nil;
-    cr_length   :@length_ds;
-    cr_class    : nil
+    cr_length   :@length_ds
    )
   );
 
@@ -438,7 +436,7 @@ begin
   end;
 end;
 
-function cvgr_dataset(obj, kernel_engine: pointer): PLseVargen;cdecl;
+function cvgr_dataset(obj: pointer): PLseVargen;cdecl;
 var
   dsrec: PLseDS;
   cvgr: PLiVG_dataset;
@@ -448,7 +446,7 @@ begin
   begin
     cvgr := lse_mem_alloc_zero(sizeof(RLiVG_dataset));
     cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_engine := kernel_engine;
+    cvgr^.vgrec.vg_engine := nil;
     cvgr^.vgrec.vg_rewind := @cvgr_dataset_rewind;
     cvgr^.vgrec.vg_has_next := @cvgr_dataset_hasNext;
     cvgr^.vgrec.vg_get_next := @cvgr_dataset_getNext;
@@ -462,7 +460,7 @@ begin
   else Result := nil;
 end;
 
-function getiv_ds(obj: pointer; index: integer; value: PLseValue; engine: pointer): integer;cdecl;
+function getiv_ds(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 var
   D: PLseDS;
   L: integer;
@@ -476,7 +474,7 @@ begin
     if (index >= 0) and (index < L) then
     begin
       case lse_ds_field_vtype(D, index) of
-        LSV_INT  : lse_set_int64(value, lse_ds_getfi(D, index));
+        LSV_INT  : lse_set_int(value, lse_ds_getfi(D, index));
         LSV_FLOAT: lse_set_float(value, lse_ds_getfd(D, index));
        {lSV_STRING, LSV_CHAR}
         else lse_set_string(value, lse_ds_getfs(D, index));
@@ -486,7 +484,7 @@ begin
   end;
 end;
 
-function getpv_ds(obj: pointer; const name: pchar; value: PLseValue; engine: pointer): integer;cdecl;
+function getpv_ds(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
 var
   this: PLseDS;
   index: integer;
@@ -499,7 +497,7 @@ begin
     if index >= 0 then
     begin
       case lse_ds_field_vtype(this, index) of
-        LSV_INT  : lse_set_int64(value, lse_ds_getfi(this, index));
+        LSV_INT  : lse_set_int(value, lse_ds_getfi(this, index));
         LSV_FLOAT: lse_set_float(value, lse_ds_getfd(this, index));
        {lSV_STRING, LSV_CHAR}
         else lse_set_string(value, lse_ds_getfs(this, index));
@@ -1411,7 +1409,7 @@ begin
     begin
       index := lse_ds_vary_index(this, invoker.paramInt(1));
       ftype := lse_ds_field_class(this, index);
-      invoker.ReturnObject(lse_type(kcType), ftype^.cr_class);
+      invoker.ReturnObject(KT_TYPE, ftype);
     end
     else
     if clss = LSV_STRING then
@@ -1421,7 +1419,7 @@ begin
       if index >= 0 then
       begin
         ftype := lse_ds_field_class(this, index);
-        invoker.ReturnObject(lse_type(kcType), ftype^.cr_class);
+        invoker.ReturnObject(KT_TYPE, ftype);
       end
       else invoker.ReturnError('',0, Format('field "%s" not found', [name]));
     end
@@ -1470,7 +1468,7 @@ begin
     if clss = LSV_INT then
     begin
       index := lse_ds_vary_index(this, invoker.Param^.p_param[1]^.VInteger);
-      lse_set_int64(invoker.Param^.p_result, lse_ds_getfi(this, index));
+      lse_set_int(invoker.Param^.p_result, lse_ds_getfi(this, index));
     end
     else
     if clss = LSV_STRING then
@@ -1478,7 +1476,7 @@ begin
       name := lse_strec_data(invoker.Param^.p_param[1]^.VObject);
       index := lse_ds_indexof(this, name);
       if index >= 0 then
-        lse_set_int64(invoker.Param^.p_result, lse_ds_getfi(this, index)) else
+        lse_set_int(invoker.Param^.p_result, lse_ds_getfi(this, index)) else
         invoker.returnError('', 0, Format('field "%s" not found', [name]));
     end
     else invoker.ReturnError('',0, 'Invalid parametre type');
