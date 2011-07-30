@@ -35,7 +35,7 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (C) 2003-2011 Li Yun Jie - http://www.lysee.net';
-  LSE_VERSION        = '2.0.2';
+  LSE_VERSION        = '2.0.3';
   LSE_BIRTHDAY       = 20030228;
   LSE_BUILDDAY       = 20110729;
   LSE_MAX_PARAMS     = 12;
@@ -178,7 +178,7 @@ type
 
   RLseVargen = packed record
     vg_data    : pointer;
-    vg_engine  : pointer;
+    vg_type    : PLseType;
     vg_rewind  : function(vgrec: PLseVargen): integer;cdecl;
     vg_has_next: function(vgrec: PLseVargen): integer;cdecl;
     vg_get_next: function(vgrec: PLseVargen; Value: PLseValue): integer;cdecl;
@@ -193,7 +193,6 @@ type
 
   TLseAddref = function(const obj: pointer): integer;cdecl;
   TLseRelease = TLseAddref;
-  TLseWriteTo = function(obj: pointer; stream: PLseStream): integer;cdecl;
   TLseToVargen = function(obj: pointer): PLseVargen;cdecl;
   TLseToString = function(obj: pointer): PLseString;cdecl;
   TLseStringTo = function(str: PLseString): pointer;cdecl;
@@ -208,7 +207,6 @@ type
     cr_desc    : pchar;           {<--description}
     cr_addref  : TLseAddref;      {<--increase reference count}
     cr_release : TLseRelease;     {<--decrease reference count}
-    cr_write_to: TLseWriteTo;     {<--write to stream}
     cr_vargen  : TLseToVargen;    {<--convert object to vargen}
     cr_otos    : TLseToString;    {<--convert object to string}
     cr_stoo    : TLseStringTo;    {<--convert string to object}
@@ -521,7 +519,7 @@ type
     FName: string;
   public
     constructor Create(const AName: string);
-    property Name: string read FName;
+    property Name: string read FName write FName;
   end;
 
 {======================================================================)
@@ -921,6 +919,7 @@ function  lse_get_char(V: PLseValue): char;
 function  lse_get_bool(V: PLseValue): boolean;
 function  lse_get_obj(V: PLseValue): pointer;overload;
 function  lse_get_obj(V: PLseValue; P: PLseType): pointer;overload;
+function  lse_get_type(V: PLseValue): PLseType;
 function  lse_get_vargen(V: PLseValue): PLseVargen;
 { set }
 procedure lse_set_int(V: PLseValue; Value: int64);
@@ -968,6 +967,7 @@ procedure lse_is(V1, V2: PLseValue);         // V1 <=     V1 is   V2
 procedure lse_as(V1, V2: PLseValue);         // V1 <=     V1 as   V2
 procedure lse_fill(V1, V2: PLseValue);       // V1 <=     V1 <<<  V2
 procedure lse_like(V1, V2: PLseValue);       // V1 <=     V1 like V2
+procedure lse_upto(V1, V2: PLseValue);       // V1 <=     V1 ..   V2
 
 {======================================================================)
 (======== vargen - variant generator ==================================)
@@ -990,6 +990,8 @@ function lse_vargen_contains(VG: PLseVargen; Value: PLseValue): boolean;
 function lse_vargen_none: PLseVargen;
 function lse_vargen_ensure(VG: PLseVargen): PLseVargen;
 function lse_vargen_this(Param: PLseParam): PLseVargen;
+function lse_vargen_upto(begv, endv, step: int64): PLseVargen;
+function lse_vargen_downto(begv, endv, step: int64): PLseVargen;
 
 {======================================================================)
 (======== stdio =======================================================)
@@ -3235,15 +3237,22 @@ begin
     Result := nil;
 end;
 
+function lse_get_type(V: PLseValue): PLseType;
+begin
+  Result := lse_type(V);
+  if Result = KT_TYPE then
+    Result := PLseType(V^.VObject);
+end;
+
 function lse_get_vargen(V: PLseValue): PLseVargen;
 var
   T: PLseType;
 begin
   Result := nil;
   T := lse_type(V);
+  if T = KT_VARGEN then
+    Result := PLseVargen(V^.VObject) else
   if Assigned(T^.cr_vargen) then
-    if T = KT_VARGEN then
-      Result := PLseVargen(V^.VObject) else
     if T = KT_INT then
       Result := T^.cr_vargen(@V^.VInteger) else
     if T^.cr_type in [LSV_STRING, LSV_OBJECT] then
@@ -3784,28 +3793,19 @@ end;
 
 procedure lse_is(V1, V2: PLseValue);
 var
-  T1, T2: PLseType;
+  T2: PLseType;
 begin
-  T2 := lse_type(V2);
-  if T2 = KT_TYPE then
-  begin
-    T2 := PLseType(lse_get_obj(V2));
-    T1 := lse_type(V1);
-    if T1 = KT_TYPE then
-      T1 := PLseType(lse_get_obj(V1));
-    lse_set_bool(V1, T1 = T2);
-  end
-  else lse_abseq(V1, V2);
+  T2 := lse_get_type(V2); 
+  lse_set_bool(V1, (lse_get_type(V1) = T2) or (T2 = KT_VARIANT));
 end;
 
 procedure lse_as(V1, V2: PLseValue);
 var
-  T2: PLseType;
+  T: PLseType;
 begin
-  T2 := lse_type(V2);
-  if T2 = KT_TYPE then
-    T2 := PLseType(lse_get_obj(V2));
-  lse_type_cast(T2, V1);
+  T := lse_get_type(V2);
+  if T <> nil then
+    lse_type_cast(T, V1);
 end;
 
 procedure lse_fill(V1, V2: PLseValue);
@@ -3837,6 +3837,21 @@ begin
   finally
     P.Free;
   end;
+end;
+
+procedure lse_upto(V1, V2: PLseValue);
+var
+  begv, endv: int64;
+begin
+  if (lse_vtype(V1) = LSV_INT) and (lse_vtype(V2) = LSV_INT) then
+  begin
+    begv := V1^.VInteger;
+    endv := V2^.VInteger;
+    if begv > endv then
+      lse_set_vargen(V1, lse_vargen_downto(begv, endv, 1)) else
+      lse_set_vargen(V1, lse_vargen_upto(begv, endv, 1));
+  end
+  else lse_set_vargen(V1, lse_vargen_none);
 end;
 
 {======================================================================)
@@ -3896,7 +3911,7 @@ end;
 const
   empty_vargen: RLseVargen = (
     vg_data    : nil;
-    vg_engine  : nil;
+    vg_type    : nil;
     vg_rewind  : {$IFDEF FPC}@{$ENDIF}empty_vargen_zero;
     vg_has_next: {$IFDEF FPC}@{$ENDIF}empty_vargen_zero;
     vg_get_next: {$IFDEF FPC}@{$ENDIF}empty_vargen_pick;
@@ -3920,6 +3935,177 @@ end;
 function lse_vargen_this(Param: PLseParam): PLseVargen;
 begin
   Result := lse_vargen_ensure(PLseVargen(Param^.p_param[0]^.VObject));
+end;
+
+type
+  RLiVG_range = packed record
+    vgrec: RLseVargen;
+    vgref: integer;
+    begv, endv, step, curr: int64;
+  end;
+  PLiVG_range = ^RLiVG_range;
+
+function range_addref(vrec: PLseVargen): integer;cdecl;
+var
+  cvgr: PLiVG_range;
+begin
+  cvgr := PLiVG_range(vrec^.vg_data); 
+  with cvgr^ do
+  begin
+    Inc(vgref);
+    Result := vgref;
+    if Result = 0 then
+      lse_mem_free(cvgr, sizeof(RLiVG_range));
+  end;
+end;
+
+function range_release(vrec: PLseVargen): integer;cdecl;
+var
+  cvgr: PLiVG_range;
+begin
+  cvgr := PLiVG_range(vrec^.vg_data); 
+  with cvgr^ do
+  begin
+    Dec(vgref);
+    Result := vgref;
+    if Result = 0 then
+      lse_mem_free(cvgr, sizeof(RLiVG_range));
+  end;
+end;
+
+function range_contains(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+
+  function in_range(V: int64): boolean;
+  var
+    cvgr: PLiVG_range;
+    BV, EV: int64;
+  begin
+    cvgr := PLiVG_range(vrec^.vg_data);
+    BV := cvgr^.begv;
+    EV := cvgr^.endv;
+    if BV <= EV then
+      Result := (V >= BV) and (V <= EV) else
+      Result := (V >= EV) and (V <= BV);
+  end;
+
+begin
+  case lse_vtype(Value) of
+    LSV_INT : Result := Ord(in_range(Value^.VInteger));
+         else Result := 0;
+  end;
+end;
+
+function upto_rewind(vrec: PLseVargen): integer;cdecl;
+var
+  range: PLiVG_range;
+begin
+  range := PLiVG_range(vrec^.vg_data);
+  with range^ do
+  begin
+    curr := begv;
+    Result := Ord(curr <= endv);
+  end;
+end;
+
+function upto_hasNext(vrec: PLseVargen): integer;cdecl;
+var
+  range: PLiVG_range;
+begin
+  range := PLiVG_range(vrec^.vg_data);
+  with range^ do
+    Result := Ord(curr <= endv);
+end;
+
+function upto_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+var
+  range: PLiVG_range;
+begin
+  range := PLiVG_range(vrec^.vg_data);
+  with range^ do
+    if curr <= endv then
+    begin
+      lse_set_int(Value, curr);
+      Inc(curr, step);
+      Result := 1;
+    end
+    else Result := 0;
+end;
+
+function lse_vargen_upto(begv, endv, step: int64): PLseVargen;
+var
+  cvgr: PLiVG_range;
+begin
+  if (begv <= endv) and (step > 0) then
+  begin
+    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_range));
+    cvgr^.vgrec.vg_data := cvgr;
+    cvgr^.vgrec.vg_type := KT_INT;
+    cvgr^.vgrec.vg_rewind := @upto_rewind;
+    cvgr^.vgrec.vg_has_next := @upto_hasNext;
+    cvgr^.vgrec.vg_get_next := @upto_getNext;
+    cvgr^.vgrec.vg_addref := @range_addref;
+    cvgr^.vgrec.vg_release := @range_release;
+    cvgr^.vgrec.vg_contains := @range_contains;
+    cvgr^.vgref := 0;
+    cvgr^.begv := begv;
+    cvgr^.endv := endv;
+    cvgr^.step := step;
+    cvgr^.curr := begv;
+    Result := @(cvgr^.vgrec);
+  end
+  else Result := nil;
+end;
+
+function downto_rewind(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_range(vrec^.vg_data)^ do
+  begin
+    curr := begv;
+    Result := Ord(curr >= endv);
+  end;
+end;
+
+function downto_hasNext(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_range(vrec^.vg_data)^ do
+    Result := Ord(curr >= endv);
+end;
+
+function downto_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+begin
+  with PLiVG_range(vrec^.vg_data)^ do
+    if curr >= endv then
+    begin
+      lse_set_int(Value, curr);
+      Dec(curr, step);
+      Result := 1;
+    end
+    else Result := 0;
+end;
+
+function lse_vargen_downto(begv, endv, step: int64): PLseVargen;
+var
+  cvgr: PLiVG_range;
+begin
+  if (begv >= endv) and (step > 0) then
+  begin
+    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_range));
+    cvgr^.vgrec.vg_data := cvgr;
+    cvgr^.vgrec.vg_type := KT_INT;
+    cvgr^.vgrec.vg_rewind := @downto_rewind; 
+    cvgr^.vgrec.vg_has_next := @downto_hasNext;
+    cvgr^.vgrec.vg_get_next := @downto_getNext;
+    cvgr^.vgrec.vg_addref := @range_addref;
+    cvgr^.vgrec.vg_release := @range_release;
+    cvgr^.vgrec.vg_contains := @range_contains;
+    cvgr^.vgref := 0;
+    cvgr^.begv := begv;
+    cvgr^.endv := endv;
+    cvgr^.step := step;
+    cvgr^.curr := begv;
+    Result := @(cvgr^.vgrec);
+  end
+  else Result := nil;
 end;
 
 {======================================================================)
@@ -5102,6 +5288,7 @@ end;
 
 constructor TLseNamed.Create(const AName: string);
 begin
+  inherited Create;
   FName := AName;
 end;
 

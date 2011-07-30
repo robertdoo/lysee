@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="707"/>
+      <BuildNr Value="708"/>
       <StringTable FileDescription="lysee script interpretor (FPC)" LegalCopyright="Copyright (C) 2003-2011 li yun jie <libudi@hotmail.com>" ProductVersion="2.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -47,7 +47,6 @@
         <Filename Value="lse_kernel.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_kernel"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2452"/>
@@ -148,10 +147,11 @@
         <Filename Value="lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="3902"/>
+        <CursorPos X="22" Y="3914"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="16" Y="645" ID="0"/>
@@ -595,7 +595,7 @@
         <UsageCount Value="10"/>
       </Unit80>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="lseu.pas"/>
         <Caret Line="1021" Column="32" TopLine="997"/>
@@ -640,6 +640,14 @@
         <Filename Value="lse_kernel.pas"/>
         <Caret Line="11208" Column="48" TopLine="11208"/>
       </Position11>
+      <Position12>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="3914" Column="26" TopLine="3902"/>
+      </Position13>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
