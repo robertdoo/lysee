@@ -1,15 +1,12 @@
-= "Input expression to evaluate or \"quit\" to leave!\n";
+{println "Input expression to evaluate or \"quit\" to leave!"}
+{print "\nlysee> "}
+{for input in @readln if input.trim() do
+    {print input + " ==> "}
+    {break if "quit" == input.trim()}
+    {try
+        {println eval "{" + input + "}"}
+        except
+            {println __error__.message}}
+    {print "\nlysee> "}}
+{println "bye-bye!"}
 
-= "\nlysee> ";
-for input:string in sys::readln if input.trim() do
-  = input, "==> ";
-  break if input.trim() == "quit";
-  try 
-    = sys::eval("return " + input), eol;
-  except 
-    = __error__.message.extractValue(" - ").extractValue(") "), eol;
-  end
-  = "\nlysee> ";
-end
-
-= "bye-bye!\n";

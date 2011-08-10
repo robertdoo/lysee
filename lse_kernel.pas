@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2011/07/30                                                      }
+{    MODIFIED: 2011/08/10                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -41,18 +41,18 @@ type
   PLiPos = ^RLiPos;
 
   KLiSymbol = (
-    syError, syBegin, syImport, syConst, syClass, syObject, sySet, syGet, syDef,
-    syReturn, syIf, syThen, syElse, syWhile, syRepeat, syUntil, syFor, syDo,
-    syBreak, syContinue, sySwitch, syCase, syTry, syExcept, syFinally, syIn,
-    syIs, syAs, syLike, syAnd, syOr, syNot, syFrom, syTo, syEnd, syBecome,
+    syError, syBegin, syImport, syConst, syClass, syObject, sySet, syGet,
+    syDef, syReturn, syIf, syThen, syElse, syWhile, syRepeat, syUntil, syFor,
+    syDo, syBreak, syContinue, sySwitch, syCase, syTry, syExcept, syFinally,
+    syIn, syIs, syAs, syLike, syAnd, syOr, syNot, syFrom, syTo, syEnd, syBecome,
     syAdd, syDec, syMul, syDiv, syMod, syBitNot, syBitXor, syBitAnd, syBitOr,
-    syBitShr, syBitShl, syFill, syLParen, syRParen, syLBlock, syRBlock,
-    syLArray, syRArray, syDot, syUpto, syAsk, syDot2, syComma, sySemicolon,
-    syEQ, syNE, syLess, syLE, syMore, syME, syFormat, syID, syFloat, syInt,
-    syStr, syNil, syNeg, syJmpT, syJmpF, syJmpTP, syJmpFP, syJump, syIdle,
-    syGetEnv, syLabel, syGoto, syGoTP, syGoFP, syVarGen, syRINR, syGETV,
-    sySETV, syGetIV, sySetIV, syDupLast, syEOF, syEcho, syGetSV, sySetSV,
-    sySend, syVarList, syHashed, sySTMT
+    syBitShr, syBitShl, syFill, syLeft, syRight, syLParen, syRParen, syLBlock,
+    syRBlock, syLArray, syRArray, syDot, syUpto, syAsk, syDot2, syComma,
+    sySemicolon, syEQ, syNE, syLess, syLE, syMore, syME, syFormat, syID,
+    syFloat, syInt, syStr, syNil, syNeg, syJmpT, syJmpF, syJmpTP, syJmpFP,
+    syJump, syIdle, syGetEnv, syLabel, syGoto, syGoTP, syGoFP, syVarGen, syRINR,
+    syGETV, sySETV, syGetIV, sySetIV, syMethod, syDupLast, syEOF, syGetSV,
+    sySetSV, sySend, syVarList, syHashed, sySTMT
   );
   KLiSymbols = set of KLiSymbol;
 
@@ -132,6 +132,7 @@ type
     function AddRinr(const Name: string; const Pos: PLiPos): PLiToken;
     function AddLabel(const Name: string; const Pos: PLiPos): PLiToken;
     function FindLabel(const Name: string): PLiToken;
+    function CopyFrom(Index: integer): TList;
     property Count: integer read GetCount;
     property Last: PLiToken read GetLast;
     property Items[Index: integer]: PLiToken read GetItem;default;
@@ -175,7 +176,7 @@ type
     procedure ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
     procedure ParseStatement(OnHead: boolean);
     procedure ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
-    procedure ParseArguments(Func: KLiFunc; EndSym: KLiSymbols; OnHead: boolean);
+    procedure ParseArguments(Func: KLiFunc; EndSyms: KLiSymbols; OnHead: boolean);
   public
     constructor Create(AModule: KLiModule);
     destructor Destroy;override;
@@ -293,6 +294,15 @@ type
     FOper: KLiSymbol;
   public
     constructor Create(AOper: KLiSymbol);
+  end;
+  
+  { KLiFunc_callcc }
+  
+  KLiFunc_callcc = class(KLiFunc)
+  private
+    FResult: PLseValue;
+  public
+    constructor Create(AModule: KLiModule; AResult: PLseValue);
   end;
   
   { KLiMacro }
@@ -645,6 +655,7 @@ type
     FLastCall: PLiCallSnap;
     FExprrec: PLiToken;
     FTerminated: boolean;
+    FCallcc: KLiFunc_callcc;
     FExcepted: boolean;
     function ExecGoonNext: boolean;
   public
@@ -668,21 +679,40 @@ type
 
   { KLiHashed }
 
-  KLiHashed = class(TLseHashTable)
+  PLiHashed = ^RLiHashed;
+  RLiHashed = packed record
+    hi_data: RLseValue;
+    hi_name: PLseString;
+    hi_link: PLiHashed;
+    hi_prev: PLiHashed;
+    hi_next: PLiHashed;
+  end;
+
+  KLiHashed = class(TLseObject)
   private
+    FBuckets: array of PLiHashed;
+    FSize: cardinal;
+    FCount: integer;
+    FFirst: PLiHashed;
+    FLast: PLiHashed;
     FEngine: KLiEngine;
     FObjRec: RLiObjRec;
-  protected
-    procedure FreeItem(Item: PLiHashItem);override;
-    procedure DoListKeys(const Key: string; Value, Param: pointer);
+    function FindItem(Name: PLseString): PLiHashed;
+    procedure FreeItem(H: PLiHashed);
   public
     constructor Create(AEngine: KLiEngine; Size: cardinal = 1);
     destructor Destroy;override;
     procedure SaveTo(V: PLseValue);
-    function ForceValue(const Key: string): PLseValue;
-    function FindValue(const Key: string): PLseValue;
-    function SetValue(const Key: string; Value: PLseValue): PLseValue;
     procedure ListKeys(List: KLiVarList);
+    procedure ListValues(List: KLiVarList);
+    procedure Clear;
+    procedure Remove(Name: PLseString);
+    function Write(Name: PLseString; Data: PLseValue): PLseValue;
+    function WriteBy(Name: pchar; Data: PLseValue): PLseValue;
+    function Find(Name: PLseString): PLseValue;
+    function FindBy(Name: pchar): PLseValue;
+    function Exists(Name: PLseString): boolean;
+    function GetData(Index: integer): PLseValue;
   end;
 
 {======================================================================)
@@ -729,6 +759,7 @@ function value_in(V: PLseValue; Host: KLiHashed): boolean;overload;
 {======================================================================)
 (======== PLseParam ===================================================)
 (======================================================================}
+function  get_func(Param: PLseParam): KLiFunc;
 function  get_runner(Param: PLseParam): KLiRunner;
 function  get_engine(Param: PLseParam): KLiEngine;
 function  get_this(Param: PLseParam; var This): boolean;
@@ -897,6 +928,8 @@ const
     (SY:syBitShr;    ID:'>>';           SM:'bit shift right'),
     (SY:syBitShl;    ID:'<<';           SM:'bit shift left'),
     (sy:syFill;      ID:'<<<';          SM:'add all'),
+    (SY:syLeft;      ID:'<-';           SM:'arrow left'),
+    (SY:syRight;     ID:'->';           SM:'arrow right'),
     (SY:syLParen;    ID:'(';            SM:'left paren'),
     (SY:syRParen;    ID:')';            SM:'right paren'),
     (SY:syLBlock;    ID:'{';            SM:'left block'),
@@ -939,9 +972,9 @@ const
     (sy:sySETV;      ID:'<SETV>';       SM:'set temp value'),
     (sy:syGetIV;     ID:'<GETIV>';      SM:'get item value'),
     (sy:sySetIV;     ID:'<SETIV>';      SM:'set item value'),
+    (sy:syMethod;    ID:'<METHOD>';     SM:'push or call method'),
     (sy:syDupLast;   ID:'<DUPLAST>';    SM:'duplicate last value'),
     (sy:syEOF;       ID:'<EOF>';        SM:'end of file'),
-    (SY:syEcho;      ID:'<ECHO>';       SM:'echo'),
     (SY:syGetSV;     ID:'<GETSV>';      SM:'get super value'),
     (SY:sySetSV;     ID:'<SETSV>';      SM:'set super value'),
     (SY:sySend;      ID:'<SEND>';       SM:'send next value'),
@@ -955,29 +988,25 @@ const
   FirstOper = Succ(syEnd);
   LastOper = syFormat;
   
-  ConstantSyms = [syFloat, syInt, syStr, syNil, syGetEnv, syGetSV];
+  ConstSyms = [syID, syFloat, syInt, syStr, syNil, syGetEnv, syGetSV];
 
-  ExprOperSyms: array[0..4] of KLiSymbols = (
-   {[syNeg, syNot, syBitNot, syFormat]}                                         // 1
-    [syMul, syDiv, syMod],                                                      // 2
-    [syAdd, syDec],                                                             // 3
-    [syBitXor, syBitAnd, syBitOr, syBitShl, syBitShr, syFill],                  // 4
-    [syEQ, syNE, syLess, syLE, syMore, syME, syIn, syLike, syAs, syIs, syUpto], // 5
-    [syAnd, syOr]                                                               // 6
-  );
+  OperSyms = [syMul, syDiv, syMod, syAdd, syDec, syBitXor, syBitAnd, syBitOr,
+              syBitShl, syBitShr, syFill, syEQ, syNE, syLess, syLE, syMore,
+              syME, syLike, syAs, syIs, syUpto, syAnd, syOr];
 
-  OperIDSyms = [syMul, syDiv, syMod, syAdd, syDec, syBitXor, syBitAnd,
-    syBitOr, syBitShl, syBitShr, syFill, syEQ, syNE, syLess, syLE, syMore, syME,
-    syLike, syAs, syIs, syUpto, syAnd, syOr];
-
-  ExprHeadSyms = ConstantSyms + OperIDSyms + [syID, syNot, syDec, syBitNot,
-    syLParen, syLArray, syLBlock, syBitOr, syFormat];
-
-  ExprEndSyms = [syIf, syElse, syExcept, syFinally, syBecome, syRParen,
-    syRBlock, syRArray, syDot, syAsk, syDot2, syComma,
-    syIn, syThen, syEnd, syUntil, syEOF];
+  ExprHeadSyms = ConstSyms + OperSyms + [syNot, syDec, syBitNot, syLParen,
+                                         syLArray, syLBlock, syFormat];
 
   GotoSyms = [syTry, syGoto, syGoTP, syGoFP, syRINR];
+
+  OperLevel: array[0..4] of KLiSymbols = (
+   {[syNeg, syNot, syBitNot, syFormat]}                                         // 0
+    [syMul, syDiv, syMod],                                                      // 1
+    [syAdd, syDec],                                                             // 2
+    [syBitXor, syBitAnd, syBitOr, syBitShl, syBitShr, syFill],                  // 3
+    [syEQ, syNE, syLess, syLE, syMore, syME, syIn, syLike, syAs, syIs, syUpto], // 4
+    [syAnd, syOr]                                                               // 5
+  );
 
 // <UDC> ///////////////////////////////////////////////////////////////////////
 
@@ -1000,12 +1029,10 @@ end;
 procedure udc_const(const Param: PLseParam);cdecl;
 var
   func: KLiFunc;
-  name: string;
   data: PLseValue;
 begin
   func := KLiFunc(Param^.p_func);
-  name := Format('@%p', [pointer(func)]);
-  data := get_engine(Param).FMainValues.FindValue(name);
+  data := get_engine(Param).FMainValues.FindBy(pchar(Format('@%p', [pointer(func)])));
   if data <> nil then
     lse_set_value(Param^.p_result, data) else
     lse_clear_value(Param^.p_result);
@@ -1052,12 +1079,27 @@ begin
   { do nothing }
 end;
 
+procedure udc_callcc(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+  func: KLiFunc_callcc;
+begin
+  func := KLiFunc_callcc(Param^.p_func);
+  func.FProc := @udc_empty;
+  rnnr := get_runner(Param);
+  if rnnr.FCallcc = nil then
+  begin
+    rnnr.FCallcc := func;
+    lse_set_value(func.FResult, Param^.p_param[0]);
+  end;
+end;
+
 // <RUNNER> ////////////////////////////////////////////////////////////////////
 
 procedure runner_next(Sender: KLiRunner);
 begin
   with Sender do
-    if (FCurrent <> nil) and not (FExcepted or FTerminated) then
+    if (FCurrent <> nil) and not FExcepted and not FTerminated and (FCallcc = nil) then
       Inc(FCurrent^.next);
 end;
 
@@ -1121,29 +1163,6 @@ procedure runner_float(Sender: KLiRunner);
 begin
   with Sender do
     FStack.Add(FExprrec^.VFLoat);
-  runner_next(Sender);
-end;
-
-procedure runner_echo(Sender: KLiRunner);
-var
-  A, index: integer;
-  data: PLseValue;
-begin
-  with Sender do
-  begin
-    index := FStack.Count - FExprrec^.tk_prmc;
-    for A := 0 to FExprrec^.tk_prmc - 1 do
-    begin
-      if A > 0 then
-        lse_stream_write(FEngine.Output, ' ', 1);
-      data := FStack[index + A];
-      if lse_vtype(data) = LSV_STRING then
-        lse_stream_write(FEngine.Output, PLseString(data^.VObject)) else
-        lse_stream_write(FEngine.Output, lse_get_str(data));
-    end;
-    FStack.Press(FExprrec^.tk_prmc);
-    FStack.Add;
-  end;
   runner_next(Sender);
 end;
 
@@ -1433,7 +1452,7 @@ begin
       begin
         new_func := KLiFunc.Create(M, F.FResultType, N, nil, F.FProc);
         for X := 0 to F.ParamCount - 1 do
-          new_func.AddParam(F.GetParam(X)^.va_name, F.GetParam(X)^.va_type);
+          new_func.AddParam(F.GetParam(X)^.v_name, F.GetParam(X)^.v_type);
       end;
       new_func.SaveTo(V);
     end;
@@ -1519,7 +1538,7 @@ begin
     while ExecGoonNext do
       if (FCurrent^.next < begx) or (FCurrent^.next > endx) then
         Break;
-    if FExcepted and not FTerminated and HasNext then
+    if FExcepted and not FTerminated and (FCallcc = nil) and HasNext then
     begin
       FExcepted := false;
       FStack.SetCount(FCurrent^.base);
@@ -1615,7 +1634,7 @@ begin
     X := 0;
     while X < N do
     begin
-      H.SetValue(lse_get_str(FStack[B]), FStack[B + 1]);
+      H.Write(lse_get_strec(FStack[B]), FStack[B + 1]);
       Inc(B, 2);
       Inc(X, 2);
     end;
@@ -1683,58 +1702,34 @@ var
   clss: PLseType;
   name: string;
   index: integer;
-  func, curr: KLiFunc;
 begin
   data := Sender.FStack[-2];
-  clss := lse_type(data);
   keyr := Sender.FStack[-1];
+  clss := lse_type(data);
   case lse_vtype(keyr) of
     LSV_INT:
-      if Assigned(clss^.cr_getiv) then
       begin
-        index := keyr^.VInteger;
-        if clss^.cr_getiv(data^.VObject, index, keyr) > 0 then
+        index := keyr^.VInteger; 
+        if lse_getiv(clss, data^.VObject, index, keyr) then
         begin
           Sender.FStack.ExchangeLastTwo;
           Sender.FStack.DeleteLast;
         end
-        else lse_error('failed get item by index of %d', [index]);
-      end
-      else lse_error('%s.getiv not supplied', [clss^.cr_name]);
+        else lse_error('failed getting %s(0x%p)[%d]',
+                       [clss^.cr_name, data^.VObject, index]);
+      end;
     LSV_STRING:
       begin
-        name := lse_strec_data(keyr^.VObject);
-        if Assigned(clss^.cr_getpv) and
-          (clss^.cr_getpv(data^.VObject, pchar(name), keyr) > 0) then
+        name := lse_strec_string(keyr^.VObject);
+        if lse_getpv(clss, data^.VObject, keyr^.VObject, keyr) then
         begin
           Sender.FStack.ExchangeLastTwo;
           Sender.FStack.DeleteLast;
         end
-        else
-        begin
-          curr := Sender.CurrentFunc;
-          func := curr.FindMethod(name, clss);
-          if func <> nil then
-          begin
-            curr := func.Curry(data, curr.Module);
-            curr.SaveTo(data);
-            if curr <> func then
-              curr.DecRefcount; // adjust refcount
-            Sender.FStack.Press;
-          end
-          else
-          begin
-            func := curr.FindMethod('get_' + name, clss);
-            if func <> nil then
-            begin
-              Sender.FStack.Press;
-              Sender.Goon(func, 1, nil);
-            end
-            else lse_error('failed get property "%s"', [name]);
-          end;
-        end;
+        else lse_error('failed getting %s(0x%p)["%s"]',
+                       [clss^.cr_name, data^.VObject, name]);
       end;
-    else lse_error('invalid index or property name');
+    else lse_error('invalid item index ');
   end;
   runner_next(Sender);
 end;
@@ -1745,41 +1740,69 @@ var
   clss: PLseType;
   name: string;
   index: integer;
-  func, curr: KLiFunc;
 begin
   data := Sender.FStack[-3];
-  clss := lse_type(data);
   keyr := Sender.FStack[-2];
+  clss := lse_type(data);
   case lse_vtype(keyr) of
     LSV_INT:
-      if Assigned(clss^.cr_setiv) then
       begin
-        index := keyr^.VInteger; 
-        if clss^.cr_setiv(data^.VObject, index, Sender.FStack[-1]) > 0 then
-          Sender.FStack.Press(2) else
-          lse_error('failed set item by index of %d', [index]);
-      end
-      else lse_error('%s.setiv not supplied', [lse_type(data)^.cr_name]);
+        index := keyr^.VInteger;
+        if lse_setiv(clss, data^.VObject, index, Sender.FStack[-1]) then
+        begin
+          index := Sender.FStack.Count - 1;
+          Sender.FStack.Exchange(index - 2, index);
+          Sender.FStack.Press(2);
+        end
+        else lse_error('failed setting %s(0x%p)[%d]',
+                       [clss^.cr_name, data^.VObject, index]);
+      end;
     LSV_STRING:
       begin
-        name := lse_strec_data(keyr^.VObject);
-        if Assigned(clss^.cr_setpv) and
-           (clss^.cr_setpv(data^.VObject, pchar(name), Sender.FStack[-1]) > 0) then
-          Sender.FStack.Press(2) else
+        name := lse_strec_string(keyr^.VObject);
+        if lse_setpv(clss, data^.VObject, keyr^.VObject, Sender.FStack[-1]) then
         begin
-          curr := Sender.CurrentFunc;
-          func := curr.FindMethod('set_' + name, clss);
-          if func <> nil then
-          begin
-            Sender.FStack.ExchangeLastTwo;
-            Sender.FStack.Press;
-            Sender.Goon(func, 2, nil);
-          end
-          else lse_error('failed set property "%s"', [name]);
-        end;
+          index := Sender.FStack.Count - 1;
+          Sender.FStack.Exchange(index - 2, index);
+          Sender.FStack.Press(2);
+        end
+        else lse_error('failed setting %s(0x%p)["%s"]',
+                       [clss^.cr_name, data^.VObject, name]);
       end;
-    else lse_error('invalid index or property name');
+    else lse_error('invalid item index ');
   end;
+  runner_next(Sender);
+end;
+
+procedure runner_method(Sender: KLiRunner);
+var
+  data: PLseValue;
+  clss: PLseType;
+  name: string;
+  func, curr: KLiFunc;
+  prmc: integer;
+begin
+  prmc := Sender.FExprrec^.tk_prmc;
+  if prmc > 0 then
+    data := Sender.FStack[-prmc] else
+    data := Sender.FStack[-1];
+  clss := lse_type(data);
+
+  name := Sender.FExprrec^.tk_name;
+  curr := Sender.FCurrent^.func;
+  func := curr.FindMethod(name, clss);
+  lse_check(func <> nil,
+    Format('failed getting %s(0x%p).%s',
+      [clss^.cr_name, data^.VObject, name]));
+      
+  if prmc = 0 then
+  begin
+    curr := func.Curry(data, curr.Module);
+    curr.SaveTo(data);
+    if curr <> func then
+      curr.DecRefcount; // adjust refcount
+  end
+  else Sender.Goon(func, prmc, nil);
   runner_next(Sender);
 end;
 
@@ -1815,7 +1838,7 @@ begin
   with Sender do
   begin
     V := FCurrent^.values.NewValue(FExprrec^.tk_name);
-    if lse_vargen_send(FEngine.FTempValues[-1]^.VObject, V) then
+    if lse_vargen_generate(FEngine.FTempValues[-1]^.VObject, V) then
       FStack.Add(1) else
       FStack.Add(0);
   end;
@@ -1846,652 +1869,6 @@ begin
     end;
   end;
   runner_next(Sender);
-end;
-
-// <TYPE> //////////////////////////////////////////////////////////////////////
-
-function type_error_otos(obj: pointer): PLseString;cdecl;
-begin
-  if obj <> nil then
-    Result := lse_strec_alloc(KLiError(obj).ErrorText) else
-    Result := nil;
-end;
-
-function type_function_otos(obj: pointer): PLseString;cdecl;
-var
-  func: KLiFunc;
-begin
-  func := KLiFunc(obj);
-  if func <> nil then
-    Result := lse_strec_alloc(KLiFunc(obj).Prototype) else
-    Result := nil;
-end;
-
-function type_module_otos(obj: pointer): PLseString;cdecl;
-begin
-  if obj <> nil then
-    Result := lse_strec_alloc(KLiModule(obj).Name) else
-    Result := nil;
-end;
-
-function type_type_otos(obj: pointer): PLseString;cdecl;
-var
-  clss: PLseType;
-begin
-  clss := PLseType(obj);
-  if clss <> nil then
-    Result := lse_strec_alloc(type_full_name(clss)) else
-    Result := nil;
-end;
-
-function type_varlist_otos(obj: pointer): PLseString;cdecl;
-begin
-  if obj <> nil then
-    Result := lse_strec_alloc(KLiVarList(obj).AsString) else
-    Result := nil;
-end;
-
-{ CVGR: create RLseVargen record}
-
-type
-  RLiVG_varlist = packed record
-    vgrec: RLseVargen;
-    vgref: integer;
-    list : KLiVarList;
-    index: integer;
-  end;
-  PLiVG_varlist = ^RLiVG_varlist;
-  
-function type_vargen_varlist_rewind(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_varlist;
-begin
-  cvgr := PLiVG_varlist(vrec^.vg_data); 
-  with cvgr^ do
-  begin
-    index := 0;
-    Result := Ord(index < list.Count);
-  end;
-end;
-
-function type_vargen_varlist_hasNext(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_varlist;
-begin
-  cvgr := PLiVG_varlist(vrec^.vg_data); 
-  with cvgr^ do
-    Result := Ord(index < list.Count);
-end;
-
-function type_vargen_varlist_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-var
-  cvgr: PLiVG_varlist;
-begin
-  cvgr := PLiVG_varlist(vrec^.vg_data);
-  with cvgr^ do
-    if index < list.Count then
-    begin
-      lse_set_value(Value, list[index]);
-      Result := 1;
-      Inc(index);
-    end
-    else Result := 0;
-end;
-
-function type_vargen_varlist_addref(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_varlist;
-begin
-  cvgr := PLiVG_varlist(vrec^.vg_data); 
-  with cvgr^ do
-  begin
-    list.IncRefcount;
-    Inc(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_varlist));
-  end;
-end;
-
-function type_vargen_varlist_release(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_varlist;
-begin
-  cvgr := PLiVG_varlist(vrec^.vg_data); 
-  with cvgr^ do
-  begin
-    list.DecRefcount;
-    Dec(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_varlist));
-  end;
-end;
-
-function type_vargen_varlist_contains(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-begin
-  Result := Ord(value_in(Value, PLiVG_varlist(vrec^.vg_data)^.list, false));
-end;
-
-function type_varlist_vargen(obj: pointer): PLseVargen;cdecl;
-var
-  list: KLiVarList;
-  cvgr: PLiVG_varlist;
-begin
-  list := KLiVarList(obj);
-  if list <> nil then
-  begin
-    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_varlist));
-    cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_type := KT_VARLIST;
-    cvgr^.vgrec.vg_rewind := @type_vargen_varlist_rewind;
-    cvgr^.vgrec.vg_has_next := @type_vargen_varlist_hasNext;
-    cvgr^.vgrec.vg_get_next := @type_vargen_varlist_getNext;
-    cvgr^.vgrec.vg_addref := @type_vargen_varlist_addref;
-    cvgr^.vgrec.vg_release := @type_vargen_varlist_release;
-    cvgr^.vgrec.vg_contains := @type_vargen_varlist_contains;
-    cvgr^.vgref := 0;
-    cvgr^.list := list;
-    cvgr^.index := 0;
-    Result := @(cvgr^.vgrec);
-  end
-  else Result := nil;
-end;
-
-type
-  RLiVG_func = packed record
-    vgrec: RLseVargen;
-    vgref: integer;
-    func: KLiFunc;
-  end;
-  PLiVG_func = ^RLiVG_func;
-
-function type_vargen_func_hasNext(vrec: PLseVargen): integer;cdecl;
-var
-  func: KLiFunc;
-begin
-  func := PLiVG_func(vrec^.vg_data)^.func;
-  Result := Ord((func <> nil) and
-                (func.FModule.FEngine <> nil) and
-                (func.FModule.FEngine.FMainRunner <>nil));
-end;
-
-function type_vargen_func_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-var
-  func: KLiFunc;
-begin
-  if type_vargen_func_hasNext(vrec) <> 0 then
-  begin
-    func := PLiVG_func(vrec^.vg_data)^.func;
-    Result := Ord(func.FModule.FEngine.MainRunner.Goon(func, 0, value));
-  end
-  else Result := 0;
-end;
-
-function type_vargen_func_addref(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_func;
-begin
-  cvgr := PLiVG_func(vrec^.vg_data);
-  with cvgr^ do
-  begin
-    func.IncRefcount;
-    Inc(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_func));
-  end;
-end;
-
-function type_vargen_func_release(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_func;
-begin
-  cvgr := PLiVG_func(vrec^.vg_data); 
-  with cvgr^ do
-  begin
-    func.DecRefcount;
-    Dec(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_func));
-  end;
-end;
-
-function type_function_vargen(obj: pointer): PLseVargen;cdecl;
-var
-  func: KLiFunc;
-  cvgr: PLiVG_func;
-begin
-  Result := nil;
-  func := KLiFunc(obj);
-  if (func <> nil) and (func.FModule.FEngine <> nil) then
-  begin
-    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_func));
-    cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_type := KT_FUNC;
-    cvgr^.vgrec.vg_rewind := @type_vargen_func_hasNext;
-    cvgr^.vgrec.vg_has_next := @type_vargen_func_hasNext;
-    cvgr^.vgrec.vg_get_next := @type_vargen_func_getNext;
-    cvgr^.vgrec.vg_addref := @type_vargen_func_addref;
-    cvgr^.vgrec.vg_release := @type_vargen_func_release;
-    cvgr^.vgref := 0;
-    cvgr^.func := func;
-    Result := @(cvgr^.vgrec);
-  end;
-end;
-
-type
-  RLiVG_stream = packed record
-    vgrec: RLseVargen;
-    vgref: integer;
-    stream: PLseStream;
-  end;
-  PLiVG_stream = ^RLiVG_stream;
-
-function type_vargen_stream_rewind(vrec: PLseVargen): integer;cdecl;
-var
-  stream: PLseStream;
-begin
-  stream := PLiVG_stream(vrec^.vg_data)^.stream;
-  lse_stream_seek(stream, 0);
-  Result := Ord(not lse_stream_eof(stream));
-end;
-
-function type_vargen_stream_hasNext(vrec: PLseVargen): integer;cdecl;
-var
-  stream: PLseStream;
-begin
-  stream := PLiVG_stream(vrec^.vg_data)^.stream;
-  Result := Ord(not lse_stream_eof(stream));
-end;
-
-function type_vargen_stream_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-var
-  stream: PLseStream;
-  ch: char;
-begin
-  stream := PLiVG_stream(vrec^.vg_data)^.stream;
-  if not lse_stream_eof(stream) then
-  begin
-    Result := lse_stream_read(stream, @ch, sizeof(char));
-    if Result > 0 then
-      lse_set_char(Value, ch);
-  end
-  else Result := 0;
-end;
-
-function type_vargen_stream_addref(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_stream;
-begin
-  cvgr := PLiVG_stream(vrec^.vg_data); 
-  with cvgr^ do
-  begin
-    stream^.s_addref(stream);
-    Inc(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_stream));
-  end;
-end;
-
-function type_vargen_stream_release(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_stream;
-begin
-  cvgr := PLiVG_stream(vrec^.vg_data);
-  with cvgr^ do
-  begin
-    stream^.s_release(stream);
-    Dec(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_stream));
-  end;
-end;
-
-function type_stream_vargen(obj: pointer): PLseVargen;cdecl;
-var
-  stream: PLseStream;
-  cvgr: PLiVG_stream;
-begin
-  stream := PLseStream(obj);
-  if stream <> nil then
-  begin
-    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_stream));
-    cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_type := KT_STREAM;
-    cvgr^.vgrec.vg_rewind := @type_vargen_stream_rewind;
-    cvgr^.vgrec.vg_has_next := @type_vargen_stream_hasNext;
-    cvgr^.vgrec.vg_get_next := @type_vargen_stream_getNext;
-    cvgr^.vgrec.vg_addref := @type_vargen_stream_addref;
-    cvgr^.vgrec.vg_release := @type_vargen_stream_release;
-    cvgr^.vgref := 0;
-    cvgr^.stream := stream;
-    Result := @(cvgr^.vgrec);
-  end
-  else Result := nil;
-end;
-
-function type_vargen_stream_getLine(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-var
-  stream: PLseStream;
-begin
-  stream := PLiVG_stream(vrec^.vg_data)^.stream;
-  if not lse_stream_eof(stream) then
-  begin
-    lse_set_string(Value, lse_stream_readln(stream));
-    Result := 1;
-  end
-  else Result := 0;
-end;
-
-function type_stream_vargen_lines(obj, kernel_engine: pointer): PLseVargen;cdecl;
-begin
-  Result := type_stream_vargen(obj);
-  Result^.vg_get_next := @type_vargen_stream_getLine;
-end;
-
-type
-  RLiVG_string = packed record
-    vgrec: RLseVargen;
-    vgref: integer;
-    srec: PLseString;
-    slen: integer;
-    index: integer;
-  end;
-  PLiVG_string = ^RLiVG_string;
-
-function type_vargen_string_rewind(vrec: PLseVargen): integer;cdecl;
-begin
-  with PLiVG_string(vrec^.vg_data)^ do
-  begin
-    index := 0;
-    Result := Ord(index < slen);
-  end;
-end;
-
-function type_vargen_string_hasNext(vrec: PLseVargen): integer;cdecl;
-begin
-  with PLiVG_string(vrec^.vg_data)^ do
-    Result := Ord(index < slen);
-end;
-
-function type_vargen_string_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-begin
-  with PLiVG_string(vrec^.vg_data)^ do
-    if index < slen then
-    begin
-      lse_set_string(value, lse_strec_data(srec)[index]);
-      Inc(index);
-      Result := 1;
-    end
-    else Result := 0;
-end;
-
-function type_vargen_string_addref(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_string;
-begin
-  cvgr := PLiVG_string(vrec^.vg_data); 
-  with cvgr^ do
-  begin
-    lse_strec_inclife(srec);
-    Inc(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_string));
-  end;
-end;
-
-function type_vargen_string_release(vrec: PLseVargen): integer;cdecl;
-var
-  cvgr: PLiVG_string;
-begin
-  cvgr := PLiVG_string(vrec^.vg_data);
-  with cvgr^ do
-  begin
-    lse_strec_declife(srec);
-    Dec(vgref);
-    Result := vgref;
-    if Result = 0 then
-      lse_mem_free(cvgr, sizeof(RLiVG_string));
-  end;
-end;
-
-function type_vargen_string_contains(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-begin
-  Result := Ord(value_in(Value, PLiVG_string(vrec^.vg_data)^.srec));
-end;
-
-function type_string_vargen(obj: pointer): PLseVargen;cdecl;
-var
-  srec: PLseString;
-  slen: integer;
-  cvgr: PLiVG_string;
-begin
-  srec := PLseString(obj);
-  slen := lse_strec_length(srec);
-  if slen > 0 then
-  begin
-    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_string));
-    cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_type := KT_STRING;
-    cvgr^.vgrec.vg_rewind := @type_vargen_string_rewind;
-    cvgr^.vgrec.vg_has_next := @type_vargen_string_hasNext;
-    cvgr^.vgrec.vg_get_next := @type_vargen_string_getNext;
-    cvgr^.vgrec.vg_addref := @type_vargen_string_addref;
-    cvgr^.vgrec.vg_release := @type_vargen_string_release;
-    cvgr^.vgrec.vg_contains := @type_vargen_string_contains;
-    cvgr^.vgref := 0;
-    cvgr^.srec := srec;
-    cvgr^.slen := slen;
-    cvgr^.index := 0;
-    Result := @(cvgr^.vgrec);
-  end
-  else Result := nil;
-end;
-
-function type_int_vargen(obj: pointer): PLseVargen;cdecl;
-var
-  R: int64;
-begin
-  Move(obj^, R, sizeof(int64));
-  Result := lse_vargen_upto(0, R - 1, 1);
-end;
-
-{ ADDI}
-
-function type_varlist_add(obj: pointer; Value: PLseValue): integer;cdecl;
-begin
-  Result := KLiVarList(obj).Count;
-  KLiVarList(obj).Add(Value);
-end;
-
-function type_stream_add(obj: pointer; Value: PLseValue): integer;cdecl;
-var
-  S: PLseStream;
-begin
-  S := PLseStream(obj);
-  if lse_vtype(Value) = LSV_STRING then
-    Result := lse_stream_write(S, Value^.VObject) else
-    Result := lse_stream_write(S, lse_get_str(Value));
-end;
-
-{ GETIV: get item value }
-
-function type_string_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
-var
-  S: PLseString;
-  L, X: int64;
-begin
-  S := PLseString(obj);
-  L := lse_strec_length(S);
-  X := lse_vary_index(index, L);
-  if (X >= 0) and (X < L) then
-  begin
-    lse_set_string(value, lse_strec_data(S)[X]);
-    Result := 1;
-  end
-  else Result := 0;
-end;
-
-function type_varlist_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
-var
-  L: KLiVarList;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    L := KLiVarList(obj);
-    index := lse_vary_index(index, L.Count);
-    if (index >= 0) and (index < L.Count) then
-    begin
-      lse_set_value(value, L[index]);
-      Result := 1;
-    end;
-  end;
-end;
-
-{ SETIV: set item value }
-
-function type_varlist_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
-var
-  L: KLiVarList;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    L := KLiVarList(obj);
-    index := lse_vary_index(index, L.Count);
-    if (index >= 0) and (index < L.Count) then
-    begin
-      lse_set_value(L[index], value);
-      Result := 1;
-    end;
-  end;
-end;
-
-{ GETPV: get property value }
-
-function type_hashed_getpv(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
-var
-  V: PLseValue;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    V := KLiHashed(obj).FindValue(name);
-    if V <> nil then
-    begin
-      lse_set_value(value, V);
-      Result := 1;
-    end;
-  end;
-end;
-
-function type_module_getpv(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
-var
-  this: KLiModule;
-  func: KLiFunc;
-  clss: PLseType;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    this := KLiModule(obj);
-    clss := this.FindType(name);
-    if clss <> nil then
-    begin
-      Result := 1;
-      lse_set_type(value, clss);
-    end
-    else
-    begin
-      func := this.FindFunc(name);
-      if func <> nil then
-      begin
-        Result := 1;
-        func.SaveTo(value);
-      end;
-    end;
-  end;
-end;
-
-function type_varsnap_getpv(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
-var
-  snap: KLiVarSnap;
-  data: PLseValue;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    snap := KLiVarSnap(obj);
-    data := snap.GetValue(name);
-    if data <> nil then
-    begin
-      lse_set_value(value, data);
-      Result := 1;
-    end;
-  end;
-end;
-
-{ SETPV: set property value }
-
-function type_hashed_setpv(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    KLiHashed(obj).SetValue(name, value);
-    Result := 1;
-  end;
-end;
-
-function type_varsnap_setpv(obj: pointer; const name: pchar; value: PLseValue): integer;cdecl;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    KLiVarSnap(obj).SetValue(name, value);
-    Result := 1;
-  end;
-end;
-
-{ LENO: length object }
-
-function type_string_length(obj: pointer): integer;cdecl;
-begin
-  Result := lse_strec_length(PLseString(obj));
-end;
-
-function type_hashed_length(obj: pointer): integer;cdecl;
-begin
-  if obj <> nil then
-    Result := KLiHashed(obj).ItemCount else
-    Result := 0;
-end;
-
-function type_stream_length(obj: pointer): integer;cdecl;
-begin
-  if obj <> nil then
-    Result := PLseStream(obj)^.s_get_size(obj) else
-    Result := 0;
-end;
-
-function type_varlist_length(obj: pointer): integer;cdecl;
-begin
-  if obj <> nil then
-    Result := KLiVarList(obj).Count else
-    Result := 0;
-end;
-
-function type_varsnap_length(obj: pointer): integer;cdecl;
-begin
-  if obj <> nil then
-    Result := KLiVarSnap(obj).Count else
-    Result := 0;
 end;
 
 // <SYSTEM> ////////////////////////////////////////////////////////////////////
@@ -2748,7 +2125,7 @@ begin
       begin
         Inc(sys_seed);
         N := Format('#%.4d', [sys_seed]);
-        if AnsiSameText(ExtractFileExt(F), LSE_DLLEXT) then
+        if AnsiSameText(ExtractFileExt(F), LSE_OBJEXT) then
         begin
           M := module_load(N, F);
           if M = nil then
@@ -3040,6 +2417,22 @@ begin
   rnnr.Current^.func.SaveTo(Param^.p_result);
 end;
 
+procedure pp_system_main_func(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+begin
+  rnnr := get_runner(Param);
+  rnnr.FEngine.FMainFunc.SaveTo(Param^.p_result);
+end;
+
+procedure pp_system_in_main_func(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+begin
+  rnnr := get_runner(Param);
+  lse_set_bool(Param^.p_result, rnnr.FCurrent^.func.IsMainFunc);
+end;
+
 procedure pp_system_current_error(const Param: PLseParam);cdecl;
 begin
   lse_set_object(Param^.p_result, KT_ERROR, get_engine(Param).Error);
@@ -3167,7 +2560,7 @@ begin
   lse_init_value(@data);
   try
     this := lse_vargen_this(Param);
-    while lse_vargen_send(this, @data) do
+    while lse_vargen_generate(this, @data) do
     begin
       rnnr.Stack.Add(PLseValue(@data));
       if not rnnr.Goon(func, 1, @test) then Break else
@@ -3300,7 +2693,140 @@ begin
   lse_set_type(Param^.p_result, lse_get_type(Param^.p_param[0]));
 end;
 
+procedure pp_system_tailrc(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+  curr: KLiFunc;
+  snap, vars: KLiVarSnap;
+  X, P: integer;
+begin
+  rnnr := get_runner(Param);
+  curr := rnnr.CurrentFunc;
+  snap := rnnr.FCurrent^.values;
+  vars := KLiVarSnap.Create(curr);
+  if curr.ParamCount > 0 then
+  begin
+    if curr.HasSuper then
+      lse_set_value(vars[0], snap[0]);
+    P := Ord(curr.HasSuper);
+    for X := P to curr.ParamCount - 1 do
+      if X - P < Param^.p_count then
+        lse_set_value(vars[X], Param^.p_param[X - P]) else
+        lse_clear_value(vars[X]);
+  end;
+  rnnr.FCurrent^.values := vars;
+  rnnr.FStack.SetCount(rnnr.FCurrent^.base);
+  rnnr.FCurrent^.next := -1; //=> runner_next()
+  snap.DecRefcount;
+end;
+
+procedure pp_system_callcc(const Param: PLseParam);cdecl;
+var
+  func: KLiFunc;
+  call: KLiFunc_callcc;
+  rnnr: KLiRunner;
+  clss: PLseType;
+
+  procedure exec_callcc(prmc: integer);
+  var
+    list: KLiVarList;
+  begin
+    list := value_varlist(Param^.p_param[1]);
+    if (list <> nil) and (func.ParamCount - prmc > 0) then
+      Inc(prmc, rnnr.FStack.AddFrom(list, func.ParamCount - prmc));
+    rnnr.Goon(func, prmc, Param^.p_result);
+  end;
+
+begin
+  func := value_func(Param^.p_param[0]);
+  if (func <> nil) and not func.IsEmptyFunc then
+  begin
+    rnnr := get_runner(Param);
+    if func.ParamCount > 0 then
+    begin
+      clss := func.GetParam(0)^.v_type;
+      if (clss = KT_FUNC) or (clss = KT_VARIANT) then
+      begin
+        call := KLiFunc_callcc.Create(rnnr.CurrentModule, Param^.p_result);
+        try
+          rnnr.FStack.Add(call, KT_FUNC);
+          exec_callcc(1);
+        finally
+          if rnnr.FCallcc = call then rnnr.FCallcc := nil;
+          call.FProc := @udc_empty;
+          call.DecRefcount;
+        end;
+        Exit;
+      end;
+    end;
+    exec_callcc(0);
+  end;
+end;
+
+procedure pp_system_yield(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+  snap: PLiSnap;
+  curr, func: KLiFunc;
+  next, base, X: integer;
+  vars: KLiVarSnap;
+  list: KLiVarList;
+  data: PLseValue;
+begin
+  func := value_func(Param^.p_param[0]);
+  if (func <> nil) and not func.IsEmptyFunc then
+  begin
+    list := value_varlist(Param^.p_param[1]);
+    rnnr := get_runner(Param);
+    if func.FProc = nil then
+    begin
+      snap := rnnr.FCurrent;
+      curr := snap^.func;
+      next := snap^.next;
+      base := snap^.base;
+      vars := snap^.values;
+      vars.IncRefcount;
+      { change }
+      snap^.func := func;
+      snap^.base := rnnr.FStack.Count;
+      snap^.next := 0;
+      try
+        for X := 0 to func.ParamCount - 1 do
+        begin
+          data := vars.NewValue(func.GetParam(X)^.v_name);
+          if (list <> nil) and (X < list.Count) then
+            lse_set_value(data, list[X]);
+          lse_type_cast(func.GetParam(X)^.v_type, data);
+        end;
+        while rnnr.ExecGoonNext do {nothing};
+        if rnnr.FStack.Count > snap^.base then
+          lse_set_value(Param^.p_result, rnnr.FStack[-1]);
+      finally
+        rnnr.FCurrent := snap;
+        snap^.func := curr;
+        snap^.next := next;
+        snap^.base := base;
+        if snap^.values <> vars then //==> tailrc
+          snap^.values := vars else
+          vars.DecRefcount;
+      end;
+    end
+    else
+    begin
+      X := rnnr.FStack.AddFrom(list, func.ParamCount);
+      rnnr.Goon(func, X, Param^.p_result);
+    end;
+  end;
+end;
+
 { error }
+
+function cr_error_otos(obj: pointer): PLseString;cdecl;
+begin
+  if obj <> nil then
+    Result := lse_strec_alloc(KLiError(obj).ErrorText) else
+    Result := nil;
+end;
 
 procedure pp_error_text(const Param: PLseParam);cdecl;
 var
@@ -3360,6 +2886,88 @@ end;
 
 { function }
 
+function cr_func_otos(obj: pointer): PLseString;cdecl;
+var
+  func: KLiFunc;
+begin
+  func := KLiFunc(obj);
+  if func <> nil then
+    Result := lse_strec_alloc(KLiFunc(obj).Prototype) else
+    Result := nil;
+end;
+
+type
+  RLiVG_func = packed record
+    vgrec: RLseVargen;
+    vgref: integer;
+  end;
+  PLiVG_func = ^RLiVG_func;
+
+function func_vargen_has_next(vrec: PLseVargen): integer;cdecl;
+var
+  func: KLiFunc;
+begin
+  func := KLiFunc(vrec^.vg_object);
+  Result := Ord(func.FModule.FEngine.FMainRunner <> nil);
+end;
+
+function func_vargen_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+var
+  func: KLiFunc;
+begin
+  func := KLiFunc(vrec^.vg_object);
+  if func.FModule.FEngine.FMainRunner <> nil then
+    Result := Ord(func.FModule.FEngine.MainRunner.Goon(func, 0, value)) else
+    Result := 0;
+end;
+
+function func_vargen_addref(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_func(vrec^.vg_data)^ do
+  begin
+    Inc(vgref);
+    Result := vgref;
+  end;
+end;
+
+function func_vargen_release(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_func(vrec^.vg_data)^ do
+  begin
+    Dec(vgref);
+    Result := vgref;
+    if Result = 0 then
+    begin
+      KLiFunc(vrec^.vg_object).DecRefcount;
+      lse_mem_free(vrec^.vg_data, sizeof(RLiVG_func));
+    end;
+  end;
+end;
+
+function cr_func_vargen(obj: pointer): PLseVargen;cdecl;
+var
+  func: KLiFunc;
+  cvgr: PLiVG_func;
+begin
+  Result := nil;
+  func := KLiFunc(obj);
+  if (func <> nil) and (func.FModule.FEngine <> nil) then
+  begin
+    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_func));
+    cvgr^.vgrec.vg_data := cvgr;
+    cvgr^.vgrec.vg_type := KT_FUNC;
+    cvgr^.vgrec.vg_object := func;
+    cvgr^.vgrec.vg_addref := @func_vargen_addref;
+    cvgr^.vgrec.vg_release := @func_vargen_release;
+    cvgr^.vgrec.vg_rewind := nil;
+    cvgr^.vgrec.vg_has_next := @func_vargen_has_next;
+    cvgr^.vgrec.vg_generate := @func_vargen_generate;
+    cvgr^.vgref := 0;
+    func.IncRefcount;
+    Result := @(cvgr^.vgrec);
+  end;
+end;
+
 procedure pp_func_name(const Param: PLseParam);cdecl;
 var
   F: KLiFunc;
@@ -3411,7 +3019,7 @@ begin
     L := KLiVarList.Create(get_engine(Param));
     L.SaveTo(Param^.p_result);
     for X := 0 to F.ParamCount - 1 do
-      L.Add(F.GetParam(X)^.va_name);
+      L.Add(F.GetParam(X)^.v_name);
   end;
 end;
 
@@ -3426,102 +3034,230 @@ begin
     L := KLiVarList.Create(get_engine(Param));
     L.SaveTo(Param^.p_result);
     for X := 0 to F.ParamCount - 1 do
-      lse_set_type(L.Add, F.GetParam(X)^.va_type);
+      lse_set_type(L.Add, F.GetParam(X)^.v_type);
+  end;
+end;
+
+procedure pp_func_tailrc(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+  curr, func: KLiFunc;
+  snap, vars: KLiVarSnap;
+  X, P: integer;
+begin
+  if get_this(Param, func) then
+  begin
+    rnnr := get_runner(Param);
+    if func.FProc = nil then
+    begin
+      curr := rnnr.FCurrent^.func;
+      snap := rnnr.FCurrent^.values;
+      vars := KLiVarSnap.Create(func);
+      if func.ParamCount > 0 then
+      begin
+        if curr.HasSuper and func.HasSuper then
+        begin
+          lse_set_value(vars[0], snap[0]);
+          P := 1;
+        end
+        else P := 0;
+        for X := P to func.ParamCount - 1 do
+          if X - P + 1 < Param^.p_count then
+            lse_set_value(vars[X], Param^.p_param[X - P + 1]) else
+            lse_clear_value(vars[X]);
+        lse_type_cast(func.GetParam(0)^.v_type, vars[0]);
+      end;
+      rnnr.FCurrent^.func := func;
+      rnnr.FCurrent^.values := vars;
+      rnnr.FStack.SetCount(rnnr.FCurrent^.base);
+      rnnr.FCurrent^.next := -1; //=> runner_next()
+      snap.DecRefcount;
+    end
+    else rnnr.Goon(func, get_func(Param).ParamCount - 1, Param^.p_result);
   end;
 end;
 
 { hashed }
 
+function cr_hashed_getpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+var
+  V: PLseValue;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    V := KLiHashed(obj).Find(prop);
+    if V <> nil then
+    begin
+      lse_set_value(value, V);
+      Result := 1;
+    end;
+  end;
+end;
+
+function cr_hashed_setpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    KLiHashed(obj).Write(prop, value);
+    Result := 1;
+  end;
+end;
+
+function cr_hashed_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+var
+  H: KLiHashed;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    H := KLiHashed(obj);
+    index := lse_vary_index(index, H.FCount);
+    if (index >= 0) and (index < H.FCount) then
+    begin
+      lse_set_value(value, H.GetData(index));
+      Result := 1;
+    end;
+  end;
+end;
+
+function cr_hashed_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+var
+  H: KLiHashed;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    H := KLiHashed(obj);
+    index := lse_vary_index(index, H.FCount);
+    if (index >= 0) and (index < H.FCount) then
+    begin
+      lse_set_value(H.GetData(index), value);
+      Result := 1;
+    end;
+  end;
+end;
+
+function cr_hashed_length(obj: pointer): integer;cdecl;
+begin
+  if obj <> nil then
+    Result := KLiHashed(obj).FCount else
+    Result := 0;
+end;
+
 procedure pp_hashed_create(const Param: PLseParam);cdecl;
 var
-  buckets: integer;
+  N: integer;
 begin
   if Param^.p_count > 0 then
-    buckets := Max(1, lse_get_int(Param^.p_param[0])) else
-    buckets := 1;
-  KLiHashed.Create(get_engine(Param), buckets).SaveTo(Param^.p_result);
+    N := Max(1, lse_get_int(Param^.p_param[0])) else
+    N := 1;
+  KLiHashed.Create(get_engine(Param), N).SaveTo(Param^.p_result);
 end;
 
 procedure pp_hashed_keys(const Param: PLseParam);cdecl;
 var
-  this: KLiHashed;
-  list: KLiVarList;
+  H: KLiHashed;
+  L: KLiVarList;
 begin
-  if get_this(Param, this) then
+  if get_this(Param, H) then
   begin
-    list := KLiVarList.Create(get_engine(Param));
-    list.SaveTo(Param^.p_result);
-    this.ListKeys(list);
+    L := KLiVarList.Create(get_engine(Param));
+    L.SaveTo(Param^.p_result);
+    H.ListKeys(L);
   end;
 end;
 
 procedure pp_hashed_values(const Param: PLseParam);cdecl;
 var
-  this: KLiHashed;
-  list: TList;
-  values: KLiVarList;
-  index: integer;
+  H: KLiHashed;
+  L: KLiVarList;
 begin
-  if get_this(Param, this) then
+  if get_this(Param, H) then
   begin
-    list := TList.Create;
-    try
-      this.ListData(list);
-      values := KLiVarList.Create(get_engine(Param));
-      values.SaveTo(Param^.p_result);
-      for index := 0 to list.Count - 1 do
-        values.Add(PLseValue(list[index]));
-    finally
-      list.Free;
-    end;
+    L := KLiVarList.Create(get_engine(Param));
+    L.SaveTo(Param^.p_result);
+    H.ListValues(L);
   end;
 end;
 
 procedure pp_hashed_remove(const Param: PLseParam);cdecl;
 var
-  this: KLiHashed;
+  H: KLiHashed;
 begin
-  if get_this(Param, this) and (Param^.p_count > 1) then
-    this.Remove(lse_get_str(Param^.p_param[1]));
+  if get_this(Param, H) and (Param^.p_count > 1) then
+    H.Remove(Param^.p_param[1]^.VObject);
 end;
 
 procedure pp_hashed_clear(const Param: PLseParam);cdecl;
 var
-  this: KLiHashed;
+  H: KLiHashed;
 begin
-  if get_this(Param, this) then
-    this.Clear;
+  if get_this(Param, H) then H.Clear;
 end;
 
 procedure pp_hashed_read(const Param: PLseParam);cdecl;
 var
-  this: KLiHashed;
-  key: string;
-  data: PLseValue;
+  H: KLiHashed;
+  V: PLseValue;
 begin
-  if get_this(Param, this) then
+  if get_this(Param, H) then
   begin
-    key := lse_get_str(Param^.p_param[1]);
-    data := this.FindValue(key);
-    if data = nil then
+    V := H.Find(lse_get_strec(Param^.p_param[1]));
+    if V = nil then
       lse_set_value(Param^.p_result, Param^.p_param[2]) else
-      lse_set_value(Param^.p_result, data);
+      lse_set_value(Param^.p_result, V);
   end;
 end;
 
 procedure pp_hashed_isset(const Param: PLseParam);cdecl;
 var
-  this: KLiHashed;
-  key: string;
+  H: KLiHashed;
 begin
-  if get_this(Param, this) and (Param^.p_count > 1) then
-  begin
-    key := lse_get_str(Param^.p_param[1]);
-    lse_set_bool(Param^.p_result, this.IsSet(key));
-  end;
+  if get_this(Param, H) and (Param^.p_count > 1) then
+    lse_set_bool(Param^.p_result,
+      H.Exists(Param^.p_param[1]^.VObject));
 end;
 
 { module }
+
+function cr_module_otos(obj: pointer): PLseString;cdecl;
+begin
+  if obj <> nil then
+    Result := lse_strec_alloc(KLiModule(obj).Name) else
+    Result := nil;
+end;
+
+function cr_module_getpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+var
+  this: KLiModule;
+  func: KLiFunc;
+  clss: PLseType;
+  name: string;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    name := lse_strec_string(prop);
+    this := KLiModule(obj);
+    clss := this.FindType(name);
+    if clss <> nil then
+    begin
+      Result := 1;
+      lse_set_type(value, clss);
+    end
+    else
+    begin
+      func := this.FindFunc(name);
+      if func <> nil then
+      begin
+        Result := 1;
+        func.SaveTo(value);
+      end;
+    end;
+  end;
+end;
 
 procedure pp_module_name(const Param: PLseParam);cdecl;
 var
@@ -3626,20 +3362,131 @@ end;
 
 procedure pp_vargen_eof(const Param: PLseParam);cdecl;
 begin
-  lse_set_bool(Param^.p_result, lse_vargen_eof(lse_vargen_this(Param)));
+  lse_set_bool(Param^.p_result, not lse_vargen_has_next(lse_vargen_this(Param)));
 end;
 
-procedure pp_vargen_next(const Param: PLseParam);cdecl;
+procedure pp_vargen_generate(const Param: PLseParam);cdecl;
 begin
-  lse_vargen_send(lse_vargen_this(Param), Param^.p_result);
+  lse_vargen_generate(lse_vargen_this(Param), Param^.p_result);
 end;
 
 procedure pp_vargen_rewind(const Param: PLseParam);cdecl;
 begin
-  lse_set_bool(Param^.p_result, lse_vargen_rewind(lse_vargen_this(Param)));
+  lse_vargen_rewind(lse_vargen_this(Param));
 end;
 
 { stream }
+
+function cr_stream_add(obj: pointer; Value: PLseValue): integer;cdecl;
+var
+  S: PLseStream;
+begin
+  S := PLseStream(obj);
+  if lse_vtype(Value) = LSV_STRING then
+    Result := lse_stream_write(S, Value^.VObject) else
+    Result := lse_stream_write(S, lse_get_str(Value));
+end;
+
+function cr_stream_length(obj: pointer): integer;cdecl;
+begin
+  if obj <> nil then
+    Result := PLseStream(obj)^.s_get_size(obj) else
+    Result := 0;
+end;
+
+type
+  RLiVG_stream = packed record
+    vgrec: RLseVargen;
+    vgref: integer;
+  end;
+  PLiVG_stream = ^RLiVG_stream;
+
+procedure stream_vargen_rewind(vrec: PLseVargen);cdecl;
+begin
+  lse_stream_seek(PLseStream(vrec^.vg_object), 0);
+end;
+
+function stream_vargen_has_next(vrec: PLseVargen): integer;cdecl;
+begin
+  Result := Ord(not lse_stream_eof(PLseStream(vrec^.vg_object)));
+end;
+
+function stream_vargen_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+var
+  stream: PLseStream;
+  ch: char;
+begin
+  stream := PLseStream(vrec^.vg_object);
+  Result := lse_stream_read(stream, @ch, sizeof(char));
+  if Result > 0 then
+    lse_set_char(Value, ch);
+end;
+
+function stream_vargen_generate_line(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+var
+  stream: PLseStream;
+begin
+  stream := PLseStream(vrec^.vg_object);
+  if not lse_stream_eof(stream) then
+  begin
+    lse_set_string(Value, lse_stream_readln(stream));
+    Result := 1;
+  end
+  else Result := 0;
+end;
+
+function stream_vargen_addref(vrec: PLseVargen): integer;cdecl;
+var
+  cvgr: PLiVG_stream;
+begin
+  cvgr := PLiVG_stream(vrec^.vg_data);
+  with cvgr^ do
+  begin
+    Inc(vgref);
+    Result := vgref;
+  end;
+end;
+
+function stream_vargen_release(vrec: PLseVargen): integer;cdecl;
+var
+  cvgr: PLiVG_stream;
+begin
+  cvgr := PLiVG_stream(vrec^.vg_data);
+  with cvgr^ do
+  begin
+    Dec(vgref);
+    Result := vgref;
+    if Result = 0 then
+    begin
+      PLseStream(vrec^.vg_object)^.s_release(PLseStream(vrec^.vg_object));
+      lse_mem_free(cvgr, sizeof(RLiVG_stream));
+    end;
+  end;
+end;
+
+function cr_stream_vargen(obj: pointer): PLseVargen;cdecl;
+var
+  stream: PLseStream;
+  cvgr: PLiVG_stream;
+begin
+  stream := PLseStream(obj);
+  if (stream <> nil) and not lse_stream_eof(stream) then
+  begin
+    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_stream));
+    cvgr^.vgrec.vg_data := cvgr;
+    cvgr^.vgrec.vg_type := KT_STREAM;
+    cvgr^.vgrec.vg_object := stream;
+    cvgr^.vgrec.vg_addref := @stream_vargen_addref;
+    cvgr^.vgrec.vg_release := @stream_vargen_release;
+    cvgr^.vgrec.vg_has_next := @stream_vargen_has_next;
+    cvgr^.vgrec.vg_generate := @stream_vargen_generate;
+    cvgr^.vgrec.vg_rewind := @stream_vargen_rewind;
+    cvgr^.vgref := 0;
+    stream^.s_addref(stream);
+    Result := @(cvgr^.vgrec);
+  end
+  else Result := nil;
+end;
 
 procedure pp_stream_close(const Param: PLseParam);cdecl;
 var
@@ -3673,7 +3520,7 @@ begin
     S^.s_seek(S, Param^.p_param[1]^.VInteger, SSF_BEGINNING);
 end;
 
-procedure pp_stream_set_length(const Param: PLseParam);cdecl;
+procedure pp_stream_resize(const Param: PLseParam);cdecl;
 var
   S: PLseStream;
 begin
@@ -3759,13 +3606,133 @@ end;
 procedure pp_stream_lines(const Param: PLseParam);cdecl;
 var
   S: PLseStream;
+  V: PLseVargen;
 begin
   if get_this(Param, S) then
-    lse_set_vargen(Param^.p_result,
-      type_stream_vargen_lines(S, get_engine(Param)));
+  begin
+    V := cr_stream_vargen(S);
+    V^.vg_generate := @stream_vargen_generate_line;
+    lse_set_vargen(Param^.p_result, V);
+  end;
 end;
 
 { string }
+
+function cr_string_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+var
+  S: PLseString;
+  L, X: int64;
+begin
+  S := PLseString(obj);
+  L := lse_strec_length(S);
+  X := lse_vary_index(index, L);
+  if (X >= 0) and (X < L) then
+  begin
+    lse_set_string(value, lse_strec_data(S)[X]);
+    Result := 1;
+  end
+  else Result := 0;
+end;
+
+function cr_string_length(obj: pointer): integer;cdecl;
+begin
+  Result := lse_strec_length(PLseString(obj));
+end;
+
+type
+  RLiVG_string = packed record
+    vgrec: RLseVargen;
+    vgref: integer;
+    slen: integer;
+    index: integer;
+  end;
+  PLiVG_string = ^RLiVG_string;
+
+procedure string_vargen_rewind(vrec: PLseVargen);cdecl;
+begin
+  PLiVG_string(vrec^.vg_data)^.index := 0;
+end;
+
+function string_vargen_has_next(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_string(vrec^.vg_data)^ do
+    Result := Ord(index < slen);
+end;
+
+function string_vargen_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+begin
+  with PLiVG_string(vrec^.vg_data)^ do
+    if index < slen then
+    begin
+      lse_set_string(value, lse_strec_data(vrec^.vg_object)[index]);
+      Inc(index);
+      Result := 1;
+    end
+    else Result := 0;
+end;
+
+function string_vargen_addref(vrec: PLseVargen): integer;cdecl;
+var
+  cvgr: PLiVG_string;
+begin
+  cvgr := PLiVG_string(vrec^.vg_data);
+  with cvgr^ do
+  begin
+    Inc(vgref);
+    Result := vgref;
+  end;
+end;
+
+function string_vargen_release(vrec: PLseVargen): integer;cdecl;
+var
+  cvgr: PLiVG_string;
+begin
+  cvgr := PLiVG_string(vrec^.vg_data);
+  with cvgr^ do
+  begin
+    Dec(vgref);
+    Result := vgref;
+    if Result = 0 then
+    begin
+      lse_strec_declife(vrec^.vg_object);
+      lse_mem_free(cvgr, sizeof(RLiVG_string));
+    end;
+  end;
+end;
+
+function string_vargen_contains(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+begin
+  Result := Ord(value_in(Value, PLseString(vrec^.vg_object)));
+end;
+
+function cr_string_vargen(obj: pointer): PLseVargen;cdecl;
+var
+  srec: PLseString;
+  slen: integer;
+  cvgr: PLiVG_string;
+begin
+  srec := PLseString(obj);
+  slen := lse_strec_length(srec);
+  if slen > 0 then
+  begin
+    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_string));
+    cvgr^.vgrec.vg_data := cvgr;
+    cvgr^.vgrec.vg_type := KT_STRING;
+    cvgr^.vgrec.vg_object := srec;
+    cvgr^.vgrec.vg_addref := @string_vargen_addref;
+    cvgr^.vgrec.vg_release := @string_vargen_release;
+    cvgr^.vgrec.vg_has_next := @string_vargen_has_next;
+    cvgr^.vgrec.vg_generate := @string_vargen_generate;
+    cvgr^.vgrec.vg_rewind := @string_vargen_rewind;
+    cvgr^.vgrec.vg_contains := @string_vargen_contains;
+    cvgr^.vgref := 0;
+    cvgr^.slen := slen;
+    cvgr^.index := 0;
+    lse_strec_inclife(srec);
+    Result := @(cvgr^.vgrec);
+  end
+  else Result := nil;
+end;
 
 procedure pp_string_setAt(const Param: PLseParam);cdecl;
 begin
@@ -4030,7 +3997,27 @@ begin
   until S^ = #0;
 end;
 
+{ int }
+
+function cr_int_vargen(obj: pointer): PLseVargen;cdecl;
+var
+  R: int64;
+begin
+  Move(obj^, R, sizeof(int64));
+  Result := lse_vargen_upto(0, R - 1, 1);
+end;
+
 { type }
+
+function cr_type_otos(obj: pointer): PLseString;cdecl;
+var
+  clss: PLseType;
+begin
+  clss := PLseType(obj);
+  if clss <> nil then
+    Result := lse_strec_alloc(type_full_name(clss)) else
+    Result := nil;
+end;
 
 procedure pp_type_name(const Param: PLseParam);cdecl;
 var
@@ -4040,7 +4027,7 @@ begin
     lse_set_string(Param^.p_result, T^.cr_name);
 end;
 
-procedure pp_type_description(const Param: PLseParam);cdecl;
+procedure pp_type_desc(const Param: PLseParam);cdecl;
 var
   T: PLseType;
 begin
@@ -4072,6 +4059,179 @@ end;
 
 { varlist }
 
+function cr_varlist_otos(obj: pointer): PLseString;cdecl;
+begin
+  if obj <> nil then
+    Result := lse_strec_alloc(KLiVarList(obj).AsString) else
+    Result := nil;
+end;
+
+type
+  RLiVG_varlist = packed record
+    vgrec: RLseVargen;
+    vgref: integer;
+    index: integer;
+  end;
+  PLiVG_varlist = ^RLiVG_varlist;
+
+procedure varlist_vargen_rewind(vrec: PLseVargen);cdecl;
+begin
+  PLiVG_varlist(vrec^.vg_data)^.index := 0;
+end;
+
+function varlist_vargen_has_next(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_varlist(vrec^.vg_data)^ do
+    Result := Ord(index < KLiVarList(vrec^.vg_object).Count);
+end;
+
+function varlist_vargen_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+begin
+  with PLiVG_varlist(vrec^.vg_data)^ do
+    if index < KLiVarList(vrec^.vg_object).GetCount then
+    begin
+      lse_set_value(Value, KLiVarList(vrec^.vg_object)[index]);
+      Result := 1;
+      Inc(index);
+    end
+    else Result := 0;
+end;
+
+function varlist_vargen_addref(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_varlist(vrec^.vg_data)^ do
+  begin
+    Inc(vgref);
+    Result := vgref;
+  end;
+end;
+
+function varlist_vargen_release(vrec: PLseVargen): integer;cdecl;
+begin
+  with PLiVG_varlist(vrec^.vg_data)^ do
+  begin
+    Dec(vgref);
+    Result := vgref;
+    if Result = 0 then
+    begin
+      KLiVarList(vrec^.vg_object).DecRefcount;
+      lse_mem_free(vrec^.vg_data, sizeof(RLiVG_varlist));
+    end;
+  end;
+end;
+
+function varlist_vargen_contains(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+begin
+  Result := Ord(value_in(Value, KLiVarList(vrec^.vg_object), false));
+end;
+
+function cr_varlist_vargen(obj: pointer): PLseVargen;cdecl;
+var
+  list: KLiVarList;
+  cvgr: PLiVG_varlist;
+begin
+  list := KLiVarList(obj);
+  if (list <> nil) and (list.Count > 0) then
+  begin
+    cvgr := lse_mem_alloc_zero(sizeof(RLiVG_varlist));
+    cvgr^.vgrec.vg_data := cvgr;
+    cvgr^.vgrec.vg_type := KT_VARLIST;
+    cvgr^.vgrec.vg_object := list;
+    cvgr^.vgrec.vg_addref := @varlist_vargen_addref;
+    cvgr^.vgrec.vg_release := @varlist_vargen_release;
+    cvgr^.vgrec.vg_has_next := @varlist_vargen_has_next;
+    cvgr^.vgrec.vg_generate := @varlist_vargen_generate;
+    cvgr^.vgrec.vg_rewind := @varlist_vargen_rewind;
+    cvgr^.vgrec.vg_contains := @varlist_vargen_contains;
+    cvgr^.vgref := 0;
+    cvgr^.index := 0;
+    list.IncRefcount;
+    Result := @(cvgr^.vgrec);
+  end
+  else Result := nil;
+end;
+
+function cr_varlist_add(obj: pointer; Value: PLseValue): integer;cdecl;
+begin
+  if obj <> nil then
+  begin
+    Result := KLiVarList(obj).Count;
+    KLiVarList(obj).Add(Value);
+  end
+  else Result := -1;
+end;
+
+function cr_varlist_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+var
+  L: KLiVarList;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    L := KLiVarList(obj);
+    index := lse_vary_index(index, L.Count);
+    if (index >= 0) and (index < L.Count) then
+    begin
+      lse_set_value(value, L[index]);
+      Result := 1;
+    end;
+  end;
+end;
+
+function cr_varlist_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
+var
+  L: KLiVarList;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    L := KLiVarList(obj);
+    index := lse_vary_index(index, L.Count);
+    if (index >= 0) and (index < L.Count) then
+    begin
+      lse_set_value(L[index], value);
+      Result := 1;
+    end;
+  end;
+end;
+
+function cr_varlist_length(obj: pointer): integer;cdecl;
+begin
+  if obj <> nil then
+    Result := KLiVarList(obj).Count else
+    Result := 0;
+end;
+
+function cr_varsnap_getpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+var
+  snap: KLiVarSnap;
+  data: PLseValue;
+  name: string;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    name := lse_strec_string(prop);
+    snap := KLiVarSnap(obj);
+    data := snap.GetValue(name);
+    if data <> nil then
+    begin
+      lse_set_value(value, data);
+      Result := 1;
+    end;
+  end;
+end;
+
+function cr_varsnap_setpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+begin
+  Result := 0;
+  if obj <> nil then
+  begin
+    KLiVarSnap(obj).SetValue(lse_strec_string(prop), value);
+    Result := 1;
+  end;
+end;
+
 procedure pp_varlist_create(const Param: PLseParam);cdecl;
 var
   L: KLiVarList;
@@ -4082,15 +4242,7 @@ begin
     L.Count := Max(0, Param^.p_param[0]^.VInteger);
 end;
 
-procedure pp_varlist_get_length(const Param: PLseParam);cdecl;
-var
-  L: KLiVarList;
-begin
-  if get_this(Param, L) then
-    lse_set_int(Param^.p_result, L.Count);
-end;
-
-procedure pp_varlist_set_length(const Param: PLseParam);cdecl;
+procedure pp_varlist_resize(const Param: PLseParam);cdecl;
 var
   L: KLiVarList;
 begin
@@ -4267,7 +4419,7 @@ begin
 end;
 
 const
-  sys_func_count = 160;
+  sys_func_count = 165;
   sys_func_array: array[0..sys_func_count - 1] of RLseFunc = (
     (fr_prot:'dir:string ||';
      fr_addr:@pp_system_dir;
@@ -4429,6 +4581,14 @@ const
      fr_addr:@pp_system_current_func;
      fr_desc:'get current function';
     ),
+    (fr_prot:'__main__:function ||';
+     fr_addr:@pp_system_main_func;
+     fr_desc:'get main function';
+    ),
+    (fr_prot:'__in_main__:int ||';
+     fr_addr:@pp_system_in_main_func;
+     fr_desc:'in main function?';
+    ),
     (fr_prot:'__error__:error ||';
      fr_addr:@pp_system_current_error;
      fr_desc:'get current error';
@@ -4505,63 +4665,79 @@ const
      fr_addr:@pp_system_typeof;
      fr_desc:'get value type';
     ),
+    (fr_prot:'tailrc:void |A,B,C,D,E,F,G,H,I,J,K,L|';
+     fr_addr:@pp_system_tailrc;
+     fr_desc:'tail recursive';
+    ),
+    (fr_prot:'callcc |func:function, params:varlist|';
+     fr_addr:@pp_system_callcc;
+     fr_desc:'call with current continuation: fun => {|exit|} exit => {|value|}';
+    ),
+    (fr_prot:'yield |func:function, params:varlist|';
+     fr_addr:@pp_system_yield;
+     fr_desc:'yield parametre function with current context';
+    ),
   { error }
-    (fr_prot:'error_get_text:string |e:error|';
+    (fr_prot:'error_text:string |e:error|';
      fr_addr:@pp_error_text;
      fr_desc:'error text';
     ),
-    (fr_prot:'error_get_module:string |e:error|';
+    (fr_prot:'error_module:string |e:error|';
      fr_addr:@pp_error_module;
-     fr_desc:'error module';
+     fr_desc:'error module name';
     ),
-    (fr_prot:'error_get_name:string |e:error|';
+    (fr_prot:'error_name:string |e:error|';
      fr_addr:@pp_error_name;
      fr_desc:'error name';
     ),
-    (fr_prot:'error_get_message:string |e:error|';
+    (fr_prot:'error_message:string |e:error|';
      fr_addr:@pp_error_message;
      fr_desc:'error message';
     ),
-    (fr_prot:'error_get_row:int |e:error|';
+    (fr_prot:'error_row:int |e:error|';
      fr_addr:@pp_error_row;
      fr_desc:'error row';
     ),
-    (fr_prot:'error_get_col:int |e:error|';
+    (fr_prot:'error_col:int |e:error|';
      fr_addr:@pp_error_col;
      fr_desc:'error column';
     ),
-    (fr_prot:'error_get_errno:int |e:error|';
+    (fr_prot:'error_errno:int |e:error|';
      fr_addr:@pp_error_errno;
      fr_desc:'error code';
     ),
   { function }
-    (fr_prot:'function_get_name:string |f:function|';
+    (fr_prot:'function_name:string |f:function|';
      fr_addr:@pp_func_name;
      fr_desc:'function name';
     ),
-    (fr_prot:'function_get_description:string |f:function|';
+    (fr_prot:'function_desc:string |f:function|';
      fr_addr:@pp_func_desc;
      fr_desc:'function description';
     ),
-    (fr_prot:'function_get_type:string |f:function|';
+    (fr_prot:'function_type:type |f:function|';
      fr_addr:@pp_func_type;
      fr_desc:'get function result type';
     ),
-    (fr_prot:'function_get_prototype:string |f:function|';
+    (fr_prot:'function_prototype:string |f:function|';
      fr_addr:@pp_func_prototype;
      fr_desc:'function prototype';
     ),
-    (fr_prot:'function_get_module:module |f:function|';
+    (fr_prot:'function_module:module |f:function|';
      fr_addr:@pp_func_module;
      fr_desc:'function module';
     ),
-    (fr_prot:'function_get_pnames:varlist |f:function|';
+    (fr_prot:'function_pnames:varlist |f:function|';
      fr_addr:@pp_func_paramNames;
      fr_desc:'function parametre name list';
     ),
-    (fr_prot:'function_get_ptypes:varlist |f:function|';
+    (fr_prot:'function_ptypes:varlist |f:function|';
      fr_addr:@pp_func_paramTypes;
      fr_desc:'function parametre type list';
+    ),
+    (fr_prot:'function_tailrc:varlist |f:function,A,B,C,D,E,F,G,H,I,J,K|';
+     fr_addr:@pp_func_tailrc;
+     fr_desc:'tail recursive with this function';
     ),
   { hashed }
     (fr_prot:'hashed_create:hashed |buckets:int|';
@@ -4584,40 +4760,40 @@ const
      fr_addr:@pp_hashed_read;
      fr_desc:'read key value';
     ),
-    (fr_prot:'hashed_get_keys:varlist |h:hashed|';
+    (fr_prot:'hashed_keys:varlist |h:hashed|';
      fr_addr:@pp_hashed_keys;
      fr_desc:'get hashed key list';
     ),
-    (fr_prot:'hashed_get_values:varlist |h:hashed|';
+    (fr_prot:'hashed_values:varlist |h:hashed|';
      fr_addr:@pp_hashed_values;
      fr_desc:'get hashed value list';
     ),
   { module }
-    (fr_prot:'module_get_name:string |m:module|';
+    (fr_prot:'module_name:string |m:module|';
      fr_addr:@pp_module_name;
      fr_desc:'module name';
     ),
-    (fr_prot:'module_get_description:string |m:module|';
+    (fr_prot:'module_desc:string |m:module|';
      fr_addr:@pp_module_desc;
      fr_desc:'module description';
     ),
-    (fr_prot:'module_get_file:string |m:module|';
+    (fr_prot:'module_file:string |m:module|';
      fr_addr:@pp_module_file;
      fr_desc:'module file';
     ),
-    (fr_prot:'module_get_modules:varlist |m:module|';
+    (fr_prot:'module_modules:varlist |m:module|';
      fr_addr:@pp_module_modules;
      fr_desc:'imported module list';
     ),
-    (fr_prot:'module_get_funcs:varlist |m:module|';
+    (fr_prot:'module_funcs:varlist |m:module|';
      fr_addr:@pp_module_funcs;
      fr_desc:'global function list';
     ),
-    (fr_prot:'module_get_classes:varlist |m:module|';
+    (fr_prot:'module_types:varlist |m:module|';
      fr_addr:@pp_module_types;
      fr_desc:'get type list';
     ),
-    (fr_prot:'module_get_version:string |m:module|';
+    (fr_prot:'module_version:string |m:module|';
      fr_addr:@pp_module_version;
      fr_desc:'type version';
     ),
@@ -4630,15 +4806,15 @@ const
      fr_addr:@pp_vargen_create;
      fr_desc:'create variant generator';
     ),
-    (fr_prot:'vargen_get_eof:int |v:vargen|';
+    (fr_prot:'vargen_eof:int |v:vargen|';
      fr_addr:@pp_vargen_eof;
      fr_desc:'test if finished';
     ),
-    (fr_prot:'vargen_next |v:vargen|';
-     fr_addr:@pp_vargen_next;
+    (fr_prot:'vargen_generate |v:vargen|';
+     fr_addr:@pp_vargen_generate;
      fr_desc:'generate next value';
     ),
-    (fr_prot:'vargen_rewind:int |v:vargen|';
+    (fr_prot:'vargen_rewind |v:vargen|';
      fr_addr:@pp_vargen_rewind;
      fr_desc:'restart from first element';
     ),
@@ -4648,18 +4824,18 @@ const
      fr_desc:'close stream';
     ),
     (fr_prot:'stream_resize:void |s:stream, length:int|';
-     fr_addr:@pp_stream_set_length;
+     fr_addr:@pp_stream_resize;
      fr_desc:'set stream size';
     ),
-    (fr_prot:'stream_get_eof:int |s:stream|';
+    (fr_prot:'stream_eof:int |s:stream|';
      fr_addr:@pp_stream_eof;
      fr_desc:'test if is at end of the stream';
     ),
-    (fr_prot:'stream_position:string |s:stream|';
+    (fr_prot:'stream_pos:string |s:stream|';
      fr_addr:@pp_stream_get_position;
      fr_desc:'get current position';
     ),
-    (fr_prot:'stream_seekTo:void |s:stream, newPosition:int|';
+    (fr_prot:'stream_seek:void |s:stream, newPosition:int|';
      fr_addr:@pp_stream_set_position;
      fr_desc:'set current position';
     ),
@@ -4692,15 +4868,15 @@ const
      fr_desc:'wrap stram as a line generator';
     ),
   { string }
-    (fr_prot:'string_setAt:string |s:string, index:int, value:string|';
+    (fr_prot:'string_set:string |s:string, index:int, value:string|';
      fr_addr:@pp_string_setAt;
      fr_desc:'set char by index';
     ),
-    (fr_prot:'string_get_name:string |s:string|';
+    (fr_prot:'string_name:string |s:string|';
      fr_addr:@pp_string_name;
      fr_desc:'extract name';
     ),
-    (fr_prot:'string_get_value:string |s:string|';
+    (fr_prot:'string_value:string |s:string|';
      fr_addr:@pp_string_value;
      fr_desc:'extract value';
     ),
@@ -4732,15 +4908,15 @@ const
      fr_addr:@pp_string_trim;
      fr_desc:'trim left and right';
     ),
-    (fr_prot:'string_trimLeft:string |s:string|';
+    (fr_prot:'string_trimL:string |s:string|';
      fr_addr:@pp_string_trimLeft;
      fr_desc:'trim left';
     ),
-    (fr_prot:'string_trimRight:string |s:string|';
+    (fr_prot:'string_trimR:string |s:string|';
      fr_addr:@pp_string_trimRight;
      fr_desc:'trim right';
     ),
-    (fr_prot:'string_trimAll:string |s:string|';
+    (fr_prot:'string_trimA:string |s:string|';
      fr_addr:@pp_string_trimAll;
      fr_desc:'trim all spaces';
     ),
@@ -4833,16 +5009,16 @@ const
      fr_desc:'test if is upper case string';
     ),
   { type }
-    (fr_prot:'type_get_name:string |t:type|';
+    (fr_prot:'type_name:string |t:type|';
      fr_addr:@pp_type_name;
      fr_desc:'type name';
     ),
-    (fr_prot:'type_get_module:module |t:type|';
+    (fr_prot:'type_module:module |t:type|';
      fr_addr:@pp_type_module;
      fr_desc:'owner module';
     ),
-    (fr_prot:'type_get_description:string |t:type|';
-     fr_addr:@pp_type_description;
+    (fr_prot:'type_desc:string |t:type|';
+     fr_addr:@pp_type_desc;
      fr_desc:'type description';
     ),
     (fr_prot:'type_methods:varlist |t:type, listName:int|';
@@ -4854,12 +5030,8 @@ const
      fr_addr:@pp_varlist_create;
      fr_desc:'create variant list';
     ),
-    (fr_prot:'varlist_get_length:int |l:varlist|';
-     fr_addr:@pp_varlist_get_length;
-     fr_desc:'set list size';
-    ),
-    (fr_prot:'varlist_set_length:void |l:varlist, count:int|';
-     fr_addr:@pp_varlist_set_length;
+    (fr_prot:'varlist_resize:void |l:varlist, count:int|';
+     fr_addr:@pp_varlist_resize;
      fr_desc:'set list size';
     ),
     (fr_prot:'varlist_exchange:void |l:varlist, X1:int, X2:int|';
@@ -4902,11 +5074,11 @@ const
      fr_addr:@pp_varlist_right;
      fr_desc:'copy right';
     ),
-    (fr_prot:'varlist_get_first |l:varlist|';
+    (fr_prot:'varlist_first |l:varlist|';
      fr_addr:@pp_varlist_first;
      fr_desc:'get first variant item';
     ),
-    (fr_prot:'varlist_get_last |l:varlist|';
+    (fr_prot:'varlist_last |l:varlist|';
      fr_addr:@pp_varlist_last;
      fr_desc:'get last variant item';
     ),
@@ -5832,6 +6004,11 @@ begin
     Result := '';
 end;
 
+function  get_func(Param: PLseParam): KLiFunc;
+begin
+  Result := KLiFunc(Param^.p_func);
+end;
+
 function get_runner(Param: PLseParam): KLiRunner;
 begin
   Result := KLiRunner(Param^.p_runner);
@@ -5970,7 +6147,7 @@ begin
   Result := (Host <> nil) and
             (V^.vtype <> nil) and
             (V^.vtype^.cr_type = LSV_STRING) and
-            Host.IsSet(lse_get_str(V));
+            Host.Exists(lse_get_strec(V));
 end;
 
 function extract_name_module(const ID: string; var Module: string): string;
@@ -6092,7 +6269,7 @@ begin
     begin
       path := lse_full_path(path);
 
-      temp := path + Name + LSE_DLLEXT;
+      temp := path + Name + LSE_OBJEXT;
       Result := FileExists(temp);
       if Result then
       begin
@@ -6584,7 +6761,7 @@ begin
     '0'..'9': get_number;
     '"','''': get_string;
     '+'     : get_operator(syAdd, [], []);
-    '-'     : get_operator(syDec, [], []);
+    '-'     : get_operator(syDec, ['>'], [syRight]);
     '*'     : get_operator(syMul, [], []);
     '/'     : get_operator(syDiv, [], []);
     '%'     : get_operator(syMod, [], []);
@@ -6598,13 +6775,13 @@ begin
     ']'     : get_operator(syRArray, [], []);
     '.'     : get_operator(syDot, ['.'], [syUpto]);
     '?'     : get_operator(syAsk, [], []);
-    ':'     : get_operator(syDot2, [], []);
+    ':'     : get_operator(syDot2, ['='], [syBecome]);
     ','     : get_operator(syComma,  [], []);
     ';'     : get_operator(sySemicolon,  [], []);
     '='     : get_operator(syBecome, ['='], [syEQ]);
     '!'     : get_operator(syError, ['=', '<', '>'], [syNE, syME, syLE]);
     '<'     : begin
-                get_operator(syLess, ['=', '<'], [syLE, syBitShl]);
+                get_operator(syLess, ['=', '<', '-'], [syLE, syBitShl, syLeft]);
                 if (token^.tk_sym = syBitShl) and (FChar = '<') then
                 begin
                   token^.tk_sym := syFill;
@@ -7077,7 +7254,7 @@ procedure KLiParser.ParseStatement(OnHead: boolean);
     //   case expr1: ...
     //   case ...  : ...
     //   case exprN: ...
-    //   else        ...
+    //   else            ...
     // --------------------------------------------
     bl := FModule.NewLabelName;
     CurCodes.AddRinr(bl, @FLast^.tk_pos);
@@ -7107,8 +7284,14 @@ procedure KLiParser.ParseStatement(OnHead: boolean);
     if FBreakLabel = '' then
       Error.SyntaxErr(EvBreakNoLoop, LastRow, LastCol, LastModule.Name,
         EsBreakNoLoop, LastModule.FileName, []);
-    SymTestNext([syRBlock]);
-    CurCodes.AddGoto(FBreakLabel, @FLast^.tk_pos);
+    SymTestNext([syIf, syRBlock]);
+    if FLast^.tk_sym = syIf then
+    begin
+      ParseExpr([syRBlock], false);
+      CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := 2;
+      CurCodes.AddGoto(FBreakLabel, @FLast^.tk_pos);
+    end
+    else CurCodes.AddGoto(FBreakLabel, @FLast^.tk_pos);
   end;
 
   procedure parse_continue;
@@ -7116,16 +7299,63 @@ procedure KLiParser.ParseStatement(OnHead: boolean);
     if FContinueLabel = '' then
       Error.SyntaxErr(EvContinueNoLoop, LastRow, LastCol, LastModule.Name,
         EsContinueNoLoop, LastModule.FileName, []);
-    SymTestNext([syRBlock]);
-    CurCodes.AddGoto(FContinueLabel, @FLast^.tk_pos);
+    SymTestNext([syIf, syRBlock]);
+    if FLast^.tk_sym = syIf then
+    begin
+      ParseExpr([syRBlock], false);
+      CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := 2;
+      CurCodes.AddGoto(FContinueLabel, @FLast^.tk_pos);
+    end
+    else CurCodes.AddGoto(FContinueLabel, @FLast^.tk_pos);
   end;
 
   procedure parse_return;
+  var
+    I, X: integer;
+    V, L: TList;
   begin
     SymGotoNext;
-    if FLast^.tk_sym <> syRBlock then
-      ParseExpr([syRBlock], true);
-    CurCodes.AddNew(syReturn, @FLast^.tk_pos);
+    if FLast^.tk_sym in [syIf, syRBlock] then
+    begin
+      if FLast^.tk_sym = syIf then
+      begin
+        ParseExpr([syRBlock], false);
+        CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := 2;
+      end;
+      CurCodes.AddNew(syReturn, @FLast^.tk_pos);
+    end
+    else
+    begin
+      I := CurCodes.Count;
+      ParseExpr([syIf, syRBlock], true);
+      CurCodes.AddNew(syReturn, @FLast^.tk_pos);
+      if FLast^.tk_sym = syIf then
+      begin
+        V := CurCodes.CopyFrom(I);
+        try
+          X := CurCodes.Count;
+          ParseExpr([syRBlock], false);
+          CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := V.Count + 1;
+          L := CurCodes.CopyFrom(X);
+          try
+            for X := 0 to L.Count - 1 do
+            begin
+              CurCodes.FItems[I] := L[X];
+              Inc(I);
+            end;
+            for X := 0 to V.Count - 1 do
+            begin
+              CurCodes.FItems[I] := V[X];
+              Inc(I);
+            end;
+          finally
+            L.Free;
+          end;
+        finally
+          V.Free;
+        end;
+      end;
+    end;
   end;
 
   procedure parse_try;
@@ -7171,20 +7401,6 @@ procedure KLiParser.ParseStatement(OnHead: boolean);
     finally
       Dec(FCatchCount);
     end;
-  end;
-
-  procedure parse_echo;
-  var
-    L: PLiToken;
-  begin
-    L := FLast;
-    L^.tk_prmc := 0;
-    repeat
-      SymGotoNext;
-      ParseExpr([syRBlock, syComma], true);
-      Inc(L^.tk_prmc);
-    until FLast^.tk_sym in [syRBlock];
-    AddToken(L)^.tk_sym := syEcho;
   end;
 
   const
@@ -7337,13 +7553,8 @@ procedure KLiParser.ParseStatement(OnHead: boolean);
       if FModule.Find(FLast^.tk_name) then
         Error.Redeclared(Self);
       FCurrent := FModule.NewFunc(FLast^.tk_name);
+      ParseArguments(FCurrent, [syRight], false);
       SymGotoNext;
-      if FLast^.tk_sym = syBitOr then
-      begin
-        ParseArguments(FCurrent, [syBitOr], false);
-        SymGotoNext;
-      end
-      else FCurrent.IsNameCall := true;
       ParseBody(syRBlock, true);
     end;
   end;
@@ -7451,7 +7662,7 @@ begin
     if FLast^.tk_sym = syEOF then
       Error.SymNotFound(Self);
 
-    while not OnHead and ((FLast^.tk_sym <> syLBlock) or (PeekNextSym = syBitOr)) do
+    while not OnHead and ((FLast^.tk_sym <> syLBlock) or (PeekNextSym in [syBitOr, syRight])) do
     begin
       ParseExpr([], true);
       if FLast^.tk_sym in [syRBlock, syElse, syCase, syEOF] then
@@ -7481,7 +7692,6 @@ begin
       syContinue: parse_continue;
       syReturn  : parse_return;
       syTry     : parse_try;
-      syBecome  : parse_echo;
       syDo      : ParseBlock([syRBlock], false);
       syRBlock  : AddToken(FLast)^.tk_sym := syNil;
       else begin
@@ -7546,43 +7756,65 @@ begin
   end;
 end;
 
-procedure KLiParser.ParseArguments(Func: KLiFunc; EndSym: KLiSymbols; OnHead: boolean);
+procedure KLiParser.ParseArguments(Func: KLiFunc; EndSyms: KLiSymbols; OnHead: boolean);
 begin
   if not OnHead then SymGotoNext;
-  if not (FLast^.tk_sym in EndSym) then
-  repeat
+  while not (FLast^.tk_sym in EndSyms) do
+  begin
     SymTestLastPureID;
     if Func.FindInside(FLast^.tk_name) then
       Error.Redeclared(Self);
     Func.AddParam(FLast^.tk_name, KT_VARIANT);
-    SymTestNext(EndSym + [syComma]);
-    if FLast^.tk_sym = syComma then SymGotoNext else Exit;
-  until false;
+    SymGotoNext;
+  end;
 end;
 
 procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
 
-  procedure parse_ask;
+  procedure parse_arguments(ask: PLiToken; Ends: KLiSymbols);
+  begin
+    ask^.tk_prmc := 1;
+    SymGotoNext;
+    if not (FLast^.tk_sym in Ends) then
+    begin
+      ParseExpr(Ends + [syComma], true);
+      Inc(ask^.tk_prmc);
+      while FLast^.tk_sym = syComma do
+      begin
+        ParseExpr(Ends + [syComma], false);
+        Inc(ask^.tk_prmc);
+      end;
+    end;
+  end;
+  
+  procedure parse_one_ask(Ends: KLiSymbols);
   var
     ask: PLiToken;
   begin
-    while FLast^.tk_sym in [syLParen] do
+    ask := CurCodes.Last;
+    if (ask^.tk_sym = syMethod) and (ask^.tk_prmc = 0) then
+    begin
+      CurCodes.FItems.Delete(CurCodes.FItems.Count - 1);
+      try
+        parse_arguments(ask, Ends);
+      finally
+        CurCodes.FItems.Add(ask);
+      end;
+    end
+    else
     begin
       ask := FLast;
-      ask^.tk_prmc := 1;
-      SymGotoNext;
-      if FLast^.tk_sym <> syRParen then
-      begin
-        ParseExpr([syRParen, syComma], true);
-        Inc(ask^.tk_prmc);
-        while FLast^.tk_sym = syComma do
-        begin
-          ParseExpr([syRParen, syComma], false);
-          Inc(ask^.tk_prmc);
-        end;
-      end;
+      parse_arguments(ask, Ends);
       ask^.tk_sym := syAsk;
       AddToken(ask);
+    end;
+  end;
+
+  procedure parse_ask;
+  begin
+    while FLast^.tk_sym in [syLParen] do
+    begin
+      parse_one_ask([syRParen]);
       SymGotoNext;
     end;
   end;
@@ -7613,12 +7845,14 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
     L := FLast;
     SymGotoNext;
 
-    if (L^.tk_sym in OperIDSyms) and ((L^.tk_sym <> syDec)
-      or (FLast^.tk_sym in OperIDSyms + EndSyms + ExprEndSyms)) then
-      begin
-        L^.tk_name := Symbols[L^.tk_sym].ID;
-        L^.tk_sym := syID;
-      end;
+    if L^.tk_sym in OperSyms then
+      if (L^.tk_sym <> syDec)
+        or not (FLast^.tk_sym in ExprHeadSyms)
+          or (FLast^.tk_sym in OperSyms + EndSyms) then
+          begin
+            L^.tk_name := Symbols[L^.tk_sym].ID;
+            L^.tk_sym := syID;
+          end;
 
     if (L^.tk_sym = syDec) and (FLast^.tk_sym in [syFloat, syInt]) then
     begin
@@ -7629,7 +7863,7 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
       SymGotoNext;
     end;
       
-    if L^.tk_sym in ConstantSyms + [syID] then
+    if L^.tk_sym in ConstSyms then
     begin
       AddToken(L);
       if L^.tk_sym in [syGetEnv, syGetSV, syID] then
@@ -7659,14 +7893,15 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
         end
         else Break;
       end;
-      if FLast^.tk_sym = syBitOr then // lambda
+      if FLast^.tk_sym in [syBitOr, syRight] then // lambda
       begin
         with Shadow do
         try
           lambda := FModule.NewFunc('');
           lambda.IsLambdaFunc := true;
           FCurrent := lambda;
-          ParseArguments(lambda, [syBitOr], false);
+          if FLast^.tk_sym = syBitOr then
+            ParseArguments(lambda, [syRight], false);
           ParseBody(syRBlock, false);
           if lambda.IsEmptyFunc then
           begin
@@ -7739,13 +7974,17 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
         SymGotoNext;
         if not (FLast^.tk_sym in [FirstKeyword..LastKeyword]) then
           SymTestLastPureID;
-        FLast^.tk_sym := syStr;
+        FLast^.tk_sym := syMethod;
+        FLast^.tk_prmc := 0;
         AddToken(FLast);
       end
-      else ParseExpr([syRArray], false);
-      L^.tk_sym := syGetIV;
-      L^.tk_prmc := 2;
-      AddToken(L);
+      else
+      begin
+        ParseExpr([syRArray], false);
+        L^.tk_sym := syGetIV;
+        L^.tk_prmc := 2;
+        AddToken(L);
+      end;
       SymGotoNext;
       parse_ask;
     end;
@@ -7763,10 +8002,10 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
     J := nil;  // jump record
     P := nil;
     X := 0;
-    while (FLast^.tk_sym in ExprOperSyms[Level]) and (PeekNextSym <> syBecome) do
+    while (FLast^.tk_sym in OperLevel[Level]) and (PeekNextSym <> syBecome) do
     begin
       L := FLast;
-      if Level = High(ExprOperSyms) then  // syAnd, syOr
+      if Level = High(OperLevel) then  // syAnd, syOr
       begin
         J := CloneSym(L);
         if L^.tk_sym = syAnd then
@@ -7788,10 +8027,21 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead: boolean);
     end;
   end;
 
+var
+  Ends: KLiSymbols;
 begin
   if not OnHead then SymGotoNext;
-  parse_fact(High(ExprOperSyms));
-  SymTestLast(EndSyms);
+  parse_fact(High(OperLevel));
+  if (EndSyms <> []) and not (FLast^.tk_sym in EndSyms) then
+  begin
+    Ends := [syIf, syThen, syDo, syDot2, syRBlock, syRParen, syRArray] * EndSyms;
+    if Ends <> [] then
+    begin
+      FTokenizer.DupCurrentToken;
+      parse_one_ask(Ends);
+    end
+    else SymTestLast(EndSyms);
+  end;
 end;
 
 function KLiParser.AddToken(token: PLiToken): PLiToken;
@@ -7997,8 +8247,8 @@ var
   V: PLseVarb;
 begin
   V := lse_mem_alloc_zero(sizeof(RLseVarb));
-  V^.va_name := VName;
-  V^.va_type := VType;
+  V^.v_name := VName;
+  V^.v_type := VType;
   X := Length(FParams);
   SetLength(FParams, X + 1);
   FParams[X] := V;
@@ -8010,17 +8260,16 @@ var
   S: PLseVarb;
 begin
   X := Length(FParams);
-  if (X = 0) or (FParams[0]^.va_name <> '$') then
+  if (X = 0) or (FParams[0]^.v_name <> '$') then
   begin
     AddParam('$', KT_VARSNAP);
     S := FParams[X];
     if X > 0 then
     begin
-      while X > 0 do
-      begin
+      repeat
         FParams[X] := FParams[X - 1];
         Dec(X);
-      end;
+      until X = 0;
       FParams[0] := S;
     end;
   end;
@@ -8102,7 +8351,7 @@ begin
     if (index - base) >= List.Count then
     begin
       varb := func.GetParam(index);
-      curr.AddParam(varb^.va_name, varb^.va_type);
+      curr.AddParam(varb^.v_name, varb^.v_type);
     end
     else curr.AddCurry(List[index - base]);
 
@@ -8146,7 +8395,7 @@ begin
   for index := base + 1 to func.ParamCount - 1 do
   begin
     varb := func.GetParam(index);
-    curr.AddParam(varb^.va_name, varb^.va_type);
+    curr.AddParam(varb^.v_name, varb^.v_type);
   end;
 
   Result := curr;
@@ -8187,7 +8436,7 @@ begin
 
   for X := 0 to Length(FParams) - 1 do
   begin
-    FParams[X]^.va_name := '';
+    FParams[X]^.v_name := '';
     lse_mem_free(FParams[X], sizeof(RLseVarb));
   end;
   SetLength(FParams, 0);
@@ -8295,7 +8544,7 @@ var
   begin
     Result := (func <> nil) and
               (func.ParamCount > 0) and
-              lse_type_match(func.GetParam(0)^.va_type, AType);
+              lse_type_match(func.GetParam(0)^.v_type, AType);
   end;
   
 begin
@@ -8343,7 +8592,7 @@ var
   X: integer;
 begin
   for X := 0 to Length(FParams) - 1 do
-    if FParams[X]^.va_name = VName then
+    if FParams[X]^.v_name = VName then
     begin
       Result := FParams[X];
       Exit;
@@ -8358,7 +8607,7 @@ end;
 
 function KLiFunc.HasSuper: boolean;
 begin
-  Result := (Length(FParams) > 0) and (FParams[0]^.va_name = '$');
+  Result := (Length(FParams) > 0) and (FParams[0]^.v_name = '$');
 end;
 
 function KLiFunc.ListMethod(AType: PLseType; OnlyName: boolean): KLiVarList;
@@ -8374,7 +8623,7 @@ var
     begin
       if N = Copy(func.Name, 1, Length(N)) then
         if func.ParamCount > 0 then
-          if lse_type_match(func.GetParam(0)^.va_type, AType) then
+          if lse_type_match(func.GetParam(0)^.v_type, AType) then
             if OnlyName then
               L.Add(func.Name) else
               L.Add(func, KT_FUNC);
@@ -8469,6 +8718,16 @@ begin
   end;
 end;
 
+function KLiTokens.CopyFrom(Index: integer): TList;
+begin
+  Result := TList.Create;
+  while Index < FItems.Count do
+  begin
+    Result.Add(FItems[Index]);
+    Inc(Index);
+  end;
+end;
+
 constructor KLiTokens.Create(AFunc: KLiFunc);
 begin
   FFunc := AFunc;
@@ -8486,107 +8745,84 @@ procedure KLiTokens.DumpCode(List: TStrings; const Margin: string);
 var
   A: integer;
   R: PLiToken;
-  L: TList;
   H: string;
-
-  function Log(const S: string): integer;
-  begin
-    Result := List.Add(Margin + S);
-  end;
-
 begin
-  L := TList.Create;
-  try
-    for A := 0 to GetCount - 1 do
-    begin
-      R := GetItem(A);
-      if R^.tk_sym in [syJump, syJmpF, syJmpT, syJmpFP, syJmpTP] then
-        L.Add(pointer(A + R^.tk_prmc));
+  for A := 0 to GetCount - 1 do
+  begin
+    R := GetItem(A);
+    case R^.tk_sym of
+      syReturn    : if R^.tk_prmc > 0 then
+                      H := 'RETL' else // return last
+                      H := 'EXIT';
+      syJump      : H := Format('JUMP %.4d:', [A + R^.tk_prmc]);
+      syJmpF      : H := Format('JMPF %.4d:', [A + R^.tk_prmc]);
+      syJmpT      : H := Format('JMPT %.4d:', [A + R^.tk_prmc]);
+      syJmpFP     : H := Format('JMPF %.4d: POP', [A + R^.tk_prmc]);
+      syJmpTP     : H := Format('JMPT %.4d: POP', [A + R^.tk_prmc]);
+      syAsk       : H := Format('CASK %d', [R^.tk_prmc]);
+      syIdle      : H := 'IDLE';
+      syID        : H := Format('PUSH %s', [R^.tk_name]);
+      syBecome    : H := Format('SAVE %s', [R^.tk_name]);
+      syFloat     : H := Format('PSHF %f', [R^.VFloat]);
+      syInt       : H := Format('PSHI %d', [R^.VInteger]);
+      syStr       : H := Format('PSHS %s', [R^.tk_name]);
+      syTry       : if R^.tk_prmc > 0 then
+                      H := Format('TRYF %s', [R^.tk_name]) else
+                      H := Format('TRYC %s', [R^.tk_name]);
+      syNeg       : H := 'CALC NEG';
+      syAdd       : H := 'CALC +';
+      syFill      : H := 'CALC <<<';
+      syDec       : H := 'CALC -';
+      syMul       : H := 'CALC *';
+      syDiv       : H := 'CALC /';
+      syMod       : H := 'CALC %';
+      syBitNot    : H := 'CALC ~';
+      syBitXor    : H := 'CALC ^';
+      syBitOr     : H := 'CALC |';
+      syBitAnd    : H := 'CALC &';
+      syBitShl    : H := 'CALC <<';
+      syBitShr    : H := 'CALC >>';
+      syEQ        : H := 'CALC ==';
+      syIn        : H := 'CALC IN';
+      syNE        : H := 'CALC !=';
+      syLess      : H := 'CALC <';
+      syLE        : H := 'CALC <=';
+      syMore      : H := 'CALC >';
+      syUpto      : H := 'CALC ..';
+      syME        : H := 'CALC >=';
+      syNot       : H := 'CALC NOT';
+      syAnd       : H := 'CALC AND';
+      syOr        : H := 'CALC OR';
+      syVarList   : H := Format('LIST %d', [R^.tk_prmc]);
+      syNil       : H := 'PUSH NIL';
+      syGetEnv    : H := Format('PUSH ${%s}', [R^.tk_name]);
+      syGetSV     : H := Format('PUSH $%s', [R^.tk_name]);
+      sySetSV     : H := Format('SAVE $%s', [R^.tk_name]);
+      syFormat    : H := 'FRMT';
+      syLabel     : H := 'IDLE';                  
+      syGoto      : H := Format('GOTO %.4d', [R^.VLabel^.tk_prmc]);
+      syGoTP      : H := Format('GOTP %.4d', [R^.VLabel^.tk_prmc]);
+      syGoFP      : H := Format('GOFP %.4d', [R^.VLabel^.tk_prmc]);
+      syIs        : H := 'CALC IS';
+      syAs        : H := 'CALC AS';
+      syVarGen    : H := 'VGEN';
+      syHashed    : H := Format('HASH %d', [R^.tk_prmc]);
+      syRINR      : H := Format('RINR %.4d', [R^.VLabel^.tk_prmc]);
+      syGETV      : H := 'GETV';
+      sySETV      : H := 'SETV';
+      syLike      : H := 'LIKE';
+      syGetIV     : H := 'GETI';
+      sySetIV     : H := 'SETI';
+      syMethod    : if R^.tk_prmc > 0 then
+                      H := Format('ASKM %d:%s', [R^.tk_prmc, R^.tk_name]) else
+                      H := Format('MTHD %s', [R^.tk_name]);
+      syDupLast   : H := 'DUPL';
+      sySend      : H := Format('SEND %s', [R^.tk_name]);
+      syCase      : H := 'CASE';
+      sySTMT      : H := 'STMT';
+      else          H := 'WRNG: ' + Symbols[R^.tk_sym].SM;
     end;
-
-    for A := 0 to GetCount - 1 do
-    begin
-      R := GetItem(A);
-      case R^.tk_sym of
-        syReturn    : if R^.tk_prmc > 0 then
-                        H := 'RETL' else // return last
-                        H := 'EXIT';
-        syJump      : H := Format('JUMP &%.4d:', [A + R^.tk_prmc]);
-        syJmpF      : H := Format('JMPF &%.4d:', [A + R^.tk_prmc]);
-        syJmpT      : H := Format('JMPT &%.4d:', [A + R^.tk_prmc]);
-        syJmpFP     : H := Format('JMPF &%.4d: POP', [A + R^.tk_prmc]);
-        syJmpTP     : H := Format('JMPT &%.4d: POP', [A + R^.tk_prmc]);
-        syAsk       : H := Format('CASK %d', [R^.tk_prmc]);
-        syIdle      : H := 'IDLE';
-        syID        : H := Format('PUSH %s', [R^.tk_name]);
-        syBecome    : H := Format('SAVE %s', [R^.tk_name]);
-        syFloat     : H := Format('PSHF %f', [R^.VFloat]);
-        syInt       : H := Format('PSHI %d', [R^.VInteger]);
-        syStr       : H := Format('PSHS %s', [R^.tk_name]);
-        syTry       : if R^.tk_prmc > 0 then
-                        H := Format('TRYF %s', [R^.tk_name]) else
-                        H := Format('TRYC %s', [R^.tk_name]);
-        syEcho      : H := Format('ECHO %d', [R^.tk_prmc]);
-        syNeg       : H := 'CALC NEG';
-        syAdd       : H := 'CALC +';
-        syFill      : H := 'CALC <<<';
-        syDec       : H := 'CALC -';
-        syMul       : H := 'CALC *';
-        syDiv       : H := 'CALC /';
-        syMod       : H := 'CALC %';
-        syBitNot    : H := 'CALC ~';
-        syBitXor    : H := 'CALC ^';
-        syBitOr     : H := 'CALC |';
-        syBitAnd    : H := 'CALC &';
-        syBitShl    : H := 'CALC <<';
-        syBitShr    : H := 'CALC >>';
-        syEQ        : H := 'CALC ==';
-        syIn        : H := 'CALC IN';
-        syNE        : H := 'CALC !=';
-        syLess      : H := 'CALC <';
-        syLE        : H := 'CALC <=';
-        syMore      : H := 'CALC >';
-        syUpto      : H := 'CALC ..';
-        syME        : H := 'CALC >=';
-        syNot       : H := 'CALC NOT';
-        syAnd       : H := 'CALC AND';
-        syOr        : H := 'CALC OR';
-        syVarList   : H := Format('LIST %d', [R^.tk_prmc]);
-        syNil       : H := 'PUSH NIL';
-        syGetEnv    : H := Format('PUSH ${%s}', [R^.tk_name]);
-        syGetSV     : H := Format('PUSH $%s', [R^.tk_name]);
-        sySetSV     : H := Format('SAVE $%s', [R^.tk_name]);
-        syFormat    : H := 'FRMT';
-        syLabel     : H := R^.tk_name;
-        syGoto      : H := Format('GOTO %s', [R^.tk_name]);
-        syGoTP      : H := Format('GOTP %s', [R^.tk_name]);
-        syGoFP    : H := Format('GOFP %s', [R^.tk_name]);
-        syIs        : H := 'CALC IS';
-        syAs        : H := 'CALC AS';
-        syVarGen    : H := 'VGEN';
-        syHashed    : H := Format('HASH %d', [R^.tk_prmc]);
-        syRINR      : H := Format('RINR %s', [R^.tk_name]);
-        syGETV      : H := 'GETV';
-        sySETV      : H := 'SETV';
-        syLike      : H := 'LIKE';
-        syGetIV     : H := 'GETI';
-        sySetIV     : H := 'SETI';
-        syDupLast   : H := 'DUPL';
-        sySend      : H := Format('SEND %s', [R^.tk_name]);
-        syCase      : H := 'CASE';
-        sySTMT      : H := 'STMT';
-        else          H := 'WRNG: ' + Symbols[R^.tk_sym].SM;
-      end;
-
-      if L.IndexOf(pointer(A)) >= 0 then
-        H := Format('%.4d:%s', [A, H]) else
-        H := '     ' + H;
-      Log(H);
-    end;
-    if L.IndexOf(pointer(GetCount)) >= 0 then
-      Log(Format('%.4d:', [GetCount]));
-  finally
-    L.Free;
+    List.Add(Format('     %s%.4d: %s', [Margin, A, H]));
   end;
 end;
 
@@ -8716,6 +8952,15 @@ begin
   AddParam('V1', KT_VARIANT);
   AddParam('V2', KT_VARIANT);
   FOper := AOper;
+end;
+
+{ KLiFunc_callcc }
+
+constructor KLiFunc_callcc.Create(AModule: KLiModule; AResult: PLseValue);
+begin
+  inherited Create(AModule, KT_VARIANT, '', nil, @udc_callcc);
+  AddParam('result', KT_VARIANT);
+  FResult := AResult;
 end;
 
 { KLiMacro }
@@ -8888,7 +9133,7 @@ end;
 
 function KLiVarList.AddSend(VG: PLseVargen): boolean;
 begin
-  Result := lse_vargen_send(VG, Add);
+  Result := lse_vargen_generate(VG, Add);
 end;
 
 function KLiVarList.AddStrings(List: TStrings): integer;
@@ -8903,10 +9148,10 @@ end;
 function KLiVarList.AddAll(VG: PLseVargen): integer;
 begin
   Result := 0;
-  while not lse_vargen_eof(VG) do
+  while lse_vargen_has_next(VG) do
   begin
     Inc(Result);
-    lse_vargen_send(VG, Add);
+    lse_vargen_generate(VG, Add);
   end;
 end;
 
@@ -10082,7 +10327,7 @@ begin
   if Name = 'mainfile' then
     lse_set_string(Value, FMainFile) else
   begin
-    data := FMainValues.FindValue(Name);
+    data := FMainValues.FindBy(pchar(Name));
     if data <> nil then
       lse_set_value(Value, data) else
       lse_set_string(Value, kernel_config(Name));
@@ -10282,7 +10527,18 @@ begin
     clss := lse_type(VD);
     if clss = KT_VARLIST then OrMarkVarlist(KLiVarList(vobj)) else
     if clss = KT_HASHED  then OrMarkHashed(KLiHashed(vobj)) else
-    if clss = KT_FUNC    then OrMarkFunc(KLiFunc(vobj))
+    if clss = KT_FUNC    then OrMarkFunc(KLiFunc(vobj)) else
+    if clss = KT_VARGEN then
+    begin
+      vobj := PLseVargen(vobj)^.vg_object;
+      if vobj <> nil then
+      begin
+        clss := PLseVargen(vobj)^.vg_type;
+        if clss = KT_VARLIST then OrMarkVarlist(KLiVarList(vobj)) else
+        if clss = KT_HASHED  then OrMarkHashed(KLiHashed(vobj)) else
+        if clss = KT_FUNC    then OrMarkFunc(KLiFunc(vobj));
+      end;
+    end;
   end;
 end;
 
@@ -10313,8 +10569,7 @@ end;
 function KLiEngine.OrMarkHashed(HS: KLiHashed): boolean;
 var
   rec: PLiObjRec;
-  list: TList;
-  index: integer;
+  H: PLiHashed;
 begin
   Result := (HS <> nil);
   if Result then
@@ -10323,12 +10578,11 @@ begin
     if not OrIsMarked(rec) then
     begin
       Include(rec^.or_state, orsMarked);
-      list := TList.Create;
-      try
-        for index := HS.ListData(list) - 1 downto 0 do
-          OrMarkValue(PLseValue(list[index]));
-      finally
-        list.Free;
+      H := HS.FFirst;
+      while H <> nil do
+      begin
+        OrMarkValue(@H^.hi_data);
+        H := H^.hi_next;
       end;
     end;
   end;
@@ -10402,7 +10656,7 @@ var
   data: PLseValue;
 begin
   try
-    data := FMainValues.FindValue(Name);
+    data := FMainValues.FindBy(pchar(Name));
     if data <> nil then
       Result := lse_get_str(data) else
     if Name = 'search' then
@@ -10435,7 +10689,7 @@ begin
   SetLength(FNames, Func.ParamCount);
   for X := 0 to Func.ParamCount - 1 do
   begin
-    FNames[X] := Func.GetParam(X)^.va_name;
+    FNames[X] := Func.GetParam(X)^.v_name;
     Add;
   end;
 end;
@@ -10484,6 +10738,8 @@ begin
     SetLength(FNames, X + 1);
     FNames[X] := Name;
     Result := Add;
+    if Name = '$' then
+      lse_type_cast(KT_VARSNAP, Result);
   end
   else Result := GetData(X);
 end;
@@ -10512,9 +10768,12 @@ begin
 end;
 
 function KLiVarSnap.Super: KLiVarSnap;
+var
+  X: integer;
 begin
-  if (Length(FNames) > 0) and (FNames[0] = '$') then
-    Result := KLiVarSnap(GetData(0)^.VObject) else
+  X := IndexOf('$');
+  if X >= 0 then
+    Result := KLiVarSnap(GetData(X)^.VObject) else
     Result := nil;
 end;
 
@@ -10595,10 +10854,9 @@ var
     if Assigned(func.FModule.FInvokeProc) then
       func.FModule.FInvokeProc(TLseFuncInvoke(func.FProc), @call) else
       TLseFuncCall(func.FProc)(@call);
-    Result := not (Terminated or FExcepted);
+    Result := not Terminated and not FExcepted and (FCallcc = nil);
     if Result then
-      lse_type_cast(func.FResultType, call.p_result) else
-      FExcepted := true;
+      lse_type_cast(func.FResultType, call.p_result);
   end;
 
 begin
@@ -10630,7 +10888,7 @@ begin
 
       for index := count to func.ParamCount - 1 do
       begin
-        clss := func.GetParam(index)^.va_type;
+        clss := func.GetParam(index)^.v_type;
         if index < ParamCount then
           lse_type_cast(clss, FStack[base + index]) else
           lse_set_nil(FStack.Add, clss);
@@ -10705,11 +10963,8 @@ begin
           end;
           FCurrent := @snap;
           last.snap := FCurrent;
-          while ExecGoonNext do
-          begin
-            { nothing }
-          end;
-          Result := not FExcepted;
+          while ExecGoonNext do {nothing};
+          Result := not FTerminated and not FExcepted and (FCallcc = nil);
           if Result then
           begin
             if FStack.Count > base then
@@ -10717,7 +10972,7 @@ begin
               lse_clear_value(snap.output);
             if func.IsConstFunc then
             begin
-              FEngine.FMainValues.SetValue(Format('@%p', [pointer(func)]), snap.output);
+              FEngine.FMainValues.WriteBy(pchar(Format('@%p', [pointer(func)])), snap.output);
               func.FProc := @udc_const;
             end;
           end;
@@ -10884,21 +11139,30 @@ end;
 
 function KLiRunner.ExecGoonNext: boolean;
 begin
-  if not FTerminated and not FExcepted and HasNext then
+  if not FTerminated and not FExcepted and (FCallcc = nil) and HasNext then
   try
     FExprrec := FCurrent^.func.FCodes[FCurrent^.next];
     sys_runner_procs[FExprrec^.tk_sym](Self);
   except
     ErrorRT(lse_exception_str);
   end;
-  Result := not FExcepted and not FTerminated and HasNext;
+  Result := not FExcepted and not FTerminated and (FCallcc = nil) and HasNext;
 end;
 
 { KLiHashed }
 
+procedure KLiHashed.Clear;
+begin
+  FillChar(FBuckets[0], sizeof(PLiHashed) * FSize, 0);
+  while FFirst <> nil do FreeItem(FFirst);
+end;
+
 constructor KLiHashed.Create(AEngine: KLiEngine; Size: cardinal);
 begin
-  inherited Create(Size);
+  inherited Create;
+  FSize := Max(Size, 1);
+  SetLength(FBuckets, FSize);
+  FillChar(FBuckets[0], sizeof(PLiHashed) * FSize, 0);
   FObjRec.or_object := Self;
   FObjRec.or_type := KT_HASHED;
   FEngine := AEngine;
@@ -10908,48 +11172,139 @@ end;
 destructor KLiHashed.Destroy;
 begin
   FEngine.OrLeave(@FObjRec);
+  Clear;
   inherited;
 end;
 
-procedure KLiHashed.DoListKeys(const Key: string; Value, Param: pointer);
-var
-  L: KLiVarList;
+function KLiHashed.Exists(Name: PLseString): boolean;
 begin
-  L := KLiVarList(Param);
-  L.Add(Key);
+  Result := (nil <> FindItem(Name));
 end;
 
-function KLiHashed.FindValue(const Key: string): PLseValue;
-begin
-  Result := DoGet(Key);
-end;
-
-function KLiHashed.ForceValue(const Key: string): PLseValue;
+function KLiHashed.GetData(Index: integer): PLseValue;
 var
-  hash: PLiHashItem;
+  H: PLiHashed;
 begin
-  hash := Find(Key);
-  if hash = nil then
+  if Index > (FCount div 2) then
   begin
-    Result := lse_new_value;
-    DoPut(Key, Result);
+    H := FLast;
+    while Index < FCount - 1 do
+    begin
+      H := H^.hi_prev;
+      Inc(Index);
+    end;
   end
-  else Result := hash^.hi_data;
+  else
+  begin
+    H := FFirst;
+    while Index > 0 do
+    begin
+      H := H^.hi_next;
+      Dec(Index);
+    end;
+  end;
+  Result := @H^.hi_data;
 end;
 
-procedure KLiHashed.FreeItem(Item: PLiHashItem);
+procedure KLiHashed.FreeItem(H: PLiHashed);
 begin
-  if Item^.hi_data <> nil then
+  if H^.hi_prev = nil then
+    FFirst := H^.hi_next else
+    H^.hi_prev^.hi_next := H^.hi_next;
+  if H^.hi_next = nil then
+    FLast := H^.hi_prev else
+    H^.hi_next^.hi_prev := H^.hi_prev;
+  Dec(FCount);
+  lse_strec_declife(H^.hi_name);
+  lse_set_nil(@H^.hi_data);
+  lse_mem_free(H, sizeof(RLiHashed));
+end;
+
+function KLiHashed.Find(Name: PLseString): PLseValue;
+var
+  H: PLiHashed;
+begin
+  H := FindItem(Name);
+  if H <> nil then
+    Result := @H^.hi_data else
+    Result := nil;
+end;
+
+function KLiHashed.FindBy(Name: pchar): PLseValue;
+var
+  H: PLiHashed;
+begin
+  H := FBuckets[lse_hash_of(Name) mod FSize];
+  while H <> nil do
   begin
-    lse_free_value(Item^.hi_data);
-    Item^.hi_data := nil;
+    if StrComp(Name, lse_strec_data(H^.hi_name)) = 0 then
+    begin
+      Result := @H^.hi_data;
+      Exit;
+    end;
+    H := H^.hi_link;
   end;
-  inherited;
+  Result := nil;
+end;
+
+function KLiHashed.FindItem(Name: PLseString): PLiHashed;
+begin
+  Result := FBuckets[lse_strec_hash(Name) mod FSize];
+  while Result <> nil do
+  begin
+    if lse_strec_same(Name, Result^.hi_name) then Exit;
+    Result := Result^.hi_link;
+  end;
 end;
 
 procedure KLiHashed.ListKeys(List: KLiVarList);
+var
+  H: PLiHashed;
 begin
-  EnumKeyData({$IFDEF FPC}@{$ENDIF}DoListKeys, List);
+  H := FFirst;
+  while H <> nil do
+  begin
+    List.Add(H^.hi_name);
+    H := H^.hi_next;
+  end;
+end;
+
+procedure KLiHashed.ListValues(List: KLiVarList);
+var
+  H: PLiHashed;
+begin
+  H := FFirst;
+  while H <> nil do
+  begin
+    List.Add(PLseValue(@H^.hi_data));
+    H := H^.hi_next;
+  end;
+end;
+
+procedure KLiHashed.Remove(Name: PLseString);
+var
+  X: cardinal;
+  H, T: PLiHashed;
+begin
+  X := lse_strec_hash(Name) mod FSize;
+  H := FBuckets[X];
+  if lse_strec_same(Name, H^.hi_name) then
+  begin
+    FBuckets[X] := H^.hi_link;
+    FreeItem(H);
+  end
+  else
+  while H^.hi_link <> nil do
+  begin
+    T := H^.hi_link;
+    if lse_strec_same(Name, T^.hi_name) then
+    begin
+      H^.hi_link := T^.hi_link;
+      FreeItem(T);
+      Exit;
+    end;
+    H := T;
+  end;
 end;
 
 procedure KLiHashed.SaveTo(V: PLseValue);
@@ -10957,10 +11312,40 @@ begin
   lse_set_object(V, KT_HASHED, Self);
 end;
 
-function KLiHashed.SetValue(const Key: string; Value: PLseValue): PLseValue;
+function KLiHashed.WriteBy(Name: pchar; Data: PLseValue): PLseValue;
+var
+  S: PLseString;
 begin
-  Result := ForceValue(Key);
-  lse_set_value(Result, Value);
+  S := lse_strec_alloc(Name);
+  lse_strec_inclife(S);
+  Result := Write(S, Data);
+  lse_strec_declife(S);
+end;
+
+function KLiHashed.Write(Name: PLseString; Data: PLseValue): PLseValue;
+var
+  X: cardinal;
+  H: PLiHashed;
+begin
+  H := FindItem(Name);
+  if H = nil then
+  begin
+    H := lse_mem_alloc_zero(sizeof(RLiHashed));
+    H^.hi_name := Name;
+    lse_strec_inclife(Name);
+    X := lse_strec_hash(Name) mod FSize;
+    H^.hi_link := FBuckets[X];
+    FBuckets[X] := H;
+    if FLast = nil then FFirst := H else
+    begin
+      FLast^.hi_next := H;
+      H^.hi_prev := FLast;
+    end;
+    FLast := H;
+    Inc(FCount);
+  end;
+  Result := @H^.hi_data;
+  lse_set_value(Result, Data);
 end;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -10995,16 +11380,16 @@ begin
     KT_VOID := setup_type(sys_module, kcVoid);
 
     lse_type_init(@R, LSV_STRING);
-    R.cr_addref := {$IFDEF FPC}@{$ENDIF}lse_strec_addref;
+    R.cr_addref  := {$IFDEF FPC}@{$ENDIF}lse_strec_addref;
     R.cr_release := {$IFDEF FPC}@{$ENDIF}lse_strec_release;
-    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}type_string_vargen;
-    R.cr_getiv := {$IFDEF FPC}@{$ENDIF}type_string_getiv;
-    R.cr_length := {$IFDEF FPC}@{$ENDIF}type_string_length;
-    KT_STRING := setup_type(sys_module, kcString);
+    R.cr_vargen  := {$IFDEF FPC}@{$ENDIF}cr_string_vargen;
+    R.cr_getiv   := {$IFDEF FPC}@{$ENDIF}cr_string_getiv;
+    R.cr_length  := {$IFDEF FPC}@{$ENDIF}cr_string_length;
+    KT_STRING    := setup_type(sys_module, kcString);
 
     lse_type_init(@R, LSV_INT);
-    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}type_int_vargen;
-    KT_INT := setup_type(sys_module, kcInteger);
+    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}cr_int_vargen;
+    KT_INT      := setup_type(sys_module, kcInteger);
 
     lse_type_init(@R, LSV_FLOAT);
     KT_FLOAT := setup_type(sys_module, kcFloat);
@@ -11013,60 +11398,62 @@ begin
     KT_VARIANT := setup_type(sys_module, kcVariant);
 
     lse_type_init(@R, 'type', 'type', LSV_OBJECT);
-    R.cr_addref := {$IFDEF FPC}@{$ENDIF}lse_long_life;
+    R.cr_addref  := {$IFDEF FPC}@{$ENDIF}lse_long_life;
     R.cr_release := {$IFDEF FPC}@{$ENDIF}lse_long_life;
-    R.cr_otos := {$IFDEF FPC}@{$ENDIF}type_type_otos;
-    KT_TYPE := setup_type(sys_module, kcType);
+    R.cr_otos    := {$IFDEF FPC}@{$ENDIF}cr_type_otos;
+    KT_TYPE      := setup_type(sys_module, kcType);
 
     lse_type_init(@R, 'module', 'module', LSV_OBJECT);
-    R.cr_otos := {$IFDEF FPC}@{$ENDIF}type_module_otos;
-    R.cr_getpv := {$IFDEF FPC}@{$ENDIF}type_module_getpv;
+    R.cr_otos  := {$IFDEF FPC}@{$ENDIF}cr_module_otos;
+    R.cr_getpv := {$IFDEF FPC}@{$ENDIF}cr_module_getpv;
     KT_MODULE := setup_type(sys_module, kcModule);
 
     lse_type_init(@R, 'function', 'function', LSV_OBJECT);
-    R.cr_otos := {$IFDEF FPC}@{$ENDIF}type_function_otos;
-    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}type_function_vargen;
-    KT_FUNC := setup_type(sys_module, kcFunc);
+    R.cr_otos   := {$IFDEF FPC}@{$ENDIF}cr_func_otos;
+    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}cr_func_vargen;
+    KT_FUNC     := setup_type(sys_module, kcFunc);
 
     lse_type_init(@R, 'error', 'error', LSV_OBJECT);
-    R.cr_otos := {$IFDEF FPC}@{$ENDIF}type_error_otos;
-    KT_ERROR := setup_type(sys_module, kcError);
+    R.cr_otos := {$IFDEF FPC}@{$ENDIF}cr_error_otos;
+    KT_ERROR  := setup_type(sys_module, kcError);
 
     lse_type_init(@R, 'stream', 'stream', LSV_OBJECT);
-    R.cr_addref := {$IFDEF FPC}@{$ENDIF}lse_stream_addref;
+    R.cr_addref  := {$IFDEF FPC}@{$ENDIF}lse_stream_addref;
     R.cr_release := {$IFDEF FPC}@{$ENDIF}lse_stream_release;
-    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}type_stream_vargen;
-    R.cr_add := {$IFDEF FPC}@{$ENDIF}type_stream_add;
-    R.cr_length := {$IFDEF FPC}@{$ENDIF}type_stream_length;
-    KT_STREAM := setup_type(sys_module, kcStream);
+    R.cr_vargen  := {$IFDEF FPC}@{$ENDIF}cr_stream_vargen;
+    R.cr_add     := {$IFDEF FPC}@{$ENDIF}cr_stream_add;
+    R.cr_length  := {$IFDEF FPC}@{$ENDIF}cr_stream_length;
+    KT_STREAM    := setup_type(sys_module, kcStream);
 
     lse_type_init(@R, 'varlist', 'varlist', LSV_OBJECT);
-    R.cr_otos := {$IFDEF FPC}@{$ENDIF}type_varlist_otos;
-    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}type_varlist_vargen;
-    R.cr_add := {$IFDEF FPC}@{$ENDIF}type_varlist_add;
-    R.cr_length := {$IFDEF FPC}@{$ENDIF}type_varlist_length;
-    R.cr_getiv := {$IFDEF FPC}@{$ENDIF}type_varlist_getiv;
-    R.cr_setiv := {$IFDEF FPC}@{$ENDIF}type_varlist_setiv;
-    KT_VARLIST := setup_type(sys_module, kcVarlist);
+    R.cr_otos   := {$IFDEF FPC}@{$ENDIF}cr_varlist_otos;
+    R.cr_vargen := {$IFDEF FPC}@{$ENDIF}cr_varlist_vargen;
+    R.cr_add    := {$IFDEF FPC}@{$ENDIF}cr_varlist_add;
+    R.cr_getiv  := {$IFDEF FPC}@{$ENDIF}cr_varlist_getiv;
+    R.cr_setiv  := {$IFDEF FPC}@{$ENDIF}cr_varlist_setiv;
+    R.cr_length := {$IFDEF FPC}@{$ENDIF}cr_varlist_length;
+    KT_VARLIST  := setup_type(sys_module, kcVarlist);
 
     lse_type_init(@R, 'varsnap', 'varsnap', LSV_OBJECT);
-    R.cr_getiv := {$IFDEF FPC}@{$ENDIF}type_varlist_getiv;
-    R.cr_setiv := {$IFDEF FPC}@{$ENDIF}type_varlist_setiv;
-    R.cr_getpv := {$IFDEF FPC}@{$ENDIF}type_varsnap_getpv;
-    R.cr_setpv := {$IFDEF FPC}@{$ENDIF}type_varsnap_setpv;
-    R.cr_length := {$IFDEF FPC}@{$ENDIF}type_varsnap_length;
-    KT_VARSNAP := setup_type(sys_module, kcVarsnap);
+    R.cr_getpv  := {$IFDEF FPC}@{$ENDIF}cr_varsnap_getpv;
+    R.cr_setpv  := {$IFDEF FPC}@{$ENDIF}cr_varsnap_setpv;
+    R.cr_getiv  := {$IFDEF FPC}@{$ENDIF}cr_varlist_getiv;
+    R.cr_setiv  := {$IFDEF FPC}@{$ENDIF}cr_varlist_setiv;
+    R.cr_length := {$IFDEF FPC}@{$ENDIF}cr_varlist_length;
+    KT_VARSNAP  := setup_type(sys_module, kcVarsnap);
 
     lse_type_init(@R, 'hashed', 'hashed', LSV_OBJECT);
-    R.cr_length := {$IFDEF FPC}@{$ENDIF}type_hashed_length;
-    R.cr_getpv := {$IFDEF FPC}@{$ENDIF}type_hashed_getpv;
-    R.cr_setpv := {$IFDEF FPC}@{$ENDIF}type_hashed_setpv;
-    KT_HASHED := setup_type(sys_module, kcHashed);
+    R.cr_getpv  := {$IFDEF FPC}@{$ENDIF}cr_hashed_getpv;
+    R.cr_setpv  := {$IFDEF FPC}@{$ENDIF}cr_hashed_setpv;
+    R.cr_getiv  := {$IFDEF FPC}@{$ENDIF}cr_hashed_getiv;
+    R.cr_setiv  := {$IFDEF FPC}@{$ENDIF}cr_hashed_setiv;
+    R.cr_length := {$IFDEF FPC}@{$ENDIF}cr_hashed_length;
+    KT_HASHED   := setup_type(sys_module, kcHashed);
 
     lse_type_init(@R, 'vargen', 'vargen', LSV_OBJECT);
-    R.cr_addref := {$IFDEF FPC}@{$ENDIF}lse_vargen_addref;
+    R.cr_addref  := {$IFDEF FPC}@{$ENDIF}lse_vargen_addref;
     R.cr_release := {$IFDEF FPC}@{$ENDIF}lse_vargen_release;
-    KT_VARGEN := setup_type(sys_module, kcVargen);
+    KT_VARGEN    := setup_type(sys_module, kcVargen);
 
     sys_module.SetupModuleFuncs(@sys_module_funcs);
     sys_module.FindFunc('eol').IsNameCall := true;
@@ -11077,76 +11464,76 @@ begin
     for X := Low(KLiSymbol) to High(KLiSymbol) do
     begin
       sys_runner_procs[X] := {$IFDEF FPC}@{$ENDIF}runner_error;
-      if X in OperIDSyms then
+      if X in OperSyms then
         KLiFunc_oper.Create(X);
     end;
     sys_oper_inc := sys_module.FindFunc('+');
 
     { setup runner procedures }
 
-    sys_runner_procs[syID]       := {$IFDEF FPC}@{$ENDIF}runner_ID;
-    sys_runner_procs[syBecome]   := {$IFDEF FPC}@{$ENDIF}runner_become;
-    sys_runner_procs[syEcho]     := {$IFDEF FPC}@{$ENDIF}runner_echo;
-    sys_runner_procs[syFloat]    := {$IFDEF FPC}@{$ENDIF}runner_float;
-    sys_runner_procs[syInt]      := {$IFDEF FPC}@{$ENDIF}runner_int;
-    sys_runner_procs[syStr]      := {$IFDEF FPC}@{$ENDIF}runner_str;
-    sys_runner_procs[syAdd]      := {$IFDEF FPC}@{$ENDIF}runner_add;
-    sys_runner_procs[syDec]      := {$IFDEF FPC}@{$ENDIF}runner_dec;
-    sys_runner_procs[syMul]      := {$IFDEF FPC}@{$ENDIF}runner_mul;
-    sys_runner_procs[syDiv]      := {$IFDEF FPC}@{$ENDIF}runner_div;
-    sys_runner_procs[syMod]      := {$IFDEF FPC}@{$ENDIF}runner_mod;
-    sys_runner_procs[syBitNot]   := {$IFDEF FPC}@{$ENDIF}runner_bit_not;
-    sys_runner_procs[syBitXor]   := {$IFDEF FPC}@{$ENDIF}runner_bit_xor;
-    sys_runner_procs[syBitOr]    := {$IFDEF FPC}@{$ENDIF}runner_bit_or;
-    sys_runner_procs[syBitAnd]   := {$IFDEF FPC}@{$ENDIF}runner_bit_and;
-    sys_runner_procs[syBitShl]   := {$IFDEF FPC}@{$ENDIF}runner_bit_shl;
-    sys_runner_procs[syBitShr]   := {$IFDEF FPC}@{$ENDIF}runner_bit_shr;
-    sys_runner_procs[syNot]      := {$IFDEF FPC}@{$ENDIF}runner_not;
-    sys_runner_procs[syNeg]      := {$IFDEF FPC}@{$ENDIF}runner_neg;
-    sys_runner_procs[syEQ]       := {$IFDEF FPC}@{$ENDIF}runner_eq;
-    sys_runner_procs[syNE]       := {$IFDEF FPC}@{$ENDIF}runner_ne;
-    sys_runner_procs[syLess]     := {$IFDEF FPC}@{$ENDIF}runner_less;
-    sys_runner_procs[syLE]       := {$IFDEF FPC}@{$ENDIF}runner_le;
-    sys_runner_procs[syMore]     := {$IFDEF FPC}@{$ENDIF}runner_more;
-    sys_runner_procs[syME]       := {$IFDEF FPC}@{$ENDIF}runner_me;
-    sys_runner_procs[syIn]       := {$IFDEF FPC}@{$ENDIF}runner_in;
-    sys_runner_procs[syAnd]      := {$IFDEF FPC}@{$ENDIF}runner_and;
-    sys_runner_procs[syOr]       := {$IFDEF FPC}@{$ENDIF}runner_or;
-    sys_runner_procs[syUpto]     := {$IFDEF FPC}@{$ENDIF}runner_upto;
-    sys_runner_procs[syVarList]  := {$IFDEF FPC}@{$ENDIF}runner_varlist;
-    sys_runner_procs[syNil]      := {$IFDEF FPC}@{$ENDIF}runner_nil;
-    sys_runner_procs[syGetEnv]   := {$IFDEF FPC}@{$ENDIF}runner_getenv;
-    sys_runner_procs[syGetSV]    := {$IFDEF FPC}@{$ENDIF}runner_getsv;
-    sys_runner_procs[sySetSV]    := {$IFDEF FPC}@{$ENDIF}runner_setsv;
-    sys_runner_procs[syFormat]   := {$IFDEF FPC}@{$ENDIF}runner_format;
-    sys_runner_procs[syIs]       := {$IFDEF FPC}@{$ENDIF}runner_is;
-    sys_runner_procs[syAs]       := {$IFDEF FPC}@{$ENDIF}runner_as;
-    sys_runner_procs[syVarGen]   := {$IFDEF FPC}@{$ENDIF}runner_vargen;
-    sys_runner_procs[syAsk]      := {$IFDEF FPC}@{$ENDIF}runner_ask;
-    sys_runner_procs[syLabel]    := {$IFDEF FPC}@{$ENDIF}runner_next;
-    sys_runner_procs[syIdle]     := {$IFDEF FPC}@{$ENDIF}runner_next;
-    sys_runner_procs[syTry]      := {$IFDEF FPC}@{$ENDIF}runner_try;
-    sys_runner_procs[syReturn]   := {$IFDEF FPC}@{$ENDIF}runner_return;
-    sys_runner_procs[syJump]     := {$IFDEF FPC}@{$ENDIF}runner_jump;
-    sys_runner_procs[syJmpF]     := {$IFDEF FPC}@{$ENDIF}runner_jmpf;
-    sys_runner_procs[syJmpT]     := {$IFDEF FPC}@{$ENDIF}runner_jmpt;
-    sys_runner_procs[syJmpFP]    := {$IFDEF FPC}@{$ENDIF}runner_jmpfpop;
-    sys_runner_procs[syJmpTP]    := {$IFDEF FPC}@{$ENDIF}runner_jmptpop;
-    sys_runner_procs[syGoto]     := {$IFDEF FPC}@{$ENDIF}runner_goto;
-    sys_runner_procs[syGoTP]     := {$IFDEF FPC}@{$ENDIF}runner_gototp;
-    sys_runner_procs[syGoFP]     := {$IFDEF FPC}@{$ENDIF}runner_gotofp;
-    sys_runner_procs[syHashed]   := {$IFDEF FPC}@{$ENDIF}runner_hashed;
-    sys_runner_procs[syRINR]     := {$IFDEF FPC}@{$ENDIF}runner_RINR;
-    sys_runner_procs[syGETV]     := {$IFDEF FPC}@{$ENDIF}runner_GETV;
-    sys_runner_procs[sySETV]     := {$IFDEF FPC}@{$ENDIF}runner_SETV;
-    sys_runner_procs[syLike]     := {$IFDEF FPC}@{$ENDIF}runner_Like;
-    sys_runner_procs[syGetIV]    := {$IFDEF FPC}@{$ENDIF}runner_getiv;
-    sys_runner_procs[sySetIV]    := {$IFDEF FPC}@{$ENDIF}runner_setiv;
-    sys_runner_procs[syDupLast]  := {$IFDEF FPC}@{$ENDIF}runner_duplast;
-    sys_runner_procs[syFill]     := {$IFDEF FPC}@{$ENDIF}runner_fill;
-    sys_runner_procs[sySend]     := {$IFDEF FPC}@{$ENDIF}runner_send;
-    sys_runner_procs[syCase]     := {$IFDEF FPC}@{$ENDIF}runner_case;
-    sys_runner_procs[sySTMT]     := {$IFDEF FPC}@{$ENDIF}runner_STMT;
+    sys_runner_procs[syID]      := {$IFDEF FPC}@{$ENDIF}runner_ID;
+    sys_runner_procs[syBecome]  := {$IFDEF FPC}@{$ENDIF}runner_become;
+    sys_runner_procs[syFloat]   := {$IFDEF FPC}@{$ENDIF}runner_float;
+    sys_runner_procs[syInt]     := {$IFDEF FPC}@{$ENDIF}runner_int;
+    sys_runner_procs[syStr]     := {$IFDEF FPC}@{$ENDIF}runner_str;
+    sys_runner_procs[syAdd]     := {$IFDEF FPC}@{$ENDIF}runner_add;
+    sys_runner_procs[syDec]     := {$IFDEF FPC}@{$ENDIF}runner_dec;
+    sys_runner_procs[syMul]     := {$IFDEF FPC}@{$ENDIF}runner_mul;
+    sys_runner_procs[syDiv]     := {$IFDEF FPC}@{$ENDIF}runner_div;
+    sys_runner_procs[syMod]     := {$IFDEF FPC}@{$ENDIF}runner_mod;
+    sys_runner_procs[syBitNot]  := {$IFDEF FPC}@{$ENDIF}runner_bit_not;
+    sys_runner_procs[syBitXor]  := {$IFDEF FPC}@{$ENDIF}runner_bit_xor;
+    sys_runner_procs[syBitOr]   := {$IFDEF FPC}@{$ENDIF}runner_bit_or;
+    sys_runner_procs[syBitAnd]  := {$IFDEF FPC}@{$ENDIF}runner_bit_and;
+    sys_runner_procs[syBitShl]  := {$IFDEF FPC}@{$ENDIF}runner_bit_shl;
+    sys_runner_procs[syBitShr]  := {$IFDEF FPC}@{$ENDIF}runner_bit_shr;
+    sys_runner_procs[syNot]     := {$IFDEF FPC}@{$ENDIF}runner_not;
+    sys_runner_procs[syNeg]     := {$IFDEF FPC}@{$ENDIF}runner_neg;
+    sys_runner_procs[syEQ]      := {$IFDEF FPC}@{$ENDIF}runner_eq;
+    sys_runner_procs[syNE]      := {$IFDEF FPC}@{$ENDIF}runner_ne;
+    sys_runner_procs[syLess]    := {$IFDEF FPC}@{$ENDIF}runner_less;
+    sys_runner_procs[syLE]      := {$IFDEF FPC}@{$ENDIF}runner_le;
+    sys_runner_procs[syMore]    := {$IFDEF FPC}@{$ENDIF}runner_more;
+    sys_runner_procs[syME]      := {$IFDEF FPC}@{$ENDIF}runner_me;
+    sys_runner_procs[syIn]      := {$IFDEF FPC}@{$ENDIF}runner_in;
+    sys_runner_procs[syAnd]     := {$IFDEF FPC}@{$ENDIF}runner_and;
+    sys_runner_procs[syOr]      := {$IFDEF FPC}@{$ENDIF}runner_or;
+    sys_runner_procs[syUpto]    := {$IFDEF FPC}@{$ENDIF}runner_upto;
+    sys_runner_procs[syVarList] := {$IFDEF FPC}@{$ENDIF}runner_varlist;
+    sys_runner_procs[syNil]     := {$IFDEF FPC}@{$ENDIF}runner_nil;
+    sys_runner_procs[syGetEnv]  := {$IFDEF FPC}@{$ENDIF}runner_getenv;
+    sys_runner_procs[syGetSV]   := {$IFDEF FPC}@{$ENDIF}runner_getsv;
+    sys_runner_procs[sySetSV]   := {$IFDEF FPC}@{$ENDIF}runner_setsv;
+    sys_runner_procs[syFormat]  := {$IFDEF FPC}@{$ENDIF}runner_format;
+    sys_runner_procs[syIs]      := {$IFDEF FPC}@{$ENDIF}runner_is;
+    sys_runner_procs[syAs]      := {$IFDEF FPC}@{$ENDIF}runner_as;
+    sys_runner_procs[syVarGen]  := {$IFDEF FPC}@{$ENDIF}runner_vargen;
+    sys_runner_procs[syAsk]     := {$IFDEF FPC}@{$ENDIF}runner_ask;
+    sys_runner_procs[syLabel]   := {$IFDEF FPC}@{$ENDIF}runner_next;
+    sys_runner_procs[syIdle]    := {$IFDEF FPC}@{$ENDIF}runner_next;
+    sys_runner_procs[syTry]     := {$IFDEF FPC}@{$ENDIF}runner_try;
+    sys_runner_procs[syReturn]  := {$IFDEF FPC}@{$ENDIF}runner_return;
+    sys_runner_procs[syJump]    := {$IFDEF FPC}@{$ENDIF}runner_jump;
+    sys_runner_procs[syJmpF]    := {$IFDEF FPC}@{$ENDIF}runner_jmpf;
+    sys_runner_procs[syJmpT]    := {$IFDEF FPC}@{$ENDIF}runner_jmpt;
+    sys_runner_procs[syJmpFP]   := {$IFDEF FPC}@{$ENDIF}runner_jmpfpop;
+    sys_runner_procs[syJmpTP]   := {$IFDEF FPC}@{$ENDIF}runner_jmptpop;
+    sys_runner_procs[syGoto]    := {$IFDEF FPC}@{$ENDIF}runner_goto;
+    sys_runner_procs[syGoTP]    := {$IFDEF FPC}@{$ENDIF}runner_gototp;
+    sys_runner_procs[syGoFP]    := {$IFDEF FPC}@{$ENDIF}runner_gotofp;
+    sys_runner_procs[syHashed]  := {$IFDEF FPC}@{$ENDIF}runner_hashed;
+    sys_runner_procs[syRINR]    := {$IFDEF FPC}@{$ENDIF}runner_RINR;
+    sys_runner_procs[syGETV]    := {$IFDEF FPC}@{$ENDIF}runner_GETV;
+    sys_runner_procs[sySETV]    := {$IFDEF FPC}@{$ENDIF}runner_SETV;
+    sys_runner_procs[syLike]    := {$IFDEF FPC}@{$ENDIF}runner_Like;
+    sys_runner_procs[syGetIV]   := {$IFDEF FPC}@{$ENDIF}runner_getiv;
+    sys_runner_procs[sySetIV]   := {$IFDEF FPC}@{$ENDIF}runner_setiv;
+    sys_runner_procs[syMethod]  := {$IFDEF FPC}@{$ENDIF}runner_method;
+    sys_runner_procs[syDupLast] := {$IFDEF FPC}@{$ENDIF}runner_duplast;
+    sys_runner_procs[syFill]    := {$IFDEF FPC}@{$ENDIF}runner_fill;
+    sys_runner_procs[sySend]    := {$IFDEF FPC}@{$ENDIF}runner_send;
+    sys_runner_procs[syCase]    := {$IFDEF FPC}@{$ENDIF}runner_case;
+    sys_runner_procs[sySTMT]    := {$IFDEF FPC}@{$ENDIF}runner_STMT;
   end;
 end;
 

@@ -41,10 +41,11 @@
         <Filename Value="lysee_ym.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_ym"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="90"/>
-        <CursorPos X="1" Y="99"/>
+        <TopLine Value="66"/>
+        <CursorPos X="1" Y="75"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -81,7 +82,6 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2413"/>
@@ -135,12 +135,10 @@
       </Unit11>
       <Unit12>
         <Filename Value="D:\Developments\lazarus\fpc\2.4.2\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="767"/>
         <CursorPos X="14" Y="779"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit12>
     </Units>
     <JumpHistory Count="10" HistoryIndex="9">

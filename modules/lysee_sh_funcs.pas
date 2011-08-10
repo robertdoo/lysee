@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/12/10                                                      }
-{    MODIFIED: 2011/07/09                                                      }
+{    MODIFIED: 2011/08/07                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -71,11 +71,11 @@ procedure sh_shexec(const invoker: TLseInvoke);cdecl;
 const
   func_count = 22;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'isfile:int |fileName:string|';
+    (fr_prot:'isfile:int |fname:string|';
      fr_addr:@sh_isfile;
      fr_desc:'is it an ordinary file?'
     ),
-    (fr_prot:'isdir:int |directory:string|';
+    (fr_prot:'isdir:int |dir:string|';
      fr_addr:@sh_isdir;
      fr_desc:'is it an directory?'
     ),
@@ -83,21 +83,21 @@ const
      fr_addr:@sh_dir;
      fr_desc:'get current directory'
     ),
-    (fr_prot:'cd:int |newDirectory:string|';
+    (fr_prot:'cd:int |dir:string|';
      fr_addr:@sh_change_dir;
      fr_desc:'change current directory'
     ),
-    (fr_prot:'copy:int |srcFile:string, dstFile:string, failIfFileExists:int|';
+    (fr_prot:'cp:int |srcFile:string, dstFile:string, failIfFileExists:int|';
      fr_addr:@sh_copy;
      fr_desc:'copy file'
     ),
-    (fr_prot:'del:int |fileMask:string|';
+    (fr_prot:'rm:int |fname:string|';
      fr_addr:@sh_delete;
-     fr_desc:'delete specified file'
+     fr_desc:'remove file'
     ),
-    (fr_prot:'ls:string |directoryOrfileMask:string|';
+    (fr_prot:'ls:string |mask:string|';
      fr_addr:@sh_list;
-     fr_desc:'list file'
+     fr_desc:'list files'
     ),
     (fr_prot:'rmdir:int |dir:string, deltree:int|';
      fr_addr:@sh_rmdir;
@@ -107,30 +107,30 @@ const
      fr_addr:@sh_mkdir;
      fr_desc:'create directory'
     ),
-    (fr_prot:'system:string |commandline:string, dir:string|';
+    (fr_prot:'system:string |cmdline:string, dir:string|';
      fr_addr:@sh_system;
      fr_desc:'execute command line and get its output'
     ),
-    (fr_prot:'shexec:int |commandline:string, dir:string, wait:int)';
+    (fr_prot:'shexec:int |cmdline:string, dir:string, wait:int|';
      fr_addr:@sh_shexec;
      fr_desc:'execute command line'
     ),
 
     { searcher }
 
-    (fr_prot:'searcher_create:searcher |fileNameMask:string|';
+    (fr_prot:'searcher_create:searcher |mask:string|';
      fr_addr:@searcher_create;
      fr_desc:'create file search object'
     ),
-    (fr_prot:'searcher_get_path:string |sr:searcher|';
+    (fr_prot:'searcher_path:string |sr:searcher|';
      fr_addr:@searcher_getPath;
      fr_desc:'get search path'
     ),
-    (fr_prot:'searcher_get_name:string |sr:searcher|';
+    (fr_prot:'searcher_name:string |sr:searcher|';
      fr_addr:@searcher_getName;
      fr_desc:'get file name without search path'
     ),
-    (fr_prot:'searcher_get_eof:int |sr:searcher|';
+    (fr_prot:'searcher_eof:int |sr:searcher|';
      fr_addr:@searcher_eof;
      fr_desc:'return true when no more file can be found'
     ),
@@ -138,7 +138,7 @@ const
      fr_addr:@searcher_getFullName;
      fr_desc:'get full file name'
     ),
-    (fr_prot:'searcher_get_size:int |sr:searcher|';
+    (fr_prot:'searcher_size:int |sr:searcher|';
      fr_addr:@searcher_getSize;
      fr_desc:'get file size'
     ),
@@ -150,7 +150,7 @@ const
      fr_addr:@searcher_getisfile;
      fr_desc:'is it an ordinary file?'
     ),
-    (fr_prot:'searcher_find:int |sr:searcher, fileNameMask:string|';
+    (fr_prot:'searcher_find:int |sr:searcher, mask:string|';
      fr_addr:@searcher_findFirst;
      fr_desc:'find first file'
     ),
@@ -345,24 +345,8 @@ begin
 end;
 
 procedure sh_delete(const invoker: TLseInvoke);cdecl;
-var
-  fmask: string;
-  count: integer;
-  sr: TLiSearch;
 begin
-  count := 0;
-  fmask := invoker.paramStr(0);
-  if (Pos('*', fmask) > 0) or (Pos('?', fmask) > 0) then
-  begin
-    sr := TLiSearch.Create(fmask);
-    try
-      count := sr.DeleteAll(true, false, false);
-    finally
-      sr.Free;
-    end;
-  end;
-  if SysUtils.DeleteFile(fmask) then Inc(count);
-  invoker.returnInt(count);
+  invoker.returnBool(SysUtils.DeleteFile(invoker.paramStr(0)));
 end;
 
 procedure sh_list(const invoker: TLseInvoke);cdecl;

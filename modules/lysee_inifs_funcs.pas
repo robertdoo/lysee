@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2007/07/12                                                      }
-{    MODIFIED: 2011/07/09                                                      }
+{    MODIFIED: 2011/08/07                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -60,7 +60,7 @@ const
      fr_addr:@pp_inifile_create;
      fr_desc:'open ini file'
     ),
-    (fr_prot:'inifile_get_fileName:string |inif:inifile|';
+    (fr_prot:'inifile_fname:string |inif:inifile|';
      fr_addr:@pp_inifile_fname;
      fr_desc:'get ini file name';
     ),
@@ -80,7 +80,7 @@ const
      fr_addr:@pp_inifile_write;
      fr_desc:'write value'
     ),
-    (fr_prot:'inifile_get_sections:string |inif:inifile|';
+    (fr_prot:'inifile_sections:string |inif:inifile|';
      fr_addr:@pp_inifile_sections;
      fr_desc:'get section list'
     ),

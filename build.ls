@@ -14,8 +14,8 @@
              ..\..\..\..\Developments\lazarus\lcl\units\i386-win32\
              ..\..\..\..\Developments\lazarus\lcl\units\i386-win32\win32\
              ..\..\..\..\Developments\lazarus\packager\units\i386-win32\'],
-    ['lpr': 'modules\lysee_odbc.lpr',
-     'out': 'modules\lysee_odbc.dll',
+    ['lpr': 'modules\lysee_sqldb.lpr',
+     'out': 'modules\lysee_sqldb.dll',
      'fup': 'modules'],
     ['lpr': 'modules\lysee_sh.lpr',
      'out': 'modules\lysee_sh.dll',
@@ -52,7 +52,7 @@
 {cmds << '@echo off'}
 {cmds << path.copy(0, 2)}
 {cmds << 'cd ' + path}
-{cmds << 'DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local *.identcache *.compiled *.bak'}
+{cmds << 'DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local *.identcache *.compiled *.bak *.lo'}
 
 // FPC
 
@@ -63,10 +63,10 @@
         {fup = ''}
         {for pp in ll if pp.trim() do
             {fup += ' -Fu' + pp.trim()}}
-        {if hs.lpr == 'lysee_pad_fpc.lpr' then
+        {if hs['lpr'] == 'lysee_pad_fpc.lpr' then
             {fup = '-WG -dSYN_LAZARUS -dLCL -dLCLwin32 ' + fup}}
-        {src = hs.lpr}
-        {dst = hs.out}
+        {src = hs['lpr']}
+        {dst = hs['out']}
         {cmds << 'echo ***** ' + src + ' => ' + dst}
         {cmds << 'del ' + dst}
         {cmds << fpc_exe + ' ' + fpc_opt + ' ' + fup + ' -o' + dst + ' ' + src}}}
@@ -80,5 +80,5 @@
 
 {fs = openfs('build.bat', 'c')}
 {for s in cmds do fs << s << eol}
-{="done!"}
+{println("done!")}
 

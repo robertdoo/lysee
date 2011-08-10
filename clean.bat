@@ -1,6 +1,6 @@
 @echo off
 
-DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *~ *.zip *.rar *.local *.identcache *.compiled *.bak *.a *.db
+DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *~ *.zip *.rar *.local *.identcache *.compiled *.bak *.a *.db *.lo
 
 rmdir __history 
 rmdir temp

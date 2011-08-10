@@ -41,11 +41,10 @@
         <Filename Value="lysee_syncobj.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_syncobj"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="24"/>
+        <CursorPos X="26" Y="7"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -61,7 +60,7 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4556"/>
         <CursorPos X="1" Y="4576"/>
@@ -91,10 +90,13 @@
         <Filename Value="lysee_syncobj_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_syncobj_funcs"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="45"/>
-        <CursorPos X="5" Y="57"/>
+        <TopLine Value="25"/>
+        <CursorPos X="26" Y="31"/>
         <UsageCount Value="20"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\lse_syncobj.pas"/>
@@ -113,7 +115,7 @@
         <UsageCount Value="10"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="12" HistoryIndex="11">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="lysee_syncobj.lpr"/>
         <Caret Line="18" Column="21" TopLine="1"/>
@@ -162,6 +164,10 @@
         <Filename Value="..\lseu.pas"/>
         <Caret Line="14" Column="18" TopLine="1"/>
       </Position12>
+      <Position13>
+        <Filename Value="lysee_syncobj_funcs.pas"/>
+        <Caret Line="55" Column="5" TopLine="45"/>
+      </Position13>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

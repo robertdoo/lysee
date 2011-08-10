@@ -1,6 +1,6 @@
-def fib:int |n:int|
-  return n if n < 2;
-  return fib(n - 2) + fib(n - 1);
-end
+{def fib n ->
+    {if n < 2 then n else
+        {fib(n - 2) + fib(n - 1)}}}
 
-= fib(20);
+{if __in_main__ then
+    {println fib 20}}

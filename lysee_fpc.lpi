@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="708"/>
+      <BuildNr Value="711"/>
       <StringTable FileDescription="lysee script interpretor (FPC)" LegalCopyright="Copyright (C) 2003-2011 li yun jie <libudi@hotmail.com>" ProductVersion="2.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -47,10 +47,11 @@
         <Filename Value="lse_kernel.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_kernel"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2452"/>
-        <CursorPos X="3" Y="2468"/>
+        <TopLine Value="1"/>
+        <CursorPos X="48" Y="16"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="1197" ID="3"/>
@@ -147,11 +148,10 @@
         <Filename Value="lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3902"/>
-        <CursorPos X="22" Y="3914"/>
+        <TopLine Value="1"/>
+        <CursorPos X="26" Y="7"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="16" Y="645" ID="0"/>
@@ -595,7 +595,7 @@
         <UsageCount Value="10"/>
       </Unit80>
     </Units>
-    <JumpHistory Count="13" HistoryIndex="12">
+    <JumpHistory Count="15" HistoryIndex="14">
       <Position1>
         <Filename Value="lseu.pas"/>
         <Caret Line="1021" Column="32" TopLine="997"/>
@@ -646,8 +646,16 @@
       </Position12>
       <Position13>
         <Filename Value="lseu.pas"/>
-        <Caret Line="3914" Column="26" TopLine="3902"/>
+        <Caret Line="3914" Column="22" TopLine="3902"/>
       </Position13>
+      <Position14>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="2468" Column="3" TopLine="2452"/>
+      </Position14>
+      <Position15>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="40" Column="32" TopLine="25"/>
+      </Position15>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

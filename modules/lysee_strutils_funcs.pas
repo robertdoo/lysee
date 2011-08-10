@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/12/10                                                      }
-{    MODIFIED: 2011/07/09                                                      }
+{    MODIFIED: 2011/08/07                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -17,13 +17,7 @@ interface
 uses
   Classes, SysUtils, lseu;
 
-const
-  AlphaChar = ['A'..'Z', 'a'..'z'];
-  SpaceChar = [#$09, #$0A, #$0C, #$0D, #$20];
-
 type
-
-  KLiCharSet = set of Char;
 
   { TLiStrBuf }
 
@@ -145,15 +139,15 @@ const
      fr_addr:@pp_strbuf_create;
      fr_desc:'create strbuf object';
     ),
-    (fr_prot:'strbuf_set_length:void |sb:strbuf, length:int|';
+    (fr_prot:'strbuf_setLength:void |sb:strbuf, length:int|';
      fr_addr:@pp_strbuf_setlen;
      fr_desc:'set strbuf size';
     ),
-    (fr_prot:'strbuf_get_data:string |sb:strbuf|';
+    (fr_prot:'strbuf_getDataStr:string |sb:strbuf|';
      fr_addr:@pp_strbuf_gets;
      fr_desc:'get data string';
     ),
-    (fr_prot:'strbuf_set_data:void |sb:strbuf, data:string|';
+    (fr_prot:'strbuf_setDataStr:void |sb:strbuf, data:string|';
      fr_addr:@pp_strbuf_sets;
      fr_desc:'set data string';
     ),
@@ -256,23 +250,23 @@ const
      fr_addr:@pp_strcut_clear;
      fr_desc:'clear values';
     ),
-    (fr_prot:'strcut_get_keysList:string |sc:strcut|';
+    (fr_prot:'strcut_keysList:string |sc:strcut|';
      fr_addr:@pp_strcut_keylist;
      fr_desc:'list key with delimiter char';
     ),
-    (fr_prot:'strcut_get_valueList:string |sc:strcut|';
+    (fr_prot:'strcut_valueList:string |sc:strcut|';
      fr_addr:@pp_strcut_valist;
      fr_desc:'list value with delimiter char';
     ),
-    (fr_prot:'strcut_get_keys:string |sc:strcut|';
+    (fr_prot:'strcut_keys:string |sc:strcut|';
      fr_addr:@pp_strcut_keys;
      fr_desc:'list key into strlist';
     ),
-    (fr_prot:'strcut_get_values:string |sc:strcut|';
+    (fr_prot:'strcut_values:string |sc:strcut|';
      fr_addr:@pp_strcut_values;
      fr_desc:'list value into strlist';
     ),
-    (fr_prot:'strcut_get_strlist:string |sc:strcut|';
+    (fr_prot:'strcut_strlist:string |sc:strcut|';
      fr_addr:@pp_strcut_strlist;
      fr_desc:'convert to strlist';
     ),
@@ -300,17 +294,16 @@ const
      fr_addr:@pp_strcut_moveByName;
      fr_desc:'move key to another place by name';
     ),
-    (fr_prot:'strcut_get_mask:string |sc:strcut|';
+    (fr_prot:'strcut_mask:string |sc:strcut|';
      fr_addr:@pp_strcut_mask;
      fr_desc:'get parsing mask';
     ),
-    (fr_prot:'strcut_get_delimiter:string |sc:strcut|';
+    (fr_prot:'strcut_delimiter:string |sc:strcut|';
      fr_addr:@pp_strcut_delimiter;
      fr_desc:'get parsing delimiter';
     )
   );
 
-function strbuf_writeto(obj: pointer; stream: PLseStream): integer;cdecl;
 function strbuf_otos(obj: pointer): PLseString;cdecl;
 function strbuf_stoo(str: PLseString): pointer;cdecl;
 function strbuf_add(obj: pointer; value: PLseValue): integer;cdecl;
@@ -321,8 +314,8 @@ function strbuf_setiv(obj: pointer; index: integer; value: PLseValue): integer;c
 function strcut_getiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 function strcut_setiv(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
 function strcut_length(obj: pointer): integer;cdecl;
-function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
-function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
+function strcut_getpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+function strcut_setpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
 
 var
   strutils_types: array[0..1] of RLseType = (
@@ -331,7 +324,6 @@ var
     cr_desc     : 'string buffer object';
     cr_addref   :@lse_addref_obj;
     cr_release  :@lse_release_obj;
-    cr_write_to :@strbuf_writeto;
     cr_vargen   : nil;
     cr_otos     :@strbuf_otos;
     cr_stoo     :@strbuf_stoo;
@@ -347,7 +339,6 @@ var
     cr_desc     : 'string cutter object';
     cr_addref   :@lse_addref_obj;
     cr_release  :@lse_release_obj;
-    cr_write_to : nil;
     cr_vargen   : nil;
     cr_otos     : nil;
     cr_stoo     : nil;
@@ -646,18 +637,6 @@ begin
   end;
 end;
 
-function strbuf_writeto(obj: pointer; stream: PLseStream): integer;cdecl;
-var
-  S: TLiStrBuf;
-begin
-  Result := 0;
-  if obj <> nil then
-  begin
-    S := TLiStrBuf(obj);
-    Result := lse_stream_write(stream, S.FStrBuf);
-  end;
-end;
-
 function strbuf_otos(obj: pointer): PLseString;cdecl;
 var
   S: TLiStrBuf;
@@ -783,7 +762,7 @@ begin
     Result := 0;
 end;
 
-function strcut_getpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
+function strcut_getpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
 var
   S: TLiStrCut;
   X: integer;
@@ -792,13 +771,13 @@ begin
   if obj <> nil then
   begin
     S := TLiStrCut(obj);
-    X := S.IndexOf(prop);
+    X := S.IndexOf(lse_strec_string(prop));
     if X >= 0 then
       lse_set_string(value, S.ValueAt(X));
   end;
 end;
 
-function strcut_setpv(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl;
+function strcut_setpv(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
 var
   S: TLiStrCut;
   X: integer;
@@ -807,7 +786,7 @@ begin
   if obj <> nil then
   begin
     S := TLiStrCut(obj);
-    X := S.IndexOf(prop);
+    X := S.IndexOf(lse_strec_string(prop));
     if X >= 0 then
     begin
       lse_type_cast(KT_STRING, value);
