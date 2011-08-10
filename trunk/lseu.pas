@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/07/29                                                      }
+{    MODIFIED: 2011/08/10                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -27,17 +27,17 @@ const
   { LSE: Lysee Script Engine }
 
   LSE_ID             = 'lysee';
-  LSE_DLLEXT         = {$IFDEF WINDOWS}'.dll'{$ELSE}'.so'{$ENDIF};
-  LSE_KERNEL         = LSE_ID + LSE_DLLEXT;
+  LSE_OBJEXT         = '.lo';
+  LSE_KERNEL         = LSE_ID + LSE_OBJEXT;
   LSE_CONFILE        = 'lysee.config';
   LSE_MIMEFILE       = 'lysee.mime';
   LSE_PATH_DELIMITER = {$IFDEF WINDOWS}'\'{$ELSE}'/'{$ENDIF};
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
-  LSE_COPYRIGHT      = 'Copyright (C) 2003-2011 Li Yun Jie - http://www.lysee.net';
-  LSE_VERSION        = '2.0.3';
+  LSE_COPYRIGHT      = 'Copyright (c) 2003-2011 Li Yun Jie';
+  LSE_VERSION        = '2.0.8';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20110729;
+  LSE_BUILDDAY       = 20110810;
   LSE_MAX_PARAMS     = 12;
   LSE_MAX_CODES      = MaxInt div 2;
 
@@ -133,8 +133,8 @@ type
   (======================================================================}
 
   RLseVarb = packed record
-    va_name: string;
-    va_type: PLseType;
+    v_name: string;
+    v_type: PLseType;
   end;
 
 {======================================================================)
@@ -179,11 +179,12 @@ type
   RLseVargen = packed record
     vg_data    : pointer;
     vg_type    : PLseType;
-    vg_rewind  : function(vgrec: PLseVargen): integer;cdecl;
-    vg_has_next: function(vgrec: PLseVargen): integer;cdecl;
-    vg_get_next: function(vgrec: PLseVargen; Value: PLseValue): integer;cdecl;
+    vg_object  : pointer;
     vg_addref  : function(vgrec: PLseVargen): integer;cdecl;
     vg_release : function(vgrec: PLseVargen): integer;cdecl;
+    vg_has_next: function(vgrec: PLseVargen): integer;cdecl;
+    vg_generate: function(vgrec: PLseVargen; Value: PLseValue): integer;cdecl;
+    vg_rewind  : procedure(vgrec: PLseVargen);cdecl;
     vg_contains: function(vgrec: PLseVargen; Value: PLseValue): integer;cdecl;
   end;
 
@@ -199,7 +200,7 @@ type
   TLseAddItem = function(obj: pointer; value: PLseValue): integer;cdecl;
   TLseLength = function(obj: pointer): integer;cdecl;
   TLseGetItem = function(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
-  TLseGetProp = function(obj: pointer; const prop: pchar; value: PLseValue): integer;cdecl; 
+  TLseGetProp = function(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
 
   RLseType = packed record
     cr_type    : TLseValue;       {<--value type: LSV_XXXX}
@@ -408,7 +409,6 @@ type
     function Readln: string;
     function FormatStr(const Str: string): string;
     function EngineRec: PLseEngine;
-    function KernelEngine: pointer;
     function GetThis(var obj): boolean;
     function ParamCount: integer;
     function ParamInt(Index: integer): integer;
@@ -416,7 +416,6 @@ type
     function ParamBool(Index: integer): boolean;
     function ParamFloat(Index: integer): double;
     function ParamStr(Index: integer): string;
-    function ParamCStr(Index: integer; var Size: integer): pchar;
     function ParamStrec(Index: integer): PLseString;
     function ParamChar(Index: integer): char;
     function ParamFmt(Index: integer): string;
@@ -462,52 +461,6 @@ type
     function MatchLen(Index: integer): integer;
     function SourceLength: integer;
     property Source: pchar read FSource;
-  end;
-
-{======================================================================)
-(======== TLseHashTable ===============================================)
-(======================================================================}
-
-  PLiHashItem = ^RLiHashItem;
-  RLiHashItem = packed record
-    hi_next: PLiHashItem;
-    hi_key : pointer;
-    hi_data: pointer;
-  end;
-
-  RLiHashPair = packed record
-    hp_head: PLiHashItem;
-    hp_tail: PLiHashItem;
-  end;
-  PLiHashPair = ^RLiHashPair;
-  
-  KLiEnumKeyData = procedure(const Key: string; Value, Param: pointer) of object;
-  
-  TLseHashTable = class(TLseObject)
-  private
-    FBucketList: array of RLiHashPair;
-    FBucketSize: integer;
-    FIgnoreCase: boolean;
-    FCount: integer;
-  protected
-    function HashOf(const Key: string): cardinal;
-    function NewItem: PLiHashItem;virtual;
-    procedure FreeItem(Item: PLiHashItem);virtual;
-    function MatchKey(const Key, ID: string): boolean;
-    procedure DoPut(const Key: string; Value: pointer);
-    function DoGet(const Key: string): pointer;
-  public
-    constructor Create(Size: integer);
-    destructor Destroy; override;
-    procedure Clear;
-    procedure Remove(const Key: string);
-    function Find(const Key: string): PLiHashItem;
-    function IsSet(const Key: string): boolean;
-    function ListKey(List: TStrings): integer;
-    function ListData(List: TList): integer;
-    function EnumKeyData(Proc: KLiEnumKeyData; Param: pointer): integer;
-    property ItemCount: integer read FCount;
-    property IgnoreCase: boolean read FIgnoreCase write FIgnoreCase;
   end;
 
 {======================================================================)
@@ -676,8 +629,7 @@ function  lse_keywords: string;
 function  lse_register_module(const Name, FileName: string; MR: PLseModule): pointer;
 function  lse_register_type(const TR: PLseType): boolean;
 function  lse_register_func(const FR: PLseFunc): pointer;
-function  lse_hash_of(Key: pchar; Len: integer): cardinal;overload;
-function  lse_hash_of(const Key: string): cardinal;overload;
+function  lse_hash_of(Key: pchar): cardinal;
 procedure lse_check(ok: boolean; const msg: string);
 procedure lse_error(const error: string);overload;
 procedure lse_error(const error: string; const Args: array of const);overload;
@@ -710,6 +662,10 @@ function  lse_type_stoo(T: PLseType; const S: PLseString): pointer;
 function  lse_type_match(T, AType: PLseType): boolean;
 function  lse_type_desc(T: PLseType): string;
 procedure lse_type_cast(T: PLseType; V: PLseValue);
+function  lse_getpv(T: PLseType; aobj: pointer; prop: PLseString; value: PLseValue): boolean;
+function  lse_setpv(T: PLseType; aobj: pointer; prop: PLseString; value: PLseValue): boolean;
+function  lse_getiv(T: PLseType; aobj: pointer; X: integer; value: PLseValue): boolean;
+function  lse_setiv(T: PLseType; aobj: pointer; X: integer; value: PLseValue): boolean;
 
 {======================================================================)
 (======== reference ===================================================)
@@ -921,6 +877,7 @@ function  lse_get_obj(V: PLseValue): pointer;overload;
 function  lse_get_obj(V: PLseValue; P: PLseType): pointer;overload;
 function  lse_get_type(V: PLseValue): PLseType;
 function  lse_get_vargen(V: PLseValue): PLseVargen;
+function  lse_get_engine(const Param: PLseParam): pointer;
 { set }
 procedure lse_set_int(V: PLseValue; Value: int64);
 procedure lse_set_float(V: PLseValue; Value: double);
@@ -972,19 +929,19 @@ procedure lse_upto(V1, V2: PLseValue);       // V1 <=     V1 ..   V2
 {======================================================================)
 (======== vargen - variant generator ==================================)
 (======================================================================)
-( lse_vargen_addref : increase reference count
-( lse_vargen_release: decrease reference count
-( lse_vargen_eof    : check end of the vargen
-( lse_vargen_send   : get next value
-( lse_vargen_rewind : rewind to head of the vargen
-( lse_vargen_none   : an empty variant generator
-( lse_vargen_ensure : ensure a non-zero vargen
-( lse_vargen_this   : get a non-zero vargen as this
+( lse_vargen_addref  : increase reference count
+( lse_vargen_release : decrease reference count
+( lse_vargen_has_next: has value?
+( lse_vargen_generate: get next value
+( lse_vargen_rewind  : rewind to head of the vargen
+( lse_vargen_none    : an empty variant generator
+( lse_vargen_ensure  : ensure a non-zero vargen
+( lse_vargen_this    : get a non-zero vargen as this
 (----------------------------------------------------------------------}
 function lse_vargen_addref(const VG: pointer): integer;cdecl;
 function lse_vargen_release(const VG: pointer): integer;cdecl;
-function lse_vargen_eof(VG: PLseVargen): boolean;
-function lse_vargen_send(VG: PLseVargen; Value: PLseValue): boolean;
+function lse_vargen_has_next(VG: PLseVargen): boolean;
+function lse_vargen_generate(VG: PLseVargen; Value: PLseValue): boolean;
 function lse_vargen_rewind(VG: PLseVargen): boolean;
 function lse_vargen_contains(VG: PLseVargen; Value: PLseValue): boolean;
 function lse_vargen_none: PLseVargen;
@@ -1050,7 +1007,7 @@ end;
 
 function lse_type_prot(V: PLseVarb): string;
 begin
-  Result := lse_type_prot(V^.va_type, V^.va_name);
+  Result := lse_type_prot(V^.v_type, V^.v_name);
 end;
 
 function lse_type_otos(T: PLseType; obj: pointer): string;
@@ -1105,6 +1062,26 @@ begin
         lse_set_object(V, T, lse_type_stoo(T, V^.VObject)) else
         lse_set_object(V, T, nil);
   end;
+end;
+
+function lse_getpv(T: PLseType; aobj: pointer; prop: PLseString; value: PLseValue): boolean;
+begin
+  Result := Assigned(T^.cr_getpv) and (T^.cr_getpv(aobj, prop, value) > 0);
+end;
+
+function lse_setpv(T: PLseType; aobj: pointer; prop: PLseString; value: PLseValue): boolean;
+begin
+  Result := Assigned(T^.cr_setpv) and (T^.cr_setpv(aobj, prop, value) > 0);
+end;
+
+function lse_getiv(T: PLseType; aobj: pointer; X: integer; value: PLseValue): boolean;
+begin
+  Result := Assigned(T^.cr_getiv) and (T^.cr_getiv(aobj, X, value) > 0);
+end;
+
+function lse_setiv(T: PLseType; aobj: pointer; X: integer; value: PLseValue): boolean;
+begin
+  Result := Assigned(T^.cr_setiv) and (T^.cr_setiv(aobj, X, value) > 0);
 end;
 
 {======================================================================)
@@ -1960,7 +1937,7 @@ end;
 
 function lse_strec_hash(S: PLseString): cardinal;
 begin
-  Result := lse_hash_of(lse_strec_data(S), lse_strec_length(S));
+  Result := lse_hash_of(lse_strec_data(S));
 end;
 
 {======================================================================)
@@ -2121,21 +2098,14 @@ begin
   Result := lse_entries^.cik_register_func(FR);
 end;
 
-function lse_hash_of(Key: pchar; Len: integer): cardinal;
-var
-  X: integer;
+function lse_hash_of(Key: pchar): cardinal;
 begin
   Result := 0;
-  for X := Min(Len, 64) downto 1 do
-  begin
+  if (Key <> nil) and (Key^ <> #0) then
+  repeat
     Result := ((Result shl 2) or (Result shr (sizeof(Result) * 8 - 2))) xor Ord(Key^);
     Inc(Key);
-  end;
-end;
-
-function lse_hash_of(const Key: string): cardinal;
-begin
-  Result := lse_hash_of(pchar(Key), Length(Key));
+  until Key^ = #0;
 end;
 
 {======================================================================)
@@ -3262,6 +3232,11 @@ begin
   Result := lse_vargen_ensure(Result);
 end;
 
+function  lse_get_engine(const Param: PLseParam): pointer;
+begin
+  Result := lse_entries^.cik_param_engine(Param)^.er_kernel;
+end;
+
 procedure lse_set_int(V: PLseValue; Value: int64);
 begin
   lse_release(V);
@@ -3819,7 +3794,7 @@ begin
     G := lse_get_vargen(V2);
     lse_vargen_addref(G);
     try
-      while lse_vargen_send(G, V2) do
+      while lse_vargen_generate(G, V2) do
         K^.cr_add(V1^.VObject, V2);
     finally
       lse_vargen_release(G);
@@ -3872,24 +3847,25 @@ begin
     Result := 0;
 end;
 
-function lse_vargen_eof(VG: PLseVargen): boolean;
+function lse_vargen_has_next(VG: PLseVargen): boolean;
 begin
-  Result := (VG = nil) or (VG^.vg_has_next(VG) = 0);
+  Result := (VG <> nil) and (VG^.vg_has_next(VG) <> 0);
 end;
 
-function lse_vargen_send(VG: PLseVargen; Value: PLseValue): boolean;
+function lse_vargen_generate(VG: PLseVargen; Value: PLseValue): boolean;
 begin
-  Result := (VG <> nil) and (VG^.vg_get_next(VG, Value) <> 0);
+  Result := (VG <> nil) and (VG^.vg_generate(VG, Value) <> 0);
 end;
 
 function lse_vargen_rewind(VG: PLseVargen): boolean;
 begin
-  Result := (VG <> nil) and (VG^.vg_rewind(VG) <> 0);
+  Result := (VG <> nil) and Assigned(VG^.vg_rewind);
+  if Result then VG^.vg_rewind(VG);
 end;
 
 function lse_vargen_contains(VG: PLseVargen; Value: PLseValue): boolean;
 begin
-  Result := Assigned(VG^.vg_contains) and
+  Result := (VG <> nil) and Assigned(VG^.vg_contains) and
             (VG^.vg_contains(VG, Value) <> 0);
 end;
 
@@ -3898,7 +3874,7 @@ begin
   Result := 0;
 end;
 
-function empty_vargen_pick(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+function empty_vargen_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
 begin
   Result := 0;
 end;
@@ -3912,11 +3888,12 @@ const
   empty_vargen: RLseVargen = (
     vg_data    : nil;
     vg_type    : nil;
-    vg_rewind  : {$IFDEF FPC}@{$ENDIF}empty_vargen_zero;
-    vg_has_next: {$IFDEF FPC}@{$ENDIF}empty_vargen_zero;
-    vg_get_next: {$IFDEF FPC}@{$ENDIF}empty_vargen_pick;
+    vg_object  : nil;
     vg_addref  : {$IFDEF FPC}@{$ENDIF}empty_vargen_life;
     vg_release : {$IFDEF FPC}@{$ENDIF}empty_vargen_life;
+    vg_has_next: {$IFDEF FPC}@{$ENDIF}empty_vargen_zero;
+    vg_generate: {$IFDEF FPC}@{$ENDIF}empty_vargen_generate;
+    vg_rewind  : nil;
     vg_contains: nil;
   );
   
@@ -3995,33 +3972,20 @@ begin
   end;
 end;
 
-function upto_rewind(vrec: PLseVargen): integer;cdecl;
-var
-  range: PLiVG_range;
+procedure upto_rewind(vrec: PLseVargen);cdecl;
 begin
-  range := PLiVG_range(vrec^.vg_data);
-  with range^ do
-  begin
-    curr := begv;
-    Result := Ord(curr <= endv);
-  end;
+  with PLiVG_range(vrec^.vg_data)^ do curr := begv;
 end;
 
-function upto_hasNext(vrec: PLseVargen): integer;cdecl;
-var
-  range: PLiVG_range;
+function upto_has_next(vrec: PLseVargen): integer;cdecl;
 begin
-  range := PLiVG_range(vrec^.vg_data);
-  with range^ do
+  with PLiVG_range(vrec^.vg_data)^ do
     Result := Ord(curr <= endv);
 end;
 
-function upto_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
-var
-  range: PLiVG_range;
+function upto_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
 begin
-  range := PLiVG_range(vrec^.vg_data);
-  with range^ do
+  with PLiVG_range(vrec^.vg_data)^ do
     if curr <= endv then
     begin
       lse_set_int(Value, curr);
@@ -4039,12 +4003,11 @@ begin
   begin
     cvgr := lse_mem_alloc_zero(sizeof(RLiVG_range));
     cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_type := KT_INT;
-    cvgr^.vgrec.vg_rewind := @upto_rewind;
-    cvgr^.vgrec.vg_has_next := @upto_hasNext;
-    cvgr^.vgrec.vg_get_next := @upto_getNext;
     cvgr^.vgrec.vg_addref := @range_addref;
     cvgr^.vgrec.vg_release := @range_release;
+    cvgr^.vgrec.vg_has_next := @upto_has_next;
+    cvgr^.vgrec.vg_generate := @upto_generate;
+    cvgr^.vgrec.vg_rewind := @upto_rewind;
     cvgr^.vgrec.vg_contains := @range_contains;
     cvgr^.vgref := 0;
     cvgr^.begv := begv;
@@ -4056,22 +4019,18 @@ begin
   else Result := nil;
 end;
 
-function downto_rewind(vrec: PLseVargen): integer;cdecl;
+procedure downto_rewind(vrec: PLseVargen);cdecl;
 begin
-  with PLiVG_range(vrec^.vg_data)^ do
-  begin
-    curr := begv;
-    Result := Ord(curr >= endv);
-  end;
+  with PLiVG_range(vrec^.vg_data)^ do curr := begv;
 end;
 
-function downto_hasNext(vrec: PLseVargen): integer;cdecl;
+function downto_has_next(vrec: PLseVargen): integer;cdecl;
 begin
   with PLiVG_range(vrec^.vg_data)^ do
     Result := Ord(curr >= endv);
 end;
 
-function downto_getNext(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
+function downto_generate(vrec: PLseVargen; Value: PLseValue): integer;cdecl;
 begin
   with PLiVG_range(vrec^.vg_data)^ do
     if curr >= endv then
@@ -4091,12 +4050,11 @@ begin
   begin
     cvgr := lse_mem_alloc_zero(sizeof(RLiVG_range));
     cvgr^.vgrec.vg_data := cvgr;
-    cvgr^.vgrec.vg_type := KT_INT;
-    cvgr^.vgrec.vg_rewind := @downto_rewind; 
-    cvgr^.vgrec.vg_has_next := @downto_hasNext;
-    cvgr^.vgrec.vg_get_next := @downto_getNext;
     cvgr^.vgrec.vg_addref := @range_addref;
     cvgr^.vgrec.vg_release := @range_release;
+    cvgr^.vgrec.vg_has_next := @downto_has_next;
+    cvgr^.vgrec.vg_generate := @downto_generate;
+    cvgr^.vgrec.vg_rewind := @downto_rewind; 
     cvgr^.vgrec.vg_contains := @range_contains;
     cvgr^.vgref := 0;
     cvgr^.begv := begv;
@@ -4474,14 +4432,14 @@ end;
 
 function TLseInvoke.Read(const Buf: pchar; Count: integer): integer;
 begin
-  Result := lse_entries^.cik_read(KernelEngine, Buf, Count);
+  Result := lse_entries^.cik_read(lse_get_engine(FParam), Buf, Count);
 end;
 
 function TLseInvoke.Readln: string;
 var
   S: PLseString;
 begin
-  S := lse_entries^.cik_readln(KernelEngine);
+  S := lse_entries^.cik_readln(lse_get_engine(FParam));
   if S <> nil then
   begin
     lse_strec_inclife(S);
@@ -4533,23 +4491,18 @@ end;
 
 function TLseInvoke.GetThis(var obj): boolean;
 var
-  this_object: pointer;
+  this: pointer;
 begin
-  this_object := paramObject(0);
-  Result := (this_object <> nil);
+  this := paramObject(0);
+  Result := (this <> nil);
   if Result then
-    pointer(obj) := this_object else
-    returnError('', 0, 'object "this" is not specified!');
+    pointer(obj) := this else
+    returnError('', 0, 'this was not specified!');
 end;
 
 constructor TLseInvoke.Create(Param: PLseParam);
 begin
   FParam := Param;
-end;
-
-function TLseInvoke.KernelEngine: pointer;
-begin
-  Result := lse_entries^.cik_param_engine(FParam)^.er_kernel;
 end;
 
 function TLseInvoke.ParamClass(Index: integer): PLseType;
@@ -4564,7 +4517,7 @@ end;
 
 function TLseInvoke.ParamFloat(Index: integer): double;
 begin
-  Result := FParam^.p_param[Index]^.VFloat;
+  Result := lse_get_float(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamFmt(Index: integer): string;
@@ -4574,61 +4527,47 @@ end;
 
 function TLseInvoke.ParamInt(Index: integer): integer;
 begin
-  Result := FParam^.p_param[Index]^.VInteger;
+  Result := lse_get_int(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamInt64(Index: integer): int64;
 begin
-  Result := FParam^.p_param[Index]^.VInteger;
+  Result := lse_get_int(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamBool(Index: integer): boolean;
 begin
-  Result := (FParam^.p_param[Index]^.VInteger <> 0);
+  Result := lse_get_bool(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamObject(Index: integer): pointer;
 begin
-  Result := FParam^.p_param[Index]^.VObject;
+  Result := lse_get_obj(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamStr(Index: integer): string;
 begin
-  Result := lse_strec_string(FParam^.p_param[Index]^.VObject);
-end;
-
-function TLseInvoke.ParamCStr(Index: integer; var Size: integer): pchar;
-var
-  strec: PLseString;
-begin
-  strec := FParam^.p_param[Index]^.VObject;
-  Result := lse_strec_data(strec);
-  Size := lse_strec_length(strec);
+  Result := lse_get_str(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamStrec(Index: integer): PLseString;
 begin
-  Result := FParam^.p_param[Index]^.VObject;
+  Result := lse_get_strec(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamChar(Index: integer): char;
-var
-  S: pchar;
 begin
-  S := lse_strec_data(FParam^.p_param[Index]^.VObject);
-  if S <> nil then
-    Result := S^ else
-    Result := #0;
+  Result := lse_get_char(FParam^.p_param[Index]);
 end;
 
 function TLseInvoke.ParamStream(Index: integer): PLseStream;
 begin
-  Result := PLseStream(FParam^.p_param[Index]^.VObject);
+  Result := lse_get_obj(FParam^.p_param[Index], KT_STREAM);
 end;
 
 procedure TLseInvoke.Print(const Str: string);
 begin
-  lse_entries^.cik_write(KernelEngine, pchar(Str), Length(Str));
+  lse_entries^.cik_write(lse_get_engine(FParam), pchar(Str), Length(Str));
 end;
 
 { TLsePatten }
@@ -5096,194 +5035,6 @@ begin
   FCount := 1;
 end;
 
-{ TLseHashTable }
-
-procedure TLseHashTable.Clear;
-var
-  index: integer;
-  base, next: PLiHashItem;
-begin
-  for index := 0 to FBucketSize - 1 do
-  begin
-    base := FBucketList[index].hp_head;
-    while base <> nil do
-    begin
-      next := base^.hi_next;
-      FreeItem(base);
-      base := next;
-      Dec(FCount);
-    end;
-    FBucketList[index].hp_head := nil;
-    FBucketList[index].hp_tail := nil;
-  end;
-  FCount := 0;
-end;
-
-constructor TLseHashTable.Create(Size: integer);
-begin
-  inherited Create;
-  FCount := 0;
-  FBucketSize := Max(1, Size);
-  SetLength(FBucketList, FBucketSize);
-  FillChar(FBucketList[0], FBucketSize * sizeof(RLiHashPair), 0);
-end;
-
-destructor TLseHashTable.Destroy;
-begin
-  Clear;
-  SetLength(FBucketList, 0);
-  inherited;
-end;
-
-function TLseHashTable.DoGet(const Key: string): pointer;
-var
-  hash: PLiHashItem;
-begin
-  hash := Find(Key);
-  if hash <> nil then
-    Result := hash^.hi_data else
-    Result := nil;
-end;
-
-procedure TLseHashTable.DoPut(const Key: string; Value: pointer);
-var
-  item: PLiHashItem;
-begin
-  item := NewItem;
-  string(item^.hi_key) := Key;
-  item^.hi_data := Value;
-  with FBucketList[HashOf(Key)] do
-  begin
-    if hp_tail <> nil then
-      hp_tail^.hi_next := item else
-      hp_head := item;
-    hp_tail := item;
-  end;
-  Inc(FCount);
-end;
-
-function TLseHashTable.EnumKeyData(Proc: KLiEnumKeyData; Param: pointer): integer;
-var
-  next: integer;
-  item: PLiHashItem;
-begin
-  Result := 0;
-  for next := 0 to FBucketSize - 1 do
-  begin
-    item := FBucketList[next].hp_head;
-    while item <> nil do
-    begin
-      Proc(string(item^.hi_key), item^.hi_data, Param);
-      item := item^.hi_next;
-      Inc(Result);
-    end;
-  end;
-end;
-
-function TLseHashTable.Find(const Key: string): PLiHashItem;
-begin
-  Result := FBucketList[HashOf(Key)].hp_head;
-  while Result <> nil do
-  begin
-    if MatchKey(Key, string(Result^.hi_key)) then Exit;
-    Result := Result^.hi_next;
-  end;
-end;
-
-procedure TLseHashTable.FreeItem(Item: PLiHashItem);
-begin
-  string(Item^.hi_key) := '';
-  lse_mem_free(Item, sizeof(RLiHashItem));
-end;
-
-function TLseHashTable.HashOf(const Key: string): cardinal;
-begin
-  if FBucketSize = 1 then Result := 0 else
-  if FIgnoreCase then
-    Result := lse_hash_of(LowerCase(Key)) mod cardinal(FBucketSize) else
-    Result := lse_hash_of(Key) mod cardinal(FBucketSize);
-end;
-
-function TLseHashTable.IsSet(const Key: string): boolean;
-begin
-  Result := (Find(Key) <> nil);
-end;
-
-function TLseHashTable.ListKey(List: TStrings): integer;
-var
-  next: integer;
-  item: PLiHashItem;
-begin
-  List.Clear;
-  for next := 0 to FBucketSize - 1 do
-  begin
-    item := FBucketList[next].hp_head;
-    while item <> nil do
-    begin
-      List.Add(string(item^.hi_key));
-      item := item^.hi_next;
-    end;
-  end;
-  Result := List.Count;
-end;
-
-function TLseHashTable.ListData(List: TList): integer;
-var
-  next: integer;
-  item: PLiHashItem;
-begin
-  List.Clear;
-  for next := 0 to FBucketSize - 1 do
-  begin
-    item := FBucketList[next].hp_head;
-    while item <> nil do
-    begin
-      List.Add(item^.hi_data);
-      item := item^.hi_next;
-    end;
-  end;
-  Result := List.Count;
-end;
-
-function TLseHashTable.MatchKey(const Key, ID: string): boolean;
-begin
-  if FIgnoreCase then
-    Result := AnsiSameText(Key, ID) else
-    Result := AnsiSameStr(Key, ID);
-end;
-
-function TLseHashTable.NewItem: PLiHashItem;
-begin
-  Result := lse_mem_alloc_zero(sizeof(RLiHashItem)); 
-end;
-
-procedure TLseHashTable.Remove(const Key: string);
-var
-  item, root: PLiHashItem;
-begin
-  root := nil;
-  with FBucketList[HashOf(Key)] do
-  begin
-    item := hp_head;
-    while item <> nil do
-    begin
-      if MatchKey(Key, string(item^.hi_key)) then
-      begin
-        if root <> nil then
-          root^.hi_next := item^.hi_next else
-          hp_head := item^.hi_next;
-        if hp_tail = item then
-          hp_tail := root;
-        lse_mem_free(item, sizeof(RLiHashItem));
-        Dec(FCount);
-        Exit;
-      end;
-      root := item;
-      item := item^.hi_next;
-    end;
-  end;
-end;
-
 { TLseNamed }
 
 constructor TLseNamed.Create(const AName: string);
@@ -5355,7 +5106,7 @@ end;
 
 function TLseHashNamed.HashOf(const Key: string): cardinal;
 begin
-  Result := lse_hash_of(Key) mod FSize;
+  Result := lse_hash_of(pchar(Key)) mod FSize;
 end;
 
 function TLseHashNamed.NewItem: PLiNameItem;

@@ -48,7 +48,6 @@
         <Filename Value="lysee_pad_fpc.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_pad_fpc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -469,10 +468,11 @@
         <Filename Value="lse_kernel.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lse_kernel"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="8"/>
+        <TopLine Value="8680"/>
+        <CursorPos X="57" Y="8699"/>
         <UsageCount Value="29"/>
         <Loaded Value="True"/>
       </Unit59>
@@ -557,123 +557,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="113" Column="1" TopLine="105"/>
+        <Caret Line="471" Column="3" TopLine="447"/>
       </Position1>
       <Position2>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="471" Column="3" TopLine="447"/>
+        <Caret Line="113" Column="1" TopLine="101"/>
       </Position2>
       <Position3>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="113" Column="1" TopLine="101"/>
+        <Caret Line="474" Column="5" TopLine="450"/>
       </Position3>
       <Position4>
-        <Filename Value="lse_synedit.pas"/>
-        <Caret Line="474" Column="5" TopLine="450"/>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="160" Column="1" TopLine="148"/>
       </Position4>
       <Position5>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="160" Column="1" TopLine="148"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position5>
       <Position6>
-        <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position6>
-      <Position7>
         <Filename Value="lse_synedit.pas"/>
         <Caret Line="94" Column="26" TopLine="84"/>
+      </Position6>
+      <Position7>
+        <Filename Value="lse_pad_fpc.pas"/>
+        <Caret Line="208" Column="19" TopLine="187"/>
       </Position7>
       <Position8>
         <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="208" Column="19" TopLine="187"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="lse_pad_fpc.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="lse_synedit.pas"/>
+        <Caret Line="94" Column="26" TopLine="83"/>
       </Position9>
       <Position10>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="94" Column="26" TopLine="83"/>
+        <Caret Line="95" Column="1" TopLine="84"/>
       </Position10>
       <Position11>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="95" Column="1" TopLine="84"/>
+        <Caret Line="122" Column="3" TopLine="106"/>
       </Position11>
       <Position12>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="122" Column="3" TopLine="106"/>
+        <Caret Line="468" Column="5" TopLine="444"/>
       </Position12>
       <Position13>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="468" Column="5" TopLine="444"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position13>
       <Position14>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="456" Column="5" TopLine="444"/>
       </Position14>
       <Position15>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="456" Column="5" TopLine="444"/>
+        <Caret Line="96" Column="12" TopLine="84"/>
       </Position15>
       <Position16>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="96" Column="12" TopLine="84"/>
+        <Caret Line="120" Column="23" TopLine="100"/>
       </Position16>
       <Position17>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="120" Column="23" TopLine="100"/>
+        <Caret Line="300" Column="17" TopLine="280"/>
       </Position17>
       <Position18>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="300" Column="17" TopLine="280"/>
+        <Caret Line="119" Column="23" TopLine="108"/>
       </Position18>
       <Position19>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="119" Column="23" TopLine="108"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position19>
       <Position20>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="100" Column="26" TopLine="94"/>
       </Position20>
       <Position21>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="100" Column="26" TopLine="94"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position21>
       <Position22>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="294" Column="15" TopLine="274"/>
       </Position22>
       <Position23>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="294" Column="15" TopLine="274"/>
+        <Caret Line="117" Column="3" TopLine="102"/>
       </Position23>
       <Position24>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="117" Column="3" TopLine="102"/>
+        <Caret Line="55" Column="15" TopLine="45"/>
       </Position24>
       <Position25>
         <Filename Value="lse_synedit.pas"/>
-        <Caret Line="55" Column="15" TopLine="45"/>
+        <Caret Line="13" Column="54" TopLine="1"/>
       </Position25>
       <Position26>
-        <Filename Value="lse_synedit.pas"/>
-        <Caret Line="13" Column="54" TopLine="1"/>
+        <Filename Value="lysee_pad_fpc.lpr"/>
+        <Caret Line="52" Column="31" TopLine="39"/>
       </Position26>
       <Position27>
         <Filename Value="lysee_pad_fpc.lpr"/>
-        <Caret Line="52" Column="31" TopLine="39"/>
+        <Caret Line="58" Column="18" TopLine="41"/>
       </Position27>
       <Position28>
         <Filename Value="lysee_pad_fpc.lpr"/>
-        <Caret Line="58" Column="18" TopLine="41"/>
+        <Caret Line="69" Column="3" TopLine="45"/>
       </Position28>
       <Position29>
-        <Filename Value="lysee_pad_fpc.lpr"/>
-        <Caret Line="69" Column="3" TopLine="45"/>
-      </Position29>
-      <Position30>
         <Filename Value="lse_synedit.pas"/>
         <Caret Line="461" Column="5" TopLine="437"/>
+      </Position29>
+      <Position30>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

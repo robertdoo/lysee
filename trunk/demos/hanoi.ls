@@ -1,15 +1,12 @@
-def move |from, to|
-  println(@"move %(from) to %(to)");
-end
+{def move From To ->
+    {println @"move %(From) to %(To)"}}
 
-def hanoi |n:int, from, middle, to|
-  if n == 1 then
-    move(from, to)
-  else
-    hanoi(n - 1, from, to, middle);
-    move(from, to);
-    hanoi(n - 1, middle, from, to)
-  end
-end
+{def hanoi n From middle To ->
+    {if n == 1 then
+        {move From, To}
+        else
+            {hanoi n - 1, From, To, middle}
+            {move From, To}
+            {hanoi n - 1, middle, From, To}}}
 
-hanoi(5, "A", "B", "C");
+{hanoi 5, "A", "B", "C"}

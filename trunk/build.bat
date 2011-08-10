@@ -1,7 +1,7 @@
 @echo off
 D:
 cd D:\budi\lysee\lysee\
-DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local *.identcache *.compiled *.bak
+DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local *.identcache *.compiled *.bak *.lo
 echo ***** lysee_fpc.lpr => lysee_fpc.exe
 del lysee_fpc.exe
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fu. -olysee_fpc.exe lysee_fpc.lpr
@@ -11,9 +11,9 @@ fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fu. -olysee_ker
 echo ***** lysee_pad_fpc.lpr => lysee_pad_fpc.exe
 del lysee_pad_fpc.exe
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu. -WG -dSYN_LAZARUS -dLCL -dLCLwin32  -Fu..\..\..\..\Developments\lazarus\components\synedit\units\i386-win32\ -Fu..\..\..\..\Developments\lazarus\lcl\units\i386-win32\ -Fu..\..\..\..\Developments\lazarus\lcl\units\i386-win32\win32\ -Fu..\..\..\..\Developments\lazarus\packager\units\i386-win32\ -olysee_pad_fpc.exe lysee_pad_fpc.lpr
-echo ***** modules\lysee_odbc.lpr => modules\lysee_odbc.dll
-del modules\lysee_odbc.dll
-fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_odbc.dll modules\lysee_odbc.lpr
+echo ***** modules\lysee_sqldb.lpr => modules\lysee_sqldb.dll
+del modules\lysee_sqldb.dll
+fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_sqldb.dll modules\lysee_sqldb.lpr
 echo ***** modules\lysee_sh.lpr => modules\lysee_sh.dll
 del modules\lysee_sh.dll
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_sh.dll modules\lysee_sh.lpr

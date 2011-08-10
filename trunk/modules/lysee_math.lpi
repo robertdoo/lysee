@@ -42,11 +42,10 @@
         <Filename Value="lysee_math.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_math"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="23"/>
+        <CursorPos X="6" Y="10"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -63,25 +62,24 @@
         <Filename Value="lysee_math_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_math_funcs"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="195"/>
-        <CursorPos X="1" Y="219"/>
+        <TopLine Value="49"/>
+        <CursorPos X="26" Y="55"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="D:\Developments\lazarus\fpc\2.4.2\source\rtl\objpas\math.pp"/>
         <UnitName Value="math"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="295"/>
         <CursorPos X="10" Y="307"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit3>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="23" HistoryIndex="22">
       <Position1>
         <Filename Value="lysee_math.lpr"/>
         <Caret Line="28" Column="18" TopLine="4"/>
@@ -138,6 +136,42 @@
         <Filename Value="lysee_math_funcs.pas"/>
         <Caret Line="349" Column="30" TopLine="337"/>
       </Position14>
+      <Position15>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="211" Column="1" TopLine="195"/>
+      </Position15>
+      <Position16>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="200" Column="1" TopLine="193"/>
+      </Position16>
+      <Position17>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="109" Column="25" TopLine="87"/>
+      </Position17>
+      <Position18>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="205" Column="24" TopLine="181"/>
+      </Position18>
+      <Position19>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="396" Column="5" TopLine="372"/>
+      </Position19>
+      <Position20>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
+      </Position20>
+      <Position21>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="54" Column="35" TopLine="37"/>
+      </Position21>
+      <Position22>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="59" Column="24" TopLine="49"/>
+      </Position22>
+      <Position23>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="394" Column="1" TopLine="370"/>
+      </Position23>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
