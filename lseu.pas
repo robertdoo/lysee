@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/08/10                                                      }
+{    MODIFIED: 2011/08/21                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -35,9 +35,9 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (c) 2003-2011 Li Yun Jie';
-  LSE_VERSION        = '2.0.8';
+  LSE_VERSION        = '2.1.1';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20110810;
+  LSE_BUILDDAY       = 20110821;
   LSE_MAX_PARAMS     = 12;
   LSE_MAX_CODES      = MaxInt div 2;
 
@@ -49,6 +49,7 @@ const
   LCS_ALNUM          = LCS_ALPHA + LCS_DIGIT;
   LCS_ID             = LCS_ALNUM + ['_'];
   LCS_HEAD           = LCS_ALPHA + ['_'];
+  LCS_ENV            = LCS_ID  + ['.', '-', ':', '/', '\'];
   LCS_PUNCT          = ['!'..'~'] - LCS_ALNUM;
   LCS_CNTRL          = [#$00..#$1F, #$7F];
   LCS_QUOTE          = ['"', ''''];
@@ -649,6 +650,7 @@ function  lse_in_charset(S: pchar; Len: integer; Chars: TLseCharSet): boolean;ov
 function  lse_in_charset(S: pchar; Chars: TLseCharSet): boolean;overload;
 function  lse_is_ident(S: pchar): boolean;
 function  lse_is_idhead(C: char): boolean;
+procedure lse_zero_ref(aobj: TLseObject);
 
 {======================================================================)
 (======== type ========================================================)
@@ -2306,6 +2308,11 @@ end;
 function lse_is_idhead(C: char): boolean;
 begin
   Result := (C in LCS_HEAD);
+end;
+
+procedure lse_zero_ref(aobj: TLseObject);
+begin
+  aobj.FRefcount := 0;
 end;
 
 {======================================================================)

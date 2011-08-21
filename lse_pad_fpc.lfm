@@ -784,7 +784,7 @@ object LspadForm: TLspadForm
         Width = 110
         Caption = 'Whole word only'
         OnChange = chkWholeWordChange
-        TabOrder = 1
+        TabOrder = 2
       end
       object chkCaseSensitive: TCheckBox
         Left = 440
@@ -793,14 +793,14 @@ object LspadForm: TLspadForm
         Width = 104
         Caption = 'Case Sensitive'
         OnChange = chkCaseSensitiveChange
-        TabOrder = 2
+        TabOrder = 3
       end
       object edtReplaceText: TEdit
         Left = 56
         Height = 20
         Top = 33
         Width = 152
-        TabOrder = 3
+        TabOrder = 1
       end
     end
   end
