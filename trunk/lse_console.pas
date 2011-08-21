@@ -108,7 +108,7 @@ end;
 procedure KLiCommander.Command;
 var
   code, line, temp, spath, args: string;
-  test, index, seconds, times: integer;
+  test, index: integer;
   exec_pause: boolean;
 
   function masked(mask: integer): boolean;
@@ -140,10 +140,8 @@ var
   end;
   
 begin
-  seconds := 0;
   spath := '';
   index := 1;
-  times := 1;
   exec_pause := false;
   args := ParamStr(0);
   
@@ -175,30 +173,6 @@ begin
       Inc(index);
     end
     else
-    if (line = '-w') or (line = '--wait') then
-    begin
-      if index = ParamCount then
-      begin
-        PrintLn('Error: seconds to wait not supplied.');
-        Exit;
-      end;
-      Inc(index);
-      seconds := StrToIntDef(ParamStr(index), 0);
-      Inc(index);
-    end
-    else
-    if (line = '-t') or (line = '--times') then
-    begin
-      if index = ParamCount then
-      begin
-        PrintLn('Error: execute times not supplied.');
-        Exit;
-      end;
-      Inc(index);
-      times := Max(1, StrToIntDef(ParamStr(index), 1));
-      Inc(index);
-    end
-    else
     if (line = '-p') or (line = '--pause') then
     begin
       exec_pause := true;
@@ -212,63 +186,56 @@ begin
 
   if index <= ParamCount then
   begin
-    while times > 0 do
-    begin
-      Dec(times);
-      WaitForSeconds(seconds);
-      FEngine.ExecCommandLine(index);
-      FEngine.Clear;
-    end;
+    FEngine.ExecCommandLine(index);
     if exec_pause then Pause;
-  end
-  else
-  begin
-    line := lse_kernel_production(true);
-    FEngine.WriteLine(line);
-    FEngine.WriteLine('');
-    temp := ':: /C=CANCEL /Q=QUIT /R=RESTART ::';
-    FEngine.WriteLine(StringOfChar(' ', (Length(line) - Length(temp)) div 2) + temp);
-    FEngine.WriteLine('');
+    Exit;
+  end;
 
-    code := '';
-    repeat
-      try
-        if code = '' then
-          FEngine.WriteText('>>> ') else
-          FEngine.WriteText('  > ');
-        line := ReadLine;
-        temp := Trim(line);
-        if AnsiSameText('/q', temp) then Break else
-        if AnsiSameText('/r', temp) then Restart else
-        if AnsiSameText('/c', temp) then Cancel else
-        if temp <> '' then
+  line := lse_kernel_production(true);
+  FEngine.WriteLine(line);
+  FEngine.WriteLine('');
+  temp := ':: /C=CANCEL /Q=QUIT /R=RESTART ::';
+  FEngine.WriteLine(StringOfChar(' ', (Length(line) - Length(temp)) div 2) + temp);
+  FEngine.WriteLine('');
+  
+  code := '';
+  repeat
+    try
+      if code = '' then
+        FEngine.WriteText('>>> ') else
+        FEngine.WriteText('  > ');
+      line := ReadLine;
+      temp := Trim(line);
+      if AnsiSameText('/q', temp) then Break else
+      if AnsiSameText('/r', temp) then Restart else
+      if AnsiSameText('/c', temp) then Cancel else
+      if temp <> '' then
+      begin
+        if code <> '' then
+          code := code + sLineBreak + line else
+          code := line;
+        test := lse_simple_test(code);
+        if masked(SCT_ERROR) then
         begin
-          if code <> '' then
-            code := code + sLineBreak + line else
-            code := line;
-          test := lse_simple_test(code);
-          if masked(SCT_ERROR) then
-          begin
-            FEngine.WriteLine('*************** INCORRECT ***************');
-            code := '';
-          end
-          else
-          if masked(SCT_OK {+ SCT_RBLOCK}) then
-          begin
-            if FEngine.ExecuteCode(code) then
-              FEngine.WriteLine(FEngine.ResultText) else
-              FEngine.WriteLine(FEngine.Error);
-            code := '';
-          end;
+          FEngine.WriteLine('*************** INCORRECT ***************');
+          code := '';
         end
         else
-        if code <> '' then
-          code := code + sLineBreak;
-      except
-        FEngine.WriteLine('*** ' + lse_exception_str);
-      end;
-    until FEngine.Exited;
-  end;
+        if masked(SCT_OK {+ SCT_RBLOCK}) then
+        begin
+          if FEngine.ExecuteCode(code) then
+            FEngine.WriteLine(FEngine.ResultText) else
+            FEngine.WriteLine(FEngine.Error);
+          code := '';
+        end;
+      end
+      else
+      if code <> '' then
+        code := code + sLineBreak;
+    except
+      FEngine.WriteLine('*** ' + lse_exception_str);
+    end;
+  until FEngine.Exited;
 end;
 
 constructor KLiCommander.Create;
@@ -302,9 +269,7 @@ begin
   PrintLn('  -v, --version           display the version of lysee and exit.');
   PrintLn('  -h, --help              print this help and exit.');
   PrintLn('  -s, --search=PATH       set module search path.');
-  PrintLn('  -w, --wait=SECONDS      wait for some seconds before going on.');
-  PrintLn('  -t, --times=COUNT       execute specified times.');
-  PrintLn('  -p, --pause             pause after execute script file.');
+  PrintLn('  -p, --pause             inteprete after execute script file.');
   PrintLn('');
   PrintLn('File:');
   PrintLn('  .ls                     execute this file directly.');

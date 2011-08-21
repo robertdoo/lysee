@@ -15,7 +15,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="711"/>
+      <BuildNr Value="717"/>
       <StringTable FileDescription="lysee script interpretor (FPC)" LegalCopyright="Copyright (C) 2003-2011 li yun jie <libudi@hotmail.com>" ProductVersion="2.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -50,8 +50,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="48" Y="16"/>
+        <TopLine Value="6297"/>
+        <CursorPos X="38" Y="6321"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="1197" ID="3"/>
@@ -595,7 +595,7 @@
         <UsageCount Value="10"/>
       </Unit80>
     </Units>
-    <JumpHistory Count="15" HistoryIndex="14">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="lseu.pas"/>
         <Caret Line="1021" Column="32" TopLine="997"/>
@@ -656,6 +656,50 @@
         <Filename Value="lseu.pas"/>
         <Caret Line="40" Column="32" TopLine="25"/>
       </Position15>
+      <Position16>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="16" Column="48" TopLine="1"/>
+      </Position16>
+      <Position17>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="9912" Column="23" TopLine="9904"/>
+      </Position17>
+      <Position18>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position18>
+      <Position19>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="7080" Column="44" TopLine="7062"/>
+      </Position19>
+      <Position20>
+        <Filename Value="lseu.pas"/>
+        <Caret Line="26" Column="32" TopLine="13"/>
+      </Position20>
+      <Position21>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="7" Column="26" TopLine="1"/>
+      </Position21>
+      <Position22>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position22>
+      <Position23>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="6332" Column="27" TopLine="6311"/>
+      </Position23>
+      <Position24>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position24>
+      <Position25>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1421" Column="36" TopLine="1414"/>
+      </Position25>
+      <Position26>
+        <Filename Value="lse_kernel.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position26>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

@@ -28,7 +28,7 @@ const
   SYNS_LYSEELANGUAGE = 'Lysee';
 
 type
-  TTokenID = (tkUnknown, tkComment, tkID, tkKey, tkNull, tkSpace,
+  TTokenID = (tkUnknown, tkComment, tkID, tkKey, tkNull, tkSpace, tkParen,
               tkString, tkNumber);
   TRangeID = (rkUnknown, rkComment, rkString, rkRawStr);
 
@@ -49,6 +49,7 @@ type
     FAttrSpace: TSynHighlighterAttributes;
     FAttrString: TSynHighlighterAttributes;
     FAttrNumber: TSynHighlighterAttributes;
+    FAttrParen: TSynHighlighterAttributes;
     FAttrUnknown: TSynHighlighterAttributes;
     procedure ParseCommentStart;
     procedure ParseComment;
@@ -56,6 +57,7 @@ type
     procedure ParseStringStart(IsRawStr: boolean);
     procedure ParseString;
     procedure ParseNumber;
+    procedure ParseParen;
     procedure ParseSpace;
     procedure ParseLineFeed;
     procedure ParseEnter;
@@ -89,6 +91,7 @@ type
     property AttrSpace: TSynHighlighterAttributes read FAttrSpace write FAttrSpace;
     property AttrString: TSynHighlighterAttributes read FAttrString write FAttrString;
     property AttrNumber: TSynHighlighterAttributes read FAttrNumber write FAttrNumber;
+    property AttrParen: TSynHighlighterAttributes read FAttrParen write FAttrParen;
     property AttrUnknown: TSynHighlighterAttributes read FAttrUnknown write FAttrUnknown;
   end;
 
@@ -254,12 +257,16 @@ begin
   AddAttribute(FAttrSpace);
 
   FAttrString := TSynHighLighterAttributes.Create(SYNS_AttrString);
-  FAttrString.Foreground := clNavy;
+  FAttrString.Foreground := clBlue;
   AddAttribute(FAttrString);
 
   FAttrNumber := TSynHighLighterAttributes.Create(SYNS_AttrNumber);
-  FAttrNumber.Foreground := $004080FF;
+  FAttrNumber.Foreground := clRed;
   AddAttribute(FAttrNumber);
+
+  FAttrParen := TSynHighLighterAttributes.Create(SYNS_AttrBrackets);
+  FAttrParen.Foreground := clRed;//clFuchsia;
+  AddAttribute(FAttrParen);
 
   FAttrUnknown := TSynHighLighterAttributes.Create(SYNS_AttrUnknownWord);
   AddAttribute(FAttrUnknown);
@@ -322,6 +329,7 @@ begin
       '"': ParseStringStart(false);
       '''': ParseStringStart(true);
       '0'..'9': ParseNumber;
+      '(', ')': ParseParen;
       'A'..'Z', 'a'..'z', '_': ParseID;
       #1..#9, #11, #12, #14..' ': ParseSpace;
       else ParseUnknown;
@@ -379,6 +387,7 @@ begin
     tkSpace  : Result := FAttrSpace;
     tkString : Result := FAttrString;
     tkNumber : Result := FAttrNumber;
+    tkParen  : Result := FAttrParen;
     tkUnknown: Result := FAttrUnknown;
   end;
 end;
@@ -440,6 +449,13 @@ begin
   else S := ['0'..'9'];
   while FLine[FRun] in S do Inc(FRun);
   FRangeID := rkUnknown;
+end;
+
+procedure TLyseeSyn.ParseParen;
+begin
+  FRangeID := rkUnknown;
+  FTokenID := tkParen;
+  Inc(FRun);
 end;
 
 initialization

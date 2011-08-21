@@ -1,4 +1,4 @@
-{path = __file__.filePath()}
+{path = {__file__.filePath}}
 {fpc_exe = 'fpc.exe'}
 {fpc_opt = '-MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.'}
 {fpc_map = [
@@ -50,23 +50,23 @@
 
 {cmds = []}
 {cmds << '@echo off'}
-{cmds << path.copy(0, 2)}
+{cmds << {path.left 2}}
 {cmds << 'cd ' + path}
 {cmds << 'DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local *.identcache *.compiled *.bak *.lo'}
 
 // FPC
 
 {for hs in fpc_map do
-    {fup = hs.read('fup').trim() or '.'}
+    {fup = {{hs.read 'fup'}.trim} or '.'}
     {if fup then
-        {ll = fup.trim().lines()}
+        {ll = {{fup.trim}.lines}}
         {fup = ''}
-        {for pp in ll if pp.trim() do
-            {fup += ' -Fu' + pp.trim()}}
-        {if hs['lpr'] == 'lysee_pad_fpc.lpr' then
+        {for pp in ll if {pp.trim} do
+            {fup += ' -Fu' + {pp.trim}}}
+        {if {get hs 'lpr'} == 'lysee_pad_fpc.lpr' then
             {fup = '-WG -dSYN_LAZARUS -dLCL -dLCLwin32 ' + fup}}
-        {src = hs['lpr']}
-        {dst = hs['out']}
+        {src = {get hs 'lpr'}}
+        {dst = {get hs 'out'}}
         {cmds << 'echo ***** ' + src + ' => ' + dst}
         {cmds << 'del ' + dst}
         {cmds << fpc_exe + ' ' + fpc_opt + ' ' + fup + ' -o' + dst + ' ' + src}}}
@@ -78,7 +78,7 @@
 {cmds << 'cd ..'}
 {cmds << '@echo on'}
 
-{fs = openfs('build.bat', 'c')}
+{fs = {openfs 'build.bat' 'c'}}
 {for s in cmds do fs << s << eol}
-{println("done!")}
+{println "done!"}
 
