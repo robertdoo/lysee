@@ -1,8 +1,8 @@
 {fun sort list ->
     {n = {length list}}
-    {for i in 0..n - 2 do
-        {for j in i + 1..n - 1 do
-            {if {get list i} > {get list j} then
+    {while 0..n - 2: i do
+        {while i + 1..n - 1: j do
+            {if {list i} > {list j} then
                 {list.exchange i j}}}}
     list}
 

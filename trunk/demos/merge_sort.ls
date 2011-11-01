@@ -1,13 +1,13 @@
-{import math}
+{load 'math'}
 
 {fun merge l r ->
     {list = {l.copy 0 0}}
     {while {length l} > 0 and {length r} > 0 do
-        {if {get l 0} < {get r 0} then
-            (list << {get l 0})
+        {if {l 0} < {r 0} then
+            (list << {l 0})
             {l.delete 0}
             else
-                (list << {get r 0})
+                (list << {r 0})
                 {r.delete 0}}}
     (list <<< l <<< r)}
 

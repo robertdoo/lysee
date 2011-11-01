@@ -1,18 +1,19 @@
 {fun getv list comp ->
     {v = {get list 0}}
-    {for i in 1..{length list} - 1 do
-        {if {comp {get list i} v} then
-            {v = {get list i}}}}
+    {while 1..{length list} - 1: i do
+        {if {comp {list i} v} then
+            {v = {list i}}}}
     v}
 
 {fun sort list ->
     {if {length list} > 1 then
         {counter = {varlist {getv list (>)} + 1}}
-        {for v in list do
-            {set counter v  1}}
+        {while list: v do
+            {counter v 1}}
         {list.clear}
-        {for v in {length counter} if {get counter v} do
-            (list << v)}}
+        {while {length counter}: v do
+            { if {counter v} then
+                (list << v)}}}
     list}
 
 {if __in_main__ then

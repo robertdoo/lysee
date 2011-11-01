@@ -1,6 +1,6 @@
-{import sh}
+{load 'sh'}
 
-{l = {map 10 ={random 100}}}
+{l = {map 10 ->{random 100}}}
 {println "Sort " + l + " with:"}
 {e = []}
 {s = {searcher {__file__.filePath} + "*_sort.ls"}}
