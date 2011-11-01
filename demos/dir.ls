@@ -1,4 +1,4 @@
-{import sh}
+{load 'sh'}
 {print "List files of directory: "}
 {dir = {{readln}.trim} or "."}
 {dir = {incPD {dir.fullFileName}}}

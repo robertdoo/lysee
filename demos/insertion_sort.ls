@@ -1,14 +1,14 @@
 {fun sort list ->
     {n = {length list}}
     {if n > 1 then
-        {for i in n do
-            {v = {get list i}}
+        {while n: i do
+            {v = {list i}}
             {j = i - 1}
             {while j >= 0 do
-                {break if {get list j} <= v}
-                {set list j + 1 {get list j}}
+                {break if {list j} <= v}
+                {list j + 1 {list j}}
                 {j -= 1}}
-            {set list j + 1 v}}}
+            {list j + 1 v}}}
   list}
 
 {if __in_main__ then

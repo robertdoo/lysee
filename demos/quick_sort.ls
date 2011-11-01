@@ -4,8 +4,8 @@
         {J = R}
         {P = (L + R) >> 1}
         {do
-            {while {get list I} < {get list P} do {I += 1}}
-            {while {get list J} > {get list P} do {J -= 1}}
+            {while {list I} < {list P} do {I += 1}}
+            {while {list J} > {list P} do {J -= 1}}
             {if I <= J then
                 {list.exchange I J}
                 {if P == I then {P = J} else

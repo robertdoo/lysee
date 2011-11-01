@@ -1,14 +1,14 @@
-{import math}
+{load 'math'}
 
 {fun sort list ->
     {gap = {length list}}
     {while gap > 1 do
         {gap = {round gap / 2}}
-        {for i in gap..{length list} - 1 do
+        {while gap..{length list} - 1: i do
             {j = i}
             {while j > 0 do
-                {if {get list j} <= {get list j - gap} then
-                    {list.exchange j  j - gap}}
+                {if {list j} <= {list (j - gap)} then
+                    {list.exchange j  (j - gap)}}
                 {j -= gap}}}}
     list}
 

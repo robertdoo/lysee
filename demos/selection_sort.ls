@@ -1,11 +1,11 @@
 {fun pop_min list ->
-    {v = {get list 0}}
+    {v = {list 0}}
     {x = 0}
     {n = {length list}}
     {if n > 1 then
-        {for i in 1..n - 1 do
-            {if {get list i} < v then
-                {v = {get list i}}
+        {while 1..n - 1: i do
+            {if {list i} < v then
+                {v = {list i}}
                 {x = i}}}}
     {list.delete x}
     v}
@@ -15,7 +15,7 @@
     {if n > 1 then
         {b = {list.copy 0 n}}
         {list.clear}
-        {for x in n do
+        {while n: x do
             (list << {pop_min b})}}
     list}
 
