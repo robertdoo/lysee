@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/11/01                                                      }
+{    MODIFIED: 2011/11/07                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -37,7 +37,7 @@ const
   LSE_COPYRIGHT      = 'Copyright (c) 2003-2011 Li Yun Jie';
   LSE_VERSION        = '2.1.3';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20111101;
+  LSE_BUILDDAY       = 20111107;
   LSE_MAX_PARAMS     = 12;
   LSE_MAX_CODES      = MaxInt div 2;
 
