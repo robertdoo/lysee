@@ -1,9 +1,10 @@
-{fun sort list ->
+{def sort list:
     {n = {length list}}
-    {while 0..n - 2: i do
-        {while i + 1..n - 1: j do
-            {if {list i} > {list j} then
-                {list.exchange i j}}}}
+    {0 => i:
+        {i + 1 => j:
+            {list.exchange i j if {list i} > {list j}}
+            {loop j + 1 if j < n - 1}}
+        {loop i + 1 if i < n - 2}}
     list}
 
 {if __in_main__ then

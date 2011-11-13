@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/02/29                                                      }
-{    MODIFIED: 2011/11/01                                                      }
+{    MODIFIED: 2011/11/10                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -41,14 +41,13 @@ type
   PLiPos = ^RLiPos;
 
   KLiSymbol = (
-    syError, syFun, syReturn, syIf, syThen, syElse, syWhile, syDo, syBreak,
-    syContinue, syTry, syExcept, syNil, syIn, syIs, syAs, syLike, syAnd, syOr,
-    syNot, syBecome, syAdd, syDec, syMul, syDiv, syMod, syBitNot, syBitXor,
-    syBitAnd, syBitOr, syBitShr, syBitShl, syFill, syRight, syLParen, syRParen,
-    syLBlock, syRBlock, syLArray, syRArray, syDot, syUpto, syAsk, syDot2,
-    syComma, syEQ, syNE, syLess, syLE, syMore, syME, syFormat, syID, syFloat,
-    syInt, syStr, syNeg, syJmpT, syJmpF, syJmpTP, syJmpFP, syJump, syIdle,
-    syEnv, syPop, syMethod, syList, syHash, syCurr, sySTMT, syEOF
+    syError, syDef, syIf, syThen, syElse, syIn, syIs, syAs, syLike, syAnd, syOr,
+    syBecome, syYield, syAdd, syDec, syMul, syDiv, syMod, syBitXor, syBitAnd,
+    syBitOr, syBitShr, syBitShl, syFill, syLParen, syRParen, syLBlock, syRBlock,
+    syLArray, syRArray, syDot, syUpto, syAsk, syDot2, syComma, syEQ, syNE,
+    syLess, syLE, syMore, syME, syID, syFloat, syInt, syStr, syJmpT, syJmpF,
+    syJmpTP, syJmpFP, syJump, syIdle, syEnv, syPop, syMethod, syList, syHash,
+    syCurr, sySTMT, syEOF
   );
   KLiSymbols = set of KLiSymbol;
 
@@ -124,25 +123,6 @@ type
     property Items[Index: integer]: PLiToken read GetItem;default;
   end;
 
-  { KLiBreakContinue}
-
-  KLiBreakContinue = class(TLseObject)
-  private
-    FParser: KLiParser;
-    FPrevBC: KLiBreakContinue;
-    FBreaks: TList;
-    FContinues: TList;
-  public
-    constructor Create(AParser: KLiParser);
-    destructor Destroy;override;
-    procedure Leave;
-    procedure AddBreak(Token: PLiToken);
-    procedure AddContinue(Token: PLiToken);
-    procedure AddBC(Token: PLiToken; Breaking: boolean);
-    procedure SetBreak(Index: integer);
-    procedure SetContinue(Index: integer);
-  end;
-  
   { KLiParser }
 
   KLiParser = class(TLseObject)
@@ -150,7 +130,6 @@ type
     FTokenizer: KLiTokenizer; {<--token analyzer}
     FTokens: KLiTokens;       {<--token list}
     FLast: PLiToken;          {<--last token}
-    FBC: KLiBreakContinue;    {<--last break continue}
     FFunc: KLiFunc;           {<--current function}
     FModule: KLiModule;       {<--current module}
     FEngine: KLiEngine;       {<--current engine}
@@ -238,6 +217,7 @@ type
     function FindCreate(AType: PLseType): KLiFunc;
     function Engine: KLiEngine;
     function Super: KLiVarSnap;virtual;
+    function CanBeYielded: boolean;virtual;
     property Module: KLiModule read FModule;
     property ResultType: PLseType read FResultType write FResultType;
     property IsMain: boolean index fusMain read HasState;
@@ -293,6 +273,7 @@ type
     destructor Destroy;override;
     procedure GarbageCollect;
     function Super: KLiVarSnap;override;
+    function CanBeYielded: boolean;override;
   end;
 
   { KLiFunc_oper }
@@ -638,7 +619,8 @@ type
     destructor Destroy;override;
     procedure ErrorRT(const ErrorStr: string);
     procedure Terminate;
-    function Goon(func: KLiFunc; ParamCount: integer; Output: PLseValue): boolean;
+    procedure DoMod(V1, V2: PLseValue);
+    function Goon(func: KLiFunc; ParamCount: integer; Output: PLseValue; Yield: KLiVarSnap): boolean;
     function GetString(const ID: string): string;
     function FormatFor(const Fmt: string; Values: KLiVarList): string;
     function HasNext: boolean;
@@ -808,6 +790,7 @@ const
     EvClassNotSpecify   = ERUNTIME + 3;
 
 var
+  sys_program           : string;        {<--program file name}
   sys_kernel            : string;        {<--kernel file name}
   sys_version           : string;        {<--kernel version}
   sys_knpath            : string;        {<--kernel file path}
@@ -816,19 +799,17 @@ var
   sys_tmpath            : string;        {<--temporary path}
   sys_search_path       : string;        {<--module search path}
   sys_confile           : string;        {<--config file name}
-  sys_mimefile          : string;        {<--MIME file name}
-  sys_mimes             : TStringList;   {<--MIME list}
   sys_configures        : TStringList;   {<--configure value list}
-  sys_program           : string;        {<--program file name}
   sys_process_ID        : string;        {<--process ID}
-  sys_libraries         : KLiModuleList; {<--kernel & library module list}
-  sys_seed              : int64;         {<--system name seed}
   sys_module            : KLiModule;     {<--builtin [sys] module}
+  sys_module_list       : KLiModuleList; {<--kernel & library module list}
+  sys_seed              : int64;         {<--system name seed}
   sys_spinlock          : Syncobjs.TCriticalSection; {<--kernel's spinlock}
-  sys_oper_inc          : KLiFunc;       {<--sys::+}
   sys_nothing           : KLiFunc;       {<--sys::nothing}
   sys_get               : KLiFunc;       {<--sys::get}
   sys_set               : KLiFunc;       {<--sys::set}
+  sys_yield             : KLiFunc;       {<--sys::yield}
+  sys_catch             : KLiFunc;       {<--sys::catch}
   sys_nil               : RLseValue;     {<--default empty data}
   sys_LB                : string = sLineBreak;
   sys_runner_procs      : array[KLiSymbol] of procedure(Runner: KLiRunner);
@@ -852,39 +833,29 @@ const
     SM: pchar;     // symbol description
   end = (
     (SY:syError;     ID:'<ERROR>';      SM:'error'),
-    (sy:syFun;       ID:'fun';          SM:'define function'),
-    (SY:syReturn;    ID:'return';       SM:'return'),
+    (sy:syDef;       ID:'def';          SM:'define function'),
     (SY:syIf;        ID:'if';           SM:'if'),
-    (sy:syThen;      ID:'then';         SM:'then clause'),
+    (SY:syThen;      ID:'then';         SM:'then'),
     (SY:syElse;      ID:'else';         SM:'else'),
-    (SY:syWhile;     ID:'while';        SM:'while'),
-    (SY:syDo;        ID:'do';           SM:'do'),
-    (SY:syBreak;     ID:'break';        SM:'break loop'),
-    (SY:syContinue;  ID:'continue';     SM:'continue loop'),
-    (SY:syTry;       ID:'try';          SM:'try'),
-    (SY:syExcept;    ID:'except';       SM:'catch execption'),
-    (SY:syNil;       ID:'nil';          SM:'push nil'),
     (SY:syIn;        ID:'in';           SM:'in'),
     (SY:syIs;        ID:'is';           SM:'type checking'),
     (SY:syAs;        ID:'as';           SM:'type casting'),
     (sy:syLike;      ID:'like';         SM:'string like patten'),
     (SY:syAnd;       ID:'and';          SM:'logical and'),
     (SY:syOr;        ID:'or';           SM:'logical or'),
-    (SY:syNot;       ID:'not';          SM:'logical not'),
     (SY:syBecome;    ID:'=';            SM:'become'),
+    (SY:syYield;     ID:'=>';           SM:'yield'),
     (SY:syAdd;       ID:'+';            SM:'add'),
     (SY:syDec;       ID:'-';            SM:'dec'),
     (SY:syMul;       ID:'*';            SM:'mul'),
     (SY:syDiv;       ID:'/';            SM:'div'),
     (SY:syMod;       ID:'%';            SM:'mod'),
-    (SY:syBitNot;    ID:'~';            SM:'bit xor -1'),
     (SY:syBitXor;    ID:'^';            SM:'bit xor'),
     (SY:syBitAnd;    ID:'&';            SM:'bit and'),
     (SY:syBitOr;     ID:'|';            SM:'bit or'),
     (SY:syBitShr;    ID:'>>';           SM:'bit shift right'),
     (SY:syBitShl;    ID:'<<';           SM:'bit shift left'),
     (sy:syFill;      ID:'<<<';          SM:'add all'),
-    (SY:syRight;     ID:'->';           SM:'arrow right'),
     (SY:syLParen;    ID:'(';            SM:'left paren'),
     (SY:syRParen;    ID:')';            SM:'right paren'),
     (SY:syLBlock;    ID:'{';            SM:'left block'),
@@ -902,12 +873,10 @@ const
     (SY:syLE;        ID:'<=';           SM:'less equal'),
     (SY:syMore;      ID:'>';            SM:'great'),
     (SY:syME;        ID:'>=';           SM:'great equal'),
-    (SY:syFormat;    ID:'@';            SM:'format string'),
     (SY:syID;        ID:'<ID>';         SM:'identity name'),
     (SY:syFloat;     ID:'<FLOAT>';      SM:'push float'),
     (SY:syInt;       ID:'<INT>';        SM:'push int'),
     (SY:syStr;       ID:'<STR>';        SM:'push string'),
-    (SY:syNeg;       ID:'<NEG>';        SM:'neg'),
     (SY:syJmpT;      ID:'<JMPT>';       SM:'jump true'),
     (SY:syJmpF;      ID:'<JMPF>';       SM:'jump false'),
     (SY:syJmpTP;     ID:'<JMPTP>';      SM:'jump true pop last'),
@@ -924,22 +893,21 @@ const
     (sy:syEOF;       ID:'<EOF>';        SM:'end of file')
   );
 
-  FirstKeyword = syFun;
-  LastKeyword  = syNot;
+  FirstKeyword = syDef;
+  LastKeyword  = syOr;
   FirstOper    = syBecome;
-  LastOper     = syFormat;
+  LastOper     = syME;
   
-  ConstSyms = [syID, syFloat, syInt, syStr, syNil, syEnv, syCurr];
+  ConstSyms = [syID, syFloat, syInt, syStr, syEnv, syCurr];
 
   OperSyms = [syMul, syDiv, syMod, syAdd, syDec, syBitXor, syBitAnd, syBitOr,
               syBitShl, syBitShr, syFill, syEQ, syNE, syLess, syLE, syMore,
               syME, syLike, syAs, syIs, syUpto, syAnd, syOr];
 
-  ExprHeadSyms = ConstSyms + OperSyms + [syNot, syDec, syBitNot, syRight,
-                                  syLParen, syLArray, syLBlock, syFormat];
+  ExprHeadSyms = ConstSyms + OperSyms + [syDec, syDot2, syLParen, syLArray, syLBlock];
 
   OperLevel: array[0..4] of KLiSymbols = (
-   {[syNeg, syNot, syBitNot, syFormat]}                                         // 0
+   {[syNeg]}                                                                    // 0
     [syMul, syDiv, syMod],                                                      // 1
     [syAdd, syDec],                                                             // 2
     [syBitXor, syBitAnd, syBitOr, syBitShl, syBitShr, syFill],                  // 3
@@ -962,7 +930,7 @@ begin
     rnnr.FStack.Add(func.CurryData(X));
   for X := 0 to Param^.p_count - 1 do
     rnnr.FStack.Add(Param^.p_param[X]);
-  rnnr.Goon(func.FCurryFunc, N + Param^.p_count, Param^.p_result);
+  rnnr.Goon(func.FCurryFunc, N + Param^.p_count, Param^.p_result, nil);
 end;
          
 procedure udc_oper(const Param: PLseParam);cdecl;
@@ -977,7 +945,7 @@ begin
   case func.FOper of
     syMul   : lse_mul(L, R);
     syDiv   : lse_div(L, R);
-    syMod   : lse_mod(L, R);
+    syMod   : get_runner(Param).DoMod(L, R);
     syAdd   : lse_add(L, R);
     syDec   : lse_dec(L, R);
     syBitXor: lse_bit_xor(L, R);
@@ -1097,6 +1065,33 @@ begin
   runner_next(Sender);
 end;
 
+procedure runner_yield(Sender: KLiRunner);
+var
+  func: KLiFunc;
+  data: PLseValue;
+  base: integer;
+begin
+  with Sender do
+  begin
+    data := FStack[-1]; 
+    func := value_func(data);
+    if func = nil then
+      func := sys_nothing;
+    func.IncRefcount;
+    try
+      base := FStack.FItems.Count - FExprrec^.tk_prmc;
+      FStack.FItems.Move(FStack.FItems.Count - 1, base);
+      lse_clear_value(data);
+      if func.CanBeYielded then
+        Goon(func, FExprrec^.tk_prmc - 1, data, FCurrent^.values) else
+        Goon(func, FExprrec^.tk_prmc - 1, data, nil);
+    finally
+      func.DecRefcount;
+    end;
+  end;
+  runner_next(Sender);
+end;
+
 procedure runner_float(Sender: KLiRunner);
 begin
   with Sender do
@@ -1148,14 +1143,8 @@ end;
 
 procedure runner_mod(Sender: KLiRunner);
 begin
-  lse_mod(Sender.FStack[-2], Sender.FStack[-1]);
+  Sender.DoMod(Sender.FStack[-2], Sender.FStack[-1]);
   Sender.FStack.DeleteLast;
-  runner_next(Sender);
-end;
-
-procedure runner_bit_not(Sender: KLiRunner);
-begin
-  lse_bit_not(Sender.FStack[-1]);
   runner_next(Sender);
 end;
 
@@ -1191,18 +1180,6 @@ procedure runner_bit_shr(Sender: KLiRunner);
 begin
   lse_bit_shr(Sender.FStack[-2], Sender.FStack[-1]);
   Sender.FStack.DeleteLast;
-  runner_next(Sender);
-end;
-
-procedure runner_not(Sender: KLiRunner);
-begin
-  lse_logic_not(Sender.FStack[-1]);
-  runner_next(Sender);
-end;
-
-procedure runner_neg(Sender: KLiRunner);
-begin
-  lse_neg(Sender.FStack[-1]);
   runner_next(Sender);
 end;
 
@@ -1318,49 +1295,10 @@ begin
   runner_next(Sender);
 end;
 
-procedure runner_nil(Sender: KLiRunner);
-begin
-  Sender.FStack.AddDefault(KT_VOID);
-  runner_next(Sender);
-end;
-
 procedure runner_env(Sender: KLiRunner);
 begin
   with Sender do
     FEngine.GetValue(FExprrec^.tk_name, FStack.Add);
-  runner_next(Sender);
-end;
-
-procedure runner_format(Sender: KLiRunner);
-var
-  V: PLseValue;
-  T: PLseType;
-  M: KLiModule;
-  F, new_func: KLiFunc;
-  N: string;
-  X: integer;
-begin
-  V := Sender.FStack[-1];
-  T := lse_type(V);
-  if T = KT_STRING then
-    lse_set_string(V, Sender.FormatFor(lse_get_str(V), nil)) else
-  if T = KT_FUNC then
-  begin
-    F := KLiFunc(V^.VObject);
-    if (F <> nil) and (F.FModule.FEngine = nil) then
-    begin
-      M := Sender.CurrentModule;
-      N := '#' + F.FullName;
-      new_func := M.FindFunc(N);
-      if new_func = nil then
-      begin
-        new_func := KLiFunc.Create(M, F.FResultType, N, nil, F.FProc);
-        for X := 0 to F.ParamCount - 1 do
-          new_func.AddParam(F.GetParam(X)^.v_name, F.GetParam(X)^.v_type);
-      end;
-      new_func.SaveTo(V);
-    end;
-  end;
   runner_next(Sender);
 end;
 
@@ -1395,7 +1333,7 @@ begin
     begin
       func := value_func(data);
       lse_check(func <> nil, EsFuncNotSpecify);
-      Goon(func, prmc - 1, data);
+      Goon(func, prmc - 1, data, nil);
     end
     else
     if clss = KT_TYPE then
@@ -1405,46 +1343,17 @@ begin
       lse_set_nil(data, clss);
       func := CurrentFunc.FindCreate(clss);
       if func <> nil then
-        Goon(func, prmc - 1, data) else
+        Goon(func, prmc - 1, data, nil) else
         FStack.Press(prmc - 1);
     end
     else
     if prmc > 2 then
-      Goon(sys_set, prmc, nil) else
-      Goon(sys_get, prmc, nil);
-//  else lse_error('invalid call to: %s', [clss^.cr_name]);
+      Goon(sys_set, prmc, nil, nil) else
+    if prmc > 1 then
+      Goon(sys_get, prmc, nil, nil) else
+      lse_error('invalid call to: %s', [clss^.cr_name]);
   end;
   runner_next(Sender);
-end;
-
-procedure runner_try(Sender: KLiRunner);
-var
-  begx, endx: integer;
-begin
-  with Sender do
-  begin
-    Inc(FCurrent^.next);
-    begx := FCurrent^.next;
-    endx := FExprrec^.tk_prmc + begx - 2;
-    while ExecGoonNext do
-      if (FCurrent^.next < begx) or (FCurrent^.next > endx) then
-        Break;
-    if FExcepted and HasNext then
-    begin
-      FExcepted := false;
-      FCurrent^.next := endx + 1;
-      FStack.SetCount(FCurrent^.base);
-    end;
-  end;
-end;
-
-procedure runner_return(Sender: KLiRunner);
-begin
-  with Sender do
-  begin
-    FCurrent^.next := LSE_MAX_CODES;
-    FCurrent := nil; {<--returned}
-  end;
 end;
 
 procedure runner_jump(Sender: KLiRunner);
@@ -1556,6 +1465,7 @@ var
   name: string;
   func, curr: KLiFunc;
   prmc: integer;
+  find: RLiFind;
 begin
   prmc := Sender.FExprrec^.tk_prmc;
   if prmc > 0 then
@@ -1566,14 +1476,45 @@ begin
   name := Sender.FExprrec^.tk_name;
   curr := Sender.FCurrent^.func;
   func := curr.FindMethod(name, clss);
-  lse_check(func <> nil,
-    Format('failed getting %s(0x%p).%s',
-      [clss^.cr_name, data^.VObject, name]));
-      
-  if prmc = 0 then
-    func.Curry(data, curr.Module).SaveTo(data) else
-    Sender.Goon(func, prmc, nil);
-  runner_next(Sender);
+
+  if func <> nil then
+  begin
+    if prmc = 0 then
+      func.Curry(data, curr.Module).SaveTo(data) else
+      Sender.Goon(func, prmc, nil, nil);
+    runner_next(Sender);
+    Exit;
+  end;
+  
+  if clss <> KT_MODULE then
+    lse_error('failed getting %s(0x%p).%s',
+      [clss^.cr_name, data^.VObject, name]);
+
+  lse_check(data^.VObject <> nil, 'module is nil');
+  lse_check(KLiModule(data^.VObject).Find(name, @find),
+            Format('%s.%s not found',
+            [KLiModule(data^.VObject).Name, name]));
+            
+  case find.fo_type of
+    foModule: begin
+                find.VModule.SaveTo(data);
+                if prmc = 0 then
+                  runner_next(Sender) else
+                  runner_ask(Sender);
+              end;
+    foFunc  : begin
+                if prmc = 0 then
+                  find.VFunc.SaveTo(data) else
+                  Sender.Goon(find.VFunc, prmc - 1, data, nil);
+                runner_next(Sender);
+              end;
+    foType  : begin
+                lse_set_type(data, find.VType);
+                if prmc = 0 then
+                  runner_next(Sender) else
+                  runner_ask(Sender);
+              end;
+  end;
 end;
 
 procedure runner_fill(Sender: KLiRunner);
@@ -1595,6 +1536,10 @@ begin
   with Sender do
   begin
     ID := FExprrec^.tk_name;
+    if ID = '__nil__' then
+      Sender.FStack.AddDefault(KT_VOID) else
+    if ID = '__eol__' then
+      FStack.Add(sys_LB) else
     if ID = '__args__' then
     begin
       L := KLiVarList.Create(FEngine);
@@ -1613,8 +1558,6 @@ begin
         L.Add(lse_getenv_string(X));
     end
     else
-    if ID = 'eol' then
-      FStack.Add(sys_LB) else
     if ID = '__error__' then
       lse_set_object(FStack.Add, KT_ERROR, FEngine.FError) else
     if ID = '__file__' then
@@ -1674,7 +1617,7 @@ end;
 
 procedure pp_system_libs(const Param: PLseParam);cdecl;
 begin
-  sys_libraries.ToVarlist(get_engine(Param)).SaveTo(Param^.p_result);
+  sys_module_list.ToVarlist(get_engine(Param)).SaveTo(Param^.p_result);
 end;
 
 procedure pp_system_exit(const Param: PLseParam);cdecl;
@@ -1691,6 +1634,18 @@ begin
   finally
     engine_unlock(eng);
   end;
+end;
+
+procedure pp_system_not(const Param: PLseParam);cdecl;
+begin
+  lse_set_bool(Param^.p_result, (Param^.p_count > 0) and
+    not lse_get_bool(Param^.p_param[0]));
+end;
+
+procedure pp_system_neg(const Param: PLseParam);cdecl;
+begin
+  lse_set_value(Param^.p_result, Param^.p_param[0]);
+  lse_neg(Param^.p_result);
 end;
 
 procedure pp_system_print(const Param: PLseParam);cdecl;
@@ -1936,7 +1891,7 @@ begin
     rnnr := get_runner(Param);
     func := rnnr.Engine.DoCompile(code);
     try
-      rnnr.Goon(func, 0, Param^.p_result);
+      rnnr.Goon(func, 0, Param^.p_result, nil);
     finally
       func.DecRefcount;
     end;
@@ -2010,7 +1965,7 @@ begin
   
   M.Import(T);
   if K <> nil then
-    R.Goon(K, 0, Param^.p_result);
+    R.Goon(K, 0, Param^.p_result, nil);
   T.SaveTo(Param^.p_result);
 end;
 
@@ -2116,7 +2071,7 @@ begin
       prms := Min(func.ParamCount, list.Count) else
       prms := 0;
     rnnr.Stack.AddFrom(list, prms);
-    rnnr.Goon(func, prms, Param^.p_result);
+    rnnr.Goon(func, prms, Param^.p_result, nil);
   end;
 end;
 
@@ -2211,7 +2166,7 @@ begin
       prms := Min(func.ParamCount, list.Count) else
       prms := 0;
     rnnr.Stack.AddFrom(list, prms);
-    rnnr.Goon(func, prms, Param^.p_result);
+    rnnr.Goon(func, prms, Param^.p_result, nil);
     lse_set_int(Param^.p_result, MilliSecondsBetween(Now, beg_time));
   end
   else lse_set_int(Param^.p_result, 0);
@@ -2228,7 +2183,7 @@ begin
   rnnr := get_runner(Param);
   this := lse_vargen_this(Param);
   while rnnr.Stack.AddSend(this) do
-    if not rnnr.Goon(func, 1, Param^.p_result) then
+    if not rnnr.Goon(func, 1, Param^.p_result, nil) then
       Break;
 end;
 
@@ -2250,7 +2205,7 @@ begin
     lse_init_value(@data);
     try
       while rnnr.Stack.AddSend(this) do
-        if rnnr.Goon(func, 1, @data) then
+        if rnnr.Goon(func, 1, @data, nil) then
           list.Add(PLseValue(@data)) else
           Break;
     finally
@@ -2275,7 +2230,7 @@ begin
   begin
     rnnr.Stack.Add(Param^.p_result);
     if not rnnr.Stack.AddSend(this)
-    or not rnnr.Goon(func, 2, Param^.p_result) then Break;
+    or not rnnr.Goon(func, 2, Param^.p_result, nil) then Break;
   end;
 end;
 
@@ -2299,7 +2254,7 @@ begin
     while lse_vargen_generate(this, @data) do
     begin
       rnnr.Stack.Add(PLseValue(@data));
-      if not rnnr.Goon(func, 1, @test) then Break else
+      if not rnnr.Goon(func, 1, @test, nil) then Break else
       if lse_get_bool(@test) then
         list.Add(PLseValue(@data));
     end;
@@ -2366,36 +2321,6 @@ begin
   end;
 end;
 
-procedure pp_system_throw(const Param: PLseParam);cdecl;
-var
-  eid, msg: string;
-  rnnr: KLiRunner;
-begin
-  if Param^.p_count < 1 then
-  begin
-    rnnr := get_runner(Param);
-    if rnnr.Engine.Error.errno = 0 then
-      set_error(Param, RuntimeError, 0, EsRuntimeError) else
-      rnnr.Excepted := true;
-  end
-  else
-  begin
-     if Param^.p_count > 1 then
-    begin
-      eid := Trim(lse_get_str(Param^.p_param[1]));
-      if eid = '' then
-        eid := RuntimeError;
-    end
-    else eid := RuntimeError;
-
-    msg := Trim(lse_get_str(Param^.p_param[0]));
-    if msg = '' then
-      msg := EsRuntimeError;
-
-    set_error(Param, eid, 0, msg);
-  end;
-end;
-
 procedure pp_system_hex(const Param: PLseParam);cdecl;
 var
   this: int64;
@@ -2419,31 +2344,24 @@ begin
   lse_set_type(Param^.p_result, lse_get_type(Param^.p_param[0]));
 end;
 
-procedure pp_system_tailrc(const Param: PLseParam);cdecl;
+procedure pp_system_loop(const Param: PLseParam);cdecl;
 var
   rnnr: KLiRunner;
-  curr: KLiFunc;
-  snap, vars: KLiVarSnap;
-  X, P: integer;
+  func: KLiFunc;
+  prmc, X: integer;
 begin
   rnnr := get_runner(Param);
-  curr := rnnr.CurrentFunc;
-  snap := rnnr.FCurrent^.values;
-  vars := KLiVarSnap.Create(curr);
-  if curr.ParamCount > 0 then
+  if Param^.p_count > 0 then
   begin
-    if curr.IsClosure then
-      lse_set_value(vars[0], snap[0]);
-    P := Ord(curr.IsClosure);
-    for X := P to curr.ParamCount - 1 do
-      if X - P < Param^.p_count then
-        lse_set_value(vars[X], Param^.p_param[X - P]) else
-        lse_clear_value(vars[X]);
+    func := rnnr.FCurrent^.func;
+    prmc := Min(func.ParamCount, Param^.p_count);
+    for X := 0 to prmc - 1 do
+      rnnr.FCurrent^.values.SetValue(func.GetParam(X)^.v_name,
+        Param^.p_param[X]);
   end;
-  rnnr.FCurrent^.values := vars;
   rnnr.FStack.SetCount(rnnr.FCurrent^.base);
-  rnnr.FCurrent^.next := -1; //=> runner_next()
-  snap.DecRefcount;
+  rnnr.FCurrent^.next := -1;
+  //=> runner_next()
 end;
 
 procedure pp_system_callcc(const Param: PLseParam);cdecl;
@@ -2460,7 +2378,7 @@ var
     list := value_varlist(Param^.p_param[1]);
     if (list <> nil) and (func.ParamCount - prmc > 0) then
       Inc(prmc, rnnr.FStack.AddFrom(list, func.ParamCount - prmc));
-    rnnr.Goon(func, prmc, Param^.p_result);
+    rnnr.Goon(func, prmc, Param^.p_result, nil);
   end;
 
 begin
@@ -2492,57 +2410,59 @@ end;
 procedure pp_system_yield(const Param: PLseParam);cdecl;
 var
   rnnr: KLiRunner;
-  snap: PLiSnap;
-  curr, func: KLiFunc;
-  next, base, X: integer;
-  vars: KLiVarSnap;
-  list: KLiVarList;
-  data: PLseValue;
+  func: KLiFunc;
+  prmc: integer;
 begin
-  func := value_func(Param^.p_param[0]);
-  if (func <> nil) and not func.IsEmpty then
+  if Param^.p_count > 0 then
   begin
-    list := value_varlist(Param^.p_param[1]);
-    rnnr := get_runner(Param);
-    if func.FProc = nil then
+    prmc := Param^.p_count - 1; 
+    func := value_func(Param^.p_param[prmc]);
+    if (func <> nil) and not func.IsEmpty then
     begin
-      snap := rnnr.FCurrent;
-      curr := snap^.func;
-      next := snap^.next;
-      base := snap^.base;
-      vars := snap^.values;
-      vars.IncRefcount;
-      { change }
-      snap^.func := func;
-      snap^.base := rnnr.FStack.Count;
-      snap^.next := 0;
+      func.IncRefcount;
       try
-        for X := 0 to func.ParamCount - 1 do
-        begin
-          data := vars.NewValue(func.GetParam(X)^.v_name);
-          if (list <> nil) and (X < list.Count) then
-            lse_set_value(data, list[X]);
-          lse_type_cast(func.GetParam(X)^.v_type, data);
-        end;
-        while rnnr.ExecGoonNext do {nothing};
-        if rnnr.FStack.Count > snap^.base then
-          lse_set_value(Param^.p_result, rnnr.FStack[-1]);
+        rnnr := get_runner(Param);
+        rnnr.FStack.Press(sys_yield.ParamCount - prmc);
+        Param^.p_count := prmc;
+        if func.CanBeYielded then
+          rnnr.Goon(func, prmc, Param^.p_result, rnnr.FCurrent^.values) else
+          rnnr.Goon(func, prmc, Param^.p_result, nil);
       finally
-        rnnr.FCurrent := snap;
-        snap^.func := curr;
-        snap^.next := next;
-        snap^.base := base;
-        if snap^.values <> vars then //==> tailrc
-          snap^.values := vars else
-          vars.DecRefcount;
+        func.DecRefcount;
       end;
-    end
-    else
-    begin
-      X := rnnr.FStack.AddFrom(list, func.ParamCount);
-      rnnr.Goon(func, X, Param^.p_result);
     end;
   end;
+end;
+
+procedure pp_system_return(const Param: PLseParam);cdecl;
+begin
+  lse_set_value(Param^.p_result, Param^.p_param[0]);
+  get_runner(Param).FCurrent^.next := LSE_MAX_CODES;
+end;
+
+procedure pp_system_catch(const Param: PLseParam);cdecl;
+var
+  rnnr: KLiRunner;
+begin
+  rnnr := get_runner(Param);
+  try
+    Param^.p_func := sys_yield;
+    pp_system_yield(Param);
+    lse_set_int(Param^.p_result, Ord(rnnr.Excepted));
+  except
+    set_error(Param, lse_exception_str);
+    lse_set_int(Param^.p_result, 1);
+  end;
+  Param^.p_func := sys_catch;
+  rnnr.Excepted := false;
+end;
+
+procedure pp_system_throw(const Param: PLseParam);cdecl;
+begin
+  if Param^.p_count > 0 then
+    set_error(Param, Trim(lse_get_str(Param^.p_param[1])), 0,
+      Trim(lse_get_str(Param^.p_param[0]))) else
+    get_runner(Param).Excepted := true;
 end;
 
 { error }
@@ -2643,7 +2563,7 @@ var
 begin
   func := KLiFunc(vrec^.vg_object);
   if func.FModule.FEngine.FMainRunner <> nil then
-    Result := Ord(func.FModule.FEngine.MainRunner.Goon(func, 0, value)) else
+    Result := Ord(func.FModule.FEngine.MainRunner.Goon(func, 0, value, nil)) else
     Result := 0;
 end;
 
@@ -2799,7 +2719,7 @@ begin
       rnnr.FCurrent^.next := -1; //=> runner_next()
       snap.DecRefcount;
     end
-    else rnnr.Goon(func, get_func(Param).ParamCount - 1, Param^.p_result);
+    else rnnr.Goon(func, get_func(Param).ParamCount - 1, Param^.p_result, nil);
   end;
 end;
 
@@ -4145,7 +4065,7 @@ begin
 end;
 
 const
-  sys_func_count = 153;
+  sys_func_count = 157;
   sys_func_array: array[0..sys_func_count - 1] of RLseFunc = (
     (fr_prot:'dir:string ||';
      fr_addr:@pp_system_dir;
@@ -4178,6 +4098,14 @@ const
     (fr_prot:'exit |status:int|';
      fr_addr:@pp_system_exit;
      fr_desc:'exit with status code';
+    ),
+    (fr_prot:'not:int |condition|';
+     fr_addr:@pp_system_not;
+     fr_desc:'reverse condition';
+    ),
+    (fr_prot:'neg |value|';
+     fr_addr:@pp_system_neg;
+     fr_desc:'reverse neg';
     ),
     (fr_prot:'random:int |low:int, high:int|';
      fr_addr:@pp_system_random;
@@ -4331,10 +4259,6 @@ const
      fr_addr:@pp_system_split;
      fr_desc:'split string to varlist';
     ),
-    (fr_prot:'throw:void |exceptionMsg:string, exceptionID:string|';
-     fr_addr:@pp_system_throw;
-     fr_desc:'throw exception';
-    ),
     (fr_prot:'hex:string |value:int, size:int|';
      fr_addr:@pp_system_hex;
      fr_desc:'convert to hex string';
@@ -4343,17 +4267,29 @@ const
      fr_addr:@pp_system_typeof;
      fr_desc:'get value type';
     ),
-    (fr_prot:'tailrc:void |A,B,C,D,E,F,G,H,I,J,K,L|';
-     fr_addr:@pp_system_tailrc;
-     fr_desc:'tail recursive';
-    ),
     (fr_prot:'callcc |func:function, params:varlist|';
      fr_addr:@pp_system_callcc;
      fr_desc:'call with current continuation: fun => {|exit|} exit => {|value|}';
     ),
-    (fr_prot:'yield |func:function, params:varlist|';
+    (fr_prot:'yield |A,B,C,D,E,F,G,H,I,J,K,L|';
      fr_addr:@pp_system_yield;
      fr_desc:'yield parametre function with current context';
+    ),
+    (fr_prot:'loop:void |A,B,C,D,E,F,G,H,I,J,K,L|';
+     fr_addr:@pp_system_loop;
+     fr_desc:'loop current function';
+    ),
+    (fr_prot:'return |value|';
+     fr_addr:@pp_system_return;
+     fr_desc:'return from function';
+    ),
+    (fr_prot:'catch:int |A,B,C,D,E,F,G,H,I,J,K,L|';
+     fr_addr:@pp_system_catch;
+     fr_desc:'catch exception';
+    ),
+    (fr_prot:'throw:void |exceptionMsg:string, exceptionID:string|';
+     fr_addr:@pp_system_throw;
+     fr_desc:'throw exception';
     ),
   { error }
     (fr_prot:'error_text:string |e:error|';
@@ -5111,7 +5047,7 @@ var
 begin
   try
     rnnr := get_runner(Param);
-    Result := Ord(rnnr.Goon(KLiFunc(Func), Params, ResValue));
+    Result := Ord(rnnr.Goon(KLiFunc(Func), Params, ResValue, nil));
   except
     Result := 0;
   end;
@@ -5438,7 +5374,6 @@ begin
     sys_knpath := ExtractFilePath(sys_kernel);
     sys_kndir := ExcludeTrailingPathDelimiter(sys_knpath);
     sys_confile := sys_knpath + LSE_CONFILE;
-    sys_mimefile := sys_knpath + LSE_MIMEFILE;
 
     if ConfigFile = '' then
       Load(sys_confile) else
@@ -5446,9 +5381,6 @@ begin
 
     sys_tmpath := lse_full_path(ReadCex('lse_tmpath', LSE_TEMP_PATH));
     sys_search_path := lse_veryPD(ReadCex('lse_search', LSE_SEARCH_PATH));
-    sys_mimefile := lse_expand_fname(ReadCex('lse_mimefile', sys_mimefile));
-
-    FreeAndNil(sys_mimes);
 
     {$IFDEF WINDOWS}
     ForceDirectories(sys_tmpath);
@@ -5463,7 +5395,6 @@ var
   index: integer;
 begin
   if ID = 'confile'  then Result := sys_confile else
-  if ID = 'mimefile' then Result := sys_mimefile else
   if ID = 'kernel'   then Result := sys_kernel else
   if ID = 'knpath'   then Result := sys_knpath else
   if ID = 'kndir'    then Result := sys_kndir else
@@ -5856,7 +5787,7 @@ begin
   begin
     kernel_lock;
     try
-      Result := sys_libraries.Find(name);
+      Result := sys_module_list.Find(name);
       if Result = nil then
       begin
         H := 0;
@@ -5906,7 +5837,7 @@ begin
     begin
       kernel_lock;
       try
-        if not sys_libraries.Has(ID) then
+        if not sys_module_list.Has(ID) then
         begin
           Result := KLiModule.Create(ID, nil, moyRegistered);
           Result.FFileName := fname;
@@ -6036,7 +5967,7 @@ begin
         Result := X;
         Exit;
       end;
-    if (ID = 'eol') or (Copy(ID, 1, 2) = '__') then
+    if Copy(ID, 1, 2) = '__' then
     begin
       Result := syCurr;
       Exit;
@@ -6385,12 +6316,11 @@ begin
                   get_operator(syAdd, [], []);
       '-'     : if PeekChar in LCS_DIGIT then
                   get_number else
-                  get_operator(syDec, ['>'], [syRight]);
+                  get_operator(syDec, [], []);
       '*'     : get_operator(syMul, [], []);
       '/'     : get_operator(syDiv, [], []);
       '%'     : get_operator(syMod, [], []);
       '^'     : get_operator(syBitXor, [], []);
-      '~'     : get_operator(syBitNot, [], []);
       '('     : get_operator(syLParen, [], []);
       ')'     : get_operator(syRParen, [], []);
       '{'     : get_operator(syLBlock, [], []);
@@ -6399,9 +6329,9 @@ begin
       ']'     : get_operator(syRArray, [], []);
       '.'     : get_operator(syDot, ['.'], [syUpto]);
       '?'     : get_operator(syAsk, [], []);
-      ':'     : get_operator(syDot2, ['='], [syBecome]);
+      ':'     : get_operator(syDot2, [], []);
       ','     : get_operator(syComma,  [], []);
-      '='     : get_operator(syBecome, ['='], [syEQ]);
+      '='     : get_operator(syBecome, ['=', '>'], [syEQ, syYield]);
       '!'     : get_operator(syError, ['=', '<', '>'], [syNE, syME, syLE]);
       '<'     : begin
                   get_operator(syLess, ['=', '<'], [syLE, syBitShl]);
@@ -6415,7 +6345,6 @@ begin
       '>'     : get_operator(syMore, ['=', '>'], [syME, syBitShr]);
       '&'     : get_operator(syBitAnd, [], []);
       '|'     : get_operator(syBitOr, [], []);
-      '@'     : get_operator(syFormat, [], []);
       else      token^.tk_name := FChar;
     end;
   end
@@ -6445,7 +6374,7 @@ var
   end;
 
 begin
-  Result := (Sym = syRight);
+  Result := (Sym = syDot2);
   if not Result and (Sym = syLBlock) then
   begin
     count := LSE_MAX_PARAMS;
@@ -6455,7 +6384,7 @@ begin
       token := token^.tk_next;
       if not on_argument then
       begin
-        Result := (token^.tk_sym = syRight);
+        Result := (token^.tk_sym = syDot2);
         Exit;
       end;
       Dec(count);
@@ -6468,7 +6397,7 @@ begin
       token^.tk_next := nil;
       if not on_argument then
       begin
-        Result := (token^.tk_sym = syRight);
+        Result := (token^.tk_sym = syDot2);
         Exit;
       end;
       Dec(count);
@@ -6589,71 +6518,6 @@ begin
     else Result := true;
 end;
 
-{ KLiBreakContinue }
-
-procedure KLiBreakContinue.AddBC(Token: PLiToken; Breaking: boolean);
-begin
-  if Breaking then AddBreak(Token) else AddContinue(Token);
-end;
-
-procedure KLiBreakContinue.AddBreak(Token: PLiToken);
-begin
-  FBreaks.Add(Token);
-  Token^.tk_prmc := FParser.CurCodes.Count - 1;
-end;
-
-procedure KLiBreakContinue.AddContinue(Token: PLiToken);
-begin
-  FContinues.Add(Token);
-  Token^.tk_prmc := FParser.CurCodes.Count - 1;
-end;
-
-constructor KLiBreakContinue.Create(AParser: KLiParser);
-begin
-  FParser := AParser;
-  FPrevBC := FParser.FBC;
-  FParser.FBC := Self;
-  FBreaks := TList.Create;
-  FContinues := TList.Create;
-end;
-
-destructor KLiBreakContinue.Destroy;
-begin
-  Leave;
-  FreeAndNil(FBreaks);
-  FreeAndNil(FContinues);
-  inherited;
-end;
-
-procedure KLiBreakContinue.Leave;
-begin
-  FParser.FBC := FPrevBC;
-end;
-
-procedure KLiBreakContinue.SetBreak(Index: integer);
-var
-  X: integer;
-  T: PLiToken;
-begin
-  for X := 0 to FBreaks.Count - 1 do
-  begin
-    T := PLiToken(FBreaks[X]);
-    T^.tk_prmc := Index - T^.tk_prmc;
-  end;
-end;
-
-procedure KLiBreakContinue.SetContinue(Index: integer);
-var
-  X: integer;
-  T: PLiToken;
-begin
-  for X := 0 to FContinues.Count - 1 do
-  begin
-    T := PLiToken(FContinues[X]);
-    T^.tk_prmc := Index - T^.tk_prmc;
-  end;
-end;
-
 { KLiParser }
 
 constructor KLiParser.Create(AModule: KLiModule);
@@ -6718,7 +6582,7 @@ end;
 
 procedure KLiParser.ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
 
-  procedure parse_fun;
+  procedure parse_def;
   begin
     {fun func arguments -> statements}
     SymTestNextPureID;
@@ -6737,156 +6601,18 @@ procedure KLiParser.ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
     ParseExpr([syThen], false, true);
     J := CurCodes.AddNew(syJmpFP, @FLast^.tk_pos);
     J^.tk_prmc := CurCodes.Count - 1;
-    ParseBlock([syRBlock, syElse], false);
-    if FLast^.tk_sym = syElse then
+    ParseBlock([syIf, syElse, syRBlock], false);
+    if FLast^.tk_sym in [syIf, syElse] then
     begin
       E := CurCodes.AddNew(syJump, @FLast^.tk_pos);
       E^.tk_prmc := CurCodes.Count - 1;
       J^.tk_prmc := CurCodes.Count - J^.tk_prmc;
-      ParseBlock([syRBlock], false);
+      if FLast^.tk_sym = syIf then
+        parse_if else
+        ParseBlock([syRBlock], false);
       E^.tk_prmc := CurCodes.Count - E^.tk_prmc;
     end
     else J^.tk_prmc := CurCodes.Count - J^.tk_prmc;
-  end;
-
-  procedure parse_while;
-  var
-    bc: KLiBreakContinue;
-    cx: integer;
-    vn: string;
-  begin
-    bc := KLiBreakContinue.Create(Self);
-    try
-      {while condition do statements}
-      cx := CurCodes.Count;
-      ParseExpr([syDot2, syIf, syDo], false, true);
-      if FLast^.tk_sym = syDot2 then
-      begin
-        {while expr -> varb do statements}
-        CurCodes.AddNew(syID, @FLast^.tk_pos)^.tk_name := 'sys::vargen';
-        CurCodes.AddNew(syAs, @FLast^.tk_pos);
-        vn := FModule.NewTempID;
-        CurCodes.AddNew(syBecome, @FLast^.tk_pos)^.tk_name := vn;
-        CurCodes.AddNew(syPop, @FLast^.tk_pos);
-        cx := CurCodes.Count;
-        CurCodes.AddNew(syID, @FLast^.tk_pos)^.tk_name := 'sys::vargen_send';
-        CurCodes.AddNew(syID, @FLast^.tk_pos)^.tk_name := vn;
-        SymTestNextPureID;
-        CurCodes.AddToken(FLast)^.tk_sym := syStr;
-        SymTestNext([syIf, syDo]);
-        CurCodes.AddNew(syAsk, @FLast^.tk_pos)^.tk_prmc := 3;
-      end;
-      bc.AddBreak(CurCodes.AddNew(syJmpFP, @FLast^.tk_pos));
-      if FLast^.tk_sym = syIf then
-      begin
-        ParseExpr([syDo], false, true);
-        bc.AddContinue(CurCodes.AddNew(syJmpFP, @FLast^.tk_pos));
-      end;
-      ParseBlock([syRBlock], false);
-      bc.AddContinue(CurCodes.AddNew(syJump, @FLast^.tk_pos));
-      bc.SetContinue(cx);
-      bc.SetBreak(CurCodes.Count);
-    finally
-      bc.Free;
-    end;
-  end;
-
-  procedure parse_do;
-  var
-    bc: KLiBreakContinue;
-    sx, cx: integer;
-  begin
-    {do statements while condition}
-    bc := KLiBreakContinue.Create(Self);
-    try
-      sx := CurCodes.Count;
-      ParseBlock([syWhile], false);
-      cx := CurCodes.Count;
-      ParseExpr([syRBlock], false, true);
-      CurCodes.AddNew(syJmpTP, @FLast^.tk_pos)^.tk_prmc := sx - CurCodes.Count + 1;
-      bc.SetContinue(cx);
-      bc.SetBreak(CurCodes.Count);
-    finally
-      bc.Free;
-    end;
-  end;
-
-  procedure parse_bc(Breaking: boolean);
-  begin
-    {break|continue if condition}
-    if FBC = nil then FError.SymUnexpected(Self);
-    SymTestNext([syIf, syRBlock]);
-    if FLast^.tk_sym = syIf then
-    begin
-      ParseExpr([syRBlock], false, true);
-      CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := 2;
-    end;
-    FBC.AddBC(CurCodes.AddNew(syJump, @FLast^.tk_pos), Breaking);
-  end;
-
-  procedure parse_return;
-  var
-    I, X: integer;
-    V, L: TList;
-  begin
-    {return expr if condition}
-    SymGotoNext;
-    if FLast^.tk_sym in [syIf, syRBlock] then
-    begin
-      if FLast^.tk_sym = syIf then
-      begin
-        ParseExpr([syRBlock], false, true);
-        CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := 2;
-      end;
-      CurCodes.AddNew(syReturn, @FLast^.tk_pos);
-    end
-    else
-    begin
-      I := CurCodes.Count;
-      ParseExpr([syIf, syRBlock], true, true);
-      CurCodes.AddNew(syReturn, @FLast^.tk_pos);
-      if FLast^.tk_sym = syIf then
-      begin
-        V := CurCodes.CopyFrom(I);
-        try
-          X := CurCodes.Count;
-          ParseExpr([syRBlock], false, true);
-          CurCodes.AddNew(syJmpFP, @FLast^.tk_pos)^.tk_prmc := V.Count + 1;
-          L := CurCodes.CopyFrom(X);
-          try
-            for X := 0 to L.Count - 1 do
-            begin
-              CurCodes.FItems[I] := L[X];
-              Inc(I);
-            end;
-            for X := 0 to V.Count - 1 do
-            begin
-              CurCodes.FItems[I] := V[X];
-              Inc(I);
-            end;
-          finally
-            L.Free;
-          end;
-        finally
-          V.Free;
-        end;
-      end;
-    end;
-  end;
-
-  procedure parse_try;
-  var
-    J, E: PLiToken;
-  begin
-    {try statements except handlers}
-    J := CurCodes.AddNew(syTry, @FLast^.tk_pos);
-    J^.tk_prmc := CurCodes.Count - 1;
-    ParseBlock([syExcept], false);
-    E := CurCodes.AddNew(syJump, @FLast^.tk_pos);
-    E^.tk_prmc := CurCodes.Count - 1;
-    J^.tk_prmc := CurCodes.Count - J^.tk_prmc;
-    ParseBlock([syRBlock], false);
-    E^.tk_prmc := CurCodes.Count - E^.tk_prmc;
   end;
 
   procedure parse_default;
@@ -6896,7 +6622,10 @@ procedure KLiParser.ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
   var
     R, M: PLiToken;
     S, X: KLiSymbol;
+    I, L: integer;
   begin
+    I := CurCodes.FItems.Count; //=> for tailing if
+
     PeekNextTwoSym(S, X);
     if token_pure_ID(FLast) and ((S = syBecome) or
                                 ((X = syBecome) and (S in OPRS)) or
@@ -6909,7 +6638,7 @@ procedure KLiParser.ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
       if (S in [syAdd, syDec]) and (S = PeekNextSym) then {a++} {a--}
       begin
         SymGotoNext;
-        SymTestNext([syRBlock]);
+        SymTestNext([syRBlock, syIf]);
         AddToken(R);
         CurCodes.AddNew(syInt, @M^.tk_pos)^.VInteger := 1;
         AddToken(M);
@@ -6919,14 +6648,40 @@ procedure KLiParser.ParseBlock(EndSyms: KLiSymbols; OnHead: boolean);
       begin
         SymTestNext([syBecome]);
         AddToken(R);
-        ParseExpr([syRBlock], false, true);
+        ParseExpr([syRBlock, syIf], false, true);
         AddToken(M);
       end
-      else ParseExpr([syRBlock], false, true); {a = v}
+      else ParseExpr([syRBlock, syIf], false, true); {a = v}
       AddToken(R)^.tk_sym := syBecome;
     end
-    else ParseAsk([syRBlock], true);
+    else ParseAsk([syRBlock, syIf], true);
     CurCodes.AddNew(sySTMT, @FLast^.tk_pos);
+    
+    if FLast^.tk_sym = syIf then
+    begin
+      L := CurCodes.FItems.Count;
+
+      ParseExpr([syRBlock, syElse], false, true);
+      M := CurCodes.AddNew(syJmpFP, @FLast^.tk_pos);
+      M^.tk_prmc := L - I + 1;
+
+      while L < CurCodes.FItems.Count do
+      begin
+        CurCodes.FItems.Move(L, I);
+        Inc(L);
+        Inc(I);
+      end;
+      
+      if FLast^.tk_sym = syElse then
+      begin
+        Inc(M^.tk_prmc);
+        M := CurCodes.AddNew(syJump, @FLast^.tk_pos);
+        M^.tk_prmc := CurCodes.FItems.Count;
+        SymGotoNext;
+        parse_default;
+        M^.tk_prmc := CurCodes.FItems.Count - M^.tk_prmc + 1;
+      end;
+    end;
   end;
 
 var
@@ -6947,14 +6702,8 @@ begin
     begin
       SymGotoNext;
       case FLast^.tk_sym of
-        syFun     : parse_fun;
+        syDef     : parse_def;
         syIf      : parse_if;
-        syWhile   : parse_while;
-        syDo      : parse_do;
-        syBreak   : parse_bc(true);
-        syContinue: parse_bc(false);
-        syReturn  : parse_return;
-        syTry     : parse_try;
         syRBlock  : FError.SymUnexpected(Self);
         else parse_default;
       end;
@@ -6977,40 +6726,52 @@ begin
 end;
 
 procedure KLiParser.ParseAsk(EndSyms: KLiSymbols; OnHead: boolean);
-
-  function parse_parametres: integer;
-  begin
-    Result := 1;
-    while not (FLast^.tk_sym in EndSyms) do
-    begin
-      ParseExpr(EndSyms, true, false);
-      Inc(Result);
-    end;
-  end;
-
 var
   A: PLiToken;
-  N: integer;
+  X, N: integer;
+  P: KLiParser;
+  F: KLiFunc;
 begin
   if not OnHead then SymGotoNext;
-  ParseExpr(EndSyms, true, false);
-  A := CurCodes.Last;
-  if (A^.tk_sym = syMethod) and (A^.tk_prmc = 0) then
+  if FLast^.tk_sym <> syYield then
   begin
-    CurCodes.FItems.Delete(CurCodes.FItems.Count - 1);
-    try
-      A^.tk_prmc := parse_parametres;
-    finally
-      CurCodes.FItems.Add(A);
+    ParseExpr(EndSyms, true, false);
+    X := CurCodes.FItems.Count - 1; {->method}
+    A := CurCodes.GetItem(X);
+
+    N := 1;
+    while not (FLast^.tk_sym in EndSyms + [syYield]) do
+    begin
+      ParseExpr(EndSyms, true, false);
+      Inc(N);
+    end;
+    
+    if FLast^.tk_sym in EndSyms then
+    begin
+      if (A^.tk_sym = syMethod) and (A^.tk_prmc = 0) then
+        CurCodes.FItems.Move(X, CurCodes.FItems.Count - 1) else
+        A := CurCodes.AddNew(syAsk, @FLast^.tk_pos);
+      A^.tk_prmc := N;
+      Exit;
     end;
   end
-  else
+  else N := 0;
+
+  FLast^.tk_sym := syLBlock;
+  if FTokenizer.OnLambda(syLBlock) then
   begin
-    N := parse_parametres;
-    A := AddToken(FLast);
-    A^.tk_sym := syAsk;
-    A^.tk_prmc := N;
-  end;
+    P := Shadow;
+    try
+      F := P.ParseLambda;
+      FLast^.tk_name := F.FullName;
+      FLast^.tk_sym := syID;
+      CurCodes.AddToken(FLast);
+    finally
+      P.Free;
+    end;
+  end
+  else ParseExpr(EndSyms, false, true);
+  CurCodes.AddNew(syYield, @FLast^.tk_pos)^.tk_prmc := N + 1;
 end;
 
 procedure KLiParser.SymTestLast(Syms: KLiSymbols);
@@ -7087,7 +6848,7 @@ end;
 procedure KLiParser.ParseArguments(Func: KLiFunc; OnHead: boolean);
 begin
   if not OnHead then SymGotoNext;
-  while not (FLast^.tk_sym = syRight) do
+  while not (FLast^.tk_sym = syDot2) do
   begin
     if (Func.ParamCount >= LSE_MAX_PARAMS - 1)
       or not token_pure_ID(FLast)
@@ -7113,32 +6874,20 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead, DoCheck: boolean);
     SymGotoNext;
 
     if L^.tk_sym in OperSyms then
-      if (L^.tk_sym <> syDec)
-        or not (FLast^.tk_sym in ExprHeadSyms)
-          or (FLast^.tk_sym in OperSyms + EndSyms) then
-          begin
-            L^.tk_name := 'sys::' + Symbols[L^.tk_sym].ID;
-            L^.tk_sym := syID;
-          end;
-
-    if (L^.tk_sym = syDec) and (FLast^.tk_sym in [syFloat, syInt]) then
     begin
-      if FLast^.tk_sym = syFloat then
-        FLast^.VFloat := - FLast^.VFloat else
-        FLast^.VInteger := - FLast^.VInteger;
-      L := FLast;
-      SymGotoNext;
+      L^.tk_name := 'sys::' + Symbols[L^.tk_sym].ID;
+      L^.tk_sym := syID;
     end;
-      
+
     if L^.tk_sym in ConstSyms then AddToken(L) else
     if L^.tk_sym = syLParen then
     begin
       if FLast^.tk_sym = syIf then
       begin
-        ParseExpr([syThen], false, true);
+        ParseExpr([], false, false);
         J := CurCodes.AddNew(syJmpFP, @FLast^.tk_pos);
         J^.tk_prmc := CurCodes.Count;
-        ParseExpr([syElse], false, true);
+        ParseExpr([syElse], true, true);
         L := CurCodes.AddNew(syJump, @FLast^.tk_pos);
         L^.tk_prmc := CurCodes.Count;
         J^.tk_prmc := CurCodes.Count - J^.tk_prmc + 1;
@@ -7183,13 +6932,6 @@ procedure KLiParser.ParseExpr(EndSyms: KLiSymbols; OnHead, DoCheck: boolean);
         L^.tk_sym := syList;
       AddToken(L);
       SymGotoNext;
-    end
-    else
-    if L^.tk_sym in [syNot, syDec, syBitNot, syFormat] then
-    begin
-      if L^.tk_sym = syDec then L^.tk_sym := syNeg;
-      parse_term;
-      AddToken(L);
     end
     else
     begin
@@ -7344,6 +7086,11 @@ begin
   X := Length(FParams);
   SetLength(FParams, X + 1);
   FParams[X] := V;
+end;
+
+function KLiFunc.CanBeYielded: boolean;
+begin
+  Result := (FProc = nil) and not IsClosure;
 end;
 
 constructor KLiFunc.Create(Parent: KLiModule; AResultType: PLseType;
@@ -7530,7 +7277,7 @@ var
   X: integer;
 begin
   Result := lse_type_prot(FResultType, Name);
-  Result := '{fun ' + Result;
+  Result := '{def ' + Result;
   if Self.ParamCount > 0 then
   begin
     Result := Result + ' ' + lse_type_prot(GetParam(0));
@@ -7811,61 +7558,53 @@ begin
   begin
     R := GetItem(A);
     case R^.tk_sym of
-      syReturn    : if R^.tk_prmc > 0 then
-                      H := 'RETL' else // return last
-                      H := 'EXIT';
-      syJump      : H := Format('JUMP %.4d:', [A + R^.tk_prmc]);
-      syJmpF      : H := Format('JMPF %.4d:', [A + R^.tk_prmc]);
-      syJmpT      : H := Format('JMPT %.4d:', [A + R^.tk_prmc]);
-      syJmpFP     : H := Format('JMPF %.4d: POP', [A + R^.tk_prmc]);
-      syJmpTP     : H := Format('JMPT %.4d: POP', [A + R^.tk_prmc]);
-      syAsk       : H := Format('CASK %d', [R^.tk_prmc]);
+      syJump      : H := Format('JUMP  %.4d', [A + R^.tk_prmc]);
+      syJmpF      : H := Format('JMPF  %.4d', [A + R^.tk_prmc]);
+      syJmpT      : H := Format('JMPT  %.4d', [A + R^.tk_prmc]);
+      syJmpFP     : H := Format('JMPFP %.4d', [A + R^.tk_prmc]);
+      syJmpTP     : H := Format('JMPTP %.4d', [A + R^.tk_prmc]);
+      syAsk       : H := Format('ASK   %d', [R^.tk_prmc]);
       syIdle      : H := 'IDLE';
-      syID        : H := Format('PUSH %s', [R^.tk_name]);
-      syBecome    : H := Format('SAVE %s', [R^.tk_name]);
-      syFloat     : H := Format('PSHF %f', [R^.VFloat]);
-      syInt       : H := Format('PSHI %d', [R^.VInteger]);
-      syStr       : H := Format('PSHS %s', [R^.tk_name]);
-      syTry       : H := Format('TRY  %.4d:', [A + R^.tk_prmc]);
-      syNeg       : H := 'CALC NEG';
-      syAdd       : H := 'CALC +';
-      syFill      : H := 'CALC <<<';
-      syDec       : H := 'CALC -';
-      syMul       : H := 'CALC *';
-      syDiv       : H := 'CALC /';
-      syMod       : H := 'CALC %';
-      syBitNot    : H := 'CALC ~';
-      syBitXor    : H := 'CALC ^';
-      syBitOr     : H := 'CALC |';
-      syBitAnd    : H := 'CALC &';
-      syBitShl    : H := 'CALC <<';
-      syBitShr    : H := 'CALC >>';
-      syEQ        : H := 'CALC ==';
-      syIn        : H := 'CALC IN';
-      syNE        : H := 'CALC !=';
-      syLess      : H := 'CALC <';
-      syLE        : H := 'CALC <=';
-      syMore      : H := 'CALC >';
-      syUpto      : H := 'CALC ..';
-      syME        : H := 'CALC >=';
-      syNot       : H := 'CALC NOT';
-      syAnd       : H := 'CALC AND';
-      syOr        : H := 'CALC OR';
-      syList      : H := Format('LIST %d', [R^.tk_prmc]);
-      syNil       : H := 'PUSH NIL';
-      syEnv       : H := Format('PUSH ${%s}', [R^.tk_name]);
-      syFormat    : H := 'FRMT';
-      syIs        : H := 'CALC IS';
-      syAs        : H := 'CALC AS';
-      syHash      : H := Format('HASH %d', [R^.tk_prmc]);
+      syID        : H := Format('PUSH  %s', [R^.tk_name]);
+      syBecome    : H := Format('SAVE  %s', [R^.tk_name]);
+      syYield     : H := Format('YIELD %d', [R^.tk_prmc]);
+      syFloat     : H := Format('PUSH  %f', [R^.VFloat]);
+      syInt       : H := Format('PUSH  %d', [R^.VInteger]);
+      syStr       : H := Format('PUSH  ''%s''', [R^.tk_name]);
+      syAdd       : H := '+';
+      syFill      : H := '<<<';
+      syDec       : H := '-';
+      syMul       : H := '*';
+      syDiv       : H := '/';
+      syMod       : H := '%';
+      syBitXor    : H := '^';
+      syBitOr     : H := '|';
+      syBitAnd    : H := '&';
+      syBitShl    : H := '<<';
+      syBitShr    : H := '>>';
+      syEQ        : H := '==';
+      syIn        : H := 'IN';
+      syNE        : H := '!=';
+      syLess      : H := '<';
+      syLE        : H := '<=';
+      syMore      : H := '>';
+      syME        : H := '>=';
+      syAnd       : H := 'AND';
+      syOr        : H := 'OR';
+      syUpto      : H := '..';
+      syList      : H := Format('LIST  %d', [R^.tk_prmc]);
+      syEnv       : H := Format('PUSH  ${%s}', [R^.tk_name]);
+      syIs        : H := 'IS';
+      syAs        : H := 'AS';
+      syHash      : H := Format('HASH  %d', [R^.tk_prmc]);
       syLike      : H := 'LIKE';
       syMethod    : if R^.tk_prmc > 0 then
-                      H := Format('ASKM %d:%s', [R^.tk_prmc, R^.tk_name]) else
-                      H := Format('MTHD %s', [R^.tk_name]);
+                      H := Format('ASKM  %d:%s', [R^.tk_prmc, R^.tk_name]) else
+                      H := Format('MTHD  %s', [R^.tk_name]);
       syCurr      : H := Format('PUSH %s', [R^.tk_name]);
       sySTMT      : H := 'STMT';
       syPop       : H := 'POP';
-      else          H := 'WRNG ' + Symbols[R^.tk_sym].SM;
+      else          H := 'WRONG ' + Symbols[R^.tk_sym].SM;
     end;
     List.Add(Format('     %s%.4d: %s', [Margin, A, H]));
   end;
@@ -7966,6 +7705,11 @@ begin
 end;
 
 { KLiFunc_closure }
+
+function KLiFunc_closure.CanBeYielded: boolean;
+begin
+  Result := false;
+end;
 
 constructor KLiFunc_closure.Create(Lambda: KLiFunc; ASnap: KLiVarSnap);
 var
@@ -8324,7 +8068,7 @@ begin
     FModules.FImporter := Self;
     FImporters := TList.Create;
   end
-  else sys_libraries.Add(Self);
+  else sys_module_list.Add(Self);
 end;
 
 destructor KLiModule.Destroy;
@@ -8349,7 +8093,7 @@ begin
   DeleteFunctions;
   FreeAndNil(FFuncList);
   FreeAndNil(FTypeList);
-  sys_libraries.FModules.Remove(Self);
+  sys_module_list.FModules.Remove(Self);
   if IsLibrary and (FHandle <> 0) then
     lse_free_library(FHandle);
   inherited;
@@ -8451,7 +8195,7 @@ begin
       if FEngine <> nil then
         Result := FEngine.FModules.Find(ID);
       if Result = nil then
-        Result := sys_libraries.Find(ID);
+        Result := sys_module_list.Find(ID);
     end
     else
     if ID = 'sys' then
@@ -8741,7 +8485,7 @@ var
 begin
   M := GetModule(Index);
   FModules.Delete(Index);
-  if FImporter = nil then M.Free; {<--KLiEngine.FModules/sys_libraries}
+  if FImporter = nil then M.Free; {<--KLiEngine.FModules/sys_module_list}
 end;
 
 destructor KLiModuleList.Destroy;
@@ -9053,9 +8797,9 @@ begin
     if same_fname(FileName, Result.FFileName) then Exit;
   end;
 
-  for X := 0 to sys_libraries.Count - 1 do
+  for X := 0 to sys_module_list.Count - 1 do
   begin
-    Result := sys_libraries[X];
+    Result := sys_module_list[X];
     if same_fname(FileName, Result.FFileName) then Exit;
   end;
   
@@ -9242,7 +8986,7 @@ begin
     try
       FMainRunner := KLiRunner.Create(Self);
       try
-        FMainRunner.Goon(FMainFunc, 0, FExitResult);
+        FMainRunner.Goon(FMainFunc, 0, FExitResult, nil);
         if not FMainRunner.FExcepted then
           FError.Clear;
       finally
@@ -9732,13 +9476,20 @@ begin
   inherited;
 end;
 
+procedure KLiRunner.DoMod(V1, V2: PLseValue);
+begin
+  if lse_vtype(V1) = LSV_STRING then
+    lse_set_string(V1, FormatFor(lse_get_str(V1), value_varlist(V1))) else
+    lse_mod(V1, V2);
+end;
+
 function KLiRunner.HasNext: boolean;
 begin
   Result := (FCurrent <> nil) and
             (FCurrent^.next < FCurrent^.func.FCodes.Count);
 end;
 
-function KLiRunner.Goon(func: KLiFunc; ParamCount: integer; Output: PLseValue): boolean;
+function KLiRunner.Goon(func: KLiFunc; ParamCount: integer; Output: PLseValue; Yield: KLiVarSnap): boolean;
 var
   base, index, count: integer;
   data: RLseValue;
@@ -9838,6 +9589,14 @@ begin
         begin
           snap.values := FEngine.MainSnap;
           snap.values.IncRefcount;
+        end
+        else
+        if Yield <> nil then
+        begin
+          snap.values := Yield;
+          Yield.IncRefcount;
+          for index := 0 to Func.ParamCount - 1 do
+            snap.values.SetValue(Func.GetParam(index)^.v_name, FStack[base + index]);
         end
         else
         begin
@@ -10234,7 +9993,7 @@ begin
   if not sys_init_lysee then
   begin
     sys_init_lysee := true;
-    sys_libraries := KLiModuleList.Create(nil);
+    sys_module_list := KLiModuleList.Create(nil);
     sys_spinlock := Syncobjs.TCriticalSection.Create;
     sys_version := LSE_VERSION;
     kernel_load_confile('');
@@ -10326,6 +10085,8 @@ begin
     sys_nothing := sys_module.FindFunc('nothing');
     sys_get := sys_module.FindFunc('get');
     sys_set := sys_module.FindFunc('set');
+    sys_yield := sys_module.FindFunc('yield');
+    sys_catch := sys_module.FindFunc('catch');
 
     { setup operator functions }
     
@@ -10335,12 +10096,12 @@ begin
       if X in OperSyms then
         KLiFunc_oper.Create(X);
     end;
-    sys_oper_inc := sys_module.FindFunc('+');
 
     { setup runner procedures }
 
     sys_runner_procs[syID]      := {$IFDEF FPC}@{$ENDIF}runner_ID;
     sys_runner_procs[syBecome]  := {$IFDEF FPC}@{$ENDIF}runner_become;
+    sys_runner_procs[syYield]   := {$IFDEF FPC}@{$ENDIF}runner_yield;
     sys_runner_procs[syFloat]   := {$IFDEF FPC}@{$ENDIF}runner_float;
     sys_runner_procs[syInt]     := {$IFDEF FPC}@{$ENDIF}runner_int;
     sys_runner_procs[syStr]     := {$IFDEF FPC}@{$ENDIF}runner_str;
@@ -10349,14 +10110,11 @@ begin
     sys_runner_procs[syMul]     := {$IFDEF FPC}@{$ENDIF}runner_mul;
     sys_runner_procs[syDiv]     := {$IFDEF FPC}@{$ENDIF}runner_div;
     sys_runner_procs[syMod]     := {$IFDEF FPC}@{$ENDIF}runner_mod;
-    sys_runner_procs[syBitNot]  := {$IFDEF FPC}@{$ENDIF}runner_bit_not;
     sys_runner_procs[syBitXor]  := {$IFDEF FPC}@{$ENDIF}runner_bit_xor;
     sys_runner_procs[syBitOr]   := {$IFDEF FPC}@{$ENDIF}runner_bit_or;
     sys_runner_procs[syBitAnd]  := {$IFDEF FPC}@{$ENDIF}runner_bit_and;
     sys_runner_procs[syBitShl]  := {$IFDEF FPC}@{$ENDIF}runner_bit_shl;
     sys_runner_procs[syBitShr]  := {$IFDEF FPC}@{$ENDIF}runner_bit_shr;
-    sys_runner_procs[syNot]     := {$IFDEF FPC}@{$ENDIF}runner_not;
-    sys_runner_procs[syNeg]     := {$IFDEF FPC}@{$ENDIF}runner_neg;
     sys_runner_procs[syEQ]      := {$IFDEF FPC}@{$ENDIF}runner_eq;
     sys_runner_procs[syNE]      := {$IFDEF FPC}@{$ENDIF}runner_ne;
     sys_runner_procs[syLess]    := {$IFDEF FPC}@{$ENDIF}runner_less;
@@ -10368,15 +10126,11 @@ begin
     sys_runner_procs[syOr]      := {$IFDEF FPC}@{$ENDIF}runner_or;
     sys_runner_procs[syUpto]    := {$IFDEF FPC}@{$ENDIF}runner_upto;
     sys_runner_procs[syList]    := {$IFDEF FPC}@{$ENDIF}runner_varlist;
-    sys_runner_procs[syNil]     := {$IFDEF FPC}@{$ENDIF}runner_nil;
     sys_runner_procs[syEnv]     := {$IFDEF FPC}@{$ENDIF}runner_env;
-    sys_runner_procs[syFormat]  := {$IFDEF FPC}@{$ENDIF}runner_format;
     sys_runner_procs[syIs]      := {$IFDEF FPC}@{$ENDIF}runner_is;
     sys_runner_procs[syAs]      := {$IFDEF FPC}@{$ENDIF}runner_as;
     sys_runner_procs[syAsk]     := {$IFDEF FPC}@{$ENDIF}runner_ask;
     sys_runner_procs[syIdle]    := {$IFDEF FPC}@{$ENDIF}runner_next;
-    sys_runner_procs[syTry]     := {$IFDEF FPC}@{$ENDIF}runner_try;
-    sys_runner_procs[syReturn]  := {$IFDEF FPC}@{$ENDIF}runner_return;
     sys_runner_procs[syJump]    := {$IFDEF FPC}@{$ENDIF}runner_jump;
     sys_runner_procs[syJmpF]    := {$IFDEF FPC}@{$ENDIF}runner_jmpf;
     sys_runner_procs[syJmpT]    := {$IFDEF FPC}@{$ENDIF}runner_jmpt;
@@ -10402,10 +10156,9 @@ try
   if not sys_exit_lysee then
   begin
     sys_exit_lysee := true;
-    sys_libraries.Clear;
-    FreeAndNil(sys_libraries);
+    sys_module_list.Clear;
+    FreeAndNil(sys_module_list);
     FreeAndNil(sys_configures);
-    FreeAndNil(sys_mimes);
     FreeAndNil(sys_spinlock);
   end;
 except
