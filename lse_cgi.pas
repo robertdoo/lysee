@@ -4,9 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2009/01/03                                                      }
-{    MODIFIED: 2011/07/09                                                      }
-{==============================================================================}
-{ Contributor(s):                                                              }
+{    MODIFIED: 2011/11/30                                                      }
 {==============================================================================}
 unit lse_cgi;
 
@@ -19,8 +17,8 @@ unit lse_cgi;
 interface
 
 uses
-  SysUtils, Classes, lseu, lse_kernel, lse_funcs
-  {$IFDEF WINDOWS},Windows{$ENDIF};
+  SysUtils, Classes, {$IFDEF WINDOWS}Windows,{$ENDIF}
+  lseu, lse_kernel;
 
 type
   KLiResponse   = class; {forward}
@@ -55,11 +53,13 @@ type
   public
     constructor Create(AEngine: KLiEngine);
     destructor Destroy;override;
-    property Mode: string read FMode;
     property ShowResponseHeader: boolean read FShowResponseHeader;
     property HasError: boolean read FHasError;
+    property Response: KLiResponse read FResponse;
   end;
 
+  { KLiCookie }
+  
   KLiCookie = class(TLseObject)
   private
     FList: KLiCookieList;
@@ -81,6 +81,8 @@ type
     property Expires: TDateTime read FExpires write FExpires;
     property Secure: Boolean read FSecure write FSecure;
   end;
+
+  { KLiCookieList }
 
   KLiCookieList = class(TLseObject)
   private
@@ -137,6 +139,7 @@ type
     property StatusCode: integer read FStatusCode write FStatusCode;
     property Cookies: KLiCookieList read FCookies;
     property ExecPack: boolean read FExecPack write FExecPack;
+    property Stream: TMemoryStream read FStream;
   end;
 
 { cgi }
@@ -166,25 +169,16 @@ procedure cgi_get_ContentLength(const Param: PLseParam);cdecl;
 procedure cgi_get_Content(const Param: PLseParam);cdecl;
 procedure cgi_set_Content(const Param: PLseParam);cdecl;
 procedure cgi_serveFile(const Param: PLseParam);cdecl;
-procedure cgi_cookieExists(const Param: PLseParam);cdecl;
-procedure cgi_getCookie(const Param: PLseParam);cdecl;
-procedure cgi_getCookieStr(const Param: PLseParam);cdecl;
-procedure cgi_setCookie(const Param: PLseParam);cdecl;
-procedure cgi_setCookieDomain(const Param: PLseParam);cdecl;
-procedure cgi_setCookiePath(const Param: PLseParam);cdecl;
-procedure cgi_setCookieExpires(const Param: PLseParam);cdecl;
-procedure cgi_setCookieSecure(const Param: PLseParam);cdecl;
-procedure cgi_deleteCookie(const Param: PLseParam);cdecl;
-procedure cgi_clearCookies(const Param: PLseParam);cdecl;
 procedure cgi_redirect(const Param: PLseParam);cdecl;
 procedure cgi_noContent(const Param: PLseParam);cdecl;
+procedure cgi_explain(const Param: PLseParam);cdecl;
 
 const
-  cgi_execute_count = 37;
-  cgi_execute_array: array[0..cgi_execute_count - 1] of RLseFunc = (
-    (fr_prot:'requestMode:string ||';
+  cgi_func_count = 28;
+  cgi_func_array: array[0..cgi_func_count - 1] of RLseFunc = (
+    (fr_prot:'mode:string ||';
      fr_addr:@cgi_mode;
-     fr_desc:'request mode'
+     fr_desc:'get request method'
     ),
     (fr_prot:'encode:string |text:string, keepMBC|';
      fr_addr:@cgi_encode;
@@ -198,7 +192,7 @@ const
      fr_addr:@cgi_parse;
      fr_desc:'parse CGI request to string list'
     ),
-    (fr_prot:'arrstr:string |str:string, count:int|';
+    (fr_prot:'short:string |str:string, count:int|';
      fr_addr:@cgi_arrstr;
      fr_desc:'arrange string to required length'
     ),
@@ -210,55 +204,55 @@ const
      fr_addr:@cgi_encodeHTML;
      fr_desc:'encode string to HTML'
     ),
-    (fr_prot:'decodeHTML:string |HTML:string|';
+    (fr_prot:'decodeHTML:string |S:string|';
      fr_addr:@cgi_decodeHTML;
      fr_desc:'decode HTML to string'
     ),
-    (fr_prot:'pack:void |immediately|';
+    (fr_prot:'pack ||';
      fr_addr:@cgi_pack;
-     fr_desc:'pack HTML content'
+     fr_desc:'pack reponse content'
     ),
-    (fr_prot:'mimeList:varlist ||';
+    (fr_prot:'mimes:varlist ||';
      fr_addr:@cgi_mimes;
      fr_desc:'get MIME list'
     ),
-    (fr_prot:'mimeFile:string |fileName:string|';
+    (fr_prot:'mime:string |fileName:string|';
      fr_addr:@cgi_mime;
      fr_desc:'get MIME type of specified file'
     ),
-    (fr_prot:'get_statusCode:int ||';
+    (fr_prot:'getStatusCode:int ||';
      fr_addr:@cgi_get_status;
      fr_desc:'get response status code'
     ),
-    (fr_prot:'set_satusCode:void |statusCode:int|';
+    (fr_prot:'setStatusCode |statusCode:int|';
      fr_addr:@cgi_set_status;
      fr_desc:'set response status code'
     ),
-    (fr_prot:'get_statusReason:string ||';
+    (fr_prot:'getStatusReason:string ||';
      fr_addr:@cgi_get_reason;
      fr_desc:'get response status reason phrase'
     ),
-    (fr_prot:'set_statusReason:void |reason:string|';
+    (fr_prot:'setStatusReason |reason:string|';
      fr_addr:@cgi_set_reason;
      fr_desc:'set response status reason phrase'
     ),
-    (fr_prot:'get_contentType:string ||';
+    (fr_prot:'getContentType:string ||';
      fr_addr:@cgi_get_ContentType;
      fr_desc:'get response content type'
     ),
-    (fr_prot:'set_contentType:void |contentType:string|';
+    (fr_prot:'setContentType:void |contentType:string|';
      fr_addr:@cgi_set_ContentType;
      fr_desc:'set response content type'
     ),
-    (fr_prot:'get_contentLength:int ||';
+    (fr_prot:'getContentLength:int ||';
      fr_addr:@cgi_get_ContentLength;
      fr_desc:'get response content Length'
     ),
-    (fr_prot:'get_contentString:string ||';
+    (fr_prot:'getContentString:string ||';
      fr_addr:@cgi_get_content;
      fr_desc:'get response content'
     ),
-    (fr_prot:'set_contentString:void |content:string|';
+    (fr_prot:'setContentString:void |content:string|';
      fr_addr:@cgi_set_content;
      fr_desc:'set response content'
     ),
@@ -268,103 +262,255 @@ const
     ),
     (fr_prot:'getHV:string |name:string|';
      fr_addr:@cgi_gethv;
-     fr_desc:'get customed response header value'
+     fr_desc:'get header value'
     ),
     (fr_prot:'setHV:void |name:string, value:string|';
      fr_addr:@cgi_sethv;
      fr_desc:'set customed response header value'
     ),
-    (fr_prot:'get_headerString:string ||';
+    (fr_prot:'getHeaderString:string ||';
      fr_addr:@cgi_headstr;
      fr_desc:'get response header string'
     ),
-    (fr_prot:'cookieExists:int |name:string|';
-     fr_addr:@cgi_cookieExists;
-     fr_desc:'check if the named cookie exists'
-    ),
-    (fr_prot:'getCookie:string |name:string|';
-     fr_addr:@cgi_getCookie;
-     fr_desc:'get cookie value'
-    ),
-    (fr_prot:'getCookieStr:string |name:string|';
-     fr_addr:@cgi_getCookieStr;
-     fr_desc:'get cookie head value string'
-    ),
-    (fr_prot:'setCookie:void |name:string, value:string|';
-     fr_addr:@cgi_setCookie;
-     fr_desc:'set cookie value'
-    ),
-    (fr_prot:'setCookieDomain:void |name:string, domain:string|';
-     fr_addr:@cgi_setCookieDomain;
-     fr_desc:'set cookie domain'
-    ),
-    (fr_prot:'setCookiePath:void |name:string, path:string|';
-     fr_addr:@cgi_setCookiePath;
-     fr_desc:'set cookie path'
-    ),
-    (fr_prot:'setCookieExpires:void |name:string, expires:string|';
-     fr_addr:@cgi_setCookieExpires;
-     fr_desc:'set cookie expires'
-    ),
-    (fr_prot:'setCookieSecure:void |name:string, secure:string|';
-     fr_addr:@cgi_setCookieSecure;
-     fr_desc:'set cookie secure attribute'
-    ),
-    (fr_prot:'deleteCookie:void |name:string|';
-     fr_addr:@cgi_deleteCookie;
-     fr_desc:'remove cookie by name'
-    ),
-    (fr_prot:'clearCookies:void ||';
-     fr_addr:@cgi_clearCookies;
-     fr_desc:'clear cookie list'
-    ),
-    (fr_prot:'reset:void ||';
+    (fr_prot:'reset ||';
      fr_addr:@cgi_reset;
      fr_desc:'reset response'
     ),
-    (fr_prot:'redirect:void |URI:string|';
+    (fr_prot:'redirect |URI:string|';
      fr_addr:@cgi_redirect;
      fr_desc:'document moved and redirect'
     ),
-    (fr_prot:'noContent:void ||';
+    (fr_prot:'noContent ||';
      fr_addr:@cgi_noContent;
      fr_desc:'set status code to 204: No Content'
+    ),
+    (fr_prot:'explain |HTML:string|';
+     fr_addr:@cgi_explain;
+     fr_desc:'explain HTML code'
     )
   );
 
-  cgi_module_funcs: RLseFuncListRec = (
-    fl_count: cgi_execute_count;
-    fl_entry:@cgi_execute_array;
+  cgi_funcs: RLseFuncListRec = (
+    fl_count: cgi_func_count;
+    fl_entry:@cgi_func_array;
   );
 
-function __parseQuery(const QS: string; fields: TStrings): integer;
-function __clearTags(const HTML: string): string;
-function __htmlEncode(const S: string; translateMBC: boolean): string;
-function __htmlDecode(const HTML: string): string;
-function __httpEncode(const data: string; keepmbc: boolean): string;
-function __httpDecode(const data: string): string;
-function __statusString(StatusCode: Integer): string;
-function __getMimeList: TStringList;
-function __getMimeType(const FileName: string): string;
-function __asCGI(const Param: PLseParam): KLiCGI;
-function __getRSP(const Param: PLseParam; var RSP: KLiResponse): boolean;
+{ cookie }
 
+procedure cookie_exists(const Param: PLseParam);cdecl;
+procedure cookie_get(const Param: PLseParam);cdecl;
+procedure cookie_set(const Param: PLseParam);cdecl;
+procedure cookie_remove(const Param: PLseParam);cdecl;
+procedure cookie_clear(const Param: PLseParam);cdecl;
+procedure cookie_text(const Param: PLseParam);cdecl;
+procedure cookie_domain(const Param: PLseParam);cdecl;
+procedure cookie_path(const Param: PLseParam);cdecl;
+procedure cookie_expires(const Param: PLseParam);cdecl;
+procedure cookie_secure(const Param: PLseParam);cdecl;
+
+const
+  cookie_func_count = 10;
+  cookie_func_array: array[0..cookie_func_count - 1] of RLseFunc = (
+    (fr_prot:'exists:int |name:string|';
+     fr_addr:@cookie_exists;
+     fr_desc:'return none zero if the cookie exists'
+    ),
+    (fr_prot:'get:string |name:string|';
+     fr_addr:@cookie_get;
+     fr_desc:'get cookie value'
+    ),
+    (fr_prot:'set |name:string, value:string|';
+     fr_addr:@cookie_set;
+     fr_desc:'set cookie value'
+    ),
+    (fr_prot:'remove |name:string|';
+     fr_addr:@cookie_remove;
+     fr_desc:'remove cookie by name'
+    ),
+    (fr_prot:'clear ||';
+     fr_addr:@cookie_clear;
+     fr_desc:'clear cookie list'
+    ),
+    (fr_prot:'value:string |name:string|';
+     fr_addr:@cookie_text;
+     fr_desc:'get head value'
+    ),
+    (fr_prot:'domain |name:string, domain:string|';
+     fr_addr:@cookie_domain;
+     fr_desc:'get/set domain'
+    ),
+    (fr_prot:'path |name:string, path:string|';
+     fr_addr:@cookie_path;
+     fr_desc:'get/set path'
+    ),
+    (fr_prot:'expires |name:string, expires:string|';
+     fr_addr:@cookie_expires;
+     fr_desc:'get/set expires'
+    ),
+    (fr_prot:'secure |name:string, secure:string|';
+     fr_addr:@cookie_secure;
+     fr_desc:'get/set secure attribute'
+    )
+  );
+
+  cookie_funcs: RLseFuncListRec = (
+    fl_count: cookie_func_count;
+    fl_entry:@cookie_func_array;
+  );
+
+function replace_all(const S, OldStr, NewStr: string): string;
+function skip_ch(const S: pchar; CharSet: TLseCharSet): pchar;
+function seek_ch(const S: pchar; CharSet: TLseCharSet): pchar;
+function parse_query(const QS: string; fields: TStrings): integer;
+function clear_tags(const HTML: string): string;
+function encode_HTML(const S: string; translateMBC: boolean): string;
+function decode_HTML(const HTML: string): string;
+function pack_HTML(const HTML: pchar; Count: integer): integer;
+function encode_HTTP(const data: string; keepmbc: boolean): string;
+function decode_HTTP(const data: string): string;
+function status_string(StatusCode: Integer): string;
+function get_mime_list: TStringList;
+function get_mime(const FileName: string): string;
+
+var
+  cgi: KLiCGI;
+  rsp: KLiResponse;
+
+procedure command_CGI;
+  
 implementation
 
-uses
-  math;
+procedure explain(K: KLiEngine; const HTML: string);
+var
+  B, P: pchar;
+  
+  procedure evaluate(const Code: string);
+  var
+    R: KLiRunner;
+    F: KLiFunc;
+    N: integer;
+  begin
+    if Code <> '' then
+    begin
+      R := K.MainRunner;
+      if R <> nil then
+      begin
+        F := R.Engine.DoCompile(Code);
+        try
+          N := R.Stack.Count;
+          if not R.Goon(F, 0, nil, nil) then
+            lse_stream_write(K.Output, K.Error.ErrorText);
+          R.Stack.Count := N;
+        finally
+          F.DecRefcount;
+        end;
+      end
+      else 
+      if lse_entries^.cik_execute(K, pchar(Code)) = 0 then
+        lse_stream_write(K.Output, K.Error.ErrorText);
+    end;
+  end;
 
-function __parseQuery(const QS: string; fields: TStrings): integer;
+begin
+  B := pchar(HTML);
+  P := B;
+  while P^ <> #0 do
+    if (P^ = '<') and ((P + 1)^ = '%') then
+    begin
+      lse_stream_write(K.Output, B, P - B);
+      Inc(P, 2);
+      B := P;
+      while P^ <> #0 do
+        if (P^ = '%') and ((P + 1)^ = '>') then
+        begin
+          evaluate(TrimRight(new_string(B, P - B)));
+          Inc(P, 2);
+          B := P;
+          Break;
+        end
+        else Inc(P);
+    end
+    else Inc(P);
+  lse_stream_write(K.Output, B, P - B);
+end;
+  
+procedure command_CGI;
+var
+  E: TLseEngine;
+  K: KLiEngine;
+  F, S: string;
+begin
+  try
+    if ParamCount > 0 then
+    begin
+      F := lse_expand_fname(ParamStr(1));
+      S := file_text(F);
+      if S <> '' then
+      begin
+        if lse_startup then
+        try
+          E := TLseEngine.Create(nil);
+          try
+            E.Arguments := E.SetupArgs(F, 2);
+            K := KLiEngine(E.EngineRec^.er_kernel);
+            K.MainFile := F;
+            cgi := KLiCGI.Create(K);
+            try
+              rsp := cgi.Response;
+              module_build('cgi', @cgi_funcs);
+              module_build('cookie', @cookie_funcs);
+              if lse_is_ls_file(F) then
+                E.ExecuteCode(S) else
+                explain(K, S);
+            finally
+              cgi.Free;
+            end;
+            Readln(S); // debug
+          finally
+            E.Free;
+          end;
+        finally
+          lse_cleanup;
+        end;
+      end;
+    end;
+  except
+    Write(lse_exception_str);
+  end;
+end;
+
+function replace_all(const S, OldStr, NewStr: string): string;
+begin
+  Result := StringReplace(S, OldStr, NewStr, [rfReplaceAll, rfIgnoreCase]);
+end;
+
+function skip_ch(const S: pchar; CharSet: TLseCharSet): pchar;
+begin
+  Result := S;
+  if Result <> nil then
+    while Result^ in CharSet do
+      Inc(Result);
+end;
+
+function seek_ch(const S: pchar; CharSet: TLseCharSet): pchar;
+begin
+  Result := S;
+  if Result <> nil then
+    while not (Result^ in CharSet) do
+      Inc(Result);
+end;
+
+function parse_query(const QS: string; fields: TStrings): integer;
 var
   next, base: pchar;
   line: string;
 begin
   fields.Clear;
-  next := __skipch(pchar(QS), ['&'] + SpaceChar);
+  next := skip_ch(pchar(QS), ['&'] + LCS_SPACE);
   while (next <> nil) and (next^ <> #0) do
   begin
     base := next;
-    next := __seekch(base, [#0, '&']);
+    next := seek_ch(base, [#0, '&']);
     if base <> next then
     begin
       SetString(line, base, next - base);
@@ -372,12 +518,12 @@ begin
       if line <> '' then
         fields.Add(line);
     end;
-    next := __skipch(next, ['&'] + SpaceChar);
+    next := skip_ch(next, ['&'] + LCS_SPACE);
   end;
   Result := fields.Count;
 end;
 
-function __clearTags(const HTML: string): string;
+function clear_tags(const HTML: string): string;
 var
   temp: string;
   strp, next: pchar;
@@ -410,10 +556,10 @@ var
       if next = nil then Exit;
     end
     else
-    if next^ in IDHeadChar then
+    if next^ in LCS_HEAD then
     begin
       base := next;
-      while next^ in IDChar do Inc(next);
+      while next^ in LCS_ID do Inc(next);
       SetString(ID, base, next - base);
       if (ID = 'script') or (ID = 'style') or (ID = 'form') or (ID = 'input') then
       begin
@@ -438,7 +584,7 @@ begin
     end;
 end;
 
-function __htmlEncode(const S: string; translateMBC: boolean): string;
+function encode_HTML(const S: string; translateMBC: boolean): string;
 var
   index, count: integer;
   temp: string;
@@ -462,11 +608,11 @@ begin
       '"': Result := Result + '&quot;';
       #9 : Result := Result + '&nbsp;&nbsp;&nbsp;&nbsp;';
       #13: begin
-             Result := Result + '<br>' + LB;
+             Result := Result + '<br>' + sLineBreak;
              if index < (count - 1) then
                if buf[index + 1] = #10 then Inc(index);
            end;
-      #10: Result := Result + '<br>' + LB;
+      #10: Result := Result + '<br>' + sLineBreak;
       else
         if translateMBC and (ch in LeadBytes) and (index < count - 1) and (buf[index + 1] in LeadBytes) then
         begin
@@ -484,7 +630,7 @@ begin
   end;
 end;
 
-function __htmlDecode(const HTML: string): string;
+function decode_HTML(const HTML: string): string;
 var
   index, cv, count: integer;
   buf: pchar;
@@ -517,7 +663,7 @@ begin
         if temp = 'quot' then Result := Result + '"' else
         if temp[1] = '#' then
         begin
-          cv := __parseInt(pchar(Copy(temp, 2, Length(temp) - 1)));
+          cv := StrToIntDef(Copy(temp, 2, Length(temp) - 1), 0);
           if cv > 255 then
           begin
             uch := WideChar(cv);
@@ -532,16 +678,88 @@ begin
     else Result := Result + buf[index];
     Inc(index);
   end;
-  Result := __replaceAll(Result, '<br>' + sLineBreak, sLineBreak);
-  Result := __replaceAll(Result, '<br>', sLineBreak);
+  Result := replace_all(Result, '<br>' + sLineBreak, sLineBreak);
+  Result := replace_all(Result, '<br>', sLineBreak);
 end;
 
-function __httpEncode(const data: string; keepmbc: boolean): string;
+function pack_HTML(const HTML: pchar; Count: integer): integer;
+var
+  base, begs, ends, head, tail: pchar;
+  divn: integer;
+begin
+  if (HTML = nil) or (Count < 1) then
+  begin
+    Result := 0;
+    Exit;
+  end;
+
+  base := HTML;
+  begs := base;
+  ends := base + Count;
+
+  // 1. seek first '<'
+  while (begs < ends) and (begs^ <> '<') do Inc(begs);
+
+  // 2. trim heading & tailing spaces
+  while begs < ends do
+  begin
+    // 2.1. seek line break or EOF
+    divn := 0;
+    head := begs;
+    while (begs < ends) and not (begs^ in [#10, #13]) do
+    begin
+      if begs^ = '/' then Inc(divn) else
+      if divn < 2 then divn := 0;
+      Inc(begs);
+    end;
+
+    // 2.2. seek last none space char
+    tail := begs - 1;
+    while tail^ in LCS_SPACE do Dec(tail);
+
+    // 2.3. move none space char
+    repeat
+      base^ := head^;
+      Inc(base);
+      Inc(head);
+    until head > tail;
+
+    // 2.4. add LB if encounter '//'
+    if (divn > 1) and (begs^ in [#10, #13]) then
+    begin
+      base^ := begs^;
+      Inc(begs);
+      if (begs^ = #10) and (base^ = #13) then
+      begin
+        Inc(base);
+        base^ := begs^;
+        Inc(begs);
+      end;
+      Inc(base);
+    end;
+    
+    // 2.5. skip spaces
+    if begs < ends then
+    begin
+      while (begs < ends) and (begs^ in LCS_SPACE) do Inc(begs);
+      if (begs < ends) and (begs^ <> '<') then
+      begin
+        base^ := ' ';
+        Inc(base);
+      end;
+    end;
+  end;
+
+  // 3. return result length
+  Result := base - HTML;
+end;
+
+function encode_HTTP(const data: string; keepmbc: boolean): string;
 var
   cset: set of char;
   base, next: PChar;
 begin
-  cset := IDChar + ['*', '@', '.', '-', '$', '!', '''', '(', ')'];
+  cset := LCS_ID + ['*', '@', '.', '-', '$', '!', '''', '(', ')'];
   if keepmbc then
     cset := cset + SysUtils.LeadBytes;
   SetLength(Result, Length(data) * 3);
@@ -565,7 +783,7 @@ begin
   SetLength(Result, next - PChar(Result));
 end;
 
-function __httpDecode(const data: string): string;
+function decode_HTTP(const data: string): string;
 var
   base, next: PChar;
 
@@ -579,7 +797,7 @@ var
     begin
       temp := base;
       Inc(base);
-      Result := (temp^ in HexChar) and (base^ in HexChar);
+      Result := (temp^ in LCS_HEX) and (base^ in LCS_HEX);
       if Result then
         next^ := Chr(StrToInt('$' + temp^ + base^));
     end
@@ -603,7 +821,7 @@ begin
   SetLength(Result, next - PChar(Result));
 end;
 
-function __statusString(StatusCode: Integer): string;
+function status_string(StatusCode: Integer): string;
 begin
   case StatusCode of
     100: Result := 'Continue';
@@ -643,7 +861,10 @@ begin
   end
 end;
 
-function __getMimeList: TStringList;
+var
+  sys_mimes: TStringList = nil;
+  
+function get_mime_list: TStringList;
 var
   line, ext, mime: string;
   list: TStrings;
@@ -651,7 +872,7 @@ var
 begin
   if sys_mimes = nil then
   begin
-    lock_kernel;
+    kernel_lock;
     try
       if sys_mimes = nil then
       begin
@@ -777,7 +998,7 @@ begin
             list.LoadFromFile(line);
             for index := 0 to list.Count - 1 do
             begin
-              ext := Trim(__extractNameValue(list[index], mime));
+              ext := Trim(extract_name_value(list[index], mime));
               if ext <> '' then
               begin
                 mime := Trim(mime);
@@ -793,61 +1014,40 @@ begin
         sys_mimes.Sorted := true;
       end;
     finally
-      unlock_kernel;
+      kernel_unlock;
     end;
   end;
   Result := sys_mimes;
 end;
 
-function __getMimeType(const FileName: string): string;
+function get_mime(const FileName: string): string;
 var
   ext: string;
 begin
   ext := Trim(Copy(ExtractFileExt(FileName), 2, MaxInt));
   if ext <> '' then
   begin
-    Result := __getMimeList.Values[ext];
+    Result := get_mime_list.Values[ext];
     if Result <> '' then Exit;
   end;
-  Result := __getMimeList.Values['*'];
+  Result := get_mime_list.Values['*'];
 end;
 
-function __asCGI(const Param: PLseParam): KLiCGI;
-begin
-  Result := KLiCGI(__AsEngine(Param).CGI);
-end;
+{ cgi }
 
-function __getRSP(const Param: PLseParam; var RSP: KLiResponse): boolean;
-var
-  CGI: KLiCGI;
+procedure cgi_mode(const Param: PLseParam);cdecl;
 begin
-  CGI := __asCGI(Param);
-  if CGI <> nil then
-    RSP := CGI.FResponse else
-    RSP := nil;
-  Result := (RSP <> nil);
-end;
-
-{ CGI }
-
-procedure cgi_mode(const Param: PLseParam);
-var
-  CGI: KLiCGI;
-begin
-  CGI := __asCGI(Param);
-  if CGI <> nil then
-    lse_set_string(Param^.p_result, CGI.FMode) else
-    lse_set_string(Param^.p_result, '');
+  lse_set_string(Param^.p_result, cgi.FMode);
 end;
 
 procedure cgi_encode(const Param: PLseParam);
 begin
-  lse_set_string(Param^.p_result, __httpEncode(__AsString(Param^.p_param[0]), false));
+  lse_set_string(Param^.p_result, encode_HTTP(lse_get_str(Param^.p_param[0]), false));
 end;
 
 procedure cgi_decode(const Param: PLseParam);
 begin
-  lse_set_string(Param^.p_result, __httpDecode(__AsString(Param^.p_param[0])));
+  lse_set_string(Param^.p_result, decode_HTTP(lse_get_str(Param^.p_param[0])));
 end;
 
 procedure cgi_parse(const Param: PLseParam);
@@ -855,11 +1055,11 @@ var
   list: TStrings;
   L: KLiVarList;
 begin
-  L := KLiVarList.Create(__AsEngine(Param));
+  L := KLiVarList.Create(get_engine(Param));
   L.SaveTo(Param^.p_result);
   list := TStringList.Create;
   try
-    __parseQuery(__AsString(Param^.p_param[0]), list);
+    parse_query(lse_get_str(Param^.p_param[0]), list);
     L.AddStrings(list);
   finally
     list.Free;
@@ -872,11 +1072,11 @@ var
   len, index, count: integer;
   MB: boolean;
 begin
-  str := __AsString(Param^.p_param[0]);
+  str := lse_get_str(Param^.p_param[0]);
   len := Length(str);
   if (len > 0) and (Param^.p_count > 1) then
   begin
-    count := __AsInt64(Param^.p_param[1]);
+    count := lse_get_int(Param^.p_param[1]);
     if (count > 0) and (count < len) then
     begin
       MB := false;
@@ -901,309 +1101,248 @@ procedure cgi_notags(const Param: PLseParam);
 var
   HTML: string;
 begin
-  HTML := __clearTags(__AsString(Param^.p_param[0]));
+  HTML := clear_tags(lse_get_str(Param^.p_param[0]));
   lse_set_string(Param^.p_result, HTML);
 end;
 
 procedure cgi_encodeHTML(const Param: PLseParam);
 begin
-  lse_set_string(Param^.p_result, __htmlEncode(__AsString(Param^.p_param[0]), false));
+  lse_set_string(Param^.p_result, encode_HTML(lse_get_str(Param^.p_param[0]), false));
 end;
 
 procedure cgi_decodeHTML(const Param: PLseParam);
 begin
-  lse_set_string(Param^.p_result, __htmlDecode(__AsString(Param^.p_param[0])));
+  lse_set_string(Param^.p_result, decode_HTML(lse_get_str(Param^.p_param[0])));
 end;
 
 procedure cgi_pack(const Param: PLseParam);cdecl;
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    if __AsBool(Param^.p_param[0]) then
-      RSP.PackTextHTML else
-      RSP.ExecPack := true;
+  rsp.ExecPack := true;
 end;
 
 procedure cgi_mimes(const Param: PLseParam);cdecl;
 var
   L: KLiVarList;
 begin
-  L := KLiVarList.Create(__AsEngine(Param));
+  L := KLiVarList.Create(get_engine(Param));
   L.SaveTo(Param^.p_result);
-  L.AddStrings(__getMimeList);
+  L.AddStrings(get_mime_list);
 end;
 
 procedure cgi_mime(const Param: PLseParam);cdecl;
 begin
-  lse_set_string(Param^.p_result, __getMimeType(__AsString(Param^.p_param[0])));
+  lse_set_string(Param^.p_result, get_mime(lse_get_str(Param^.p_param[0])));
 end;
 
 procedure cgi_get_status(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_integer(Param^.p_result, RSP.StatusCode);
+  lse_set_int(Param^.p_result, rsp.StatusCode);
 end;
 
 procedure cgi_set_status(const Param: PLseParam);
 var
-  RSP: KLiResponse;
   code: integer;
   text: string;
 begin
-  if __getRSP(Param, RSP) then
+  code := lse_get_int(Param^.p_param[0]);
+  if code <> rsp.StatusCode then
   begin
-    code := __AsInt64(Param^.p_param[0]);
-    if code <> RSP.StatusCode then
-    begin
-      text := __statusString(code);
-      if text <> '' then
-        if code <> 204 then
-        begin
-          RSP.StatusCode := __AsInt64(Param^.p_param[1]);
-          RSP.ReasonString := text;
-        end
-        else RSP.NoContent;
-    end;
+    text := status_string(code);
+    if text <> '' then
+      if code <> 204 then
+      begin
+        rsp.StatusCode := lse_get_int(Param^.p_param[1]);
+        rsp.ReasonString := text;
+      end
+      else rsp.NoContent;
   end;
 end;
 
 procedure cgi_get_reason(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_string(Param^.p_result, RSP.ReasonString);
+  lse_set_string(Param^.p_result, rsp.ReasonString);
 end;
 
 procedure cgi_set_reason(const Param: PLseParam);
 var
-  RSP: KLiResponse;
   text: string;
 begin
-  if __getRSP(Param, RSP) then
-  begin
-    text := Trim(__AsString(Param^.p_param[0]));
-    if text = '' then
-      text := __statusString(RSP.StatusCode);
-    RSP.ReasonString := text;
-  end;
+  text := Trim(lse_get_str(Param^.p_param[0]));
+  if text = '' then
+    text := status_string(rsp.StatusCode);
+  rsp.ReasonString := text;
 end;
 
 procedure cgi_gethv(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_string(Param^.p_result, RSP.GetHV(__AsString(Param^.p_param[0])));
+  lse_set_string(Param^.p_result, rsp.GetHV(lse_get_str(Param^.p_param[0])));
 end;
 
 procedure cgi_sethv(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    RSP.SetHV(__AsString(Param^.p_param[0]), __AsString(Param^.p_param[1]));
+  rsp.SetHV(lse_get_str(Param^.p_param[0]), lse_get_str(Param^.p_param[1]));
 end;
 
 procedure cgi_get_ContentType(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_string(Param^.p_result, RSP.ContentType);
+  lse_set_string(Param^.p_result, rsp.ContentType);
 end;
 
 procedure cgi_set_ContentType(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    RSP.ContentType := Trim(__AsString(Param^.p_param[0]));
+  rsp.ContentType := Trim(lse_get_str(Param^.p_param[0]));
 end;
 
 procedure cgi_reset(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then RSP.Reset;
+  rsp.Reset;
 end;
 
 procedure cgi_headstr(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_string(Param^.p_result, RSP.HeaderString);
+  lse_set_string(Param^.p_result, rsp.HeaderString);
 end;
 
 procedure cgi_get_ContentLength(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_integer(Param^.p_result, RSP.ContentLength);
+  lse_set_int(Param^.p_result, rsp.ContentLength);
 end;
 
 procedure cgi_get_Content(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_string(Param^.p_result, RSP.Content);
+  lse_set_string(Param^.p_result, rsp.Content);
 end;
 
 procedure cgi_set_Content(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    RSP.Content := __AsString(Param^.p_param[0]);
+  rsp.Content := lse_get_str(Param^.p_param[0]);
 end;
 
 procedure cgi_serveFile(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    lse_set_string(Param^.p_result,
-      RSP.ServeFile(__AsString(Param^.p_param[0])));
-end;
-
-procedure cgi_cookieExists(const Param: PLseParam);cdecl;
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    lse_set_bool(Param^.p_result, cookie <> nil);
-  end;
-end;
-
-procedure cgi_getCookie(const Param: PLseParam);cdecl;
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    if cookie <> nil then
-      lse_set_string(Param^.p_result, cookie.FValue);
-  end;
-end;
-
-procedure cgi_getCookieStr(const Param: PLseParam);cdecl;
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    if cookie <> nil then
-      lse_set_string(Param^.p_result, cookie.HeaderValue);
-  end;
-end;
-
-procedure cgi_setCookie(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Add(__AsString(Param^.p_param[0]));
-    cookie.Value := Trim(__AsString(Param^.p_param[1]));
-  end;
-end;
-
-procedure cgi_setCookieDomain(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    if cookie <> nil then
-      cookie.Domain := Trim(__AsString(Param^.p_param[1]));
-  end;
-end;
-
-procedure cgi_setCookiePath(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    if cookie <> nil then
-      cookie.Path := Trim(__AsString(Param^.p_param[1]));
-  end;
-end;
-
-procedure cgi_setCookieExpires(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    if cookie <> nil then
-      cookie.Expires := __AsTime(Param^.p_param[1]);
-  end;
-end;
-
-procedure cgi_setCookieSecure(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-  cookie: KLiCookie;
-begin
-  if __getRSP(Param, RSP) then
-  begin
-    cookie := RSP.FCookies.Find(__AsString(Param^.p_param[0]));
-    if cookie <> nil then
-      cookie.Secure := __AsBool(Param^.p_param[1]);
-  end;
-end;
-
-procedure cgi_deleteCookie(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-begin
-  if __getRSP(Param, RSP) then
-    RSP.FCookies.Remove(Trim(__AsString(Param^.p_param[0])));
-end;
-
-procedure cgi_clearCookies(const Param: PLseParam);
-var
-  RSP: KLiResponse;
-begin
-  if __getRSP(Param, RSP) then
-    RSP.FCookies.Clear;
+  lse_set_string(Param^.p_result,
+    rsp.ServeFile(lse_get_str(Param^.p_param[0])));
 end;
 
 procedure cgi_redirect(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    RSP.Redirect(Trim(__AsString(Param^.p_param[0])));
+  rsp.Redirect(Trim(lse_get_str(Param^.p_param[0])));
 end;
 
 procedure cgi_noContent(const Param: PLseParam);
-var
-  RSP: KLiResponse;
 begin
-  if __getRSP(Param, RSP) then
-    RSP.NoContent;
+  rsp.NoContent;
+end;
+
+procedure cgi_explain(const Param: PLseParam);cdecl;
+var
+  HTML: pchar;
+begin
+  HTML := lse_strec_data(lse_get_strec(Param^.p_param[0]));
+  if (HTML <> nil) and (HTML^ <> #0) then
+    explain(get_engine(Param), HTML);
+end;
+
+procedure cookie_exists(const Param: PLseParam);cdecl;
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  lse_set_bool(Param^.p_result, cookie <> nil);
+end;
+
+procedure cookie_get(const Param: PLseParam);cdecl;
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  if cookie <> nil then
+    lse_set_string(Param^.p_result, cookie.FValue);
+end;
+
+procedure cookie_set(const Param: PLseParam);
+var
+  cookie: KLiCookie;
+  value: string;
+begin
+  value := Trim(lse_get_str(Param^.p_param[1]));
+  if value = '' then
+  begin
+    cookie := rsp.FCookies.Add(lse_get_str(Param^.p_param[0]));
+    cookie.Value := value;
+  end
+  else rsp.FCookies.Remove(lse_get_str(Param^.p_param[0]));
+end;
+
+procedure cookie_remove(const Param: PLseParam);
+begin
+  rsp.FCookies.Remove(Trim(lse_get_str(Param^.p_param[0])));
+end;
+
+procedure cookie_clear(const Param: PLseParam);
+begin
+  rsp.FCookies.Clear;
+end;
+
+procedure cookie_text(const Param: PLseParam);cdecl;
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  if cookie <> nil then
+    lse_set_string(Param^.p_result, cookie.HeaderValue);
+end;
+
+procedure cookie_domain(const Param: PLseParam);
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  if cookie <> nil then
+  begin
+    if Param^.p_count > 1 then
+      cookie.Domain := Trim(lse_get_str(Param^.p_param[1]));
+    lse_set_string(Param^.p_result, cookie.Domain);
+  end;
+end;
+
+procedure cookie_path(const Param: PLseParam);
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  if cookie <> nil then
+  begin
+    if Param^.p_count > 1 then
+      cookie.Path := Trim(lse_get_str(Param^.p_param[1]));
+    lse_set_string(Param^.p_result, cookie.Path);
+  end;
+end;
+
+procedure cookie_expires(const Param: PLseParam);
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  if cookie <> nil then
+  begin
+    if Param^.p_count > 1 then
+      cookie.Expires := lse_get_time(Param^.p_param[1])^.tr_time;
+    lse_set_string(Param^.p_result, lse_encode_GMT(cookie.Expires));
+  end;
+end;
+
+procedure cookie_secure(const Param: PLseParam);
+var
+  cookie: KLiCookie;
+begin
+  cookie := rsp.FCookies.Find(lse_get_str(Param^.p_param[0]));
+  if cookie <> nil then
+  begin
+    if Param^.p_count > 1 then
+      cookie.Secure := lse_get_bool(Param^.p_param[1]);
+    lse_set_bool(Param^.p_result, cookie.Secure);
+  end;
 end;
 
 { KLiCGI }
@@ -1219,9 +1358,9 @@ begin
     base := next;
     while not (next^ in [#0, '&']) do Inc(next);
     SetString(line, base, next - base);
-    line := __extractNameValue(line, data);
+    line := extract_name_value(line, data);
     if line <> '' then
-      AddRequest(line, __httpDecode(data));
+      AddRequest(line, decode_HTTP(data));
     if next^ = '&' then Inc(next);
   end;
 end;
@@ -1237,18 +1376,18 @@ begin
     value := Trim(lse_getenv('COOKIE'));
     if value = '' then
       value := Trim(lse_getenv('HTTP_COOKIE'));
-    list.Text := __replaceAll(value, ';', sLineBreak);
+    list.Text := replace_all(value, ';', sLineBreak);
     for index := 0 to list.Count - 1 do
     begin
       item := Trim(list[index]);
-      ID := __extractNameValue(item, value);
+      ID := extract_name_value(item, value);
       if ID = '' then
       begin
         ID := Trim(list[index]);
         value := '';
       end;
       if ID <> '' then
-        FEngine.MainValues.SetStr('cookie' + ID, value);
+        FEngine.MainValues.Write('cookie' + ID, value);
     end;
   finally
     list.Free;
@@ -1298,7 +1437,7 @@ var
   var
     outs: TFileStream;
   begin
-    outs := TFileStream.Create(lse_veryPD(sys_tmpath + __genid), fmCreate);
+    outs := TFileStream.Create(lse_veryPD(sys_tmpath + genid), fmCreate);
     try
       Result := outs.FileName;
       AddTempFile(Result);
@@ -1311,7 +1450,7 @@ var
 begin
   blen := Length(Boundary);
   mlen := (blen + CRLEN) * 2 + 8;
-  size := __parseInt(pchar(lse_getenv('CONTENT_LENGTH')));
+  size := StrToIntDef(lse_getenv('CONTENT_LENGTH'), 0);
   if size <= mlen then Exit;
 
   cache := TMemoryStream.Create;
@@ -1324,7 +1463,7 @@ begin
       begin
         Dec(size, blen + CRLEN);
         Inc(base, blen + CRLEN);
-        next := __pos(base, size, pchar(Boundary), blen, false);
+        next := lse_mem_pos(base, size, pchar(Boundary), blen, false);
         if next <> nil then
         begin
           line := get_line(base, next - base);
@@ -1340,8 +1479,8 @@ begin
               if fname <> '' then
               begin
                 file_size := next - base - CRLEN;
-                AddRequest(iname + '->file', save_file(base, file_size));
-                AddRequest(iname + '->size', file_size);
+                AddRequest(iname + '.file', save_file(base, file_size));
+                AddRequest(iname + '.size', file_size);
                 AddRequest(iname, fname);
               end;
             end
@@ -1364,7 +1503,7 @@ end;
 procedure KLiCGI.AddRequest(const ID, VALUE: string);
 begin
   if ID <> '' then
-    FEngine.MainValues.SetStr('request.' + ID, VALUE);
+    FEngine.MainValues.Write('request.' + ID, VALUE);
 end;
 
 constructor KLiCGI.Create(AEngine: KLiEngine);
@@ -1376,10 +1515,9 @@ var
   index: integer;
 begin
   try
-    FActionParsed := false;
-    FHasError := false;
     FEngine := AEngine;
-    FEngine.CGI := Self;
+    FHasError := false;
+    FActionParsed := false;
 
     FResponse := KLiResponse.Create(Self);
     FResponseStream := lse_wrap_stream(FResponse.FStream, false);
@@ -1389,9 +1527,10 @@ begin
     FTempFiles := TStringList.Create;
     LoadCookies;
 
-    FMode := UpperCase(lse_getenv('REQUEST_METHOD'));
-    FShowResponseHeader := (FMode <> '') or
-      (FEngine.Arguments.IndexOf('--show-response-header') >= 0);
+    FMode := UpperCase(Trim(lse_getenv('REQUEST_METHOD')));
+    if FMode <> '' then
+      AddRequest('MODE', FMode);
+    FShowResponseHeader := (FMode <> '');
 
     ParseQueryString(lse_getenv('QUERY_STRING'));
 
@@ -1414,7 +1553,7 @@ begin
       end
       else
       begin
-        index := __parseInt(pchar(lse_getenv('CONTENT_LENGTH')));
+        index := StrToIntDef(lse_getenv('CONTENT_LENGTH'), 0);
         if index > 0 then
         begin
           SetLength(value, index);
@@ -1424,7 +1563,7 @@ begin
       end;
     end;
   except
-    WriteText(__httpEncode(lse_exception_str, true));
+    WriteText(encode_HTTP(lse_exception_str, true));
   end;
 end;
 
@@ -1433,7 +1572,6 @@ var
   S: string;
 begin
   try
-    FEngine.CGI := nil;
     FEngine.Output := nil;
     if FShowResponseHeader then
     begin
@@ -1472,9 +1610,15 @@ begin
 end;
 
 procedure KLiCGI.AddRequest(const ID: string; Value: int64);
+var
+  V: RLseValue;
 begin
   if ID <> '' then
-    FEngine.MainValues.SetInt64('request.' + ID, VALUE);
+  begin
+    V.vtype := KT_INT;
+    V.VInteger := Value;
+    FEngine.MainValues.Write('request.' + ID, @V);
+  end;
 end;
 
 procedure KLiCGI.AddTempFile(const FileName: string);
@@ -1573,7 +1717,7 @@ end;
 
 function KLiCookie.HeaderValue: string;
 begin
-  Result := Format('%s=%s', [__httpEncode(FName, false), __httpEncode(FValue, false)]);
+  Result := Format('%s=%s', [encode_HTTP(FName, false), encode_HTTP(FValue, false)]);
   if FDomain <> '' then
     Result := Format('%s; domain=%s', [Result, FDomain]);
   if FPath <> '' then
@@ -1808,7 +1952,7 @@ begin
   put_value('WWW-Authenticate');
   for index := 0 to FHeadValues.Count - 1 do
   begin
-    name := Trim(__extractNameValue(FHeadValues[index], value));
+    name := Trim(extract_name_value(FHeadValues[index], value));
     if (name <> '') and not is_RHV(name) then
     begin
       value := Trim(value);
@@ -1836,7 +1980,7 @@ end;
 procedure KLiResponse.PackTextHTML;
 begin
   if (FStream <> nil) and IsTextHTML then
-    FStream.Size := __packHTML(pchar(FStream.Memory), FStream.size);
+    FStream.Size := pack_HTML(pchar(FStream.Memory), FStream.size);
 end;
 
 procedure KLiResponse.Redirect(const URI: string);
@@ -1848,7 +1992,7 @@ const
 begin
   SetHV('Location', URI);
   FStatusCode := 302;
-  FReasonString := __statusString(FStatusCode);
+  FReasonString := status_string(FStatusCode);
   FContentType := 'text/html';  { do not localize }
   SetContent(Format(DOCMOVED, [URI]));
 end;
@@ -1857,13 +2001,13 @@ procedure KLiResponse.NoContent;
 begin
   Reset;
   FStatusCode := 204;
-  FReasonString := __statusString(FStatusCode);
+  FReasonString := status_string(FStatusCode);
 end;
 
 procedure KLiResponse.Reset;
 begin
   FStatusCode := 200;
-  FReasonString := __statusString(FStatusCode);
+  FReasonString := status_string(FStatusCode);
   FHeadValues.Clear;
   FStream.Size := 0;
   FCookies.Clear;

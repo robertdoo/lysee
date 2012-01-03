@@ -1,9 +1,9 @@
-{load 'sh'}
-{print "List files of directory: "}
-{dir = {{readln}.trim} or "."}
-{dir = {incPD {dir.fullFileName}}}
-{sr = {searcher dir + "*.*"}}
-{while not {sr.eof} do
-    {println {sr.fullName}}
-    {sr.next}}
+load('sh')
+print("List files of directory: ")
+set dir = incPD((readln().trim() or ".").fullFileName())
+set sr = searcher(dir + "*.*")
+while not(sr.eof()) do
+    println(sr.fullName())
+    sr.next()
+end
 

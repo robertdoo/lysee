@@ -115,6 +115,7 @@ var
     cr_type    : LSV_OBJECT;
     cr_name    : 'inifile';
     cr_desc    : 'ini file read/write class';
+    cr_module  : nil;
     cr_addref  :@lse_addref_obj;
     cr_release :@lse_release_obj
   );

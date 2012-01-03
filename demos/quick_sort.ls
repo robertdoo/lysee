@@ -1,26 +1,35 @@
-{fun do_sort list L R ->
-    {do
-        {I = L}
-        {J = R}
-        {P = (L + R) >> 1}
-        {do
-            {while {list I} < {list P} do {I += 1}}
-            {while {list J} > {list P} do {J -= 1}}
-            {if I <= J then
-                {list.exchange I J}
-                {if P == I then {P = J} else
-                {if P == J then {P = I}}}
-                {I += 1}
-                {J -= 1}}
-         while I <= J}
-        {if L < J then {do_sort list L J}}
-        {L = I}
-     while I < R}}
+def do_sort(list L R)
+    set I = L
+    set J = R
+    set P = (L + R) >> 1
+    yield do()
+        while list[I] < list[P] do set I += 1 end
+        while list[J] > list[P] do set J -= 1 end
+        if I <= J then
+            exchange(list I J)
+            if P == I then
+                set P = J
+            elif P == J then
+                set P = I
+            end
+            set I += 1
+            set J -= 1
+        end
+        I <= J and loop
+    end
+    if L < J then do_sort(list L J) end
+    set L = I
+    I < R and loop
+end
 
-{fun sort list ->
-    {do_sort list 0 {length list} - 1}
-    list}
+def sort(list)
+    set n = length(list)
+    if n > 1 then
+        do_sort(list 0 n - 1)
+    end
+    list
+end
 
-{if __in_main__ then
-    {println {sort [2.3, 1.3, 15.02, 25.02, 45, 85.14, 56.1, 35.2, 4.2, 15.4]}}}
+@in_main and
+println(sort({2.3, 1.3, 15.02, 25.02, 45, 85.14, 56.1, 35.2, 4.2, 15.4}))
 

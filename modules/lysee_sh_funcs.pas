@@ -169,6 +169,7 @@ var
     cr_type    : LSV_OBJECT;
     cr_name    : 'searcher';
     cr_desc    : 'file searcher';
+    cr_module  : nil;
     cr_addref  :@lse_addref_obj;
     cr_release :@lse_release_obj
   );

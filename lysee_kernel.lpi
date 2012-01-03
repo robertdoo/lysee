@@ -16,7 +16,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="404"/>
+      <BuildNr Value="405"/>
       <StringTable FileDescription="Lysee Script Kernel (FPC)" LegalCopyright="Copyright (C) 2003-2010 Li Yun Jie" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -43,7 +43,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="38"/>
+        <TopLine Value="37"/>
         <CursorPos X="25" Y="53"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>

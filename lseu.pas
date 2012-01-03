@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/11/07                                                      }
+{    MODIFIED: 2011/12/25                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -35,9 +35,9 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (c) 2003-2011 Li Yun Jie';
-  LSE_VERSION        = '2.1.3';
+  LSE_VERSION        = '3.0.1';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20111107;
+  LSE_BUILDDAY       = 20111225;
   LSE_MAX_PARAMS     = 12;
   LSE_MAX_CODES      = MaxInt div 2;
 
@@ -73,10 +73,10 @@ const
 
   { SCT: Simple Code Test }
 
-  SCT_ERROR          = $01;  {<--has error}
-  SCT_OK             = $02;  {<--OK! might be right}
-  SCT_RBLOCK         = $04;  {<--last symbol is syRBlock}
-  SCT_UNFINISHED     = $08;  {<--not finished}
+  SCT_ERROR          = 1;  {<--has error}
+  SCT_OK             = 2;  {<--OK! might be right}
+  SCT_RBLOCK         = 4;  {<--last symbol is syRBlock}
+  SCT_UNFINISHED     = 8;  {<--not finished}
 
 type
 
@@ -89,6 +89,7 @@ type
   { record forward }
 
   PLseString = ^RLseString;
+  PLseTime   = ^RLseTime;
   PLseValue  = ^RLseValue;
   PLseVarb   = ^RLseVarb;
   PLseParam  = ^RLseParam;
@@ -116,6 +117,16 @@ type
   end;
 
 {======================================================================)
+(======== time interface ==============================================)
+(======================================================================}
+
+  RLseTime = packed record
+    tr_life: integer;
+    tr_time: TDateTime;
+    tr_free: procedure(const TR: PLseTime);cdecl;
+  end;
+
+{======================================================================)
 (======== value interface =============================================)
 (======================================================================}
 
@@ -129,9 +140,9 @@ type
       LSV_OBJECT: (VObject : pointer);
   end;
 
-  {======================================================================)
-  (======== variable interface ==========================================)
-  (======================================================================}
+{======================================================================)
+(======== variable interface ==========================================)
+(======================================================================}
 
   RLseVarb = packed record
     v_name: string;
@@ -198,27 +209,51 @@ type
   TLseToVargen = function(obj: pointer): PLseVargen;cdecl;
   TLseToString = function(obj: pointer): PLseString;cdecl;
   TLseStringTo = function(str: PLseString): pointer;cdecl;
-  TLseAddItem = function(obj: pointer; value: PLseValue): integer;cdecl;
+  TLseAdd = function(obj: pointer; V: PLseValue): integer;cdecl;
+  TLseInsert = function(obj: pointer; X: integer; V: PLseValue): integer;cdecl;
+  TLseDelete = function(obj: pointer; X: integer): integer;cdecl;
+  TLseClear = procedure(obj: pointer);cdecl;
   TLseLength = function(obj: pointer): integer;cdecl;
+  TLseResize = function(obj: pointer; NewSize: integer): integer;cdecl;
+  TLseCopy = function(obj: pointer; X, N: integer): pointer;cdecl;
+  TLseMove = function(obj: pointer; X1, X2: integer): integer;cdecl;
+  TLseSort = procedure(obj: pointer; DESC: integer);cdecl;
   TLseGetItem = function(obj: pointer; index: integer; value: PLseValue): integer;cdecl;
   TLseGetProp = function(obj: pointer; prop: PLseString; value: PLseValue): integer;cdecl;
+  TLseHasProp = function(obj: pointer; prop: PLseString): integer;cdecl;
+  TLseEachPropProc = procedure(prop: PLseString; data: pointer);cdecl;
+  TLseEachProp = procedure(obj: pointer; EachProc: TLseEachPropProc; data: pointer);cdecl; 
+  TLseEachValueProc = procedure(Value: PLseValue; data: pointer);cdecl;
+  TLseEachValue = procedure(obj: pointer; EachProc: TLseEachValueProc; data: pointer);cdecl;
 
   RLseType = packed record
     cr_type    : TLseValue;       {<--value type: LSV_XXXX}
     cr_name    : pchar;           {<--type name}
     cr_desc    : pchar;           {<--description}
+    cr_module  : pointer;         {<--lse_kernel.KLiModule}
     cr_addref  : TLseAddref;      {<--increase reference count}
     cr_release : TLseRelease;     {<--decrease reference count}
     cr_vargen  : TLseToVargen;    {<--convert object to vargen}
     cr_otos    : TLseToString;    {<--convert object to string}
     cr_stoo    : TLseStringTo;    {<--convert string to object}
-    cr_add     : TLseAddItem;     {<--add item <<}
-    cr_getiv   : TLseGetItem;     {<--get item by index}
-    cr_setiv   : TLseGetItem;     {<--set item by index}
-    cr_getpv   : TLseGetProp;     {<--get property}
-    cr_setpv   : TLseGetProp;     {<--set property}
-    cr_length  : TLseLength;      {<--get item count}
-    cr_module  : pointer;         {<--lse_kernel.KLiModule}
+    cr_length  : TLseLength;      {<--L*: get item count}
+    cr_resize  : TLseResize;      {<--L*: resize list}
+    cr_add     : TLseAdd;         {<--L*: add item <<}
+    cr_insert  : TLseInsert;      {<--L*: insert item}
+    cr_delete  : TLseDelete;      {<--L*: delete list item}
+    cr_getiv   : TLseGetItem;     {<--L*: get item by index}
+    cr_setiv   : TLseGetItem;     {<--L*: set item by index}
+    cr_copy    : TLseCopy;        {<--L*: copy part of list}
+    cr_move    : TLseMove;        {<--L*: move item}
+    cr_exchange: TLseMove;        {<--L*: exchange item}
+    cr_sort    : TLseSort;        {<--L*: sort list}
+    cr_getpv   : TLseGetProp;     {<--*H: get property}
+    cr_setpv   : TLseGetProp;     {<--*H: set property}
+    cr_haspv   : TLseHasProp;     {<--*H: has property?}
+    cr_remove  : TLseHasProp;     {<--*H: remove property}
+    cr_eachp   : TLseEachProp;    {<--*H: each property name}
+    cr_eachv   : TLseEachValue;   {<--LH: each value}
+    cr_clear   : TLseClear;       {<--LH: clear}
   end;
 
   ALseTypeList = array[0..1023] of RLseType;
@@ -234,9 +269,9 @@ type
 (======== kernel types ================================================)
 (======================================================================}
 
-  TLseKernelType = (kcVoid, kcString, kcInteger, kcFloat, kcVariant,
-                    kcType, kcModule, kcFunc, kcError, kcStream,
-                    kcVarlist, kcVarsnap, kcHashed, kcVargen);
+  TLseKernelType = (ktVoid, ktString, ktInteger, ktFloat, ktVariant,
+                    ktType, ktModule, ktFunc, ktStream, ktVarlist,
+                    ktHashed, ktVargen, ktTime);
 
   RLseKernelTypeList = array[TLseKernelType] of PLseType;
   PLseKernelTypeList = ^RLseKernelTypeList;
@@ -269,9 +304,9 @@ type
 
   RLseStream = packed record
     s_data: pointer;
-    s_read: function(S: PLseStream; Buffer: pointer; Count: integer): integer;cdecl;
+    s_read: function(S: PLseStream; Buf: pointer; Count: integer): integer;cdecl;
     s_readln: function(S: PLseStream): PLseString;cdecl;
-    s_write: function(S: PLseStream; Buffer: pointer; Count: integer): integer;cdecl;
+    s_write: function(S: PLseStream; Buf: pointer; Count: integer): integer;cdecl;
     s_seek: function(S: PLseStream; Offset: int64; Origin: integer): int64;cdecl;
     s_get_size: function(S: PLseStream): int64;cdecl;
     s_set_size: procedure(S: PLseStream; NewSize: int64);cdecl;
@@ -289,7 +324,7 @@ type
 
   TLseObject = class
   private
-    FRefcount: integer; {<--free this object when 0}
+    FRefcount: integer; {<--life}
   public
     function IncRefcount: integer;virtual;
     function DecRefcount: integer;virtual;
@@ -303,7 +338,6 @@ type
 (======================================================================}
 
   TLseEngineEvent = procedure(Engine: PLseEngine);cdecl;
-  TLsePassword = function(Engine: PLseEngine): PLseString;cdecl;
 
   RLseEngine = packed record
     er_engine   : TLseEngine;      {<--L: TLseEngine instance}
@@ -486,6 +520,8 @@ type
     ni_nobj: TLseNamed;
   end;
 
+  TLseEnumNamed = procedure(nobj: TLseNamed; data: pointer);
+  
   TLseHashNamed = class(TLseObject)
   private
     FBuckets: array of PLiNameItem;
@@ -503,6 +539,7 @@ type
     procedure Remove(const Key: string);
     procedure Put(AObj: TLseNamed);
     function Get(const Key: string): TLseNamed;
+    procedure Enum(Proc: TLseEnumNamed; Data: pointer);
   end;
 
 {======================================================================)
@@ -651,6 +688,7 @@ function  lse_in_charset(S: pchar; Chars: TLseCharSet): boolean;overload;
 function  lse_is_ident(S: pchar): boolean;
 function  lse_is_idhead(C: char): boolean;
 procedure lse_zero_ref(aobj: TLseObject);
+function  lse_is_ls_file(const FileName: string): boolean;
 
 {======================================================================)
 (======== type ========================================================)
@@ -691,6 +729,7 @@ function  lse_mem_comp(B1, B2: pointer; Len: integer; IgnoreCase: boolean): inte
 function  lse_mem_comp(B1: pointer; L1: integer; B2: pointer; L2: integer; IgnoreCase: boolean): integer;overload;
 function  lse_mem_same(B1, B2: pointer; Len: integer; IgnoreCase: boolean): boolean;overload;
 function  lse_mem_same(B1: pointer; L1: integer; B2: pointer; L2: integer; IgnoreCase: boolean): boolean;overload;
+function  lse_mem_pos(Buf: pchar; BufLen: integer; Sub: pchar; SubLen: integer; IgnoreCase: boolean): pchar;
 
 {======================================================================)
 (======== ENV - get/set environment values ============================)
@@ -744,6 +783,7 @@ procedure lse_strec_inclife(strec: PLseString);
 procedure lse_strec_declife(strec: PLseString);
 function  lse_strec_addref(const strec: pointer): integer;cdecl;
 function  lse_strec_release(const strec: pointer): integer;cdecl;
+function  lse_strec_nil(var strec: PLseString): integer;
 function  lse_strec_data(strec: PLseString): pchar;
 function  lse_strec_length(strec: PLseString): integer;
 function  lse_strec_string(strec: PLseString): string;
@@ -775,6 +815,15 @@ function  lse_strec_insert(S, R: PLseString; X: int64): PLseString;
 procedure lse_strec_save(S: PLseString; const FileName: string);
 function  lse_strec_load(const FileName: string): PLseString;
 function  lse_strec_hash(S: PLseString): cardinal;
+
+{======================================================================)
+(======== PLseTime ====================================================)
+(======================================================================}
+function  lse_time_alloc(Value: TDateTime): PLseTime;
+procedure lse_time_inclife(tmrec: PLseTime);
+procedure lse_time_declife(tmrec: PLseTime);
+function  lse_time_addref(const tmrec: pointer): integer;cdecl;
+function  lse_time_release(const tmrec: pointer): integer;cdecl;
 
 {======================================================================)
 (======== stream ======================================================)
@@ -871,7 +920,7 @@ function  lse_get_pchar(V: PLseValue): pchar;
 function  lse_get_str(V: PLseValue): string;
 function  lse_get_int(V: PLseValue): int64;
 function  lse_get_float(V: PLseValue): double;
-function  lse_get_time(V: PLseValue): TDateTime;
+function  lse_get_time(V: PLseValue): PLseTime;
 function  lse_get_fname(V: PLseValue): string;
 function  lse_get_char(V: PLseValue): char;
 function  lse_get_bool(V: PLseValue): boolean;
@@ -890,6 +939,8 @@ procedure lse_set_string(V: PLseValue; const Value: string);overload;
 procedure lse_set_string(V: PLseValue; const Value: pchar);overload;
 procedure lse_set_string(V: PLseValue; const Value: pchar; Length: integer);overload;
 procedure lse_set_object(V: PLseValue; CR: PLseType; Value: pointer);
+procedure lse_set_time(V: PLseValue; Value: PLseTime);overload;
+procedure lse_set_time(V: PLseValue; Value: TDateTime);overload;
 procedure lse_set_type(V: PLseValue; Value: PLseType);
 procedure lse_set_stream(V: PLseValue; Value: PLseStream);
 procedure lse_set_vargen(V: PLseValue; Value: PLseVargen);
@@ -898,6 +949,7 @@ procedure lse_set_nil(V: PLseValue);overload;
 procedure lse_set_nil(V: PLseValue; T: PLseType);overload;
 { compare }
 function  lse_compare(V1, V2: PLseValue): TLseCompareResult;
+function  lse_compare_value(V1, V2: pointer): integer;
 function  lse_match(V1, V2: PLseValue; Test: TLseCompareResults): boolean;
 procedure lse_equal(V1, V2: PLseValue);      // V1 <=     V1 ==   V2
 procedure lse_diff(V1, V2: PLseValue);       // V1 <=     V1 !=   V2
@@ -965,8 +1017,8 @@ function lse_errput: integer;
 
 var
   KT_VOID, KT_STRING, KT_INT, KT_FLOAT, KT_VARIANT, KT_TYPE,
-  KT_MODULE, KT_FUNC, KT_ERROR, KT_STREAM, KT_VARLIST, KT_HASHED,
-  KT_VARGEN, KT_VARSNAP: PLseType;
+  KT_MODULE, KT_FUNC, KT_STREAM, KT_VARLIST, KT_HASHED,
+  KT_VARGEN, KT_TIME: PLseType;
 
 implementation
 
@@ -1180,6 +1232,23 @@ begin
     if IgnoreCase then
       Result := (lse_mem_comp(B1, B2, L1, true) = 0) else
       Result := CompareMem(B1, B2, L1);
+end;
+
+function lse_mem_pos(Buf: pchar; BufLen: integer; Sub: pchar; SubLen: integer; IgnoreCase: boolean): pchar;
+var
+  endpos: pchar;
+begin
+  if (Buf <> nil) and (Sub <> nil) and (SubLen > 0) and (SubLen <= BufLen) then
+  begin
+    endpos := Buf + (BufLen - SubLen);
+    Result := Buf;
+    while Result <= endpos do
+    begin
+      if lse_mem_same(Result, Sub, SubLen, IgnoreCase) then Exit;
+      Inc(Result);
+    end;
+  end;
+  Result := nil;
 end;
 
 {======================================================================)
@@ -1454,6 +1523,23 @@ begin
   S := PLseString(strec);
   if S <> nil then
   begin
+    Dec(S^.sr_life);
+    Result := S^.sr_life;
+    if Result < 1 then
+      if Assigned(S^.sr_free) then
+        S^.sr_free(S);
+  end
+  else Result := 0;
+end;
+
+function lse_strec_nil(var strec: PLseString): integer;
+var
+  S: PLseString;
+begin
+  if strec <> nil then
+  begin
+    S := strec;
+    strec := nil;
     Dec(S^.sr_life);
     Result := S^.sr_life;
     if Result < 1 then
@@ -1943,6 +2029,71 @@ begin
 end;
 
 {======================================================================)
+(======== PLseTime ====================================================)
+(======================================================================}
+
+procedure lse_time_free(const tmrec: PLseTime);cdecl;
+begin
+  if tmrec <> nil then
+    lse_mem_free(tmrec, sizeof(RLseTime));
+end;
+
+function  lse_time_alloc(Value: TDateTime): PLseTime;
+begin
+  Result := lse_mem_alloc(sizeof(RLseTime));
+  Result^.tr_life := 0;
+  Result^.tr_time := Value;
+  Result^.tr_free := @lse_time_free;
+end;
+
+procedure lse_time_inclife(tmrec: PLseTime);
+begin
+  if tmrec <> nil then
+    Inc(tmrec^.tr_life);
+end;
+
+procedure lse_time_declife(tmrec: PLseTime);
+begin
+  if tmrec <> nil then
+  begin
+    Dec(tmrec^.tr_life);
+    if tmrec^.tr_life < 1 then
+      if Assigned(tmrec^.tr_free) then
+        tmrec^.tr_free(tmrec);
+  end;
+end;
+
+function  lse_time_addref(const tmrec: pointer): integer;cdecl;
+var
+  T: PLseTime;
+begin
+  T := PLseTime(tmrec);
+  if T <> nil then
+  begin
+    Inc(T^.tr_life);
+    Result := T^.tr_life;
+  end
+  else Result := 0;
+end;
+
+function  lse_time_release(const tmrec: pointer): integer;cdecl;
+var
+  T: PLseTime;
+begin
+  T := PLseTime(tmrec);
+  if T <> nil then
+  begin
+    Dec(T^.tr_life);
+    Result := T^.tr_life;
+    if Result < 1 then
+      if Assigned(T^.tr_free) then
+        T^.tr_free(T);
+  end
+  else Result := 0;
+end;
+
+
+{======================================================================)
 (======== kernel - load/manifest lysee kernel =========================)
 (======================================================================}
 
@@ -1951,20 +2102,19 @@ begin
   lse_entries := Entry;
   if lse_startup then
   begin
-    KT_VOID    := lse_kernel_type(kcVoid);
-    KT_STRING  := lse_kernel_type(kcString);
-    KT_INT     := lse_kernel_type(kcInteger);
-    KT_FLOAT   := lse_kernel_type(kcFloat);
-    KT_VARIANT := lse_kernel_type(kcVariant);
-    KT_TYPE    := lse_kernel_type(kcType);
-    KT_MODULE  := lse_kernel_type(kcModule);
-    KT_FUNC    := lse_kernel_type(kcFunc);
-    KT_ERROR   := lse_kernel_type(kcError);
-    KT_STREAM  := lse_kernel_type(kcStream);
-    KT_VARLIST := lse_kernel_type(kcVarList);
-    KT_HASHED  := lse_kernel_type(kcHashed);
-    KT_VARGEN  := lse_kernel_type(kcVarGen);
-    KT_VARSNAP := lse_kernel_type(kcVarSnap);
+    KT_VOID    := lse_kernel_type(ktVoid);
+    KT_STRING  := lse_kernel_type(ktString);
+    KT_INT     := lse_kernel_type(ktInteger);
+    KT_FLOAT   := lse_kernel_type(ktFloat);
+    KT_VARIANT := lse_kernel_type(ktVariant);
+    KT_TYPE    := lse_kernel_type(ktType);
+    KT_MODULE  := lse_kernel_type(ktModule);
+    KT_FUNC    := lse_kernel_type(ktFunc);
+    KT_STREAM  := lse_kernel_type(ktStream);
+    KT_VARLIST := lse_kernel_type(ktVarList);
+    KT_HASHED  := lse_kernel_type(ktHashed);
+    KT_VARGEN  := lse_kernel_type(ktVarGen);
+    KT_TIME    := lse_kernel_type(ktTime);
   end;
 end;
 
@@ -2313,6 +2463,14 @@ end;
 procedure lse_zero_ref(aobj: TLseObject);
 begin
   aobj.FRefcount := 0;
+end;
+
+function lse_is_ls_file(const FileName: string): boolean;
+var
+  N: integer;
+begin
+  N := Length(FileName);
+  Result := (N > 2) and ('.ls' = LowerCase(Copy(FileName, N - 2, 3)));
 end;
 
 {======================================================================)
@@ -2667,23 +2825,23 @@ end;
 function lse_stream_write(Stream: PLseStream; const S: pchar; Count: integer): integer;
 begin
   if Assigned(Stream^.s_write) then
-    Result := Stream^.s_write(Stream, S, Count) else
+    Result := Stream^.s_write(Stream, S, Count * sizeof(char)) else
     Result := 0;
 end;
 
 function lse_stream_write(Stream: TStream; const S: PLseString): integer;overload;
 begin
-  Result := Stream.Write(lse_strec_data(S)^, lse_strec_length(S));
+  Result := Stream.Write(lse_strec_data(S)^, lse_strec_length(S) * sizeof(char));
 end;
 
 function lse_stream_write(Stream: TStream; const S: string): integer;
 begin
-  Result := Stream.Write(pointer(S)^, Length(S));
+  Result := Stream.Write(pointer(S)^, Length(S) * sizeof(char));
 end;
 
 function lse_stream_write(Stream: TStream; const S: pchar; Count: integer): integer;
 begin
-  Result := Stream.Write(S^, Count);
+  Result := Stream.Write(S^, Count * sizeof(char));
 end;
 
 function lse_stream_writeln(Stream: PLseStream): integer;
@@ -2723,7 +2881,7 @@ end;
 function lse_stream_read(Stream: PLseStream; const S: pchar; Count: integer): integer;
 begin
   if Assigned(Stream^.s_read) then
-    Result := Stream^.s_read(Stream, S, Count) else
+    Result := Stream^.s_read(Stream, S, Count * sizeof(char)) else
     Result := 0;
 end;
 
@@ -2739,7 +2897,7 @@ begin
   if Count > 0 then
   begin
     SetLength(Result, Count);
-    SetLength(Result, lse_stream_read(Stream, pchar(Result), Count));
+    SetLength(Result, lse_stream_read(Stream, pchar(Result), Count * sizeof(char)));
   end
   else Result := '';
 end;
@@ -3158,14 +3316,11 @@ begin
   end;
 end;
 
-function lse_get_time(V: PLseValue): TDateTime;
+function lse_get_time(V: PLseValue): PLseTime;
 begin
-  case lse_vtype(V) of
-    LSV_STRING: Result := lse_decode_GMT(lse_get_str(V));
-    LSV_FLOAT : Result := V^.VFloat;
-    LSV_INT   : Result := UnixToDateTime(V^.VInteger);
-    else Result := 0;
-  end;
+  if V^.vtype = KT_TIME then
+    Result := PLseTime(V^.VObject) else
+    Result := nil;
 end;
 
 function lse_get_fname(V: PLseValue): string;
@@ -3303,6 +3458,16 @@ begin
   V^.VObject := Value;
 end;
 
+procedure lse_set_time(V: PLseValue; Value: PLseTime);
+begin
+  lse_set_object(V, KT_TIME, Value);
+end;
+
+procedure lse_set_time(V: PLseValue; Value: TDateTime);
+begin
+  lse_set_time(V, lse_time_alloc(Value));
+end;
+
 procedure lse_set_type(V: PLseValue; Value: PLseType);
 begin
   lse_set_object(V, KT_TYPE, Value);
@@ -3343,6 +3508,7 @@ end;
 
 procedure lse_set_nil(V: PLseValue; T: PLseType);
 begin
+  if T = nil then lse_clear_value(V) else
   case T^.cr_type of
     LSV_STRING: lse_set_string(V, '');
     LSV_INT   : lse_set_int(V, 0);
@@ -3434,6 +3600,15 @@ begin
   if (R1 = LSV_FLOAT) or (R2 = LSV_FLOAT) then
     Result := compareF(lse_get_float(V1), lse_get_float(V2)) else
     Result := compareI(lse_get_int(V1), lse_get_int(V2));
+end;
+
+function lse_compare_value(V1, V2: pointer): integer;
+var
+  R: TLseCompareResult;
+begin
+  R := lse_compare(V1, V2);
+  if R = crLess then Result := -1 else
+  if R = crMore then Result :=  1 else Result := 0;
 end;
 
 function lse_match(V1, V2: PLseValue; Test: TLseCompareResults): boolean;
@@ -3731,9 +3906,8 @@ begin
                   lse_set_int(V1, V1^.VInteger shl V2^.VInteger) else
                   V1^.vtype := nil;
     LSV_FLOAT : V1^.vtype := nil;
-    LSV_OBJECT: if V1^.VObject <> nil then
-                  if Assigned(V1^.vtype^.cr_add) then
-                    V1^.vtype^.cr_add(V1^.VObject, V2);
+    LSV_OBJECT: if Assigned(V1^.vtype^.cr_add) then
+                  V1^.vtype^.cr_add(V1^.VObject, V2);
   end;
 end;
 
@@ -3758,13 +3932,13 @@ end;
 
 procedure lse_logic_and(V1, V2: PLseValue);
 begin
-  if lse_get_bool(V1) and not lse_get_bool(V2) then
+  if lse_get_bool(V1) then
     lse_set_value(V1, V2);
 end;
 
 procedure lse_logic_or(V1, V2: PLseValue);
 begin
-  if not lse_get_bool(V1) and lse_get_bool(V2) then
+  if not lse_get_bool(V1) then
     lse_set_value(V1, V2);
 end;
 
@@ -5083,6 +5257,22 @@ begin
   Clear;
   SetLength(FBuckets, 0);
   inherited;
+end;
+
+procedure TLseHashNamed.Enum(Proc: TLseEnumNamed; Data: pointer);
+var
+  X: integer;
+  M: PLiNameItem;
+begin
+  for X := 0 to FSize - 1 do
+  begin
+    M := FBuckets[X];
+    while M <> nil do
+    begin
+      Proc(M^.ni_nobj, Data);
+      M := M^.ni_next;
+    end;
+  end;
 end;
 
 function TLseHashNamed.FindItem(const Key: string): PLiNameItem;

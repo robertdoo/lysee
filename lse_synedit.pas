@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2008/04/05                                                      }
-{    MODIFIED: 2011/07/30                                                      }
+{    MODIFIED: 2012/01/03                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -464,11 +464,10 @@ initialization
 {$ENDIF}
   LyseeKeywords := TStringList.Create;
   LyseeKeywords.CaseSensitive := true;
-  LyseeKeywords.CommaText := 'and,as,begin,break,case,class,const,continue,' +
-                             'def,do,else,end,except,finally,float,for,from,' +
-                             'get,has,if,import,in,int,is,let,like,main,not,' +
-                             'object,or,repeat,return,set,string,switch,sys,' +
-                             'then,this,to,try,until,variant,void,while,with';
+  LyseeKeywords.CommaText := 'and,as,break,catch,continue,def,do,each,elif,' +
+                             'else,end,float,if,in,int,is,like,loop,main,map,' +
+                             'object,or,reduce,return,set,string,sys,then,' +
+                             'throw,variant,void,while,yield';
   LyseeKeywords.Sorted := true;
 
 finalization

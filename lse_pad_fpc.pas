@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2008/04/05                                                      }
-{    MODIFIED: 2011/07/30                                                      }
+{    MODIFIED: 2012/01/03                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -455,6 +455,7 @@ procedure TLspadForm.btnFindClick(Sender: TObject);
 begin
   if smLysee.SearchReplace(edtFindText.Text, '', FOptions) < 1 then
     MsgErr('No matches found!');
+  smLysee.SetFocus;
 end;
 
 procedure TLspadForm.btnReplaceClick(Sender: TObject);
@@ -465,8 +466,12 @@ begin
       smLysee.SelText := edtReplaceText.Text;
     btnFindClick(nil);
   end
-  else smLysee.SearchReplace(edtFindText.Text, edtReplaceText.Text,
-    FOptions + [ssoReplaceAll]);
+  else
+  begin
+    smLysee.SearchReplace(edtFindText.Text, edtReplaceText.Text,
+      FOptions + [ssoReplaceAll]);
+    smLysee.SetFocus;
+  end;
 end;
 
 procedure TLspadForm.chkCaseSensitiveChange(Sender: TObject);

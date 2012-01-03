@@ -1,7 +1,11 @@
-{fun generator_func seed ->
-    {->{$seed ++}}}
+def inc_generator(seed)
+    {@ def set seed += 1 end}
+end
 
-{if __in_main__ then
-    {generator = {generator_func 10}}
-    {while 10: x do
-        {println {generator}}}}
+if @in_main then
+    set inc = inc_generator(10)
+    yield each 10 def
+        println(inc())
+    end
+end
+
