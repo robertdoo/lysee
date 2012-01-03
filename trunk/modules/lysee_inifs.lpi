@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="377"/>
+      <BuildNr Value="378"/>
       <StringTable FileDescription="ini file accessing module for lysee" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -60,10 +60,12 @@
         <Filename Value="..\lseu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lseu"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="8"/>
+        <TopLine Value="213"/>
+        <CursorPos X="1" Y="234"/>
         <UsageCount Value="21"/>
+        <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\lse_dbu.pas"/>
@@ -98,13 +100,13 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="51"/>
-        <CursorPos X="23" Y="57"/>
+        <TopLine Value="105"/>
+        <CursorPos X="22" Y="118"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="14" HistoryIndex="13">
       <Position1>
         <Filename Value="lysee_inifs.lpr"/>
         <Caret Line="24" Column="35" TopLine="24"/>
@@ -149,6 +151,18 @@
         <Filename Value="lysee_inifs_funcs.pas"/>
         <Caret Line="62" Column="24" TopLine="46"/>
       </Position11>
+      <Position12>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="57" Column="23" TopLine="51"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="8" Column="1" TopLine="1"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\lseu.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position14>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

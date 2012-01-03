@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="375"/>
+      <BuildNr Value="376"/>
       <StringTable FileDescription="chinese pinyin" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.1.1.315"/>
     </VersionInfo>
     <BuildModes Count="1">

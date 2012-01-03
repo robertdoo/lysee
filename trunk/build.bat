@@ -1,10 +1,13 @@
 @echo off
-D:
+
 cd D:\budi\lysee\lysee\
 DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local *.identcache *.compiled *.bak *.lo
 echo ***** lysee_fpc.lpr => lysee_fpc.exe
 del lysee_fpc.exe
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fu. -olysee_fpc.exe lysee_fpc.lpr
+echo ***** lysee_cgi_fpc.lpr => lysee_cgi_fpc.exe
+del lysee_cgi_fpc.exe
+fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fu. -olysee_cgi_fpc.exe lysee_cgi_fpc.lpr
 echo ***** lysee_kernel.lpr => lysee_kernel.dll
 del lysee_kernel.dll
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fu. -olysee_kernel.dll lysee_kernel.lpr
@@ -46,5 +49,6 @@ del modules\lysee_md5.dll
 fpc.exe -MObjFPC -Sgi -CX -Cr -O2 -OoREGVAR -Xs -XX -vewn -Fu.  -Fumodules -omodules\lysee_md5.dll modules\lysee_md5.lpr
 dcc32.exe -B -M lysee.dpr
 dcc32.exe -B -M -CC lysee_exe.dpr
+dcc32.exe -B -M -CC lysee_cgi.dpr
 cd ..
 @echo on

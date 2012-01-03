@@ -14,7 +14,7 @@ object LspadForm: TLspadForm
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   Position = poDefault
-  LCLVersion = '0.9.30'
+  LCLVersion = '0.9.30.2'
   object StatusBar: TStatusBar
     Left = 0
     Height = 20
@@ -59,7 +59,6 @@ object LspadForm: TLspadForm
       PopupMenu = popEdit
       TabOrder = 0
       BookMarkOptions.Xoffset = 15
-      BorderStyle = bsSingle
       Gutter.Color = 15000804
       Gutter.LeftOffset = 2
       Gutter.Visible = False

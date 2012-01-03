@@ -52,6 +52,7 @@ var
    (cr_type    : LSV_OBJECT;
     cr_name    :'lock';
     cr_desc    :'spinlock';
+    cr_module  : nil;
     cr_addref  :@lse_addref_obj;
     cr_release :@lse_release_obj
     )

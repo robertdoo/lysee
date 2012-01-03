@@ -48,6 +48,8 @@ uses
   lse_console,
   lse_kernel;
 
+{$R *.res}
+
 begin
   try
     lse_console.Execute;

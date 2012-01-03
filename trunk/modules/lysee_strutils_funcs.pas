@@ -322,32 +322,42 @@ var
    (cr_type     : LSV_OBJECT;
     cr_name     : 'strbuf';
     cr_desc     : 'string buffer object';
+    cr_module   : nil;
     cr_addref   :@lse_addref_obj;
     cr_release  :@lse_release_obj;
     cr_vargen   : nil;
     cr_otos     :@strbuf_otos;
     cr_stoo     :@strbuf_stoo;
+    cr_length   :@strbuf_length;
+    cr_resize   : nil;
     cr_add      :@strbuf_add;
+    cr_insert   : nil;
+    cr_delete   : nil;
     cr_getiv    :@strbuf_getiv;
-    cr_setiv    :@strbuf_setiv;
-    cr_getpv    : nil;
-    cr_setpv    : nil;
-    cr_length   :@strbuf_length
+    cr_setiv    :@strbuf_setiv
    ),
    (cr_type     : LSV_OBJECT;
     cr_name     : 'strcut';
     cr_desc     : 'string cutter object';
+    cr_module   : nil;
     cr_addref   :@lse_addref_obj;
     cr_release  :@lse_release_obj;
     cr_vargen   : nil;
     cr_otos     : nil;
     cr_stoo     : nil;
+    cr_length   :@strcut_length;
+    cr_resize   : nil;
     cr_add      : nil;
+    cr_insert   : nil;
+    cr_delete   : nil;
     cr_getiv    :@strcut_getiv;
     cr_setiv    :@strcut_setiv;
+    cr_copy     : nil;
+    cr_move     : nil;
+    cr_exchange : nil;
+    cr_sort     : nil;
     cr_getpv    :@strcut_getpv;
-    cr_setpv    :@strcut_setpv;
-    cr_length   :@strcut_length
+    cr_setpv    :@strcut_setpv
    )
   );
 

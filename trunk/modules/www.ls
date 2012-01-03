@@ -1,4 +1,5 @@
-{import sh}
+load('sh')
 
-{fun wgets URL ->
-    {system @'wget --quiet --output-document - %(URL)'}}
+def wgets(URL)
+    system(format('wget --quiet --output-document - %(URL)'))
+end
