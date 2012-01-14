@@ -2,7 +2,7 @@ def do_sort(list L R)
     set I = L
     set J = R
     set P = (L + R) >> 1
-    yield do()
+    repeat
         while list[I] < list[P] do set I += 1 end
         while list[J] > list[P] do set J -= 1 end
         if I <= J then
@@ -15,11 +15,10 @@ def do_sort(list L R)
             set I += 1
             set J -= 1
         end
-        I <= J and loop
-    end
+    until I > J;
     if L < J then do_sort(list L J) end
     set L = I
-    I < R and loop
+    I < R and @loop
 end
 
 def sort(list)

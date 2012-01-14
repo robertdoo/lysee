@@ -59,11 +59,11 @@ cmds << 'DEL /S /F /Q *.dcu *.exe *.dll *.o *.ppu *.tmp *.~* *.zip *.rar *.local
 
 // FPC
 
-while fpc_map:hs do
+for hs in fpc_map do
     set src = hs.lpr
     set dst = hs.out
     set fup = ''
-    while hs.fup.trim().lines():pp do
+    for pp in hs.fup.trim().lines() do
         set fup += ' -Fu' + pp.trim()
     end
     if hs.lpr == 'lysee_pad_fpc.lpr' then
@@ -83,7 +83,7 @@ cmds << 'cd ..'
 cmds << '@echo on'
 
 set fs = openfs('build.bat' 'c')
-while cmds:s do
+for s in cmds do
   fs << s << @eol
 end
 println("done!")

@@ -40,19 +40,19 @@ procedure zipper_zip(const invoker: TLseInvoke);cdecl;
 const
   func_count = 4;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'list:string |zipFile:string|';
+    (fr_prot:'list:string(zipFile:string)';
      fr_addr:@zipper_list;
      fr_desc:'list sub-files in source zip file'
     ),
-    (fr_prot:'unzip:void |zipFile:string, outputPath:string|';
+    (fr_prot:'unzip:void(zipFile:string, outputPath:string)';
      fr_addr:@zipper_unzip;
      fr_desc:'unzip all files to specified path'
     ),
-    (fr_prot:'unzipf:void |zipFile:string, subFile:string, outputPath:string|';
+    (fr_prot:'unzipf:void(zipFile:string, subFile:string, outputPath:string)';
      fr_addr:@zipper_unzip_file;
      fr_desc:'unzip specified sub file'
     ),
-    (fr_prot:'zip:int |zipFile:string, sourceFile:string|';
+    (fr_prot:'zip:int(zipFile:string, sourceFile:string)';
      fr_addr:@zipper_zip;
      fr_desc:'create zip file with passed source file or LB delimited list'
     )

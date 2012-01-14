@@ -27,19 +27,19 @@ procedure pp_lock_unlock(const invoker: TLseInvoke);cdecl;
 const
   func_count = 4;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'lock_create:lock ||';
+    (fr_prot:'lock_create:lock()';
      fr_addr:@pp_lock_create;
      fr_desc:'create lock';
     ),
-    (fr_prot:'lock_enter |sl:lock|';
+    (fr_prot:'lock_enter(sl:lock)';
      fr_addr:@pp_lock_lock;
      fr_desc:'lock';
     ),
-    (fr_prot:'lock_tryEnter:int |sl:lock|';
+    (fr_prot:'lock_tryEnter:int(sl:lock)';
      fr_addr:@pp_lock_trylock;
      fr_desc:'try lock';
     ),
-    (fr_prot:'lock_leave |sl:lock|';
+    (fr_prot:'lock_leave(sl:lock)';
      fr_addr:@pp_lock_unlock;
      fr_desc:'unlock';
     )

@@ -65,8 +65,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="49"/>
-        <CursorPos X="26" Y="55"/>
+        <TopLine Value="175"/>
+        <CursorPos X="30" Y="196"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -79,7 +79,7 @@
         <UsageCount Value="10"/>
       </Unit3>
     </Units>
-    <JumpHistory Count="23" HistoryIndex="22">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="lysee_math.lpr"/>
         <Caret Line="28" Column="18" TopLine="4"/>
@@ -172,6 +172,18 @@
         <Filename Value="lysee_math_funcs.pas"/>
         <Caret Line="394" Column="1" TopLine="370"/>
       </Position23>
+      <Position24>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="55" Column="26" TopLine="49"/>
+      </Position24>
+      <Position25>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="196" Column="40" TopLine="175"/>
+      </Position25>
+      <Position26>
+        <Filename Value="lysee_math_funcs.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position26>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

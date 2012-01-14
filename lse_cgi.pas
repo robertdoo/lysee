@@ -176,115 +176,115 @@ procedure cgi_explain(const Param: PLseParam);cdecl;
 const
   cgi_func_count = 28;
   cgi_func_array: array[0..cgi_func_count - 1] of RLseFunc = (
-    (fr_prot:'mode:string ||';
+    (fr_prot:'mode:string()';
      fr_addr:@cgi_mode;
      fr_desc:'get request method'
     ),
-    (fr_prot:'encode:string |text:string, keepMBC|';
+    (fr_prot:'encode:string(text:string, keepMBC)';
      fr_addr:@cgi_encode;
      fr_desc:'encode text to CGI request'
     ),
-    (fr_prot:'decode:string |request:string|';
+    (fr_prot:'decode:string(request:string)';
      fr_addr:@cgi_decode;
      fr_desc:'decode CGI request to original text'
     ),
-    (fr_prot:'parse:varlist |queryString:string|';
+    (fr_prot:'parse:varlist(queryString:string)';
      fr_addr:@cgi_parse;
      fr_desc:'parse CGI request to string list'
     ),
-    (fr_prot:'short:string |str:string, count:int|';
+    (fr_prot:'short:string(str:string, count:int)';
      fr_addr:@cgi_arrstr;
      fr_desc:'arrange string to required length'
     ),
-    (fr_prot:'notags:string |HTML:string|';
+    (fr_prot:'notags:string(HTML:string)';
      fr_addr:@cgi_notags;
      fr_desc:'clear HTML tags'
     ),
-    (fr_prot:'encodeHTML:string |S:string|';
+    (fr_prot:'encodeHTML:string(S:string)';
      fr_addr:@cgi_encodeHTML;
      fr_desc:'encode string to HTML'
     ),
-    (fr_prot:'decodeHTML:string |S:string|';
+    (fr_prot:'decodeHTML:string(S:string)';
      fr_addr:@cgi_decodeHTML;
      fr_desc:'decode HTML to string'
     ),
-    (fr_prot:'pack ||';
+    (fr_prot:'pack()';
      fr_addr:@cgi_pack;
      fr_desc:'pack reponse content'
     ),
-    (fr_prot:'mimes:varlist ||';
+    (fr_prot:'mimes:varlist()';
      fr_addr:@cgi_mimes;
      fr_desc:'get MIME list'
     ),
-    (fr_prot:'mime:string |fileName:string|';
+    (fr_prot:'mime:string(fileName:string)';
      fr_addr:@cgi_mime;
      fr_desc:'get MIME type of specified file'
     ),
-    (fr_prot:'getStatusCode:int ||';
+    (fr_prot:'getStatusCode:int()';
      fr_addr:@cgi_get_status;
      fr_desc:'get response status code'
     ),
-    (fr_prot:'setStatusCode |statusCode:int|';
+    (fr_prot:'setStatusCode(statusCode:int)';
      fr_addr:@cgi_set_status;
      fr_desc:'set response status code'
     ),
-    (fr_prot:'getStatusReason:string ||';
+    (fr_prot:'getStatusReason:string()';
      fr_addr:@cgi_get_reason;
      fr_desc:'get response status reason phrase'
     ),
-    (fr_prot:'setStatusReason |reason:string|';
+    (fr_prot:'setStatusReason(reason:string)';
      fr_addr:@cgi_set_reason;
      fr_desc:'set response status reason phrase'
     ),
-    (fr_prot:'getContentType:string ||';
+    (fr_prot:'getContentType:string()';
      fr_addr:@cgi_get_ContentType;
      fr_desc:'get response content type'
     ),
-    (fr_prot:'setContentType:void |contentType:string|';
+    (fr_prot:'setContentType:void(contentType:string)';
      fr_addr:@cgi_set_ContentType;
      fr_desc:'set response content type'
     ),
-    (fr_prot:'getContentLength:int ||';
+    (fr_prot:'getContentLength:int()';
      fr_addr:@cgi_get_ContentLength;
      fr_desc:'get response content Length'
     ),
-    (fr_prot:'getContentString:string ||';
+    (fr_prot:'getContentString:string()';
      fr_addr:@cgi_get_content;
      fr_desc:'get response content'
     ),
-    (fr_prot:'setContentString:void |content:string|';
+    (fr_prot:'setContentString:void(content:string)';
      fr_addr:@cgi_set_content;
      fr_desc:'set response content'
     ),
-    (fr_prot:'serveFile:string |fileName:string|';
+    (fr_prot:'serveFile:string(fileName:string)';
      fr_addr:@cgi_serveFile;
      fr_desc:'set reponse file'
     ),
-    (fr_prot:'getHV:string |name:string|';
+    (fr_prot:'getHV:string(name:string)';
      fr_addr:@cgi_gethv;
      fr_desc:'get header value'
     ),
-    (fr_prot:'setHV:void |name:string, value:string|';
+    (fr_prot:'setHV:void(name:string, value:string)';
      fr_addr:@cgi_sethv;
      fr_desc:'set customed response header value'
     ),
-    (fr_prot:'getHeaderString:string ||';
+    (fr_prot:'getHeaderString:string()';
      fr_addr:@cgi_headstr;
      fr_desc:'get response header string'
     ),
-    (fr_prot:'reset ||';
+    (fr_prot:'reset()';
      fr_addr:@cgi_reset;
      fr_desc:'reset response'
     ),
-    (fr_prot:'redirect |URI:string|';
+    (fr_prot:'redirect(URI:string)';
      fr_addr:@cgi_redirect;
      fr_desc:'document moved and redirect'
     ),
-    (fr_prot:'noContent ||';
+    (fr_prot:'noContent()';
      fr_addr:@cgi_noContent;
      fr_desc:'set status code to 204: No Content'
     ),
-    (fr_prot:'explain |HTML:string|';
+    (fr_prot:'explain(HTML:string)';
      fr_addr:@cgi_explain;
      fr_desc:'explain HTML code'
     )
@@ -311,43 +311,43 @@ procedure cookie_secure(const Param: PLseParam);cdecl;
 const
   cookie_func_count = 10;
   cookie_func_array: array[0..cookie_func_count - 1] of RLseFunc = (
-    (fr_prot:'exists:int |name:string|';
+    (fr_prot:'exists:int(name:string)';
      fr_addr:@cookie_exists;
      fr_desc:'return none zero if the cookie exists'
     ),
-    (fr_prot:'get:string |name:string|';
+    (fr_prot:'get:string(name:string)';
      fr_addr:@cookie_get;
      fr_desc:'get cookie value'
     ),
-    (fr_prot:'set |name:string, value:string|';
+    (fr_prot:'set(name:string, value:string)';
      fr_addr:@cookie_set;
      fr_desc:'set cookie value'
     ),
-    (fr_prot:'remove |name:string|';
+    (fr_prot:'remove(name:string)';
      fr_addr:@cookie_remove;
      fr_desc:'remove cookie by name'
     ),
-    (fr_prot:'clear ||';
+    (fr_prot:'clear()';
      fr_addr:@cookie_clear;
      fr_desc:'clear cookie list'
     ),
-    (fr_prot:'value:string |name:string|';
+    (fr_prot:'value:string(name:string)';
      fr_addr:@cookie_text;
      fr_desc:'get head value'
     ),
-    (fr_prot:'domain |name:string, domain:string|';
+    (fr_prot:'domain(name:string, domain:string)';
      fr_addr:@cookie_domain;
      fr_desc:'get/set domain'
     ),
-    (fr_prot:'path |name:string, path:string|';
+    (fr_prot:'path(name:string, path:string)';
      fr_addr:@cookie_path;
      fr_desc:'get/set path'
     ),
-    (fr_prot:'expires |name:string, expires:string|';
+    (fr_prot:'expires(name:string, expires:string)';
      fr_addr:@cookie_expires;
      fr_desc:'get/set expires'
     ),
-    (fr_prot:'secure |name:string, secure:string|';
+    (fr_prot:'secure(name:string, secure:string)';
      fr_addr:@cookie_secure;
      fr_desc:'get/set secure attribute'
     )

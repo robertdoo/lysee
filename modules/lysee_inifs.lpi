@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="378"/>
+      <BuildNr Value="379"/>
       <StringTable FileDescription="ini file accessing module for lysee" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="1.1.1.306"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -100,13 +100,13 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="105"/>
-        <CursorPos X="22" Y="118"/>
+        <TopLine Value="86"/>
+        <CursorPos X="80" Y="107"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit7>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
         <Filename Value="lysee_inifs.lpr"/>
         <Caret Line="24" Column="35" TopLine="24"/>
@@ -163,6 +163,22 @@
         <Filename Value="..\lseu.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position14>
+      <Position15>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="118" Column="22" TopLine="105"/>
+      </Position15>
+      <Position16>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position16>
+      <Position17>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="107" Column="38" TopLine="86"/>
+      </Position17>
+      <Position18>
+        <Filename Value="lysee_inifs_funcs.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position18>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

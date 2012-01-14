@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2008/04/05                                                      }
-{    MODIFIED: 2012/01/03                                                      }
+{    MODIFIED: 2012/01/14                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -28,7 +28,7 @@ const
   SYNS_LYSEELANGUAGE = 'Lysee';
 
 type
-  TTokenID = (tkUnknown, tkComment, tkID, tkKey, tkNull, tkSpace, tkParen,
+  TTokenID = (tkUnknown, tkComment, tkID, tkCurr, tkKey, tkNull, tkSpace, tkParen,
               tkString, tkNumber);
   TRangeID = (rkUnknown, rkComment, rkString, rkRawStr);
 
@@ -45,6 +45,7 @@ type
     FRangeID: TRangeID;
     FAttrComment: TSynHighlighterAttributes;
     FAttrID: TSynHighlighterAttributes;
+    FAttrCurr: TSynHighlighterAttributes;
     FAttrKeyword: TSynHighlighterAttributes;
     FAttrSpace: TSynHighlighterAttributes;
     FAttrString: TSynHighlighterAttributes;
@@ -249,6 +250,10 @@ begin
   FAttrID := TSynHighLighterAttributes.Create(SYNS_AttrIdentifier);
   AddAttribute(FAttrID);
 
+  FAttrCurr := TSynHighLighterAttributes.Create(SYNS_AttrUser);
+  FAttrCurr.Foreground := clGray;
+  AddAttribute(FAttrCurr);
+
   FAttrKeyword := TSynHighLighterAttributes.Create(SYNS_AttrReservedWord);
   FAttrKeyword.Style := [fsBold];
   AddAttribute(FAttrKeyword);
@@ -296,10 +301,12 @@ var
   temp: string;
 begin
   base := FRun;
-  while FLine[FRun] in ['a'..'z', 'A'..'Z', '0'..'9', '_'] do Inc(FRun);
+  while FLine[FRun] in ['a'..'z', 'A'..'Z', '0'..'9', '_', '@'] do Inc(FRun);
   SetString(temp, FLine + base, FRun - base);
   if LyseeKeywords.IndexOf(temp) >= 0 then
     FTokenID := tkKey else
+  if temp[1] = '@' then
+    FTokenID := tkCurr else
     FTokenID := tkID;
 end;
 
@@ -330,7 +337,7 @@ begin
       '''': ParseStringStart(true);
       '0'..'9': ParseNumber;
       '(', ')': ParseParen;
-      'A'..'Z', 'a'..'z', '_': ParseID;
+      'A'..'Z', 'a'..'z', '_', '@': ParseID;
       #1..#9, #11, #12, #14..' ': ParseSpace;
       else ParseUnknown;
     end;
@@ -383,6 +390,7 @@ begin
   case GetTokenID of
     tkComment: Result := FAttrComment;
     tkID     : Result := FAttrID;
+    tkCurr   : Result := FAttrCurr;
     tkKey    : Result := FAttrKeyword;
     tkSpace  : Result := FAttrSpace;
     tkString : Result := FAttrString;

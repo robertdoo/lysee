@@ -44,8 +44,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="66"/>
-        <CursorPos X="1" Y="75"/>
+        <TopLine Value="69"/>
+        <CursorPos X="24" Y="90"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -141,7 +141,7 @@
         <UsageCount Value="10"/>
       </Unit12>
     </Units>
-    <JumpHistory Count="10" HistoryIndex="9">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
         <Filename Value="lysee_ym.lpr"/>
         <Caret Line="6" Column="34" TopLine="1"/>
@@ -182,6 +182,18 @@
         <Filename Value="..\lseu.pas"/>
         <Caret Line="2467" Column="40" TopLine="2455"/>
       </Position10>
+      <Position11>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="77" Column="1" TopLine="66"/>
+      </Position11>
+      <Position12>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="90" Column="45" TopLine="69"/>
+      </Position12>
+      <Position13>
+        <Filename Value="lysee_ym.lpr"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position13>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

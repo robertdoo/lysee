@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/12/05                                                      }
+{    MODIFIED: 2012/01/13                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}

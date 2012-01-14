@@ -135,170 +135,170 @@ const
 
   func_count = 41;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'strbuf_create:strbuf |data:string|';
+    (fr_prot:'strbuf_create:strbuf(data:string)';
      fr_addr:@pp_strbuf_create;
      fr_desc:'create strbuf object';
     ),
-    (fr_prot:'strbuf_setLength:void |sb:strbuf, length:int|';
+    (fr_prot:'strbuf_setLength:void(sb:strbuf, length:int)';
      fr_addr:@pp_strbuf_setlen;
      fr_desc:'set strbuf size';
     ),
-    (fr_prot:'strbuf_getDataStr:string |sb:strbuf|';
+    (fr_prot:'strbuf_getDataStr:string(sb:strbuf)';
      fr_addr:@pp_strbuf_gets;
      fr_desc:'get data string';
     ),
-    (fr_prot:'strbuf_setDataStr:void |sb:strbuf, data:string|';
+    (fr_prot:'strbuf_setDataStr:void(sb:strbuf, data:string)';
      fr_addr:@pp_strbuf_sets;
      fr_desc:'set data string';
     ),
-    (fr_prot:'strbuf_replace:void |sb:strbuf, patten:string, newStr:string, ignoreCase:int, replaceFirstOnly:int|';
+    (fr_prot:'strbuf_replace:void(sb:strbuf, patten:string, newStr:string, ignoreCase:int, replaceFirstOnly:int)';
      fr_addr:@pp_strbuf_replace;
      fr_desc:'replace patten to new string';
     ),
-    (fr_prot:'strbuf_pos:int |sb:strbuf, SubStr:string, IgnoreCase:int, start:int|';
+    (fr_prot:'strbuf_pos:int(sb:strbuf, SubStr:string, IgnoreCase:int, start:int)';
      fr_addr:@pp_strbuf_pos;
      fr_desc:'get first sub-string position';
     ),
-    (fr_prot:'strbuf_lastpos:int |sb:strbuf, SubStr:string, IgnoreCase:int, start:int|';
+    (fr_prot:'strbuf_lastpos:int(sb:strbuf, SubStr:string, IgnoreCase:int, start:int)';
      fr_addr:@pp_strbuf_lastPos;
      fr_desc:'get last sub-string position';
     ),
-    (fr_prot:'strbuf_trim:void |sb:strbuf|';
+    (fr_prot:'strbuf_trim:void(sb:strbuf)';
      fr_addr:@pp_strbuf_trim;
      fr_desc:'clear left and right spaces';
     ),
-    (fr_prot:'strbuf_trimLeft:void |sb:strbuf|';
+    (fr_prot:'strbuf_trimLeft:void(sb:strbuf)';
      fr_addr:@pp_strbuf_trimLeft;
      fr_desc:'clear left spaces';
     ),
-    (fr_prot:'strbuf_trimRight:void |sb:strbuf|';
+    (fr_prot:'strbuf_trimRight:void(sb:strbuf)';
      fr_addr:@pp_strbuf_trimRight;
      fr_desc:'clear right spaces';
     ),
-    (fr_prot:'strbuf_trimAll:void |sb:strbuf|';
+    (fr_prot:'strbuf_trimAll:void(sb:strbuf)';
      fr_addr:@pp_strbuf_trimAll;
      fr_desc:'clear all spaces';
     ),
-    (fr_prot:'strbuf_lower:void |sb:strbuf|';
+    (fr_prot:'strbuf_lower:void(sb:strbuf)';
      fr_addr:@pp_strbuf_lower;
      fr_desc:'translate to lower case';
     ),
-    (fr_prot:'strbuf_upper:void |sb:strbuf|';
+    (fr_prot:'strbuf_upper:void(sb:strbuf)';
      fr_addr:@pp_strbuf_upper;
      fr_desc:'translate to upper case';
     ),
-    (fr_prot:'strbuf_delete:void |sb:strbuf, index:int, count:int|';
+    (fr_prot:'strbuf_delete:void(sb:strbuf, index:int, count:int)';
      fr_addr:@pp_strbuf_delete;
      fr_desc:'delete sub-string by range';
     ),
-    (fr_prot:'strbuf_insert:void |sb:strbuf, substr:string, index:int|';
+    (fr_prot:'strbuf_insert:void(sb:strbuf, substr:string, index:int)';
      fr_addr:@pp_strbuf_insert;
      fr_desc:'insert sub-string at specified position';
     ),
-    (fr_prot:'strbuf_join:void |sb:strbuf, str:string|';
+    (fr_prot:'strbuf_join:void(sb:strbuf, str:string)';
      fr_addr:@pp_strbuf_join;
      fr_desc:'join (concatenate) string';
     ),
-    (fr_prot:'strbuf_reverse:void |sb:strbuf|';
+    (fr_prot:'strbuf_reverse:void(sb:strbuf)';
      fr_addr:@pp_strbuf_reverse;
      fr_desc:'reverse string buffer';
     ),
-    (fr_prot:'strbuf_randomize:void |sb:strbuf|';
+    (fr_prot:'strbuf_randomize:void(sb:strbuf)';
      fr_addr:@pp_strbuf_randomize;
      fr_desc:'randomize string buffer';
     ),
-    (fr_prot:'strbuf_contains:int |sb:strbuf, subStr:string, ignoreCase:int|';
+    (fr_prot:'strbuf_contains:int(sb:strbuf, subStr:string, ignoreCase:int)';
      fr_addr:@pp_strbuf_contains;
      fr_desc:'test if contains specified sub-string';
     ),
-    (fr_prot:'strbuf_copy:string |sb:strbuf, index:int, count:int|';
+    (fr_prot:'strbuf_copy:string(sb:strbuf, index:int, count:int)';
      fr_addr:@pp_strbuf_copy;
      fr_desc:'copy sub-string by range';
     ),
 
     { strcut }
 
-    (fr_prot:'strcut_create:strcut |keylist:string, delimiter:string|';
+    (fr_prot:'strcut_create:strcut(keylist:string, delimiter:string)';
      fr_addr:@pp_strcut_create;
      fr_desc:'create strcut object';
     ),
-    (fr_prot:'strcut_reinit:void |sc:strcut, keylist:string, delimiter:string|';
+    (fr_prot:'strcut_reinit:void(sc:strcut, keylist:string, delimiter:string)';
      fr_addr:@pp_strcut_reinit;
      fr_desc:'reinitialize this string cutter';
     ),
-    (fr_prot:'strcut_parse:void |sc:strcut, text:string|';
+    (fr_prot:'strcut_parse:void(sc:strcut, text:string)';
      fr_addr:@pp_strcut_parse;
      fr_desc:'parse plain text';
     ),
-    (fr_prot:'strcut_getKey:string |sc:strcut, index:int|';
+    (fr_prot:'strcut_getKey:string(sc:strcut, index:int)';
      fr_addr:@pp_strcut_getname;
      fr_desc:'get key name by index';
     ),
-    (fr_prot:'strcut_setKey:void |sc:strcut, index:int, key:string|';
+    (fr_prot:'strcut_setKey:void(sc:strcut, index:int, key:string)';
      fr_addr:@pp_strcut_setname;
      fr_desc:'change key name by index';
     ),
-    (fr_prot:'strcut_rename:void |sc:strcut, key:string, newKey:string|';
+    (fr_prot:'strcut_rename:void(sc:strcut, key:string, newKey:string)';
      fr_addr:@pp_strcut_rename;
      fr_desc:'rename key';
     ),
-    (fr_prot:'strcut_indexOf:int |sc:strcut, key:string|';
+    (fr_prot:'strcut_indexOf:int(sc:strcut, key:string)';
      fr_addr:@pp_strcut_indexof;
      fr_desc:'get key index';
     ),
-    (fr_prot:'strcut_clear:void |sc:strcut|';
+    (fr_prot:'strcut_clear:void(sc:strcut)';
      fr_addr:@pp_strcut_clear;
      fr_desc:'clear values';
     ),
-    (fr_prot:'strcut_keysList:string |sc:strcut|';
+    (fr_prot:'strcut_keysList:string(sc:strcut)';
      fr_addr:@pp_strcut_keylist;
      fr_desc:'list key with delimiter char';
     ),
-    (fr_prot:'strcut_valueList:string |sc:strcut|';
+    (fr_prot:'strcut_valueList:string(sc:strcut)';
      fr_addr:@pp_strcut_valist;
      fr_desc:'list value with delimiter char';
     ),
-    (fr_prot:'strcut_keys:string |sc:strcut|';
+    (fr_prot:'strcut_keys:string(sc:strcut)';
      fr_addr:@pp_strcut_keys;
      fr_desc:'list key into strlist';
     ),
-    (fr_prot:'strcut_values:string |sc:strcut|';
+    (fr_prot:'strcut_values:string(sc:strcut)';
      fr_addr:@pp_strcut_values;
      fr_desc:'list value into strlist';
     ),
-    (fr_prot:'strcut_strlist:string |sc:strcut|';
+    (fr_prot:'strcut_strlist:string(sc:strcut)';
      fr_addr:@pp_strcut_strlist;
      fr_desc:'convert to strlist';
     ),
-    (fr_prot:'strcut_delete:void |sc:strcut, index:int|';
+    (fr_prot:'strcut_delete:void(sc:strcut, index:int)';
      fr_addr:@pp_strcut_delete;
      fr_desc:'delete key by index';
     ),
-    (fr_prot:'strcut_remove:void |sc:strcut, key:string|';
+    (fr_prot:'strcut_remove:void(sc:strcut, key:string)';
      fr_addr:@pp_strcut_remove;
      fr_desc:'remove key by name';
     ),
-    (fr_prot:'strcut_exchange:void |sc:strcut, X1:int, X2:int|';
+    (fr_prot:'strcut_exchange:void(sc:strcut, X1:int, X2:int)';
      fr_addr:@pp_strcut_exchange;
      fr_desc:'exchange two keys by index';
     ),
-    (fr_prot:'strcut_exchangeByName:void |sc:strcut, key1:string, key2:string|';
+    (fr_prot:'strcut_exchangeByName:void(sc:strcut, key1:string, key2:string)';
      fr_addr:@pp_strcut_exchangeByName;
      fr_desc:'exchange two keys by name';
     ),
-    (fr_prot:'strcut_move:void |sc:strcut, X1:int, X2:int|';
+    (fr_prot:'strcut_move:void(sc:strcut, X1:int, X2:int)';
      fr_addr:@pp_strcut_move;
      fr_desc:'move key to another place by index';
     ),
-    (fr_prot:'strcut_moveByName:void |sc:strcut, key:string, another:string|';
+    (fr_prot:'strcut_moveByName:void(sc:strcut, key:string, another:string)';
      fr_addr:@pp_strcut_moveByName;
      fr_desc:'move key to another place by name';
     ),
-    (fr_prot:'strcut_mask:string |sc:strcut|';
+    (fr_prot:'strcut_mask:string(sc:strcut)';
      fr_addr:@pp_strcut_mask;
      fr_desc:'get parsing mask';
     ),
-    (fr_prot:'strcut_delimiter:string |sc:strcut|';
+    (fr_prot:'strcut_delimiter:string(sc:strcut)';
      fr_addr:@pp_strcut_delimiter;
      fr_desc:'get parsing delimiter';
     )

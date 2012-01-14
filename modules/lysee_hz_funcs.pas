@@ -22,7 +22,7 @@ procedure hz_pinyin(const invoker: TLseInvoke);cdecl;
 const
   func_count = 1;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'pinyin:string |chinese:string, longFmt:int, separateLongFmt:int|';
+    (fr_prot:'pinyin:string(chinese:string, longFmt:int, separateLongFmt:int)';
      fr_addr:@hz_pinyin;
      fr_desc:'translate chinese into pinyin'
     )
