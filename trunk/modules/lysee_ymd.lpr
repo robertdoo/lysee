@@ -75,19 +75,19 @@ end;
 const
   func_count = 4;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'now:int ||';
+    (fr_prot:'now:int()';
      fr_addr:@ymd_now;
      fr_desc:'get current ymd'
     ),
-    (fr_prot:'check:int |ymd:int|';
+    (fr_prot:'check:int(ymd:int)';
      fr_addr:@ymd_check;
      fr_desc:'check ymd'
     ),
-    (fr_prot:'next:int |ymd:int, days:int|';
+    (fr_prot:'next:int(ymd:int, days:int)';
      fr_addr:@ymd_next;
      fr_desc:'get next ymd'
     ),
-    (fr_prot:'prev:int |ymd:int, days:int|';
+    (fr_prot:'prev:int(ymd:int, days:int)';
      fr_addr:@ymd_prev;
      fr_desc:'get prev ymd'
     )

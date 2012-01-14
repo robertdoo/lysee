@@ -17,7 +17,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="376"/>
+      <BuildNr Value="377"/>
       <StringTable FileDescription="chinese pinyin" LegalCopyright="Copyright (C) 2003-2010 li yun jie <libudi@hotmail.com>" ProductVersion="0.1.1.315"/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -41,11 +41,10 @@
         <Filename Value="lysee_hz.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_hz"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="11"/>
+        <TopLine Value="13"/>
+        <CursorPos X="1" Y="38"/>
         <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -111,10 +110,11 @@
         <Filename Value="lysee_hz_funcs.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="lysee_hz_funcs"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
-        <CursorPos X="1" Y="22"/>
+        <CursorPos X="78" Y="25"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -133,7 +133,7 @@
         <UsageCount Value="20"/>
       </Unit11>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="12" HistoryIndex="11">
       <Position1>
         <Filename Value="lysee_hz.lpr"/>
         <Caret Line="10" Column="35" TopLine="3"/>
@@ -178,6 +178,10 @@
         <Filename Value="lysee_hz.lpr"/>
         <Caret Line="8" Column="1" TopLine="1"/>
       </Position11>
+      <Position12>
+        <Filename Value="lysee_hz.lpr"/>
+        <Caret Line="11" Column="1" TopLine="1"/>
+      </Position12>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

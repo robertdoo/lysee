@@ -1,9 +1,9 @@
 def sort(list)
     set n = length(list)
     if n > 1 then
-        while n:i do
+        for i in n do
             set v = list[i]
-            while i - 1..-1:j do
+            for j in i - 1..-1 do
                 (j < 0) or (list[j] <= v) and break;
                 set list[j + 1] = list[j]
             end

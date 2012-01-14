@@ -93,8 +93,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="42"/>
-        <CursorPos X="22" Y="55"/>
+        <TopLine Value="21"/>
+        <CursorPos X="35" Y="42"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -115,7 +115,7 @@
         <UsageCount Value="10"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="17" HistoryIndex="16">
       <Position1>
         <Filename Value="lysee_syncobj.lpr"/>
         <Caret Line="18" Column="21" TopLine="1"/>
@@ -172,6 +172,18 @@
         <Filename Value="lysee_syncobj_funcs.pas"/>
         <Caret Line="31" Column="26" TopLine="25"/>
       </Position14>
+      <Position15>
+        <Filename Value="lysee_syncobj_funcs.pas"/>
+        <Caret Line="55" Column="22" TopLine="42"/>
+      </Position15>
+      <Position16>
+        <Filename Value="lysee_syncobj_funcs.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position16>
+      <Position17>
+        <Filename Value="lysee_syncobj_funcs.pas"/>
+        <Caret Line="28" Column="36" TopLine="21"/>
+      </Position17>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

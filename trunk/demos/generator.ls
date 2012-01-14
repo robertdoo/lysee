@@ -4,8 +4,6 @@ end
 
 if @in_main then
     set inc = inc_generator(10)
-    yield each 10 def
-        println(inc())
-    end
+    @each 10 {@ def println(inc()) end}
 end
 

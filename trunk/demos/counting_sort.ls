@@ -1,10 +1,10 @@
 def sort(list)
-    set c = map (reduce list 0 max) + 1 0
-    while list:x do
+    set c = @map (@folder list max) + 1 !0
+    for x in list do
         set c[x] = 1
     end
     clear(list);
-    while length(c):x if c[x] then
+    for x in length(c) if c[x] do
         list << x
     end
     list

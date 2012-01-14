@@ -4,7 +4,7 @@
 {   COPYRIGHT: Copyright (c) 2003-2011, Li Yun Jie. All Rights Reserved.       }
 {     LICENSE: modified BSD license                                            }
 {     CREATED: 2003/10/10                                                      }
-{    MODIFIED: 2011/12/25                                                      }
+{    MODIFIED: 2012/01/14                                                      }
 {==============================================================================}
 { Contributor(s):                                                              }
 {==============================================================================}
@@ -35,9 +35,9 @@ const
   LSE_SEARCH_PATH    = '${kndir}/modules';
   LSE_TEMP_PATH      = {$IFDEF WINDOWS}'${kndir}\temp'{$ELSE}'/tmp'{$ENDIF};
   LSE_COPYRIGHT      = 'Copyright (c) 2003-2011 Li Yun Jie';
-  LSE_VERSION        = '3.0.1';
+  LSE_VERSION        = '3.0.2';
   LSE_BIRTHDAY       = 20030228;
-  LSE_BUILDDAY       = 20111225;
+  LSE_BUILDDAY       = 20120114;
   LSE_MAX_PARAMS     = 12;
   LSE_MAX_CODES      = MaxInt div 2;
 
@@ -225,6 +225,7 @@ type
   TLseEachProp = procedure(obj: pointer; EachProc: TLseEachPropProc; data: pointer);cdecl; 
   TLseEachValueProc = procedure(Value: PLseValue; data: pointer);cdecl;
   TLseEachValue = procedure(obj: pointer; EachProc: TLseEachValueProc; data: pointer);cdecl;
+  TLseHasMore = function(obj: pointer): integer;cdecl;
 
   RLseType = packed record
     cr_type    : TLseValue;       {<--value type: LSV_XXXX}
@@ -254,6 +255,7 @@ type
     cr_eachp   : TLseEachProp;    {<--*H: each property name}
     cr_eachv   : TLseEachValue;   {<--LH: each value}
     cr_clear   : TLseClear;       {<--LH: clear}
+    cr_has_more: TLseHasMore;     {<--**: has more/not EOF}
   end;
 
   ALseTypeList = array[0..1023] of RLseType;
@@ -687,8 +689,13 @@ function  lse_in_charset(S: pchar; Len: integer; Chars: TLseCharSet): boolean;ov
 function  lse_in_charset(S: pchar; Chars: TLseCharSet): boolean;overload;
 function  lse_is_ident(S: pchar): boolean;
 function  lse_is_idhead(C: char): boolean;
+function  lse_hex_value(ch: char): integer;
+function  lse_parse_int(S: pchar): int64;
+function  lse_parse_hex(S: pchar): int64;
+function  lse_parse_float(S: pchar): double;
 procedure lse_zero_ref(aobj: TLseObject);
 function  lse_is_ls_file(const FileName: string): boolean;
+procedure lse_release_and_nil(var obj);
 
 {======================================================================)
 (======== type ========================================================)
@@ -815,6 +822,8 @@ function  lse_strec_insert(S, R: PLseString; X: int64): PLseString;
 procedure lse_strec_save(S: PLseString; const FileName: string);
 function  lse_strec_load(const FileName: string): PLseString;
 function  lse_strec_hash(S: PLseString): cardinal;
+function  lse_strec_parse_int(S: PLseString): int64;
+function  lse_strec_parse_float(S: PLseString): double;
 
 {======================================================================)
 (======== PLseTime ====================================================)
@@ -978,7 +987,7 @@ procedure lse_is(V1, V2: PLseValue);         // V1 <=     V1 is   V2
 procedure lse_as(V1, V2: PLseValue);         // V1 <=     V1 as   V2
 procedure lse_fill(V1, V2: PLseValue);       // V1 <=     V1 <<<  V2
 procedure lse_like(V1, V2: PLseValue);       // V1 <=     V1 like V2
-procedure lse_upto(V1, V2: PLseValue);       // V1 <=     V1 ..   V2
+procedure lse_range(V1, V2: PLseValue);      // V1 <=     V1 ..   V2
 
 {======================================================================)
 (======== vargen - variant generator ==================================)
@@ -2028,6 +2037,16 @@ begin
   Result := lse_hash_of(lse_strec_data(S));
 end;
 
+function lse_strec_parse_int(S: PLseString): int64;
+begin
+  Result := lse_parse_int(lse_strec_data(S));
+end;
+
+function lse_strec_parse_float(S: PLseString): double;
+begin
+  Result := lse_parse_float(lse_strec_data(S));
+end;
+
 {======================================================================)
 (======== PLseTime ====================================================)
 (======================================================================}
@@ -2460,6 +2479,95 @@ begin
   Result := (C in LCS_HEAD);
 end;
 
+function lse_hex_value(ch: char): integer;
+begin
+  case ch of
+    '0'..'9': Result := Ord(ch) - Ord('0');
+    'A'..'F': Result := Ord(ch) - Ord('A') + 10;
+    'a'..'f': Result := Ord(ch) - Ord('a') + 10;
+         else Result := 0;
+  end;
+end;
+
+function lse_parse_int(S: pchar): int64;
+var
+  neg: boolean;
+begin
+  Result := 0;
+  if (S <> nil) and (S^ <> #0) then
+  begin
+    neg := (S^ = '-');
+    if neg or (S^ = '+') then Inc(S);
+    if (S^ = '0') and ((S + 1)^ in ['x', 'X']) then
+    begin
+      Inc(S, 2);
+      if S^ in LCS_HEX then
+      repeat
+        Result := (Result * 16) + lse_hex_value(S^);
+        Inc(S);
+      until not (S^ in LCS_HEX);
+    end
+    else
+    if S^ in LCS_DIGIT then
+    begin
+      repeat
+        Result := (Result * 10) + lse_hex_value(S^);
+        Inc(S);
+      until not (S^ in LCS_DIGIT);
+      if S^ = '.' then
+        repeat Inc(S) until not (S^ in LCS_DIGIT);
+    end;
+    if S^ <> #0 then Result := 0 else
+    if neg then
+      Result := -Result;
+  end;
+end;
+
+function  lse_parse_hex(S: pchar): int64;
+var
+  neg: boolean;
+begin
+  Result := 0;
+  if (S <> nil) and (S^ <> #0) then
+  begin
+    neg := (S^ = '-');
+    if neg or (S^ = '+') then Inc(S);
+    if (S^ = '0') and ((S + 1)^ in ['x', 'X']) then Inc(S, 2);
+    while S^ in LCS_HEX do
+    begin
+      Result := (Result * 16) + lse_hex_value(S^);
+      Inc(S);
+    end;
+    if S^ <> #0 then Result := 0 else
+    if neg then
+      Result := -Result;
+  end;
+end;
+
+function lse_parse_float(S: pchar): double;
+var
+  P: pchar;
+  V: string;
+begin
+  Result := 0;
+  if (S <> nil) and (S^ <> #0) then
+  begin
+    P := S;
+    if S^ in ['+', '-'] then Inc(S);
+    if S^ in LCS_DIGIT then
+    begin
+      repeat Inc(S) until not (S^ in LCS_DIGIT);
+      if S^ = '.' then
+        repeat Inc(S) until not (S^ in LCS_DIGIT);
+      if S^ = #0 then
+      begin
+        SetString(V, P, S - P);
+        Result := StrToFloat(V);
+      end;
+    end;
+  end;
+end;
+
 procedure lse_zero_ref(aobj: TLseObject);
 begin
   aobj.FRefcount := 0;
@@ -2471,6 +2579,18 @@ var
 begin
   N := Length(FileName);
   Result := (N > 2) and ('.ls' = LowerCase(Copy(FileName, N - 2, 3)));
+end;
+
+procedure lse_release_and_nil(var obj);
+var
+  o: TLseObject;
+begin
+  o := TLseObject(obj);
+  if o <> nil then
+  begin
+    pointer(obj) := nil;
+    o.DecRefcount;
+  end;
 end;
 
 {======================================================================)
@@ -3299,7 +3419,7 @@ end;
 function lse_get_int(V: PLseValue): int64;
 begin
   case lse_vtype(V) of
-    LSV_STRING: Result := StrToInt64Def(lse_strec_string(V^.VObject), 0);
+    LSV_STRING: Result := lse_strec_parse_int(V^.VObject);
     LSV_INT   : Result := V^.VInteger;
     LSV_FLOAT : Result := Trunc(V^.VFloat);
     else Result := 0;
@@ -3309,7 +3429,7 @@ end;
 function lse_get_float(V: PLseValue): double;
 begin
   case lse_vtype(V) of
-    LSV_STRING: Result := StrToFloatDef(lse_strec_string(V^.VObject), 0);
+    LSV_STRING: Result := lse_strec_parse_float(V^.VObject);
     LSV_INT   : Result := V^.VInteger;
     LSV_FLOAT : Result := V^.VFloat;
     else Result := 0;
@@ -3855,10 +3975,9 @@ end;
 procedure lse_neg(V1: PLseValue);
 begin
   case lse_vtype(V1) of
-    LSV_STRING: lse_clear_string(V1);
-    LSV_INT   : V1^.VInteger := - V1^.VInteger;
-    LSV_FLOAT : V1^.VFloat := - V1^.VFloat;
-    LSV_OBJECT: lse_clear_object(V1);
+    LSV_INT  : V1^.VInteger := - V1^.VInteger;
+    LSV_FLOAT: V1^.VFloat := - V1^.VFloat;
+    else lse_clear_value(V1);
   end;
 end;
 
@@ -3995,7 +4114,7 @@ begin
   end;
 end;
 
-procedure lse_upto(V1, V2: PLseValue);
+procedure lse_range(V1, V2: PLseValue);
 var
   begv, endv: int64;
 begin

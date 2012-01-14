@@ -4,7 +4,7 @@ def sort(list)
     set gap = length(list)
     while gap > 1 do
         set gap = round(gap / 2)
-        while gap..length(list) - 1:i do
+        for i in gap..length(list) - 1 do
             set j = i
             while j > 0 do
                 if list[j] <= list[j - gap] then

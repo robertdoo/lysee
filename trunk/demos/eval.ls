@@ -7,13 +7,13 @@ def ieval
         return
     else
         println(eval(input))
-        loop
+        @loop
     end
 end
 
-if catch ieval then
+if @catch ieval then
     println(@emsg)
-    end
+end
 
 println("bye-bye!")
 

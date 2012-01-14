@@ -1,7 +1,7 @@
 def sort(list)
     set n = length(list)
-    while n - 1:i do
-      while i + 1..n - 1:j if list[i] > list[j] then
+    for i in n do
+      for j = i + 1 to n - 1 if list[i] > list[j] do
         exchange(list i j)
       end
     end

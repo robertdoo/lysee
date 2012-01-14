@@ -56,55 +56,55 @@ const
 
   func_count = 13;
   func_array: array[0..func_count - 1] of RLseFunc = (
-    (fr_prot:'inifile_create:inifile |fileName:string|';
+    (fr_prot:'inifile_create:inifile(fileName:string)';
      fr_addr:@pp_inifile_create;
      fr_desc:'open ini file'
     ),
-    (fr_prot:'inifile_fname:string |inif:inifile|';
+    (fr_prot:'inifile_fname:string(inif:inifile)';
      fr_addr:@pp_inifile_fname;
      fr_desc:'get ini file name';
     ),
-    (fr_prot:'inifile_open:void |inif:inifile, fileName:string|';
+    (fr_prot:'inifile_open:void(inif:inifile, fileName:string)';
      fr_addr:@pp_inifile_open;
      fr_desc:'open another ini file'
     ),
-    (fr_prot:'inifile_close:void |inif:inifile|';
+    (fr_prot:'inifile_close:void(inif:inifile)';
      fr_addr:@pp_inifile_close;
      fr_desc:'close current file'
     ),
-    (fr_prot:'inifile_read:string |inif:inifile, section:string, key:string, defValue:string|';
+    (fr_prot:'inifile_read:string(inif:inifile, section:string, key:string, defValue:string)';
      fr_addr:@pp_inifile_read;
      fr_desc:'read value'
     ),
-    (fr_prot:'inifile_write:void |inif:inifile, section:string, key:string, value:string|';
+    (fr_prot:'inifile_write:void(inif:inifile, section:string, key:string, value:string)';
      fr_addr:@pp_inifile_write;
      fr_desc:'write value'
     ),
-    (fr_prot:'inifile_sections:string |inif:inifile|';
+    (fr_prot:'inifile_sections:string(inif:inifile)';
      fr_addr:@pp_inifile_sections;
      fr_desc:'get section list'
     ),
-    (fr_prot:'inifile_keys:string |inif:inifile, section:string|';
+    (fr_prot:'inifile_keys:string(inif:inifile, section:string)';
      fr_addr:@pp_inifile_keys;
      fr_desc:'get key list of specified section'
     ),
-    (fr_prot:'inifile_values:string |inif:inifile, section:string|';
+    (fr_prot:'inifile_values:string(inif:inifile, section:string)';
      fr_addr:@pp_inifile_values;
      fr_desc:'get value list of specified section'
     ),
-    (fr_prot:'inifile_sectionExists:int |inif:inifile, section:string|';
+    (fr_prot:'inifile_sectionExists:int(inif:inifile, section:string)';
      fr_addr:@pp_inifile_sectionExists;
      fr_desc:'check if a named section eixsts'
     ),
-    (fr_prot:'inifile_eraseSection:void |inif:inifile, section:string|';
+    (fr_prot:'inifile_eraseSection:void(inif:inifile, section:string)';
      fr_addr:@pp_inifile_eraseSection;
      fr_desc:'erase a section'
     ),
-    (fr_prot:'inifile_keyExists:int |inif:inifile, section:string, key:string|';
+    (fr_prot:'inifile_keyExists:int(inif:inifile, section:string, key:string)';
      fr_addr:@pp_inifile_keyExists;
      fr_desc:'check if a key exists'
     ),
-    (fr_prot:'inifile_deleteKey:void |inif:inifile, section:string, key:string|';
+    (fr_prot:'inifile_deleteKey:void(inif:inifile, section:string, key:string)';
      fr_addr:@pp_inifile_deleteKey;
      fr_desc:'delete a key'
     )

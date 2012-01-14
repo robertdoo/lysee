@@ -3,7 +3,7 @@ def pop_min(list)
     set x = 0
     set n = length(list)
     if n > 1 then
-        while 1..n - 1:i if list[i] < v then
+        for i in 1..n - 1 if list[i] < v do
             set v = list[i]
             set x = i
         end
@@ -16,7 +16,9 @@ def sort(list)
     set n = length(list)
     set b = copy(list)
     clear(list)
-    while n:x do list << pop_min(b) end
+    for x in n do
+        list << pop_min(b)
+    end
     list
 end
 
