@@ -1,18 +1,18 @@
-==1.Introduction==
+==1 Introduction==
 
 Lysee is a small, fast, reliable and cross platform script language. Its interpreter is a standalone program. Lysee kernel is used to be embedded into Pascal programs as a critical mission controler and script the host. Lysee script can be embedded into HTML to develop active WEB sites.
 
 "LSE" is abbreviation of "Lysee Script Engine".
 
-===1.1.Features===
+===1.1 Features===
 
   * Written in pure Pascal language.
   * Support module and functional programings.
   * Run in platforms where [http://www.freepascal.org/ Free Pascal], [http://www.lazarus.freepascal.org/ Lazarus] or Delphi exist.
 
-==2.Install and configure==
+==2 Install and configure==
 
-===2.1.Installation===
+===2.1 Installation===
 
 Download the latest installer or source code:
 
@@ -20,7 +20,7 @@ Download the latest installer or source code:
 || Windows || Run the installer || c:\lysee ||
 || Linux/Unix || make; sudo make install || /usr/local/lib/lysee ||
 
-===2.2.File Structure===
+===2.2 File Structure===
 
 || Name || Type || Linux/Unix || Windows || Description ||
 || modules || folder || * || * || stores lysee modules ||
@@ -36,3 +36,66 @@ Download the latest installer or source code:
 || lysee || program || * || N/A ||  interpreter ||
 || lysee_pad.exe || program || N/A || * || syntax highlighter editor ||
 || lysee_pad || program || * || N/A || syntax highlighter editor ||
+
+===2.3 Configuration===
+
+Add installation path to system search PATH:
+
+
+Platform
+How to
+Windows
+attch installation path to system environment variable PATH
+
+Edit file lysee.config to configure lysee:
+
+ 
+Variable
+Description
+Default Value
+lse_tmpath
+temporary directory
+${LYSEE}/temp
+lse_search
+module search path 
+${LYSEE}/modules
+lse_create_log
+if create log file? 
+false
+
+The following constants can be used in lysee.config:
+
+ 
+Constant
+Description
+Value
+${confile}
+Configuration file name
+Full file name of file lysee.config
+${kernel}
+Kernel file name 
+Full file name of kernel
+${kndir}
+Kernel directory 
+Full file name of kernel directory 
+${knpath}
+Kernel path 
+Full file name of kernel path
+${home}
+Home path of user 
+Full file name of current user home path
+${program}
+current program
+ParamStr(0)
+${tmpath}
+temporary path
+Set by lse_tmpath in lysee.config
+${search}
+module search path
+Set by lse_search in lysee.config
+${keywords}
+keyword list
+ 
+${mimefile}
+MIME file
+${knpath} + mime.config
