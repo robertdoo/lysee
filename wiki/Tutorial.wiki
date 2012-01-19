@@ -16,13 +16,13 @@ Lysee is a small, fast, reliable and cross platform script language. Its interpr
 
 Download the latest installer or source code:
 
-|| Platform || How to || Default Position ||
+|| *Platform* || *How to* || *Default Position* ||
 || Windows || Run the installer || c:\lysee ||
 || Linux/Unix || make; sudo make install || /usr/local/lib/lysee ||
 
 ===2.2 File Structure===
 
-|| Name || Type || Linux/Unix || Windows || Description ||
+|| *Name* || *Type* || *Linux/Unix* || *Windows* || *Description* ||
 || modules || folder || * || * || stores lysee modules ||
 || manual || folder || * || * || manuals  ||
 || temp || folder ||  N/A || * || temporary file directory ||
@@ -41,18 +41,18 @@ Download the latest installer or source code:
 
 Add installation path to system search PATH:
 
-|| Platform || How to ||
+|| *Platform* || *How to* ||
 || Windows || attch installation path to system environment variable PATH ||
 
 Edit file lysee.config to configure lysee:
  
-|| Variable || Description || Default Value ||
+|| *Variable* || *Description* || *Default Value* ||
 || lse_tmpath || temporary directory || ${LYSEE}/temp ||
 || lse_search || module search path || ${LYSEE}/modules ||
 
 The following constants can be used in lysee.config:
 
-|| Constant || Description || Value ||
+|| *Constant* || *Description* || *Value* ||
 || ${confile} || Configuration file name || Full file name of file lysee.config ||
 || ${kernel} || Kernel file name || Full file name of kernel ||
 || ${kndir} || Kernel directory  || Full file name of kernel directory ||
