@@ -66,7 +66,7 @@ The following constants can be used in lysee.config:
 
 ===2.4 Test===
 
-After type "lysee" and ENTER in a console, you will see something like below.
+Open a console and type "lysee" and give a ENTER, you will see something like below.
 
 {{{
 lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
@@ -76,52 +76,41 @@ lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
 >>>
 }}}
 
-If wrong, you'd have to use the absolute file name:
-
-{{{
-Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net
-
-   :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
-
->>>
-}}}
-
-2.5 Hello World
+===2.5 Hello World===
 
 Let's print "Hello World":
 
-D:\www.lysee.net>lysee
-Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net
+{{{
+lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
 
-           :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
+   :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
 
->>> = "Hello World";
+>>> print("Hello World")
 Hello World 
 >>>
+}}}
 
-Is it simple?
+Where, ">>>" prompts you enter lysee command or script.
 
-Expl:	 	1. ">>>" prompts you enter lysee command or script.
- 	 	2. "=" means print.
- 	 	3. last ";" means end of input and lysee should execute the command or script.
-2.6 Execute Script File
+===2.6 Execute Script File===
 
-Save "= "hello world";" to file hw.ls, and run it with lysee:
+Save "print("hello world")" to file hw.ls, and run it with lysee:
 
-D:\www.lysee.net>echo ="hello world"; > hw.ls
-D:\www.lysee.net>lysee hw.ls
+{{{
+c:\lysee>lysee hw.ls
 Hello World 
-D:\www.lysee.net>
+c:\lysee>
+}}}
 
-[Expl]	 	1. Lysee script file's extension is ".ls".
- 	 	2. Lysee interpreter quits after execute the file.
- 	 	3. File consists of any lysee statements.
-2.7 Command Line Arguments
+".ls" is file extension of Lysee script file.
+
+===2.7 Command Line Arguments===
 
 Run " lysee --help" to print Lysee usages:
 
-D:\www.lysee.net>lysee --help
-Lysee 0.1.6.387 - interactive LYSEE script interpreter
+{{{
+c:\lysee>lysee --help
+Lysee 3.0.1 - interactive LYSEE script interpreter
 
 Usage: lysee [OPTION]... [FILE [ARGS]...]
 
@@ -141,32 +130,33 @@ File:
 Args:
   *                       arguments for file execution.
 
-D:\www.lysee.net>
+c:\lysee>
+}}}
 
-Options:
+*Options:*
 
-Option	Attachments	Description
--v	--version	None	Print version informations and quit
--h	--help	None	Print usages and quit
--s	--search	Path list seperated with ';'	Add search path
--w	--wait	Seconds	Wait for seconds before running
--t	--times	Times	Repeat running times
--p	--pause	None	Pause after execute a file
+|| *Option* || *Attachments* ||	*Description* ||
+|| -v/--version || None || Print version informations and quit ||
+|| -h/--help || None || Print usages and quit ||
+|| -s/--search || Path list seperated with ';' || Add search path ||
+|| -w/--wait || Seconds || Wait for seconds before running ||
+|| -t/--times || Times || Repeat running times ||
+|| -p/--pause || None || Pause after execute a file ||
 
-File:
+*File:*
 
-Ext	File Type	Description
-.ls	Lysee program of module	Pure lysee statement
-.lsp	 LSP（Lysee Script Page）	Active HTML web page contains lysee statements
-*	 	Deal as .lsp file
+|| *Extension* || *File Type* || *Description* ||
+|| .ls || Lysee script file or  module || Pure lysee statement ||
+|| .lsp ||  LSP（Lysee Script Page） || Active HTML web page ||
+|| * ||	Deal as .lsp file || produce WEB page ||
 
-Args：
+*Args:*
 
-Can be accessed with string list __args__.
+Can be accessed with string list @args.
 
-Command Lines:
+*Command Lines:*
 
-Command Line	Description
-lysee backup.ls "skip=.tmp,....,.ppu"	backup lysee project, some files will be ignored
-lysee -w 3600 -t 9999 spider.ls	run web spider once an hour
-lysee logout.lsp user=mack	user mack logout
+|| *Command Line* || *Description* ||
+|| lysee backup.ls "skip=.tmp,....,.ppu" || backup lysee project, ignore some files  ||
+|| lysee -w 3600 -t 9999 spider.ls || run web spider once an hour ||
+|| lysee logout.lsp user=mack || user mack logout||
