@@ -41,61 +41,25 @@ Download the latest installer or source code:
 
 Add installation path to system search PATH:
 
-
-Platform
-How to
-Windows
-attch installation path to system environment variable PATH
+|| Platform || How to ||
+|| Windows || attch installation path to system environment variable PATH ||
 
 Edit file lysee.config to configure lysee:
-
  
-Variable
-Description
-Default Value
-lse_tmpath
-temporary directory
-${LYSEE}/temp
-lse_search
-module search path 
-${LYSEE}/modules
-lse_create_log
-if create log file? 
-false
+|| Variable || Description || Default Value ||
+|| lse_tmpath || temporary directory || ${LYSEE}/temp ||
+|| lse_search || module search path || ${LYSEE}/modules ||
 
 The following constants can be used in lysee.config:
 
- 
-Constant
-Description
-Value
-${confile}
-Configuration file name
-Full file name of file lysee.config
-${kernel}
-Kernel file name 
-Full file name of kernel
-${kndir}
-Kernel directory 
-Full file name of kernel directory 
-${knpath}
-Kernel path 
-Full file name of kernel path
-${home}
-Home path of user 
-Full file name of current user home path
-${program}
-current program
-ParamStr(0)
-${tmpath}
-temporary path
-Set by lse_tmpath in lysee.config
-${search}
-module search path
-Set by lse_search in lysee.config
-${keywords}
-keyword list
- 
-${mimefile}
-MIME file
-${knpath} + mime.config
+|| Constant || Description || Value ||
+|| ${confile} || Configuration file name || Full file name of file lysee.config ||
+|| ${kernel} || Kernel file name || Full file name of kernel ||
+|| ${kndir} || Kernel directory  || Full file name of kernel directory ||
+|| ${knpath} || Kernel path  || Full file name of kernel path ||
+|| ${home} || Home path of user || Full file name of current user home path ||
+|| ${program} || current program || ParamStr(0) ||
+|| ${tmpath} || temporary path || Set by lse_tmpath in lysee.config ||
+|| ${search} || module search path || Set by lse_search in lysee.config ||
+|| ${keywords} || keyword list || main,int,string,for,while,... ||
+|| ${mimefile} || MIME file || ${knpath}/mime.config ||
