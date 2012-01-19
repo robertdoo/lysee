@@ -63,3 +63,110 @@ The following constants can be used in lysee.config:
 || ${search} || module search path || Set by lse_search in lysee.config ||
 || ${keywords} || keyword list || main,int,string,for,while,... ||
 || ${mimefile} || MIME file || ${knpath}/mime.config ||
+
+===2.4 Test===
+
+After type "lysee" and ENTER in a console, you will see something like below.
+
+{{{
+lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
+
+   :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
+
+>>>
+}}}
+
+If wrong, you'd have to use the absolute file name:
+
+{{{
+Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net
+
+   :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
+
+>>>
+}}}
+
+2.5 Hello World
+
+Let's print "Hello World":
+
+D:\www.lysee.net>lysee
+Lysee 0.1.6.387 - Copyright (C) 2003-2009 LiBUDI - www.lysee.net
+
+           :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
+
+>>> = "Hello World";
+Hello World 
+>>>
+
+Is it simple?
+
+Expl:	 	1. ">>>" prompts you enter lysee command or script.
+ 	 	2. "=" means print.
+ 	 	3. last ";" means end of input and lysee should execute the command or script.
+2.6 Execute Script File
+
+Save "= "hello world";" to file hw.ls, and run it with lysee:
+
+D:\www.lysee.net>echo ="hello world"; > hw.ls
+D:\www.lysee.net>lysee hw.ls
+Hello World 
+D:\www.lysee.net>
+
+[Expl]	 	1. Lysee script file's extension is ".ls".
+ 	 	2. Lysee interpreter quits after execute the file.
+ 	 	3. File consists of any lysee statements.
+2.7 Command Line Arguments
+
+Run " lysee --help" to print Lysee usages:
+
+D:\www.lysee.net>lysee --help
+Lysee 0.1.6.387 - interactive LYSEE script interpreter
+
+Usage: lysee [OPTION]... [FILE [ARGS]...]
+
+Option:
+  -v, --version           display the version of lysee and exit.
+  -h, --help              print this help and exit.
+  -s, --search=PATH       set module search path.
+  -S, --script=SCRIPT     execute script.
+  -w, --wait=SECONDS      wait for some seconds before going on.
+  -t, --times=COUNT       execute specified times.
+  -p, --pause             pause after execute script file.
+
+File:
+  .ls                     execute this file directly.
+  .lsp, .html, .htm, .*   execute as a LSP file (Lysee Script Page).
+
+Args:
+  *                       arguments for file execution.
+
+D:\www.lysee.net>
+
+Options:
+
+Option	Attachments	Description
+-v	--version	None	Print version informations and quit
+-h	--help	None	Print usages and quit
+-s	--search	Path list seperated with ';'	Add search path
+-w	--wait	Seconds	Wait for seconds before running
+-t	--times	Times	Repeat running times
+-p	--pause	None	Pause after execute a file
+
+File:
+
+Ext	File Type	Description
+.ls	Lysee program of module	Pure lysee statement
+.lsp	 LSP（Lysee Script Page）	Active HTML web page contains lysee statements
+*	 	Deal as .lsp file
+
+Args：
+
+Can be accessed with string list __args__.
+
+Command Lines:
+
+Command Line	Description
+lysee backup.ls "skip=.tmp,....,.ppu"	backup lysee project, some files will be ignored
+lysee -w 3600 -t 9999 spider.ls	run web spider once an hour
+lysee logout.lsp user=mack	user mack logout
