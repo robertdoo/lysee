@@ -1,17 +1,12 @@
-===1.Introduction===
+=1.Introduction=
 
 Lysee is a small, fast, reliable and cross platform script language. Its interpreter is a standalone program. Lysee kernel is used to be embedded into Pascal programs as a critical mission controler and script the host. Lysee script can be embedded into HTML to develop active WEB sites.
 
 "LSE" is abbreviation of "Lysee Script Engine".
 
-= Introduction =
+==FEATURES==
 
-Add your content here.
+    * Written in pure Pascal language.
+    * Support module and functional programings.
+    * Run in platforms where [http://www.freepascal.org/ Free Pascal], [http://www.lazarus.freepascal.org/ Lazarus] or Delphi exist.
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
