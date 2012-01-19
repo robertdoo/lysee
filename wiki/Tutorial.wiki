@@ -1,12 +1,38 @@
-=1.Introduction=
+==1.Introduction==
 
 Lysee is a small, fast, reliable and cross platform script language. Its interpreter is a standalone program. Lysee kernel is used to be embedded into Pascal programs as a critical mission controler and script the host. Lysee script can be embedded into HTML to develop active WEB sites.
 
 "LSE" is abbreviation of "Lysee Script Engine".
 
-==FEATURES==
+===1.1.Features===
 
-    * Written in pure Pascal language.
-    * Support module and functional programings.
-    * Run in platforms where [http://www.freepascal.org/ Free Pascal], [http://www.lazarus.freepascal.org/ Lazarus] or Delphi exist.
+  * Written in pure Pascal language.
+  * Support module and functional programings.
+  * Run in platforms where [http://www.freepascal.org/ Free Pascal], [http://www.lazarus.freepascal.org/ Lazarus] or Delphi exist.
 
+==2.Install and configure==
+
+===2.1.Installation===
+
+Download the latest installer or source code:
+
+|| Platform || How to || Default Position ||
+|| Windows || Run the installer || c:\lysee ||
+|| Linux/Unix || make; sudo make install || /usr/local/lib/lysee ||
+
+===2.2.File Structure===
+
+|| Name || Type || Linux/Unix || Windows || Description ||
+|| modules || folder || * || * || stores lysee modules ||
+|| manual || folder || * || * || manuals  ||
+|| temp || folder ||  N/A || * || temporary file directory ||
+|| LICENSE || file || * || * || license file  ||
+|| COPYING || file || * || * || Modified BSD ||
+|| lysee.dll || library || N/A || * || kernel ||
+|| lysee.so || library || * || N/A || kernel ||
+|| lysee.config || file || * || * || configuration file ||
+|| lysee.exe || program || N/A || * || interpreter ||
+|| lysee_fpc.exe || program || N/A || * || interpreter build with FPC ||
+|| lysee || program || * || N/A ||  interpreter ||
+|| lysee_pad.exe || program || N/A || * || syntax highlighter editor ||
+|| lysee_pad || program || * || N/A || syntax highlighter editor ||
