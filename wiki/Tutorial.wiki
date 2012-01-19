@@ -157,6 +157,6 @@ Can be accessed with string list @args.
 *Command Lines:*
 
 || *Command Line* || *Description* ||
-|| lysee backup.ls "skip=.tmp,....,.ppu" || backup lysee project, ignore some files  ||
+|| lysee backup.ls "skip=.tmp,....,.ppu" || backup lysee project ||
 || lysee -w 3600 -t 9999 spider.ls || run web spider once an hour ||
 || lysee logout.lsp user=mack || user mack logout||
