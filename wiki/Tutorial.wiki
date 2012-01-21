@@ -9,7 +9,6 @@ Lysee is a small, fast, reliable and cross platform script language. Its interpr
   * Written in pure Pascal language.
   * Support module and functional programings.
   * Run in platforms where [http://www.freepascal.org/ Free Pascal], [http://www.lazarus.freepascal.org/ Lazarus] or Delphi exist.
-
 ----
 ==2 Install and configure==
 
@@ -161,3 +160,16 @@ Can be accessed with string list @args.
 || lysee backup.ls "skip=.tmp,....,.ppu" || backup lysee project ||
 || lysee -w 3600 -t 9999 spider.ls || run web spider once an hour ||
 || lysee logout.lsp user=mack || user mack logout||
+----
+==3 Language Reference==
+
+  #Token
+  #Types
+  #Variables
+  #Constants
+  #Functions
+  #Classes
+  #Expressions
+  #Statements
+  #Program Files
+  #Directives
