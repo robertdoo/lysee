@@ -10,6 +10,7 @@ Lysee is a small, fast, reliable and cross platform script language. Its interpr
   * Support module and functional programings.
   * Run in platforms where [http://www.freepascal.org/ Free Pascal], [http://www.lazarus.freepascal.org/ Lazarus] or Delphi exist.
 
+----
 ==2 Install and configure==
 
 ===2.1 Installation===
