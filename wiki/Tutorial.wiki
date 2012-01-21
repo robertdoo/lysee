@@ -195,64 +195,52 @@ Identity consists of alpha, '_' and digit charactors, and the first charactor mu
 
 || *Status* || *Identity* || *Reason* ||
 || Yes || JAMES_is_007 || ||
-|| No || 007_is_JAMES || Fist is digit ||
+|| No || 007_is_JAMES || Starts with digit ||
 
 Identity is case sensitive, abc、Abc、ABc and ABC are different.
-3.1.4 Keywords
 
->>> = ${keywords};
-__clen__,and,as,bool,break,case,char,class,const,continue,def,do,else,elseif,end
-,endinc,except,false,finally,float,for,if,import,in,include,int,is,like,main,nil
-,not,object,or,recall,repeat,return,string,super,switch,sys,then,this,time,true,
-try,type,until,variant,void,while
+*3.1.4 Keywords*
+
+{{{
+>>> @keywords
+@catch,@each,@filter,@folder,@loop,@map,@reduce,@throw,@yield,and,as,break,continue,def,do,downto,elif,else,end,float,for,if,in,int,is,like,main,object,or,repeat,return,set,string,sys,then,to,until,variant,void,while
 >>>
-3.1.5 Number
+}}}
 
-Number has 3 types, integer, float and money:
+*3.1.5 Number*
 
-Type 	Base 10 	Base 16 	Base 8 	Base 2 	Science
-int
-	2008 	0x07D8 	0o3730 	0b11111011000 	-
-double 	2008.4 	- 	- 	- 	2.0084e3
-money
-	100.0712 	- 	- 	- 	-
+Number has 2 types, int and float:
 
-bool is special integer type, it has only two values: true(1), false(0).
-3.1.6 Char and string
+|| *Type* || *Base 10* || *Base 16* ||
+|| int || 2008 || 0x07D8 ||
+|| float || 2008.4 || N/A ||
+
+*3.1.6 String*
 
 Lysee char is single byte ANSI char(0..255): 'a'..'z', '0'..'9', ...
 
 Escaped charactors are listed below:
 
-Char 	Base 16 Escape 	ASCII 	Description
-\0
-	\x00 	0 	end of string
-\a 	\x07 	7 	BELL
-\b 	\x08 	8 	BACKSPACE
-\e 	\x1B 	27 	ESCAPE
-\f 	\x0C 	12 	FORMFEED
-\n 	\x0A 	10 	NEWLINE
-\r 	\x0D 	13 	CARRIGE RETURN
-\t 	\x09 	9 	TAB
-\v 	\x0B 	11 	VERTICAL TAB
-\\ 	\x5C 	92 	转义符
-\' 	\x27 	39 	单引号
-\" 	\x22 	34 	双引号
+|| *Char* || *Base 16 Escape* || *ASCII* || *Description * ||
+|| \0 || \x00 || 0 || end of string ||
+|| \a || \x07 || 7 | BELL ||
+|| \b || \x08 || 8 || BACKSPACE ||
+|| \e || \x1B || 27 || ESCAPE ||
+|| \f || \x0C || 12 || FORMFEED ||
+|| \n || \x0A || 10 || NEWLINE ||
+|| \r || \x0D || 13 || CARRIGE RETURN ||
+|| \t || \x09 || 9 || TAB ||
+|| \v || \x0B || 11 || 	VERTICAL TAB ||
+|| \\ || \x5C || 92 || '\' ||
+|| \' || \x27 || 39 || single quote mark ||
+|| \" || \x22 || 34 || double quote mark ||
 
-string is sequence of char, ended with '\0'. string has 3 formats:
+string is sequence of char, ended with '\0'. string has 2 formats:
 
-Format 	Begin Tag 	End Tag 	Example 	Escape 	Description
-1
-	" 	" 	"kite\'s mother is
-            jessy" 	Yes 	Escape when encounter '\'
-2
-	R" 	" 	R"kite's mother is
-            jessy" 	No 	Has no escape char
-3 	""" 	""" 	"""kite's mother is
-            jessy""" 	No 	Has no escape char
+|| *Format* || *Begin Tag* || *End Tag* || *Example* || *Escape* || *Description* ||
+|| 1 || " || " || "c:\\lysee\\lysee.exe" || Yes || Escaped with '\' ||
+|| 2 || ' || ' || 'c:\lysee\lysee.exe' || No || No escape ||
 
 Lysee string can span over two or more lines.
 
->>> = """How many charactors in this string?"""""""";
-How many charactors in this string?"""""
->>>
+----
