@@ -446,73 +446,42 @@ Operators in Lysee has different priority levels. They are list below from hight
 || 5 || ==  !=  <  <=  >  >=  in like ||
 || 6 || and  or ||
 
-3.7.3 Concatenate Strings
+*3.6.2 Concatenate strings*
 
-Use operator + to concatenate strings, at this time left or right value of + must be string type:
+Use operator + to concatenate strings:
 
->>> = "hello" + "world";
+{{{
+>>> "hello" + "world"
 helloworld
->>> = "TIME: " + now();
-TIME: Fri, 18 Apr 2008 18:57:52 GMT
+>>> "TIME: " + @now
+TIME: 20120121121814046
 >>>
-3.7.4 Times Concatenate
+}}}
+
+*3.6.3 Times Concatenate*
 
 Use operator * to cocatenate string by specified times. In this case left value must be a string and right value must be a integer, or else nil is returned:
 
->>> = "Aa" * 4;
+{{{
+>>> "Aa" * 4;
 AaAaAaAa
 >>> = "Cc" * 1.42;
 
 >>>
-3.7.5 Shift Left Insert
+}}}
 
-When calculate OBJECT << VALUE, Lysee interpreter will try to insert/add VALUE into/to OBJECT, and expression result is the object:
+*3.6.4 Shift Left Insert*
 
->>> cout << "I love " << "coding" << "!";
-I love coding!
->>> = varlist() << 1 << 2 << "hello" << 4;
-[1,2,hello,4]
->>> = strlist() << "hello" << "world";
-hello
-world
+When calculate OBJECT << VALUE, Lysee will try to insert/add VALUE into/to OBJECT, and expression result is the object:
+
+{{{
+>>> set a = {,}
+{,}
+>>> a << 10
+{10}
+>>> a << 100
+{10 100}
 >>>
+}}}
 
-Now, the OBJECT should be stream、strlist or varlist.
-3.7.6 Define varlist Object
-
-Symbol [ and ] are used to define varlist object, [] equals with varlist():
-
->>> a = [1, 2, 3];
->>> = a;
-[1,2,3]
->>> 	>>> a = [] << 1 << 2 << 3;
->>> = a;
-[1,2,3]
->>> 	>>> a = varlist() << 1 << 2 << 3;
->>> = a;
-[1,2,3]
->>>
-3.7.7 Define hashed Object
-
-Symbol { and } are used to define hashed object, {} equals with hashed():
-
->>> a = {"name": "libudi",
-  >      "sex" : "male",
-  >      "age" : 40};
->>> for s in a.keys do
-  >   = s, a.read(s), eol;
-  > end;
-age 40
-sex male
-name libudi
->>> 	>>> a = hashed();
->>> a.name = "libudi";
->>> a.sex = "male";
->>> a.age = 40;
->>> for s in a.keys do
-  >   = s, a.read(s), eol;
-  > end;
-age 40
-sex male
-name libudi
->>>
+The OBJECT should be stream,varlist or user defined containers.
