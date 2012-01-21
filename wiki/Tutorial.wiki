@@ -261,7 +261,7 @@ There are 3 buildin simple types in kernel:
 
 || *Type* || *Description * ||
 || void || has only one value: @nil ||
-|| variant || cantains any other types ||
+|| variant || cantains any value of any type ||
 || type || type of type ||
 || module || kernel module or other loaded modules ||
 || function || function ||
@@ -276,11 +276,17 @@ There are 3 buildin simple types in kernel:
 Variant can be any data type, depends on the time you check:
 
 {{{
->>> set v = "string" // a string
->>> set v = 18 // change to int
->>> set v = {,} // change to varlist
->>> v.add("hello world") // add a line to varlist
->>> v // print strlist content
-{"hello world"}
+>>> set v = "string"
+string
+>>> set v = 18
+18
+>>> set v = {,} # empty varlist
+{,}
+>>> add(v "hello world") # add a line
+0
+>>> add(v 10)
+1
+>>> print(v)
+{"hello world",10}
 >>>
 }}}
