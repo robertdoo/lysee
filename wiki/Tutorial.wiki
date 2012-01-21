@@ -160,6 +160,104 @@ Can be accessed with string list @args.
 || lysee backup.ls "skip=.tmp,....,.ppu" || backup lysee project ||
 || lysee -w 3600 -t 9999 spider.ls || run web spider once an hour ||
 || lysee logout.lsp user=mack || user mack logout||
-
 ----
 ==3 Language Reference==
+
+===3.1 Tokens===
+
+These are lysee keywords, identities, numbers and strings here.
+
+*3.1.1 Charactors*
+
+Lysee script is is made of these charactors:
+
+|| *Type* || *Range* || *Usage* ||
+|| letter || a..z A..Z _ || identities, keywords ||
+|| digit || 0..9 || numbers, identities ||
+|| char || + - * / \ = < > [ ] ( ) : ^ @ { } $ # ... || operators, delimiters, comments ||
+|| char pair || // /* */ == != >= <= || comments, operators ||
+|| space || SPACE, TAB, \n, \r, ... || delimiters ||
+
+3.1.2 Comments
+
+Line comments and block comments:
+
+Type 	Begin Tag 	End Tag 	Samples
+Line Comment 1
+	# 	#13, #10, EOF 	# This is a shell comment
+Line Comment 2
+	// 	#13, #10, EOF 	// This a normal line comment
+Block Comment
+	/* 	*/ 	/* This is a block comment */
+3.1.3 Identity
+
+Identity consists of alpha, '_' and digit charactors, and the first charactor must not be digit.:
+
+* 	Identity 	Reason
+Yes
+	JAMES_is_007 	 
+Yes
+	_007 	 
+No
+	007_is_JAMES 	Fist is digit
+No 	JAMES is 007 	Has space char
+
+Identity is case sensitive, abc、Abc、ABc and ABC are different.
+3.1.4 Keywords
+
+>>> = ${keywords};
+__clen__,and,as,bool,break,case,char,class,const,continue,def,do,else,elseif,end
+,endinc,except,false,finally,float,for,if,import,in,include,int,is,like,main,nil
+,not,object,or,recall,repeat,return,string,super,switch,sys,then,this,time,true,
+try,type,until,variant,void,while
+>>>
+3.1.5 Number
+
+Number has 3 types, integer, float and money:
+
+Type 	Base 10 	Base 16 	Base 8 	Base 2 	Science
+int
+	2008 	0x07D8 	0o3730 	0b11111011000 	-
+double 	2008.4 	- 	- 	- 	2.0084e3
+money
+	100.0712 	- 	- 	- 	-
+
+bool is special integer type, it has only two values: true(1), false(0).
+3.1.6 Char and string
+
+Lysee char is single byte ANSI char(0..255): 'a'..'z', '0'..'9', ...
+
+Escaped charactors are listed below:
+
+Char 	Base 16 Escape 	ASCII 	Description
+\0
+	\x00 	0 	end of string
+\a 	\x07 	7 	BELL
+\b 	\x08 	8 	BACKSPACE
+\e 	\x1B 	27 	ESCAPE
+\f 	\x0C 	12 	FORMFEED
+\n 	\x0A 	10 	NEWLINE
+\r 	\x0D 	13 	CARRIGE RETURN
+\t 	\x09 	9 	TAB
+\v 	\x0B 	11 	VERTICAL TAB
+\\ 	\x5C 	92 	转义符
+\' 	\x27 	39 	单引号
+\" 	\x22 	34 	双引号
+
+string is sequence of char, ended with '\0'. string has 3 formats:
+
+Format 	Begin Tag 	End Tag 	Example 	Escape 	Description
+1
+	" 	" 	"kite\'s mother is
+            jessy" 	Yes 	Escape when encounter '\'
+2
+	R" 	" 	R"kite's mother is
+            jessy" 	No 	Has no escape char
+3 	""" 	""" 	"""kite's mother is
+            jessy""" 	No 	Has no escape char
+
+Lysee string can span over two or more lines.
+
+>>> = """How many charactors in this string?"""""""";
+How many charactors in this string?"""""
+>>>
