@@ -203,7 +203,10 @@ Identity is case sensitive, abc、Abc、ABc and ABC are different.
 
 {{{
 >>> @keywords
-@catch,@each,@filter,@folder,@loop,@map,@reduce,@throw,@yield,and,as,break,continue,def,do,downto,elif,else,end,float,for,if,in,int,is,like,main,object,or,repeat,return,set,string,sys,then,to,until,variant,void,while
+@catch,@each,@filter,@folder,@loop,@map,@reduce,@throw,@yield,
+and,as,break,continue,def,do,downto,elif,else,end,float,for,if,
+in,int,is,like,main,object,or,repeat,return,set,string,sys,then,
+to,until,variant,void,while
 >>>
 }}}
 
@@ -243,4 +246,41 @@ string is sequence of char, ended with '\0'. string has 2 formats:
 
 Lysee string can span over two or more lines.
 
-----
+===3.2 Types===
+
+*3.2.1 Simple Types*
+
+There are 3 buildin simple types in kernel:
+
+|| *Type* || *Description * ||
+|| string || '\0' ended ANSI string ||
+|| int || integer(64bits) ||
+|| float || double(64bits) ||
+
+*3.2.2 Other types*
+
+|| *Type* || *Description * ||
+|| void || has only one value: @nil ||
+|| variant || cantains any other types ||
+|| type || type of type ||
+|| module || kernel module or other loaded modules ||
+|| function || function ||
+|| stream || file stream, memory stream, socket stream, ... ||
+|| varlist || variant list ||
+|| hashed || map, dictionary ||
+|| vargen || variant generator ||
+|| time || time ||
+
+*3.2.3 Variant*
+
+Variant can be any data type, depends on the time you check:
+
+{{{
+>>> set v = "string" // a string
+>>> set v = 18 // change to int
+>>> set v = {,} // change to varlist
+>>> v.add("hello world") // add a line to varlist
+>>> v // print strlist content
+{"hello world"}
+>>>
+}}}
