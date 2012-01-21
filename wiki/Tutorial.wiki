@@ -311,10 +311,13 @@ Variable is a named value in stack or memory.
 
 Define local variable by assign value to it. Default variable type is variant if not specified.
 {{{
->>> def get_min_value(v1 v2)
-  >   v1 > v2 ? v2 : v1
-  > end
->>> get_min_value(10 4);
+>>> set v1 = 10
+10
+>>> set v2 = 4
+4
+>>> set min_value = v1 > v2 ? v2 : v1
+4
+>>> min_value
 4
 >>>
 }}}
