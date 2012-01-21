@@ -367,7 +367,7 @@ Contant values of builtin simple types:
 @maxint  :  max integer value
 @minint  :  min integer value
 @module  :  current module
-@pd      :  path delimiter char)
+@pd      :  path delimiter
 @inmain  :  check in main function
 @errno   :  error number
 @ename   :  error name
@@ -377,5 +377,45 @@ Contant values of builtin simple types:
 @efile   :  error file
 @emodule :  error module
 @etext   :  formated error text
+>>>
+}}}
+
+----
+===3.5 Functions===
+
+Lysee function includes normal and lambda functions.
+
+*3.5.1 Normal function*
+
+*Syntax:* *def* FuncName(ParamList) .... *end*
+
+{{{
+>>> def repeatStr(S times)
+  >   S * times
+  > end
+>>> repeatStr("Aa" 4)
+AaAaAaAa
+>>>
+}}}
+
+*3.5.2 Lambda functions*
+
+Lambda function is used as a simple value in expression.
+
+*Syntax 1:* *def*(ParamList) .... *end*
+
+{{{
+>>> @map 10 def(_) _ + 1 end
+{1 2 3 4 5 6 7 8 9 10}
+>>>
+}}}
+
+*Syntax 2:* !expression
+
+_*!expression*_ is the equal of _*def(_) expression end*_
+
+{{{
+>>> @map 10 !_ + 1
+{1 2 3 4 5 6 7 8 9 10}
 >>>
 }}}
