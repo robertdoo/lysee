@@ -325,3 +325,57 @@ Define local variable by assign value to it. Default variable type is variant if
 *3.3.3 Formal Parameters*
 
 Parameters of a function.
+
+----
+===3.4 Constants===
+
+*3.4.1 Simple Constants*
+
+Contant values of builtin simple types:
+
+|| *Type* || *Sample values* ||
+|| string || "I like coding" ||
+|| int ||  -843, 0, 1, 2008 ||
+|| float || 3.1415926, 0.618 ||
+
+*3.4.2 @Constants*
+{{{
+>>> @?
+@...     :  current context
+@?       :  @XXXX list
+@nil     :  nil value
+@eol     :  line break
+@confile :  config file
+@kernel  :  kernel file
+@knpath  :  kernel file path
+@kndir   :  kernel file directory
+@home    :  home path of current user
+@program :  program file
+@search  :  search path
+@tmpath  :  temp path
+@keywords:  keyword list
+@now     :  current time
+@args    :  argument list
+@envs    :  environment value list
+@dir     :  current directory
+@modules :  loaded modules
+@libs    :  system level modules
+@file    :  current file
+@func    :  current function
+@line    :  current line number
+@main    :  main function
+@maxint  :  max integer value
+@minint  :  min integer value
+@module  :  current module
+@pd      :  path delimiter char)
+@inmain  :  check in main function
+@errno   :  error number
+@ename   :  error name
+@emsg    :  error message
+@erow    :  error row
+@ecol    :  error col
+@efile   :  error file
+@emodule :  error module
+@etext   :  formated error text
+>>>
+}}}
