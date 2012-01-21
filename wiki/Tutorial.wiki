@@ -202,7 +202,7 @@ Identity is case sensitive, abc、Abc、ABc and ABC are different.
 *3.1.4 Keywords*
 
 {{{
->>> @keywords
+>>> print(@keywords)
 @catch,@each,@filter,@folder,@loop,@map,@reduce,@throw,@yield,
 and,as,break,continue,def,do,downto,elif,else,end,float,for,if,
 in,int,is,like,main,object,or,repeat,return,set,string,sys,then,
