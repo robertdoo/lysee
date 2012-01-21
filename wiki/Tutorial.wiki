@@ -4,8 +4,7 @@ Lysee is a small, fast, reliable and cross platform script language. Its interpr
 
 "LSE" is abbreviation of "Lysee Script Engine".
 
-----
-===1.1 Features===
+*Features*
 
   * Written in pure Pascal language.
   * Support module and functional programings.
