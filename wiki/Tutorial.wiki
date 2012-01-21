@@ -299,3 +299,26 @@ string
 {"hello world",10}
 >>>
 }}}
+
+----
+===3.3 Variables===
+
+*3.3.1 What is Variable?*
+
+Variable is a named value in stack or memory.
+
+*3.3.2 Local Variables*
+
+Define local variable by assign value to it. Default variable type is variant if not specified.
+{{{
+>>> def get_min_value(v1 v2)
+  >   v1 > v2 ? v2 : v1
+  > end
+>>> get_min_value(10 4);
+4
+>>>
+}}}
+
+*3.3.3 Formal Parameters*
+
+Parameters of a function.
