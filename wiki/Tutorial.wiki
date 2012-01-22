@@ -858,3 +858,57 @@ age 40
 {{"v1":2 "v2":1 "v3":-5} max3(v1 v2 v3) 2}
 >>>
 }}}
+
+----
+===3.7 Statements===
+
+Statement is the smallest standalone element of lysee script. Lysee program is formed by a sequence of one or more statements. Usually, Lysee statement ends with ';'.
+
+*3.7.1 Assign value*
+
+{{{
+>>> set hs = {:}
+{:}
+>>> set hs.time = @now
+20120122165259942
+>>> set hs["name"] = nameof(hashed)
+hashed
+>>> hs
+{"time":20120122165259942 "name":"hashed"}
+>>> set list = {0 1 2 3}
+{0 1 2 3}
+>>> set list[1] = "lysee"
+lysee
+>>> list
+{0 "lysee" 2 3}
+>>>
+}}}
+
+*3.7.2 Expression*
+
+{{{
+>>> @now.encodeGMT()
+Sun, 22 Jan 2012 16:56:54 GMT
+>>> 10
+10
+>>>
+}}}
+
+*3.7.3 if clause*
+
+*Syntax:* if CONDITION then ... [elif CONDITION then ... else ...] end
+
+*3.7.4 while clause*
+
+*Syntax:* while CONDITION do ... end
+
+*3.7.5 repeat until*
+
+*Syntax:* repeat ... until CONDITION
+
+*3.7.6 for clause*
+
+*Syntax:* 
+  * for VARB in VARGEN [if CONDITION] do ... end
+  * for VARB = LOW_VALUE to HIGH_VALUE [if CONDITION] do ... end
+  * for VARB = HIGH_VALUE downto LOW_VALUE [if CONDITION] do ... end
