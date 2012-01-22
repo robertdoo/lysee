@@ -460,7 +460,7 @@ TIME: 20120121121814046
 
 *3.6.3 Times Concatenate*
 
-Use operator * to cocatenate string by specified times. In this case left value must be a string and right value must be a integer, or else nil is returned:
+Use operator `*` to cocatenate string by specified times. In this case left value must be a string and right value must be a integer, or else nil is returned:
 
 {{{
 >>> "Aa" * 4;
@@ -485,3 +485,52 @@ When calculate OBJECT << VALUE, Lysee will try to insert/add VALUE into/to OBJEC
 }}}
 
 The OBJECT should be stream,varlist or user defined containers.
+
+*3.6.5 varlist object*
+
+Syntax: {V1 V2 ...} or {V1, V2, ...}
+
+{{{
+>>> set a = {1 2 3}
+{1 2 3}
+>>> set a = {} << 1 << 2 << 3;
+>>>
+{1 2 3}
+>>> a = varlist() << 1 << 2 << 3;
+{1 2 3}
+>>> a;
+{1 2 3}
+>>>
+}}}
+
+{} or {,}  means empty varlist object.
+
+*3.6.6 hashed object*
+
+Syntax: {Key1:V1 Key2:V2 ...} or {Key1:V1, Key2:V2, ...}
+
+{{{
+>>> set a = {"name": "libudi"
+  >          "sex" : "male"
+  >          "age" : 40}
+{"name":"libudi" "sex":"male" "age":40}
+>>> for s in props(a) do
+  >   println(s + " " + a[s])
+  > end
+name libudi
+sex male
+age 40
+>>> set a = {:}
+>>> a.name = "libudi";
+>>> a.sex = "male";
+>>> a.age = 40;
+>>> for s in props(a) do
+  >   println(s + " " + a[s])
+  > end
+name libudi
+sex male
+age 40
+>>>
+}}}
+
+{:} means empty hashed object.
