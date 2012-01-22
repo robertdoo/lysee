@@ -1,3 +1,4 @@
+#labels Featured
 ==1 Introduction==
 
 Lysee is a small, fast, reliable and cross platform script language. Its interpreter is a standalone program. Lysee kernel is used to be embedded into Pascal programs as a critical mission controler and script the host. Lysee script can be embedded into HTML to develop active WEB sites.
@@ -898,13 +899,59 @@ Sun, 22 Jan 2012 16:56:54 GMT
 
 *Syntax:* if CONDITION then ... [elif CONDITION then ... else ...] end
 
+{{{
+>>> for x in 10 do
+  >     if x % 3 == 0 then
+  >         println(x) 
+  >     end
+  > end
+0
+3
+6
+9
+>>>
+}}}
+
 *3.7.4 while clause*
 
 *Syntax:* while CONDITION do ... end
 
+{{{
+>>> set g = 10 as vargen
+>>> while g.send("x") do
+  >    if x == 6 then break else println(x) end
+  > end
+0
+1
+2
+3
+4
+5
+>>>
+}}}
+
 *3.7.5 repeat until*
 
 *Syntax:* repeat ... until CONDITION
+
+{{{
+>>> set n = 0
+>>> repeat
+  >    set n += random(10)
+  >    println(n)
+  > until n > 20
+4
+4
+8
+8
+12
+12
+14
+15
+16
+22
+>>>
+}}}
 
 *3.7.6 for clause*
 
@@ -912,3 +959,17 @@ Sun, 22 Jan 2012 16:56:54 GMT
   * for VARB in VARGEN [if CONDITION] do ... end
   * for VARB = LOW_VALUE to HIGH_VALUE [if CONDITION] do ... end
   * for VARB = HIGH_VALUE downto LOW_VALUE [if CONDITION] do ... end
+
+{{{
+>>> for x in 10 do print(x) end
+0123456789
+>>> for x in 0..9 do print(x) end
+0123456789
+>>> for x = 0 to 9 if x > 4 do print(x) end
+56789
+>>> for x = 9 downto 0 if x < 7 do print(x) end
+6543210
+>>>
+}}}
+
+*break* and *continue*  can be used in while, repeat and for clauses.
