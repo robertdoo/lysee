@@ -772,7 +772,7 @@ age 40
 || @throw ERROR_MESSAGE ERROR_ID || throw error ||
 || @throw ERROR_MESSAGE || throw runtime error ||
 || @throw || throw again last error ||
-|| @catch FUNC PRM1 PRM2 ... || returns true if catch a exception ||
+|| @catch FUNC PRM1 PRM2 ... || returns true if catch a exception in FUNC ||
 
 {{{
 >>> def check(ok msg)
@@ -785,5 +785,23 @@ age 40
 1
 >>> if @catch check 0 "something wrong" then @throw end
 [mainError]: (module=main file=C:\lysee\lysee.exe row=2 col=11 errno=1300) check() - something wrong
+>>>
+}}}
+
+
+*3.6.13 @loop*
+
+|| *Syntax* || *Description* || 
+|| @loop PRM1 PRM2 ... || set parametres and jump to head of current function ||
+
+{{{
+>>> def sumi(n r)
+  >    if n < 100 then
+  >        set r += n
+  >        @loop n + 1  # increase n and jump to head of sumi
+  >    end
+  > end
+>>> sumi(0 100000)
+104950
 >>>
 }}}
