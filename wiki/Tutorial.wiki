@@ -832,3 +832,38 @@ age 40
 {"sum_range":100 "i":100 "n":4950}
 >>>
 }}}
+
+
+*3.6.15 Apply list*
+
+|| *Syntax* || *Description* || 
+|| {FUNC PRM1 PRM2 ...}() || execute FUNC ||
+|| {CONTEXT FUNC PRM1 PRM2 ...}() || execute FUNC with CONTEXT ||
+
+{{{
+>>> def max3(v1 v2 v3)
+  >     max(max(v1 v2) v3)
+  > end
+>>> max3(2 10 5)
+10
+>>> set list = {max3 2}
+{max3(v1 v2 v3) 2}
+>>> list(10 5)  # apply 1
+10
+>>> list(1 -5)  # apply 2
+2
+>>> set hash = {:}
+{:}
+>>> insert(list 0 hash)
+1
+>>> list
+{{:} max3(v1 v2 v3) 2}
+>>> list(1 -5)  # apply 3
+2
+>>> hash
+{"v1":2 "v2":1 "v3":-5}
+>>> @
+{"list":{{"v1":2 "v2":1 "v3":-5} max3(v1 v2 v3) 2} "hash":{"v1":2 v2":1 "v3":-5
+}}
+>>>
+}}}
