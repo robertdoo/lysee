@@ -304,7 +304,7 @@ string
 
 vargen means variant generator, used to enum sub items of varlist, string, stream or ranges:
 
-*Vargen of varlist:*
+vargen for varlist:
 
 {{{
 >>> set g = {0 1 2 3 4} as vargen
@@ -315,7 +315,7 @@ vargen means variant generator, used to enum sub items of varlist, string, strea
 >>>
 }}}
 
-*Vargen of string:"
+vargen for string:
 
 {{{
 >>> set g = "hello" as vargen
@@ -326,7 +326,7 @@ HELLO
 >>>
 }}}
 
-*Vargen of integer:* 
+vargen for integer: 
 
 {{{
 >>>set g = 5 as vargen
@@ -342,6 +342,22 @@ HELLO
 >>> for x = 4 downto 0 do print(x) end
 43210
 >>> 
+}}}
+
+vargen for stream:
+
+{{{
+>>> set m = memory()
+>>> m.write("hello")
+5
+>>> m.seek(0)
+>>> for x in m do println('\x' + hex(x) + ": " + chr(x)) end
+\x68: h
+\x65: e
+\x6C: l
+\x6C: l
+\x6F: o
+>>>
 }}}
 
 ----
