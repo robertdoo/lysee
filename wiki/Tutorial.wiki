@@ -956,9 +956,9 @@ Sun, 22 Jan 2012 16:56:54 GMT
 *3.7.6 for clause*
 
 *Syntax:* 
-  * for VARB in VARGEN [if CONDITION] do ... end
-  * for VARB = LOW_VALUE to HIGH_VALUE [if CONDITION] do ... end
-  * for VARB = HIGH_VALUE downto LOW_VALUE [if CONDITION] do ... end
+  * for VARB in VARGEN `[if CONDITION]` do ... end
+  * for VARB = LOW_VALUE to HIGH_VALUE `[if CONDITION]` do ... end
+  * for VARB = HIGH_VALUE downto LOW_VALUE `[if CONDITION]` do ... end
 
 {{{
 >>> for x in 10 do print(x) end
