@@ -26,20 +26,14 @@ Download the latest installer or source code:
 ----
 ===2.2 File Structure===
 
-|| *Name* || *Type* || *Linux/Unix* || *Windows* || *Description* ||
-|| modules || folder || * || * || stores lysee modules ||
-|| manual || folder || * || * || manuals  ||
-|| temp || folder ||  N/A || * || temporary file directory ||
-|| LICENSE || file || * || * || license file  ||
-|| COPYING || file || * || * || Modified BSD ||
-|| lysee.dll || library || N/A || * || kernel ||
-|| lysee.so || library || * || N/A || kernel ||
-|| lysee.config || file || * || * || configuration file ||
-|| lysee.exe || program || N/A || * || interpreter ||
-|| lysee_fpc.exe || program || N/A || * || interpreter build with FPC ||
-|| lysee || program || * || N/A ||  interpreter ||
-|| lysee_pad.exe || program || N/A || * || syntax highlighter editor ||
-|| lysee_pad || program || * || N/A || syntax highlighter editor ||
+|| *Name* || *Description* ||
+|| modules || folder that stores lysee modules ||
+|| LICENSE || license file  ||
+|| COPYING || copyright file ||
+|| lysee.so, lysee.dll || lysee kernel ||
+|| lysee lysee.exe lysee_fpc.exe || interpreter ||
+|| lysee_pad lysee_pad.exe || syntax highlighter editor ||
+|| lysee.config || configuration file ||
 
 ----
 ===2.3 Configuration===
