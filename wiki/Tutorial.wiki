@@ -300,6 +300,50 @@ string
 >>>
 }}}
 
+*3.2.4 Vargen*
+
+vargen means variant generator, used to enum sub items of varlist, string, stream or ranges:
+
+*Vargen of varlist:*
+
+{{{
+>>> set g = {0 1 2 3 4} as vargen
+>>> for x in g do print(x) end
+01234
+>>> for x in {0 1 2 3 4} do print(x) end
+01234
+>>>
+}}}
+
+*Vargen of string:"
+
+{{{
+>>> set g = "hello" as vargen
+>>> for x in g do print(x.upper()) end
+HELLO
+>>> for x in "hello" do print(x.upper()) end
+HELLO
+>>>
+}}}
+
+*Vargen of integer:* 
+
+{{{
+>>>set g = 5 as vargen
+>>> for x in g do print(x) end
+01234
+>>> for x in 5 do print(x) end
+01234
+>>> for x in 0..4 do print(x) end
+01234
+>>> 
+>>> for x = 0 to 4 do print(x) end
+01234
+>>> for x = 4 downto 0 do print(x) end
+43210
+>>> 
+}}}
+
 ----
 ===3.3 Variables===
 
@@ -521,9 +565,9 @@ name libudi
 sex male
 age 40
 >>> set a = {:}
->>> a.name = "libudi";
->>> a.sex = "male";
->>> a.age = 40;
+>>> a.name = "libudi"
+>>> a.sex = "male"
+>>> a.age = 40
 >>> for s in props(a) do
   >   println(s + " " + a[s])
   > end
