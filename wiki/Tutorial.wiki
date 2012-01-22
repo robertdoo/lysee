@@ -805,3 +805,30 @@ age 40
 104950
 >>>
 }}}
+
+*3.6.14 @yield*
+
+|| *Syntax* || *Description* || 
+|| @yield FUNC PRM1 PRM2 ... || execute FUNC with current context ||
+
+{{{
+>>> set sum_range = 100
+100
+>>> @ # show current context
+{"sum_range":100}
+>>> def sum(i)
+  >   set n = 0
+  >   while i < sum_range do
+  >     set n += i
+  >     set i += 1
+  >   end
+  >   n
+  > end
+>>> sum(0)
+[RuntimeError]: (module=main file=C:\lysee\lysee.exe row=3 col=13 errno=1300) oject sum_range not found
+>>> @yield sum 0
+4950
+>>> @ # show current context after @yield
+{"sum_range":100 "i":100 "n":4950}
+>>>
+}}}
