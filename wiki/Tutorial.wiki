@@ -447,7 +447,7 @@ Lysee function includes normal and lambda functions.
 
 *3.5.1 Normal function*
 
-*Syntax:* *def* FuncName(ParamList) .... *end*
+*Syntax:* *def* FuncName`(ParamList)` .... *end*
 
 {{{
 >>> def repeatStr(S times)
@@ -462,7 +462,7 @@ AaAaAaAa
 
 Lambda function is used as a simple value in expression.
 
-*Syntax 1:* *def*(ParamList) .... *end*
+*Syntax 1:* *def*`(ParamList)` .... *end*
 
 {{{
 >>> @map 10 def(v) v + 1 end
@@ -472,7 +472,7 @@ Lambda function is used as a simple value in expression.
 
 *Syntax 2:* !expression
 
-Where, _*!expression*_ is the equal of _*def(`_`) expression end*_
+Where, _*!expression*_ is the equal of _*def`(_)` expression end*_
 
 {{{
 >>> @map 10 !_ + 1
@@ -486,11 +486,11 @@ Where, _*!expression*_ is the equal of _*def(`_`) expression end*_
 Expression is any legal combination of symbols that represents a value:
 
 || Usages || Example ||
-|| Assign Value || set magic = sys::random() % 100 ||
+|| Assign Value || set magic = sys::random`()` % 100 ||
 || Condition || if handle == 0 then @throw "Failed open file" end ||
 || Constants || "OK" 1 3.14 ||
 || Enviroment || ${PATH} ||
-|| Call Function || sys::genid() ||
+|| Call Function || sys::genid`()` ||
 
 Expression in Lysee is calculated from left to right.
 
