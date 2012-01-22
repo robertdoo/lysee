@@ -27,10 +27,10 @@ Download the latest installer or source code:
 ===2.2 File Structure===
 
 || *Name* || *Description* ||
-|| modules || folder that stores lysee modules ||
+|| modules || stores lysee modules ||
 || LICENSE || license file  ||
 || COPYING || copyright file ||
-|| lysee.so, lysee.dll || lysee kernel ||
+|| lysee.so lysee.dll || lysee kernel ||
 || lysee lysee.exe lysee_fpc.exe || interpreter ||
 || lysee_pad lysee_pad.exe || syntax highlighter editor ||
 || lysee.config || configuration file ||
