@@ -548,7 +548,7 @@ The OBJECT should be stream,varlist or user defined containers.
 
 *3.6.5 varlist object*
 
-Syntax: {V1 V2 ...} or {V1, V2, ...}
+*Syntax:* {V1 V2 ...} or {V1, V2, ...}
 
 {{{
 >>> set a = {1 2 3}
@@ -567,7 +567,7 @@ Syntax: {V1 V2 ...} or {V1, V2, ...}
 
 *3.6.6 hashed object*
 
-Syntax: {Key1:V1 Key2:V2 ...} or {Key1:V1, Key2:V2, ...}
+*Syntax:* {Key1:V1 Key2:V2 ...} or {Key1:V1, Key2:V2, ...}
 
 {{{
 >>> set a = {"name": "libudi"
@@ -594,3 +594,196 @@ age 40
 }}}
 
 {:} means empty hashed object.
+
+*3.6.7 @map*
+
+*Syntax:* @map VARGEN FUNC
+
+{{{
+>>> @map 10 !_ + 1
+{1 2 3 4 5 6 7 8 9 10}
+>>> @map 10 !_ + 100
+{100 101 102 103 104 105 106 107 108 109}
+>>> @map "hello" !_
+{"h" "e" "l" "l" "o"}
+>>>
+}}}
+
+@map works as the following function:
+
+{{{
+>>> def map(VARGEN FUNC)
+  >     set list = {}
+  >     for x in VARGEN do
+  >         list << FUNC(x)
+  >     end
+  >     list
+  > end
+>>> map(10 !_ + 1)
+{1 2 3 4 5 6 7 8 9 10}
+>>>
+}}}
+
+*3.6.8 @reduce*
+
+*Syntax:* @reduce VARGEN INIT_VALUE FUNC
+
+{{{
+>>> @reduce 10 1000 def(x v)
+  >     println(x + " " + v)
+  >     x + v
+  > end
+0 1000
+1 1000
+2 1001
+3 1003
+4 1006
+5 1010
+6 1015
+7 1021
+8 1028
+9 1036
+1045
+>>>
+}}}
+
+@reduce works as the following function:
+
+{{{
+>>> def reduce(VARGEN INIT_VALUE FUNC)
+  >     for x in VARGEN do
+  >         set INIT_VALUE = FUNC(x INIT_VALUE)
+  >     end
+  >     INIT_VALUE
+  > end
+
+>>> reduce(10 1000 +)
+1045
+>>>
+}}}
+
+*3.6.9 @folder*
+
+*Syntax:* @folder VARGEN FUNC
+
+{{{
+>>> @folder 10 def(x v)
+  >     println(x + " " + v)
+  >     x + v
+  > end
+1 0
+2 1
+3 3
+4 6
+5 10
+6 15
+7 21
+8 28
+9 36
+45
+>>>
+}}}
+
+@folder works as the following function:
+
+{{{
+>>> def folder(VARGEN FUNC) # folder left
+  >     set v = VARGEN as vargen
+  >     @reduce VARGEN v.generate() FUNC
+  > end
+
+>>> folder(10 +)
+45
+>>>
+}}}
+
+*3.6.10 @each*
+
+*Syntax:* @each VARGEN FUNC
+
+{{{
+>>> @each 10 println
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+>>>
+}}}
+
+@each works as the following function:
+
+{{{
+>>> def each(VARGEN FUNC)
+  >     for x in VARGEN do
+  >         FUNC(x)
+  >     end
+  > end
+>>> each(10 println)
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+>>>
+}}}
+
+*3.6.11 @filter*
+
+*Syntax:* @filter VARGEN FUNC
+
+{{{
+>>> @filter 10 !_ % 3 == 0
+{0 3 6 9}
+>>>
+}}}
+
+@filter works as the following function:
+
+{{{
+>>> def filter(VARGEN FUNC)
+  >     set list = {}
+  >     for x in VARGEN do
+  >         if FUNC(x) then
+  >             list << x
+  >         end
+  >     end
+  >     list
+  > end
+
+>>> filter(10 !_ % 3 == 0)
+{0 3 6 9}
+>>>
+}}}
+
+*3.6.12 @throw and @catch*
+
+|| *Syntax* || *Description* || 
+|| @throw ERROR_MESSAGE ERROR_ID || throw error ||
+|| @throw ERROR_MESSAGE || throw runtime error ||
+|| @throw || throw again last error ||
+|| @catch FUNC PRM1 PRM2 ... || returns true if catch a exception ||
+
+{{{
+>>> def check(ok msg)
+  >     ok or @throw msg
+  > end
+
+>>> @catch check 1 "something wrong"
+0
+>>> @catch check 0 "something wrong"
+1
+>>> if @catch check 0 "something wrong" then @throw end
+[mainError]: (module=main file=C:\lysee\lysee.exe row=2 col=11 errno=1300) check() - something wrong
+>>>
+}}}
