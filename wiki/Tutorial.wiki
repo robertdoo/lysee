@@ -442,7 +442,7 @@ Lysee function includes normal and lambda functions.
 
 *3.5.1 Normal function*
 
-*Syntax:* *def* FuncName`(ParamList)` .... *end*
+*Syntax: def* `FuncName(ParamList)` .... *end*
 
 {{{
 >>> def repeatStr(S times)
