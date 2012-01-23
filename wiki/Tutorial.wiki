@@ -458,8 +458,8 @@ AaAaAaAa
 Lambda function is used as a simple value in expression.
 
 || *Syntax* || *Description* ||
-|| *def*`(ParamList)` ... *end* || ||
-|| !EXPRESSION || equal of _*def`(_)` EXPRESSION end*_ ||
+|| *def*`(ParamList)` ... *end* || unnamed ||
+|| *!EXPRESSION* || equal of: def`(_)` *EXPRESSION* end ||
 
 {{{
 >>> @map 10 def(v) v + 1 end
@@ -819,6 +819,8 @@ age 40
 4950
 >>> @ # show current context after @yield
 {"sum_range":100 "i":100 "n":4950}
+>>> {@ sum 0}() # same as @yield sum 0
+4950
 >>>
 }}}
 
