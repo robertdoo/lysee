@@ -458,7 +458,7 @@ AaAaAaAa
 Lambda function is used as a simple value in expression.
 
 || *Syntax* || *Description* ||
-|| *def*`(ParamList)` ... *end* || unnamed ||
+|| *def*`(ParamList)` ... *end* || unnamed function ||
 || *!EXPRESSION* || equal of: def`(_)` *EXPRESSION* end ||
 
 {{{
