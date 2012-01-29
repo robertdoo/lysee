@@ -396,10 +396,14 @@ Contant values of builtin simple types:
 *3.4.2 @Constants*
 {{{
 >>> @?
-@...     :  current context
 @?       :  @XXXX list
+@        :  current context
+@@       :  global values
 @nil     :  nil value
 @eol     :  line break
+@X       :  ths no.X param: X = 1..LSE_MAX_PARAMS
+@prmc    :  actual param count
+@prms    :  actual param list
 @confile :  config file
 @kernel  :  kernel file
 @knpath  :  kernel file path
@@ -422,7 +426,8 @@ Contant values of builtin simple types:
 @maxint  :  max integer value
 @minint  :  min integer value
 @module  :  current module
-@pd      :  path delimiter
+@pd      :  path delimiter char
+@pascal  :  pascal language informations
 @inmain  :  check in main function
 @errno   :  error number
 @ename   :  error name
