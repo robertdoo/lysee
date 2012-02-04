@@ -595,7 +595,7 @@ age 40
 
 {:} means empty hashed object.
 
-*3.6.7 yield @yield*
+*3.6.7 yield and @yield*
 
 || *Syntax* || *Description* || 
 || *yield* FUNC PRM1 PRM2 ... || execute FUNC with current context ||
@@ -860,7 +860,7 @@ map works as the following function:
 Used to break each, map, reduce, folder and filter.
 
 {{{
->>> each 10 do (x)
+>>> each 10 def (x)
   >     println(x)
   >     if x == 4 then @break end
   > end
