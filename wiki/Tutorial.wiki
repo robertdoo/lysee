@@ -69,7 +69,7 @@ The following constants can be used in lysee.config:
 Open a console and type "lysee" and give a ENTER, you will see something like below.
 
 {{{
-lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
+lysee 3.0.3 - Copyright (c) 2003-2011 Li Yun Jie
 
    :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
 
@@ -82,7 +82,7 @@ lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
 Let's print "Hello World":
 
 {{{
-lysee 3.0.1 - Copyright (c) 2003-2011 Li Yun Jie
+lysee 3.0.3 - Copyright (c) 2003-2011 Li Yun Jie
 
    :: /C=CANCEL /F=FILE /Q=QUIT /R=RESTART ::
 
@@ -113,7 +113,7 @@ Run " lysee --help" to print Lysee usages:
 
 {{{
 c:\lysee>lysee --help
-Lysee 3.0.1 - interactive LYSEE script interpreter
+Lysee 3.0.3 - interactive LYSEE script interpreter
 
 Usage: lysee [OPTION]... [FILE [ARGS]...]
 
