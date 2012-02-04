@@ -358,11 +358,9 @@ vargen for stream:
 ----
 ===3.3 Variables===
 
-*3.3.1 What is Variable?*
-
 Variable is a named value in stack or memory.
 
-*3.3.2 Local Variables*
+*3.3.1 Local Variables*
 
 Define local variable by assign value to it. Default variable type is variant if not specified.
 {{{
@@ -377,7 +375,7 @@ Define local variable by assign value to it. Default variable type is variant if
 >>>
 }}}
 
-*3.3.3 Formal Parameters*
+*3.3.2 Formal Parameters*
 
 Parameters of a function.
 
@@ -471,6 +469,14 @@ Lambda function is used as a simple value in expression.
 {1 2 3 4 5 6 7 8 9 10}
 >>> @map 10 !_ + 1
 {1 2 3 4 5 6 7 8 9 10}
+>>>
+}}}
+
+One ! means one parametre:
+
+{{{
+>>> reduce 0 "hello" !!_ + ord(__) // _:first param, __:second param
+532
 >>>
 }}}
 
@@ -589,21 +595,60 @@ age 40
 
 {:} means empty hashed object.
 
-*3.6.7 @map*
+*3.6.7 yield @yield*
 
-*Syntax:* @map VARGEN FUNC
+|| *Syntax* || *Description* || 
+|| *yield* FUNC PRM1 PRM2 ... || execute FUNC with current context ||
+|| *yield do* (PRM!=V! ...) *end* || execute anonimous function with current context ||
 
 {{{
->>> @map 10 !_ + 1
+>>> set sum_range = 100
+100
+>>> def sum(i)
+  >   set n = 0
+  >   while i < sum_range do
+  >     set n += i
+  >     set i += 1
+  >   end
+  >   n
+  > end
+>>> sum(0)
+[RuntimeError]: (module=main file=C:\lysee\lysee.exe row=3 col=13 errno=1300) oject sum_range not found
+>>> yield sum 0
+4950
+>>> {@ sum 0}() # same as yield sum 0
+4950
+>>> yield do (i = 0)
+  >   set n = 0
+  >   while i < sum_range do
+  >     set n += i
+  >     set i += 1
+  >   end
+  >   n
+  > end
+4950
+>>>
+}}}
+
+*@yield* works same as *yield*.
+
+*3.6.8 map and @map*
+
+|| *Syntax:* || *Description* ||
+|| *map* VARGEN FUNC || map VARGEN items to varlist ||
+|| *@map* VARGEN FUNC || process *map* with current context ||
+
+{{{
+>>> map 10 !_ + 1
 {1 2 3 4 5 6 7 8 9 10}
->>> @map 10 !_ + 100
+>>> map 10 !_ + 100
 {100 101 102 103 104 105 106 107 108 109}
->>> @map "hello" !_
+>>> map "hello" !_
 {"h" "e" "l" "l" "o"}
 >>>
 }}}
 
-@map works as the following function:
+map works as the following function:
 
 {{{
 >>> def map(VARGEN FUNC)
@@ -618,14 +663,16 @@ age 40
 >>>
 }}}
 
-*3.6.8 @reduce*
+*3.6.9 reduce and @reduce*
 
-*Syntax:* @reduce VARGEN INIT_VALUE FUNC
+|| *Syntax:* || *Description* ||
+|| *reduce* INIT_VALUE VARGEN FUNC || reduce VARGEN items to a value ||
+|| *@reduce* INIT_VALUE VARGEN FUNC || process *reduce* with current context ||
 
 {{{
->>> @reduce 10 1000 def(x v)
+>>> reduce 1000 10 def(v x)
   >     println(x + " " + v)
-  >     x + v
+  >     v + x
   > end
 0 1000
 1 1000
@@ -644,24 +691,26 @@ age 40
 @reduce works as the following function:
 
 {{{
->>> def reduce(VARGEN INIT_VALUE FUNC)
+>>> def reduce(INIT_VALUE VARGEN FUNC)
   >     for x in VARGEN do
-  >         set INIT_VALUE = FUNC(x INIT_VALUE)
+  >         set INIT_VALUE = FUNC(INIT_VALUE x)
   >     end
   >     INIT_VALUE
   > end
 
->>> reduce(10 1000 +)
+>>> reduce(1000 10 +)
 1045
 >>>
 }}}
 
-*3.6.9 @folder*
+*3.6.10 folder and @folder*
 
-*Syntax:* @folder VARGEN FUNC
+|| *Syntax:* || *Description* ||
+|| *folder* VARGEN FUNC || folder VARGEN items to a value from left ||
+|| *@folder* VARGEN FUNC || process *folder* with current context ||
 
 {{{
->>> @folder 10 def(x v)
+>>> folder 10 def(v x)
   >     println(x + " " + v)
   >     x + v
   > end
@@ -683,7 +732,7 @@ age 40
 {{{
 >>> def folder(VARGEN FUNC) # folder left
   >     set v = VARGEN as vargen
-  >     @reduce VARGEN v.generate() FUNC
+  >     reduce v.generate() v FUNC
   > end
 
 >>> folder(10 +)
@@ -691,12 +740,14 @@ age 40
 >>>
 }}}
 
-*3.6.10 @each*
+*3.6.11 each and @each*
 
-*Syntax:* @each VARGEN FUNC
+|| *Syntax:* || *Description* ||
+|| *each* VARGEN FUNC || process each VARGEN item ||
+|| *@each* VARGEN FUNC || process *each* with current context ||
 
 {{{
->>> @each 10 println
+>>> each 10 println
 0
 1
 2
@@ -732,12 +783,14 @@ age 40
 >>>
 }}}
 
-*3.6.11 @filter*
+*3.6.12 filer and @filter*
 
-*Syntax:* @filter VARGEN FUNC
+|| *Syntax:* || *Description* ||
+|| *filter* VARGEN FUNC || filter VARGEN items to a varlist ||
+|| *@filter* VARGEN FUNC || *filter* with current context ||
 
 {{{
->>> @filter 10 !_ % 3 == 0
+>>> filter 10 !_ % 3 == 0
 {0 3 6 9}
 >>>
 }}}
@@ -760,39 +813,41 @@ age 40
 >>>
 }}}
 
-*3.6.12 @throw and @catch*
+*3.6.13 throw, catch and @catch*
 
 || *Syntax* || *Description* || 
-|| @throw ERROR_MESSAGE ERROR_ID || throw error ||
-|| @throw ERROR_MESSAGE || throw runtime error ||
-|| @throw || throw again last error ||
-|| @catch FUNC PRM1 PRM2 ... || returns true if catch a exception in FUNC ||
+|| *throw* ERROR_MESSAGE ERROR_ID || throw error ||
+|| *throw* ERROR_MESSAGE || throw runtime error ||
+|| *throw* || throw again last error ||
+|| *catch* FUNC PRM1  ... || catch exception in FUNC ||
+|| *@catch* FUNC PRM1 ... || protect FUNC with current context ||
+|| *catch do* (PRM1=V1 ...) end || catch exception in anonimous function ||
+|| *@catch do* (PRM1=V1 ...) end || protect anonimous function with current context ||
 
 {{{
 >>> def check(ok msg)
-  >     ok or @throw msg
+  >     ok or throw msg
   > end
 
->>> @catch check 1 "something wrong"
+>>> catch check 1 "something wrong"
 0
->>> @catch check 0 "something wrong"
+>>> catch check 0 "something wrong"
 1
->>> if @catch check 0 "something wrong" then @throw end
+>>> if catch check 0 "something wrong" then throw end
 [mainError]: (module=main file=C:\lysee\lysee.exe row=2 col=11 errno=1300) check() - something wrong
 >>>
 }}}
 
-
-*3.6.13 @loop*
+*3.6.14 @continue*
 
 || *Syntax* || *Description* || 
-|| @loop PRM1 PRM2 ... || set parametres and jump to head of current function ||
+|| @continue PRM1 PRM2 ... || set parametres and jump to head of current function ||
 
 {{{
 >>> def sumi(n r)
   >    if n < 100 then
   >        set r += n
-  >        @loop n + 1  # increase n and jump to head of sumi
+  >        @continue n + 1  # increase n and jump to head of sumi
   >    end
   > end
 >>> sumi(0 100000)
@@ -800,37 +855,24 @@ age 40
 >>>
 }}}
 
-*3.6.14 @yield*
+*3.6.15 @break*
 
-|| *Syntax* || *Description* || 
-|| @yield FUNC PRM1 PRM2 ... || execute FUNC with current context ||
+Used to break each, map, reduce, folder and filter.
 
 {{{
->>> set sum_range = 100
-100
->>> @ # show current context
-{"sum_range":100}
->>> def sum(i)
-  >   set n = 0
-  >   while i < sum_range do
-  >     set n += i
-  >     set i += 1
-  >   end
-  >   n
+>>> each 10 do (x)
+  >     println(x)
+  >     if x == 4 then @break end
   > end
->>> sum(0)
-[RuntimeError]: (module=main file=C:\lysee\lysee.exe row=3 col=13 errno=1300) oject sum_range not found
->>> @yield sum 0
-4950
->>> @ # show current context after @yield
-{"sum_range":100 "i":100 "n":4950}
->>> {@ sum 0}() # same as @yield sum 0
-4950
+0
+1
+2
+3
+4
 >>>
 }}}
 
-
-*3.6.15 Call a list*
+*3.6.16 Call a list*
 
 || *Syntax* || *Description* || 
 || {FUNC PRM1 PRM2 ...}() || execute FUNC ||
