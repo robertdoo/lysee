@@ -859,7 +859,7 @@ map works as the following function:
 
 *3.6.15 @break*
 
-Used to break each, map, reduce, folder and filter.
+Used to break *each*, *map*, *reduce*, *folder* and *filter*.
 
 {{{
 >>> each 10 def (x)
@@ -886,16 +886,19 @@ Used to break each, map, reduce, folder and filter.
   > end
 >>> max3(2 10 5)
 10
->>> set list = {max3 2}
-{max3(v1 v2 v3) 2}
->>> list(1 -5)  # call 1
-2
->>> set list = {{:} max3 2 }
-{{:} max3(v1 v2 v3) 2}
->>> list(1 -5) # call 2 with a context
-2
->>> list
-{{"v1":2 "v2":1 "v3":-5} max3(v1 v2 v3) 2}
+>>> {max3 2}(10 5)
+10
+>>> set n = 100
+100
+>>> def max4(v1 v2 v3)
+  >     max(max3(v1 v2 v3) n)
+  > end
+>>> {@ max4 2}(10 5)
+100
+>>> set n = 0
+0
+>>> {{"n":200} max4 2}(10 5)
+200
 >>>
 }}}
 
@@ -936,7 +939,7 @@ Sun, 22 Jan 2012 16:56:54 GMT
 
 *3.7.3 if clause*
 
-*Syntax:* if CONDITION then ... [elif CONDITION then ... else ...] end
+*Syntax:* *if* CONDITION *then* ... `[`*elif* CONDITION *then* ... *else* ...`]` *end*
 
 {{{
 >>> for x in 10 do
@@ -953,7 +956,7 @@ Sun, 22 Jan 2012 16:56:54 GMT
 
 *3.7.4 while clause*
 
-*Syntax:* while CONDITION do ... end
+*Syntax:* *while* CONDITION *do* ... *end*
 
 {{{
 >>> set g = 10 as vargen
@@ -971,7 +974,7 @@ Sun, 22 Jan 2012 16:56:54 GMT
 
 *3.7.5 repeat until*
 
-*Syntax:* repeat ... until CONDITION
+*Syntax:* *repeat* ... *until* CONDITION
 
 {{{
 >>> set n = 0
@@ -995,9 +998,9 @@ Sun, 22 Jan 2012 16:56:54 GMT
 *3.7.6 for clause*
 
 *Syntax:* 
-  * for VARB in VARGEN `[if CONDITION]` do ... end
-  * for VARB = LOW_VALUE to HIGH_VALUE `[if CONDITION]` do ... end
-  * for VARB = HIGH_VALUE downto LOW_VALUE `[if CONDITION]` do ... end
+  * *for* VARB *in* VARGEN `[`*if* CONDITION`]` *do* ... *end*
+  * *for* VARB = LOW_VALUE *to* HIGH_VALUE `[`*if* CONDITION`]` *do* ... *end*
+  * *for* VARB = HIGH_VALUE *downto* LOW_VALUE `[`*if* CONDITION`]` *do* ... *end*
 
 {{{
 >>> for x in 10 do print(x) end
