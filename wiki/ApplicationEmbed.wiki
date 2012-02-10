@@ -7,7 +7,7 @@ Lysee kernel has only two files: lseu.pas, lse_kernel.pas. The next is steps of 
 
 *1. Use Lysee Kernel File*
 
-  * Copy lseu.pas and lse_kernel.pas to your project directory.
+  * Copy _*lseu.pas*_ and _*lse_kernel.pas*_ to your project directory.
   * Add them to your project.
   * Add them to *uses* clause.
 
