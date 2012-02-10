@@ -204,7 +204,7 @@ begin
   FEngine := TLseEngine.Create(nil);
   // create calc module
   FCalcModule := KLiModule.Create('calc', nil, mtBuiltin);
-  // register function triple
+  // register function triple_mul
   FCalcModule.SetupFunc(@triple_mul, 'triple_mul:float(value:float)', 'triple float values');
   // load calc module
   FEngine.ExecuteCode('load("calc")');
