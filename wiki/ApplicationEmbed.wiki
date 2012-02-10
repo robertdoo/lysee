@@ -60,7 +60,7 @@ uses
 ----
 == 4. Startup Lysee Kernel ==
 
-Create `OnCreate` event handler and call _*lse_startup*_ to initialize lysee kernel:
+Create _*OnCreate*_ event handler and call _*lse_startup*_ to initialize lysee kernel:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
@@ -72,7 +72,7 @@ end;
 ----
 == 5. Cleanup Lysee Kernel ==
 
-Create `OnDestroy` event handler and call _*lse_cleanup*_ to finalize lysee kernel.
+Create _*OnDestroy*_ event handler and call _*lse_cleanup*_ to finalize lysee kernel.
 
 {{{
 procedure TCalcForm.FormDestroy(Sender: TObject);
@@ -84,7 +84,7 @@ end;
 ----
 == 6. Create TLseEngine Instance ==
 
-6.1. Define FEngine: TLseEngine in TCalcForm:
+6.1. Define _*FEngine: TLseEngine*_ in TCalcForm:
 
 {{{
 type
@@ -102,7 +102,7 @@ type
   end; 
 }}}
 
-6.2. Create engine in `FormCreate`:
+6.2. Create engine in _*FormCreate*_:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
@@ -112,7 +112,7 @@ begin
 end;
 }}}
 
-6.3. Destroy engine in `FormDestroy`:
+6.3. Destroy engine in _*FormDestroy*_:
 
 {{{
 procedure TCalcForm.FormDestroy(Sender: TObject);
@@ -121,3 +121,20 @@ begin
   lse_cleanup;
 end;
 }}}
+
+----
+== 7. Evaluate Expression In _eExpr_ ==
+
+Create _*bCalc*_'s _*OnClick*_ event handler and evaluate expression in _*eExpr*_:
+
+{{{
+procedure TCalcForm.bCalcClick(Sender: TObject);
+begin
+  eResult.Text := '';
+  if FEngine.ExecuteCode(eExpr.Text) then
+    eResult.Text := FEngine.ResultText else
+    ShowMessage(FEngine.ErrorMsg);
+end;
+}}}
+
+Now, please press F9 to run this program and type a expression(for example: 6 * 9) to evaluate.
