@@ -29,7 +29,9 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, Forms,
-  frmcalc, lseu, lse_kernel;
+  frmcalc,
+  lseu in '../../lseu.pas',
+  lse_kernel in '../../lse_kernel.pas';
 
 {$R *.res}
 
