@@ -7,10 +7,11 @@ Lysee kernel has only two files: lseu.pas, lse_kernel.pas. The next is steps of 
 
 *1. Add lysee kernel to your project*
 
-  # Copy lseu.pas and lse_kernel.pas to your project folder.
-  # Add the two files to your project.
-  # Add the tow files to *uses* clause.
+  * Copy lseu.pas and lse_kernel.pas to your project directory.
+  * Add them to your project.
+  * Add them to *uses* clause.
 
+It looks like this:
   <code language="pascal">
   uses
     lseu, lse_kernel;
