@@ -19,8 +19,8 @@ uses
 
 *2. Setup Framework*
 
-  * Call _*lse_startup*_ to initialize lysee kernel.
-  * Call _*lse_cleanup*_ to release lysee kernel.
+  * Call _*lse_startup*_ firstly to initialize lysee kernel.
+  * Call _*lse_cleanup*_ finally to release lysee kernel.
 
 {{{
 begin
