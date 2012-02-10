@@ -60,7 +60,7 @@ uses
 ----
 == 4. Startup Lysee Kernel ==
 
-Create OnCreate event handler and call _*lse_startup*_ to initialize lysee kernel:
+Create `OnCreate` event handler and call _*lse_startup*_ to initialize lysee kernel:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
@@ -72,7 +72,7 @@ end;
 ----
 == 5. Cleanup Lysee Kernel ==
 
-Create OnDestroy event handler and call _*lse_cleanup*_ to finalize lysee kernel.
+Create `OnDestroy` event handler and call _*lse_cleanup*_ to finalize lysee kernel.
 
 {{{
 procedure TCalcForm.FormDestroy(Sender: TObject);
@@ -102,7 +102,7 @@ type
   end; 
 }}}
 
-6.2. Create engine in FormCreate:
+6.2. Create engine in `FormCreate`:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
@@ -112,7 +112,7 @@ begin
 end;
 }}}
 
-6.3. Destroy engine in FormDestroy:
+6.3. Destroy engine in `FormDestroy`:
 
 {{{
 procedure TCalcForm.FormDestroy(Sender: TObject);
