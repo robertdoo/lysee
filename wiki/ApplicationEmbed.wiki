@@ -32,6 +32,10 @@ Call _*lse_cleanup*_ as the final statement to release lysee kernel.
 {{{
 begin
   lse_startup;
-  lse_cleanup;
+  try
+    { USE LYSEE CODES }
+  finally
+    lse_cleanup;
+  end;
 end
 }}}
