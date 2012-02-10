@@ -161,7 +161,7 @@ type
   end; 
 }}}
 
-8.2. Create _*calc*_ module _*FormCreate*_:
+8.2. Create And Load _*calc*_ Module:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
