@@ -3,21 +3,43 @@
 
 = Embed Lysee Step By Step =
 
-This page will lead you create a expression evaluating application called _*calc.lpi*_, show you how to embed lysee into this program to expand its capabilities.
+This page will lead you create a expression evaluating application called _*calc.lpi*_, this program use lysee to implement its calculating capabilities.
 
 *1. Create Project*
 
   # Open lazarus and create a _*Application*_ project.
   # Save this project as _*calc.lpi*_.
-  # Same Unit1 as frmcalc.pas.
-  # Place a label editor to main form and rename it as 'eExpr'.
-  # Place a label editor to main form and rename is as 'eResult'.
-  # Place a button to main form and rename it as 'bCalc'.
+  # Same Unit1 as _*frmcalc.pas*_.
+  # Place a label editor to main form and rename it as _*eExpr*_.
+  # Place a label editor to main form and rename is as _*eResult*_.
+  # Place a button to main form and rename it as _*bCalc*_.
   
-*1. Add Lysee Kernel File To Project*
+*2. Add Lysee Kernel To Project*
 
-  * Copy _*lseu.pas*_ and _*lse_kernel.pas*_ to your project directory.
-  * Add them to your project.
+Add _*lseu.pas*_ and _*lse_kernel.pas*_ into this project.
+
+{{{
+program calc;
+
+{$mode objfpc}{$H+}
+
+uses
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Interfaces, // this includes the LCL widgetset
+  Forms, frmcalc, lseu, lse_kernel
+  { you can add units after this };
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TCalcForm, CalcForm);
+  Application.Run;
+end.
+}}}
+
   * Add them to *uses* clause.
 
 It looks like this:
