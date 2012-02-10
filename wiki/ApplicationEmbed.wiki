@@ -12,7 +12,7 @@ Lysee kernel has only two files: lseu.pas, lse_kernel.pas. The next is steps of 
   * Add them to *uses* clause.
 
 It looks like this:
-  <code language="pascal">
-  uses
-    lseu, lse_kernel;
-  </code>
+{{{
+uses
+  lseu, lse_kernel;
+}}}
