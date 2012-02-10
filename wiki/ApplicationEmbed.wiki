@@ -5,7 +5,7 @@
 
 This page will lead you create a expression evaluating application called _*calc.lpi*_ with embeded lysee to implement its evaluating capabilities.
 
-*1. Create Project _*calc.lpi*_*
+== 1. Create Project _calc.lpi_ ==
 
   # Open lazarus and create a _*Application*_ project.
   # Save this project as _*calc.lpi*_.
@@ -14,7 +14,8 @@ This page will lead you create a expression evaluating application called _*calc
   # Place a label editor to main form and rename is as _*eResult*_.
   # Place a button to main form and rename it as _*bCalc*_.
   
-*2. Add Lysee Kernel To Project*
+----
+== 2. Add Lysee Kernel To Project ==
 
 Add _*lseu.pas*_ and _*lse_kernel.pas*_ into this project.
 
@@ -39,7 +40,8 @@ begin
 end.
 }}}
 
-*3. Use _lseu.pas_ And _lse_kernel.pas_ in _frmcalc_*
+----
+== 3. Use _lseu.pas_ And _lse_kernel.pas_ in _frmcalc_ ==
 
 Add _*lseu*_, _*lse_kernel*_ into _*frmcalc*_'s uses clause:
 
@@ -55,7 +57,8 @@ uses
   Buttons, StdCtrls, lseu, lse_kernel;
 }}}
 
-*4. Startup Lysee Kernel*
+----
+== 4. Startup Lysee Kernel ==
 
 Create OnCreate event handler and call _*lse_startup*_ to initialize lysee kernel:
 
@@ -66,7 +69,8 @@ begin
 end;
 }}}
 
-*5. Cleanup Lysee Kernel*
+----
+== 5. Cleanup Lysee Kernel ==
 
 Create OnDestroy event handler and call _*lse_cleanup*_ to finalize lysee kernel.
 
@@ -77,9 +81,10 @@ begin
 end;
 }}}
 
-*6. Create TLseEngine Instance*
+----
+== 6. Create TLseEngine Instance ==
 
-Define FEngine: TLseEngine in TCalcForm:
+6.1. Define FEngine: TLseEngine in TCalcForm:
 
 {{{
 type
