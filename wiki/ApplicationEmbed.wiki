@@ -73,6 +73,26 @@ Create OnDestroy event handler and call _*lse_cleanup*_ to finalize lysee kernel
 {{{
 procedure TCalcForm.FormDestroy(Sender: TObject);
 begin
-  lseu.lse_cleanup;
+  lse_cleanup;
 end;
+}}}
+
+*6. Create TLseEngine Instance*
+
+Define FEngine: TLseEngine in TCalcForm:
+
+{{{
+type
+
+  { TCalcForm }
+
+  TCalcForm = class(TForm)
+    bCalc: TButton;
+    eExpr: TLabeledEdit;
+    eResult: TLabeledEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    FEngine: TLseEngine;
+  end; 
 }}}
