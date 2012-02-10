@@ -5,7 +5,7 @@
 
 This page will lead you create a expression evaluating application called _*calc.lpi*_ with embeded lysee to implement its evaluating capabilities.
 
-*1. Create Project*
+*1. Create Project _*calc.lpi*_*
 
   # Open lazarus and create a _*Application*_ project.
   # Save this project as _*calc.lpi*_.
@@ -39,12 +39,20 @@ begin
 end.
 }}}
 
-  * Add them to *uses* clause.
+*3. Use _lseu.pas_ And _lse_kernel.pas_ in _frmcalc_*
 
-It looks like this:
+Add _*lseu*_, _*lse_kernel*_ to _*frmcalc*_'s uses clause:
+
 {{{
+unit frmcalc;
+
+{$mode objfpc}{$H+}
+
+interface
+
 uses
-  lseu, lse_kernel;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Buttons, StdCtrls, lseu, lse_kernel;
 }}}
 
 *2. Setup Framework*
