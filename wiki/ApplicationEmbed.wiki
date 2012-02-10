@@ -1,11 +1,20 @@
 #labels Phase-Implementation
 #Embed lysee to application step by step.
 
-= Embed lysee step by step =
+= Embed Lysee Step By Step =
 
-Lysee kernel has only two files: lseu.pas, lse_kernel.pas. The next is steps of how to embed lysee kernel into your application and works find.
+This page will lead you create a expression evaluating application called _*calc.lpi*_, show you how to embed lysee into this program to expand its capabilities.
 
-*1. Use Lysee Kernel File*
+*1. Create Project*
+
+  # Open lazarus and create a _*Application*_ project.
+  # Save this project as _*calc.lpi*_.
+  # Same Unit1 as frmcalc.pas.
+  # Place a label editor to main form and rename it as 'eExpr'.
+  # Place a label editor to main form and rename is as 'eResult'.
+  # Place a button to main form and rename it as 'bCalc'.
+  
+*1. Add Lysee Kernel File To Project*
 
   * Copy _*lseu.pas*_ and _*lse_kernel.pas*_ to your project directory.
   * Add them to your project.
