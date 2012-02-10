@@ -28,7 +28,7 @@ end
 
 *3. Cleanup*
 
-Call _*lse_cleanup*_ as the final statement to release resources occupied by lysee.
+Call _*lse_cleanup*_ as the final statement to release lysee kernel.
 {{{
 begin
   lse_startup;
