@@ -138,3 +138,38 @@ end;
 }}}
 
 Now, please press F9 to run this program and type a expression(for example: 6 * 9) to evaluate.
+
+== 8. Create _calc_ Module ==
+
+8.1. Define _*FCalcModule: KLiModule*_ in TCalcForm:
+
+{{{
+type
+
+  { TCalcForm }
+
+  TCalcForm = class(TForm)
+    bCalc: TButton;
+    eExpr: TLabeledEdit;
+    eResult: TLabeledEdit;
+    procedure bCalcClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    FEngine: TLseEngine;
+    FCalcModule: KLiModule;
+  end; 
+}}}
+
+8.2. Create _*calc*_ module _*FormCreate*_:
+
+{{{
+procedure TCalcForm.FormCreate(Sender: TObject);
+begin
+  lse_startup;
+  FEngine := TLseEngine.Create(nil);
+  FCalcModule := KLiModule.Create('calc', nil, mtBuiltin);
+  // load calc module
+  FEngine.ExecuteCode('load("calc")');
+end;
+}}}
