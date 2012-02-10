@@ -11,7 +11,7 @@ Lysee kernel has only two files: lseu.pas, lse_kernel.pas. The next is steps of 
   # Add the two files to your project.
   # Add the tow files to *uses* clause.
 
-{{{
+<code language="pascal">
 uses
   lseu, lse_kernel;
-}}}
+</code>
