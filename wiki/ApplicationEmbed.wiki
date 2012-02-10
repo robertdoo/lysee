@@ -139,7 +139,7 @@ begin
 end;
 }}}
 
-Press F9 to run this program and type a expression(for example: 6 * 9) to evaluate.
+Press F9 to run this program and type a expression(for example: `6 * 9`) to evaluate.
 
 ----
 == 8. Create '_calc_' Module ==
