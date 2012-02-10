@@ -1,0 +1,17 @@
+#labels Phase-Implementation
+#Embed lysee to application step by step.
+
+= Embed lysee step by step =
+
+Lysee kernel has only two files: lseu.pas, lse_kernel.pas. The next is steps of how to embed lysee kernel into your application and works find.
+
+*1. Add lysee kernel to your project*
+
+  # Copy lseu.pas and lse_kernel.pas to your project folder.
+  # Add the two files to your project.
+  # Add the tow files to *uses* clause.
+
+{{{
+uses
+  lseu, lse_kernel;
+}}}
