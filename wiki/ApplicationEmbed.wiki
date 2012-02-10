@@ -17,18 +17,11 @@ uses
   lseu, lse_kernel;
 }}}
 
-*2. Startup*
+*2. Setup Framework*
 
-Call _*lse_startup*_ as the first statment to initialize lysee kernel.
-{{{
-begin
-  lse_startup;
-end
-}}}
+  * Call _*lse_startup*_ to initialize lysee kernel.
+  * Call _*lse_cleanup*_ to release lysee kernel.
 
-*3. Cleanup*
-
-Call _*lse_cleanup*_ as the final statement to release lysee kernel.
 {{{
 begin
   lse_startup;
