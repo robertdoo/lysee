@@ -41,7 +41,7 @@ end.
 
 *3. Use _lseu.pas_ And _lse_kernel.pas_ in _frmcalc_*
 
-Add _*lseu*_, _*lse_kernel*_ to _*frmcalc*_'s uses clause:
+Add _*lseu*_, _*lse_kernel*_ into _*frmcalc*_'s uses clause:
 
 {{{
 unit frmcalc;
@@ -55,18 +55,24 @@ uses
   Buttons, StdCtrls, lseu, lse_kernel;
 }}}
 
-*2. Setup Framework*
+*4. Startup Lysee Kernel*
 
-  * Call _*lse_startup*_ firstly to initialize lysee kernel.
-  * Call _*lse_cleanup*_ finally to release lysee kernel.
+Create OnCreate event handler and call _*lse_startup*_ to initialize lysee kernel:
 
 {{{
+procedure TCalcForm.FormCreate(Sender: TObject);
 begin
   lse_startup;
-  try
-    // Put using-lysee codes here
-  finally
-    lse_cleanup;
-  end;
-end
+end;
+}}}
+
+*5. Cleanup Lysee Kernel*
+
+Create OnDestroy event handler and call _*lse_cleanup*_ to finalize lysee kernel.
+
+{{{
+procedure TCalcForm.FormDestroy(Sender: TObject);
+begin
+  lseu.lse_cleanup;
+end;
 }}}
