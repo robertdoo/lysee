@@ -101,3 +101,23 @@ type
     FEngine: TLseEngine;
   end; 
 }}}
+
+6.2. Create engine in FormCreate:
+
+{{{
+procedure TCalcForm.FormCreate(Sender: TObject);
+begin
+  lse_startup;
+  FEngine := TLseEngine.Create(nil);
+end;
+}}}
+
+6.3. Destroy engine in FormDestroy:
+
+{{{
+procedure TCalcForm.FormDestroy(Sender: TObject);
+begin
+  FEngine.Free;
+  lse_cleanup;
+end;
+}}}
