@@ -9,10 +9,10 @@ This page will lead you create a expression evaluating application called _*calc
 
   # Open lazarus and create a _*Application*_ project.
   # Save this project as _*calc.lpi*_.
-  # Name main form as 'CalcForm' and save as _*frmcalc.pas*_.
-  # Place a label editor on CalcForm and rename it as _*eExpr*_.
-  # Place a label editor on CalcForm and rename is as _*eResult*_.
-  # Place a button on CalcForm and rename it as _*bCalc*_.
+  # Name main form as _*CalcForm*_ and save as _*frmcalc.pas*_.
+  # Place a label editor on _*CalcForm*_ and rename it as _*eExpr*_.
+  # Place a label editor on _*CalcForm*_ and rename is as _*eResult*_.
+  # Place a button on _*CalcForm*_ and rename it as _*bCalc*_.
   
 ----
 == 2. Add Lysee Kernel To Project ==
