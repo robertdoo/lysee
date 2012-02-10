@@ -16,3 +16,22 @@ It looks like this:
 uses
   lseu, lse_kernel;
 }}}
+
+*2. Startup*
+
+Call _*lse_startup*_ as the first statment to startup lysee kernel.
+{{{
+begin
+  lse_startup;
+end
+}}}
+
+*3. Cleanup*
+
+Call _*lse_cleanup*_ as the last statement to release lysee occupied resources.
+{{{
+begin
+  lse_startup;
+  lse_cleanup;
+end
+}}}
