@@ -3,7 +3,7 @@
 
 = Embed Lysee Step By Step =
 
-This page will lead you create a expression evaluating application called _*calc.lpi*_, this program use lysee to implement its calculating capabilities.
+This page will lead you create a expression evaluating application called _*calc.lpi*_ with embeded lysee to implement its evaluating capabilities.
 
 *1. Create Project*
 
@@ -27,9 +27,8 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Interfaces, // this includes the LCL widgetset
-  Forms, frmcalc, lseu, lse_kernel
-  { you can add units after this };
+  Interfaces, Forms,
+  frmcalc, lseu, lse_kernel;
 
 {$R *.res}
 
