@@ -3,7 +3,7 @@
 
 = Embed Lysee Step By Step =
 
-This page will lead you create a expression evaluating application called _*calc.lpi*_ with embeded lysee to implement its evaluating capabilities.
+This page will lead you create a expression evaluating application called _*calc.lpi*_ with embeded lysee to implement its evaluating capability.
 
 == 1. Create Project _calc.lpi_ ==
 
@@ -137,9 +137,10 @@ begin
 end;
 }}}
 
-Now, please press F9 to run this program and type a expression(for example: 6 * 9) to evaluate.
+Press F9 to run this program and type a expression(for example: 6 * 9) to evaluate.
 
-== 8. Create _calc_ Module ==
+----
+== 8. Create '_calc_' Module ==
 
 8.1. Define _*FCalcModule: KLiModule*_ in TCalcForm:
 
@@ -168,8 +169,48 @@ procedure TCalcForm.FormCreate(Sender: TObject);
 begin
   lse_startup;
   FEngine := TLseEngine.Create(nil);
+  // create calc module
   FCalcModule := KLiModule.Create('calc', nil, mtBuiltin);
   // load calc module
   FEngine.ExecuteCode('load("calc")');
 end;
 }}}
+
+----
+== 9. Register Lysee Functions ==
+
+9.1. Define lysee function _*triple*_ to calculate: x * x * x.
+
+{{{
+// triple:float(value:float)
+procedure triple(const Param: PLseParam);cdecl;
+var
+  V: double;
+begin
+  with Param^ do
+  begin
+    V := lse_get_float(p_param[0]);
+    lse_set_float(p_result, V * V * V);
+  end;
+end;
+}}}
+
+9.2. Register function _*triple*_ into _*calc*_ module:
+
+{{{
+procedure TCalcForm.FormCreate(Sender: TObject);
+begin
+  lse_startup;
+  FEngine := TLseEngine.Create(nil);
+  // create calc module
+  FCalcModule := KLiModule.Create('calc', nil, mtBuiltin);
+  // register function triple
+  FCalcModule.SetupFunc(@triple, 'triple:float(value:float)', 'triple float values');
+  // load calc module
+  FEngine.ExecuteCode('load("calc")');
+end;
+}}}
+
+Press F9 to run this program again and enter 'triple(10)' to evaluate, you should got 1000.
+
+Now, you can repeat step 8..9 to register any amount of lysee modules and functions to extend _*calc*_'s evaluating cability.
