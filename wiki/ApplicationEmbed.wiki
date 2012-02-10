@@ -102,7 +102,7 @@ type
   end; 
 }}}
 
-6.2. Create engine in _*`FormCreate`*_:
+6.2. Create FEngine:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
@@ -112,7 +112,7 @@ begin
 end;
 }}}
 
-6.3. Destroy engine in _*`FormDestroy`*_:
+6.3. Destroy FEngine:
 
 {{{
 procedure TCalcForm.FormDestroy(Sender: TObject);
@@ -123,7 +123,7 @@ end;
 }}}
 
 ----
-== 7. Evaluate Expression In _eExpr_ ==
+== 7. Evaluate Expression ==
 
 Create _*bCalc*_'s _*`OnClick`*_ event handler and evaluate expression in _*eExpr*_:
 
@@ -179,11 +179,11 @@ end;
 ----
 == 9. Register Lysee Functions ==
 
-9.1. Define lysee function _*triple*_ to calculate: x * x * x.
+9.1. Define lysee function _*triple_mul*_ to mul a value 3 times:
 
 {{{
-// triple:float(value:float)
-procedure triple(const Param: PLseParam);cdecl;
+// triple_mul:float(value:float)
+procedure triple_mul(const Param: PLseParam);cdecl;
 var
   V: double;
 begin
@@ -195,7 +195,7 @@ begin
 end;
 }}}
 
-9.2. Register function _*triple*_ into _*calc*_ module:
+9.2. Register function _*triple_mul*_ into _*calc*_ module:
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
@@ -205,12 +205,12 @@ begin
   // create calc module
   FCalcModule := KLiModule.Create('calc', nil, mtBuiltin);
   // register function triple
-  FCalcModule.SetupFunc(@triple, 'triple:float(value:float)', 'triple float values');
+  FCalcModule.SetupFunc(@triple_mul, 'triple_mul:float(value:float)', 'triple float values');
   // load calc module
   FEngine.ExecuteCode('load("calc")');
 end;
 }}}
 
-Press F9 to run this program again and enter 'triple(10)' to evaluate, you should got 1000.
+Press F9 to run this program again and enter 'triple_mul(10)' to evaluate, you should got 1000.
 
 Now, you can repeat step 8..9 to register any amount of lysee modules and functions to extend _*calc*_'s evaluating cability.
