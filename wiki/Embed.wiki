@@ -173,7 +173,7 @@ begin
   // create calc module
   FCalcModule := KLiModule.Create('calc', nil, mtBuiltin);
   // load calc module
-  FEngine.ExecuteCode('load("calc")');
+  FEngine.Load('calc');
 end;
 }}}
 
