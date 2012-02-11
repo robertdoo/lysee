@@ -216,3 +216,16 @@ Press F9 to run this program again and enter '_*triple_mul(10)*_' to evaluate, y
 
 ----
 From now on, you can repeat step 8..9 to register any amount of lysee modules and functions to extend _*calc*_'s evaluating capability.
+
+----
+*NOTE:* If you like, you can directly register _*triple_mul*_ and other functions into _*sys*_ module without creating _*calc*_ module. 
+
+{{{
+procedure TCalcForm.FormCreate(Sender: TObject);
+begin
+  lse_startup;
+  FEngine := TLseEngine.Create(nil);
+  // register function triple_mul
+  sys_module.SetupFunc(@triple_mul, 'triple_mul:float(value:float)', 'mul float value 3 times');
+end;
+}}}
