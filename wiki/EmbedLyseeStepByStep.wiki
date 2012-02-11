@@ -3,7 +3,7 @@
 
 = Embed Lysee Step By Step =
 
-This page will lead you create a expression evaluating application called _*calc.lpi*_ with embeded lysee to implement its evaluating capability.
+This page will lead you create a expression evaluating application called _*calc.lpi*_ to explain how to extend a program's capability by embeding lyseee.
 
 == 1. Create Project _calc.lpi_ ==
 
