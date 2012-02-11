@@ -1,4 +1,4 @@
-#summary Lysee and its reference guide
+#summary Lysee and lysee language reference guide
 #labels Featured
 
 ==1 Introduction==
