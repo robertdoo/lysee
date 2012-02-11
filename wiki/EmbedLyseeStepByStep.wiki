@@ -1,4 +1,4 @@
-#summary Embed lysee step by step.
+#summary Explain how to extend a program's capability by embeding lyseee
 #labels Featured,Phase-Implementation
 
 = Embed Lysee Step By Step =
