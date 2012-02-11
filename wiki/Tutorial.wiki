@@ -1,5 +1,5 @@
-#summary Lysee and lysee language reference guide
-#labels Featured
+#summary Lysee and lysee language reference
+#labels Featured,Phase-Implementation
 
 ==1 Introduction==
 
