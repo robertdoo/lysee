@@ -1,4 +1,4 @@
-#summary Explain how to extend a program's capability by embeding lyseee
+#summary How to extend a program's capability by embeding lyseee
 
 = Embed Lysee Step By Step =
 
