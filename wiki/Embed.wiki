@@ -214,11 +214,12 @@ end;
 
 Press F9 to run this program again and enter '_*triple_mul(10)*_' to evaluate, you should got 1000.
 
-----
 From now on, you can repeat step 8..9 to register any amount of lysee modules and functions to extend _*calc*_'s evaluating capability.
 
 ----
-*NOTE:* If you like, you can directly register _*triple_mul*_ and other functions into _*sys*_ module without creating _*calc*_ module. 
+*NOTE:* 
+
+If you like, you can directly register _*triple_mul*_ and other functions into _*sys*_ module without creating _*calc*_ module. 
 
 {{{
 procedure TCalcForm.FormCreate(Sender: TObject);
