@@ -1,4 +1,4 @@
-#summary Lysee is under modified BSD style license.
+#summary Lysee is under modified BSD style license
 
 Copyright (c) 2003-2010, Li Yun Jie. All rights reserved.
 
