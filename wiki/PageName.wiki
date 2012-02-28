@@ -15,7 +15,7 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 
 == 2. Content Of sample.pas ==
 
-{{{
+<code language="pas">
 unit sample;
 
 {$mode objfpc}{$H+}
@@ -37,6 +37,6 @@ begin
 end;
 
 end.      
-}}}
+</code>
 
 == 3. Content of samplew.pp ==
