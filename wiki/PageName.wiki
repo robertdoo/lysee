@@ -1,0 +1,14 @@
+#summary pascal module compiler
+#labels Phase-Design,Phase-Implementation,Phase-Support
+
+= Pascal Module Compiler =
+
+Pascal module compiler (PMC) is designed to compile a pascal unit to lysee module.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
