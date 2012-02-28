@@ -39,5 +39,4 @@ end;
 
 end.      
 </code>
-
 === 2.2. samplew.pp ===
