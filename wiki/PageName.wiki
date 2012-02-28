@@ -7,11 +7,11 @@ What PMC does is to compile directly a free-pascal unit file to a lysee module.
 
 By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 
-== 1. Usage ==
+== 1. PMC Usage ==
 
 || *usage* || *description ||
-|| lysee_pmc pasunit.pas || generate _*pasunit_m.pas, wraping pasunit.pas as a lysee module ||
-|| lysee_pmc -opasunit.dll pasunit.pas || compile pasunit.pas to lysee module pasunit.dll || 
+|| lysee_pmc _*pasunit.pas*_ || generate _*pasunit_m.pas*_, wraping pasunit.pas as a lysee module ||
+|| lysee_pmc -o_*pasunit.dll*_ _*pasunit.pas*_ || compile pasunit.pas to lysee module _*pasunit.dll*_ || 
 
 == 2. How it works ==
 
