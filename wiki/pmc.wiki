@@ -11,7 +11,7 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 
 || *usage* || *description* ||
 || `lysee_pmc` sample.pas || wrap sample.pas to samplew.lmp ||
-|| `lysee_pmc` -osample.dll sample.pas || wrap sample.pas to samplew.lmp and compile samplew.lmp to sample.dll || 
+|| `lysee_pmc` -MObjfpc -O2 -osample.dll sample.pas || wrap sample.pas to samplew.lmp and compile samplew.lmp to sample.dll || 
 
 == 2. File Content ==
 
