@@ -13,7 +13,9 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 || `lysee_pmc` sample.pas || wrap sample.pas to samplew.pp ||
 || `lysee_pmc` -osample.dll sample.pas || wrap sample.pas to samplew.pp and compile samplew.pp to sample.dll || 
 
-== 2. Content Of sample.pas ==
+== 2. File Content ==
+
+=== 2.1. sample.pas ===
 
 <code language="pas">
 unit sample;
@@ -39,4 +41,4 @@ end;
 end.      
 </code>
 
-== 3. Content of samplew.pp ==
+=== 2.2. samplew.pp ===
