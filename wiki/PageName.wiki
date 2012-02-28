@@ -3,7 +3,7 @@
 
 = Pascal Module Compiler (PMC) =
 
-What PMC can do is compiling directly a free-pascal unit file to lysee module.
+What PMC does is to compile directly a free-pascal unit file to a lysee module.
 
 By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 
