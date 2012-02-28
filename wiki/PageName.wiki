@@ -10,7 +10,8 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 == 1. PMC Usage ==
 
 || *usage* || *description* ||
-|| `lysee_pmc` sample.pas || wrap sample.pas to samplew.pp ||
+|| `lysee_pmc` sample.pas || wrap sample.pas to samplew.pp \
+god ||
 || `lysee_pmc` -osample.dll sample.pas || wrap sample.pas to samplew.pp and compile samplew.pp to sample.dll || 
 
 == 2. File Content ==
