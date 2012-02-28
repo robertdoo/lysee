@@ -17,25 +17,18 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 
 <code language="pas">
 unit sample;
-
 {$mode objfpc}{$H+}
-
 interface
-
 uses
   Classes, SysUtils; 
-
 function MaxStr(const S1, S2: string): string;
-
 implementation
-
 function MaxStr(const S1, S2: string): string;
 begin
   if S1 >= S2 then
     Result := S1 else
     Result := S2;
 end;
-
 end.      
 </code>
 
