@@ -16,14 +16,10 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 == 2. File Content ==
 
 === 2.1. sample.pas ===
-
 <code language="pas">
 unit sample;
-
 {$mode objfpc}{$H+}
-
 interface
-
 uses
   Classes, SysUtils; 
 
