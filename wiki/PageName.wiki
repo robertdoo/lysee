@@ -10,8 +10,8 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 == 1. PMC Usage ==
 
 || *usage* || *description* ||
-|| `lysee_pmc`pasunit.pas || parse pasunit.pas and generate its wraping unit *`pasunit_m.pas`* ||
-|| `lysee_pmc` -opasunit.dll pasunit.pas || compile pasunit.pas to lysee module *pasunit.dll* || 
+|| `lysee_pmc`pasunit.pas || parse pasunit.pas and generate its wraping unit `pasunit_m.pas` ||
+|| `lysee_pmc` -opasunit.dll pasunit.pas || compile pasunit.pas to lysee module pasunit.dll || 
 
 == 2. How it works ==
 
