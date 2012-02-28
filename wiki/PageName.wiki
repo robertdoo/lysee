@@ -13,11 +13,31 @@ By the time, PMC is packed in _*lysee_pmc*_, a standalone console program.
 || `lysee_pmc` sample.pas || wrap sample.pas to samplew.pp ||
 || `lysee_pmc` -osample.dll sample.pas || wrap sample.pas to samplew.pp and compile samplew.pp to sample.dll || 
 
-== 2. How it works ==
+== 2. Content Of sample.pas ==
 
-  # Parse a pascal file.
-  # Wrap pascal funtions to lysee type(TLseFuncCall).
-  # Generate lysee module by calling
+{{{
+unit sample;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils; 
+
+function MaxStr(const S1, S2: string): string;
+
+implementation
+
+function MaxStr(const S1, S2: string): string;
+begin
+  if S1 >= S2 then
+    Result := S1 else
+    Result := S2;
+end;
+
+end.      
+}}}
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
