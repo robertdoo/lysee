@@ -6,7 +6,11 @@
 Pascal module compiler (PMC) is designed to compile a pascal unit to lysee module.
 
 
-= Details =
+== 1. How it works ==
+
+  # Parse a pascal file.
+  # Wrap pascal funtions to lysee type(TLseFuncCall).
+  # Generate lysee module by calling
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
